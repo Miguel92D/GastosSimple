@@ -22,6 +22,7 @@ class ActionController {
         TransactionFlowService.instance.startQuickEntry(
           context,
           isVault: false,
+          type: 'income',
         );
         break;
 
@@ -29,6 +30,7 @@ class ActionController {
         TransactionFlowService.instance.startQuickEntry(
           context,
           isVault: false,
+          type: 'expense',
         );
         break;
 

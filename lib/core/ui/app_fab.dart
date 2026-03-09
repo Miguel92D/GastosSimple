@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
-import '../router/navigation_service.dart';
+import '../controllers/action_controller.dart';
+import '../controllers/app_action.dart';
 import 'quick_action_menu.dart';
 
 class AppFAB extends StatelessWidget {
@@ -10,20 +10,35 @@ class AppFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     if (mode == "normal") {
-      return FloatingActionButton.extended(
-        onPressed: () {
-          NavigationService.navigate("/add");
-        },
-        label: Text(
-          l10n.add_transaction_fab,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        icon: const Icon(Icons.add),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // INGRESO
+          FloatingActionButton(
+            heroTag: "income_btn",
+            backgroundColor: Colors.green,
+            elevation: 4,
+            onPressed: () {
+              ActionController.execute(context, AppAction.addIncome);
+            },
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+
+          const SizedBox(height: 12),
+
+          // GASTO
+          FloatingActionButton(
+            heroTag: "expense_btn",
+            backgroundColor: Colors.red,
+            elevation: 4,
+            onPressed: () {
+              ActionController.execute(context, AppAction.addExpense);
+            },
+            child: const Icon(Icons.remove, color: Colors.white),
+          ),
+        ],
       );
     }
 

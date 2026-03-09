@@ -13,9 +13,13 @@ class TransactionFlowService {
   Future<void> startQuickEntry(
     BuildContext context, {
     bool isVault = false,
+    String? type,
   }) async {
     AppModeController.instance.setVaultMode(isVault);
-    await NavigationService.navigate('/add', arguments: {'isVault': isVault});
+    await NavigationService.navigate(
+      '/add',
+      arguments: {'isVault': isVault, 'type': type},
+    );
   }
 
   Future<dynamic> openEditTransaction(
