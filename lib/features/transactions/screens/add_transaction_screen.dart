@@ -124,43 +124,55 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     super.dispose();
   }
 
+  bool _isSaving = false;
+
   void _saveMovement() async {
+    if (_isSaving) return;
+
     final amountText = _amountController.text.replaceAll(',', '.');
     final amount = double.tryParse(amountText);
 
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.amount_error)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.amount_error)),
+        );
+      }
       return;
     }
 
-    final newMovement = Transaction(
-      id: widget.movimientoToEdit?.id,
-      amount: double.tryParse(_amountController.text) ?? 0,
-      category: _selectedCategory,
-      type: _tipo,
-      date: widget.movimientoToEdit?.date ?? DateTime.now(),
-      isSecret: widget.isVault ? 1 : 0,
-      isRecurring: _isRecurring,
-      note: _noteController.text.trim().isEmpty
-          ? null
-          : _noteController.text.trim(),
-      goalId: _selectedGoal?.id,
-      goalAmount: double.tryParse(_goalAmountController.text),
-    );
+    setState(() => _isSaving = true);
 
-    // Call centralized flow service
-    await TransactionFlowService.instance.saveTransaction(
-      context,
-      newMovement,
-      isRecurring: _isRecurring,
-      frequency: _frequency,
-      goal: _selectedGoal,
-      goalAmount: double.tryParse(_goalAmountController.text) ?? 0,
-    );
+    try {
+      final newMovement = Transaction(
+        id: widget.movimientoToEdit?.id,
+        amount: amount,
+        category: _selectedCategory,
+        type: _tipo,
+        date: widget.movimientoToEdit?.date ?? DateTime.now(),
+        isSecret: widget.isVault ? 1 : 0,
+        isRecurring: _isRecurring,
+        note: _noteController.text.trim().isEmpty
+            ? null
+            : _noteController.text.trim(),
+        goalId: _selectedGoal?.id,
+        goalAmount: double.tryParse(_goalAmountController.text),
+      );
 
-    if (!mounted) return;
+      // Call centralized flow service - Navigation is handled inside the service
+      await TransactionFlowService.instance.saveTransaction(
+        context,
+        newMovement,
+        isRecurring: _isRecurring,
+        frequency: _frequency,
+        goal: _selectedGoal,
+        goalAmount: double.tryParse(_goalAmountController.text) ?? 0,
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
   }
 
   @override

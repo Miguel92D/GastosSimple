@@ -15,7 +15,7 @@ class AppFAB extends StatelessWidget {
     if (mode == "normal") {
       return FloatingActionButton.extended(
         onPressed: () {
-          NavigationService.navigate("/quick_entry");
+          NavigationService.navigate("/add");
         },
         label: Text(
           l10n.add_transaction_fab,

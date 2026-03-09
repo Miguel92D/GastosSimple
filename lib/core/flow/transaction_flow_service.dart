@@ -4,6 +4,8 @@ import '../../features/transactions/controllers/transaction_controller.dart';
 import '../../features/transactions/models/transaction.dart';
 import '../state/app_mode_controller.dart';
 
+import '../../features/dashboard/screens/home_screen.dart';
+
 class TransactionFlowService {
   static final TransactionFlowService instance = TransactionFlowService._();
   TransactionFlowService._();
@@ -37,18 +39,13 @@ class TransactionFlowService {
             frequency,
           );
         }
-
-        // We can handle goal logic here if needed, or in TransactionController
       }
 
-      // TransactionController already handles Notification via TransactionNotifier
-
-      // Final navigation based on mode
-      if (transaction.isSecret == 1) {
-        NavigationService.navigateAndRemoveUntil('/vault');
-      } else {
-        NavigationService.navigateAndRemoveUntil('/dashboard');
-      }
+      // After saving, navigate only to the Dashboard and clear stack
+      NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
     } catch (e) {
       debugPrint('Error saving transaction flow: $e');
       if (context.mounted) {

@@ -4,6 +4,8 @@ import '../../../l10n/app_localizations.dart';
 import 'widgets/entry_amount_card.dart';
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
+import '../../../core/flow/transaction_flow_service.dart';
+import '../models/transaction.dart';
 
 class QuickEntryScreen extends StatefulWidget {
   const QuickEntryScreen({super.key});
@@ -66,10 +68,15 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                   color: Colors.green,
                   icon: Icons.arrow_upward,
                   onSubmit: (amount) {
-                    ActionController.execute(
+                    final transaction = Transaction(
+                      amount: amount,
+                      category: 'Otros',
+                      type: 'ingreso',
+                      date: DateTime.now(),
+                    );
+                    TransactionFlowService.instance.saveTransaction(
                       context,
-                      AppAction.addIncome,
-                      arguments: {"amount": amount, "isFromQuickEntry": true},
+                      transaction,
                     );
                   },
                 ),
@@ -79,10 +86,15 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                   color: Colors.red,
                   icon: Icons.arrow_downward,
                   onSubmit: (amount) {
-                    ActionController.execute(
+                    final transaction = Transaction(
+                      amount: amount,
+                      category: 'Otros',
+                      type: 'gasto',
+                      date: DateTime.now(),
+                    );
+                    TransactionFlowService.instance.saveTransaction(
                       context,
-                      AppAction.addExpense,
-                      arguments: {"amount": amount, "isFromQuickEntry": true},
+                      transaction,
                     );
                   },
                 ),

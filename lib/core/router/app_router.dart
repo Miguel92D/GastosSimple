@@ -29,7 +29,7 @@ class AppRouter {
       case "/":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const HomeScreen(),
+          builder: (_) => const QuickEntryScreen(),
         );
 
       case "/quick_entry":

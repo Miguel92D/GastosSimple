@@ -19,7 +19,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
-import 'features/dashboard/screens/home_screen.dart';
+import 'features/transactions/screens/quick_entry_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -195,6 +195,6 @@ class _InitialGuardState extends State<InitialGuard> {
 
   @override
   Widget build(BuildContext context) {
-    return const HomeScreen();
+    return const QuickEntryScreen();
   }
 }

@@ -33,7 +33,7 @@ class ActionController {
         break;
 
       case AppAction.openEntry:
-        NavigationService.navigateAndRemoveUntil("/");
+        NavigationService.navigateAndRemoveUntil("/quick_entry");
         break;
 
       case AppAction.openSettings:
