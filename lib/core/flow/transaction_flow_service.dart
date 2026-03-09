@@ -18,6 +18,16 @@ class TransactionFlowService {
     await NavigationService.navigate('/add', arguments: {'isVault': isVault});
   }
 
+  Future<dynamic> openEditTransaction(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    return await NavigationService.navigate(
+      '/add',
+      arguments: {'movimientoToEdit': transaction},
+    );
+  }
+
   Future<void> saveTransaction(
     BuildContext context,
     Transaction transaction, {

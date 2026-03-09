@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../flow/general_flow_service.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
 
@@ -33,15 +34,15 @@ class QuickActionMenu {
                   leading: const Icon(Icons.flash_on, color: Colors.amber),
                   title: const Text('Entrada rápida'),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, "/quick_entry");
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openEntry();
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.arrow_upward, color: Colors.green),
                   title: const Text('Agregar ingreso'),
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addIncome);
                   },
                 ),
@@ -49,7 +50,7 @@ class QuickActionMenu {
                   leading: const Icon(Icons.arrow_downward, color: Colors.red),
                   title: const Text('Agregar gasto'),
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addExpense);
                   },
                 ),
@@ -65,7 +66,7 @@ class QuickActionMenu {
                       : 'Agregar movimiento privado',
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                   ActionController.openQuickEntryVault(context);
                 },
               ),
@@ -74,7 +75,7 @@ class QuickActionMenu {
                   leading: const Icon(Icons.arrow_downward, color: Colors.red),
                   title: const Text('Agregar gasto privado'),
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.openQuickEntryVault(context);
                   },
                 ),

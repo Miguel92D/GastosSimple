@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../router/navigation_service.dart';
+import '../flow/general_flow_service.dart';
 import '../flow/transaction_flow_service.dart';
 import 'app_action.dart';
 
@@ -11,11 +11,11 @@ class ActionController {
   }) {
     switch (action) {
       case AppAction.openDashboard:
-        NavigationService.navigateAndRemoveUntil("/dashboard");
+        GeneralFlowService.openDashboard();
         break;
 
       case AppAction.openVault:
-        NavigationService.navigate("/vault");
+        GeneralFlowService.openVault();
         break;
 
       case AppAction.addIncome:
@@ -33,27 +33,27 @@ class ActionController {
         break;
 
       case AppAction.openEntry:
-        NavigationService.navigateAndRemoveUntil("/quick_entry");
+        GeneralFlowService.openEntry();
         break;
 
       case AppAction.openSettings:
-        NavigationService.navigate("/settings");
+        GeneralFlowService.openSettings();
         break;
 
       case AppAction.openStats:
-        NavigationService.navigate("/stats");
+        GeneralFlowService.openStats();
         break;
 
       case AppAction.openDebts:
-        NavigationService.navigate("/debts");
+        GeneralFlowService.openDebts();
         break;
 
       case AppAction.openGoals:
-        NavigationService.navigate("/goals");
+        GeneralFlowService.openGoals();
         break;
 
       case AppAction.openBudgets:
-        NavigationService.navigate("/budgets");
+        GeneralFlowService.openBudgets();
         break;
     }
   }

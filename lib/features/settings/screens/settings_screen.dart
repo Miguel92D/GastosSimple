@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../services/language_service.dart';
 import '../../../services/theme_service.dart';
 import '../../../services/security_service.dart';
-import '../../../services/premium_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../core/router/navigation_service.dart';
+import '../../../core/flow/general_flow_service.dart';
+import '../../../core/flow/premium_flow_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -114,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               leading: const Icon(Icons.cloud_upload),
               onTap: () async {
                 if (!ProService.instance.isPro) {
-                  PremiumService.showUpgradePrompt(context);
+                  PremiumFlowService.showUpgradePrompt(context);
                   return;
                 }
 
@@ -138,7 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               leading: const Icon(Icons.cloud_download),
               onTap: () async {
                 if (!ProService.instance.isPro) {
-                  PremiumService.showUpgradePrompt(context);
+                  PremiumFlowService.showUpgradePrompt(context);
                   return;
                 }
 
@@ -163,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               value: _autoBackup,
               onChanged: (val) async {
                 if (!ProService.instance.isPro) {
-                  PremiumService.showUpgradePrompt(context);
+                  PremiumFlowService.showUpgradePrompt(context);
                   return;
                 }
 
@@ -194,7 +194,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(l10n.privacy_policy),
               leading: const Icon(Icons.policy),
               onTap: () {
-                NavigationService.navigate("/privacy");
+                GeneralFlowService.openPrivacy();
               },
             ),
           ],
@@ -233,7 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () async {
                   await CurrencyService.instance.setCurrency('\$');
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                 },
               ),
               ListTile(
@@ -241,7 +241,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () async {
                   await CurrencyService.instance.setCurrency('USD ');
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                 },
               ),
               ListTile(
@@ -249,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () async {
                   await CurrencyService.instance.setCurrency('€');
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                 },
               ),
               ListTile(
@@ -257,7 +257,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () async {
                   await CurrencyService.instance.setCurrency('R\$');
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                 },
               ),
               ListTile(
@@ -265,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () async {
                   await CurrencyService.instance.setCurrency('¥');
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                 },
               ),
             ],
@@ -292,7 +292,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => GeneralFlowService.goBack(),
             child: Text(AppLocalizations.of(context)!.delete),
           ),
           TextButton(
@@ -300,7 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (controller.text.length == 4) {
                 await SecurityService.instance.setPin(controller.text);
                 await SecurityService.instance.setPinActive(true);
-                if (context.mounted) Navigator.pop(context);
+                if (context.mounted) GeneralFlowService.goBack();
               }
             },
             child: Text(AppLocalizations.of(context)!.save),

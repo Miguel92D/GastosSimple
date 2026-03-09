@@ -3,7 +3,8 @@ import '../models/transaction.dart';
 import 'transaction_tile.dart';
 import '../../../l10n/app_localizations.dart';
 import '../controllers/transaction_controller.dart';
-import '../../../../core/router/navigation_service.dart';
+import '../../../../core/flow/general_flow_service.dart';
+import '../../../../core/flow/transaction_flow_service.dart';
 
 class TransactionHistoryList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -30,11 +31,9 @@ class TransactionHistoryList extends StatelessWidget {
                 leading: const Icon(Icons.edit, color: Colors.blue),
                 title: Text(AppLocalizations.of(context)!.edit),
                 onTap: () async {
-                  Navigator.pop(context);
-                  final result = await NavigationService.navigate(
-                    "/add",
-                    arguments: {'movimientoToEdit': transaction},
-                  );
+                  GeneralFlowService.goBack();
+                  final result = await TransactionFlowService.instance
+                      .openEditTransaction(context, transaction);
                   if (result == true) {
                     onRefresh();
                   }
@@ -44,7 +43,7 @@ class TransactionHistoryList extends StatelessWidget {
                 leading: const Icon(Icons.delete, color: Colors.red),
                 title: Text(AppLocalizations.of(context)!.delete),
                 onTap: () async {
-                  Navigator.pop(context);
+                  GeneralFlowService.goBack();
                   if (transaction.id != null) {
                     await TransactionController.deleteTransaction(
                       transaction.id!,
@@ -56,7 +55,7 @@ class TransactionHistoryList extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.cancel, color: Colors.grey),
                 title: Text(AppLocalizations.of(context)!.cancel),
-                onTap: () => Navigator.pop(context),
+                onTap: () => GeneralFlowService.goBack(),
               ),
             ],
           ),

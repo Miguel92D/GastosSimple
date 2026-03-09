@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../router/navigation_service.dart';
+import '../flow/general_flow_service.dart';
 import '../../core/state/app_state.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
@@ -74,7 +74,7 @@ class AppDrawer extends StatelessWidget {
                   activeIcon: Icons.dashboard,
                   title: 'Inicio',
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openDashboard);
                   },
                 ),
@@ -83,8 +83,8 @@ class AppDrawer extends StatelessWidget {
                   activeIcon: Icons.receipt_long,
                   title: 'Movimientos',
                   onTap: () {
-                    Navigator.pop(context);
-                    NavigationService.navigate("/movements");
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openMovements();
                   },
                 ),
                 _DrawerItem(
@@ -92,7 +92,7 @@ class AppDrawer extends StatelessWidget {
                   activeIcon: Icons.analytics,
                   title: 'Análisis',
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
                   },
                 ),
@@ -101,7 +101,7 @@ class AppDrawer extends StatelessWidget {
                   activeIcon: Icons.savings,
                   title: 'Deudas',
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openDebts);
                   },
                 ),
@@ -122,15 +122,15 @@ class AppDrawer extends StatelessWidget {
                     icon: Icons.auto_graph_outlined,
                     title: 'Predicción de gastos',
                     onTap: () {
-                      Navigator.pop(context);
-                      NavigationService.navigate("/prediction");
+                      GeneralFlowService.goBack();
+                      GeneralFlowService.openPrediction();
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.lock_outline,
                     title: 'Bóveda privada',
                     onTap: () {
-                      Navigator.pop(context);
+                      GeneralFlowService.goBack();
                       ActionController.execute(context, AppAction.openVault);
                     },
                   ),
@@ -140,7 +140,7 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   title: 'Ajustes',
                   onTap: () {
-                    Navigator.pop(context);
+                    GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openSettings);
                   },
                 ),
