@@ -1,0 +1,26 @@
+﻿Analyzing GastosSimple...                                       
+
+   info - Missing type annotation - lib\core\ui\design\app_design.dart:8:14 - strict_top_level_inference
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\settings\screens\backup_screen.dart:21:7 - deprecated_member_use
+   info - 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\settings\screens\backup_screen.dart:21:13 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\premium_screen.dart:95:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\premium_screen.dart:176:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\premium_screen.dart:212:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\premium_screen.dart:215:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\premium_screen.dart:248:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\splash_screen.dart:67:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\settings\screens\splash_screen.dart:90:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\transactions\screens\filtered_history_screen.dart:77:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\transactions\screens\movements_screen.dart:66:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\transactions\screens\widgets\entry_amount_card.dart:39:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\transactions\widgets\transaction_tile.dart:63:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\transactions\widgets\transaction_tile.dart:76:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\vault\widgets\vault_card.dart:22:38 - deprecated_member_use
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:37:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:52:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:75:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:77:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:86:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:107:7 - undefined_method
+  error - The method 'debugPrint' isn't defined for the type 'CloudBackupService' - lib\services\cloud_backup_service.dart:109:7 - undefined_method
+

@@ -1,0 +1,6 @@
+﻿Analyzing GastosSimple...                                       
+
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\widgets\dashboard_card.dart:33:22 - deprecated_member_use
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\settings\screens\backup_screen.dart:21:13 - deprecated_member_use
+   info - 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\settings\screens\backup_screen.dart:21:19 - deprecated_member_use
+

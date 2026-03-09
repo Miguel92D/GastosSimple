@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "741621410452",
+    "project_id": "simple-app-78147",
+    "storage_bucket": "simple-app-78147.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741621410452:android:ab56b43cf0b7eb8647e281",
+        "android_client_info": {
+          "package_name": "com.gastossimple.gastos_simple"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJSErokzCn_vHz1WKPb14Ip_E-Tn3G-cc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,6 @@
+﻿Analyzing GastosSimple...                                       
+
+   info - Missing type annotation - lib\core\ui\design\app_design.dart:8:14 - strict_top_level_inference
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\settings\screens\backup_screen.dart:21:7 - deprecated_member_use
+   info - 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\settings\screens\backup_screen.dart:21:13 - deprecated_member_use
+
