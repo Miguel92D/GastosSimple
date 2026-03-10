@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_spacing.dart';
 
 class MovementsScreen extends StatefulWidget {
   const MovementsScreen({super.key});
@@ -92,9 +93,16 @@ class _MovementsScreenState extends State<MovementsScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : TransactionHistoryList(
-              transactions: _movimientos,
+          : RefreshIndicator(
               onRefresh: _loadData,
+              child: TransactionHistoryList(
+                transactions: _movimientos,
+                onRefresh: _loadData,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.md,
+                ),
+              ),
             ),
     );
   }

@@ -57,17 +57,17 @@ class TransactionTile extends StatelessWidget {
     Widget tile = GestureDetector(
       onTap: onTap,
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         borderRadius: 20,
         glowColor: amountColor.withOpacity(0.04),
         child: Row(
           children: [
             Container(
-              height: 40,
-              width: 40,
+              height: 36,
+              width: 36,
               decoration: BoxDecoration(
                 color: amountColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: amountColor.withOpacity(0.15),
                   width: 1,
@@ -76,7 +76,7 @@ class TransactionTile extends StatelessWidget {
               child: Icon(
                 _getCategoryIcon(transaction.category),
                 color: amountColor,
-                size: 20,
+                size: 18,
               ),
             ),
             const SizedBox(width: 12),
@@ -90,7 +90,7 @@ class TransactionTile extends StatelessWidget {
                       context,
                       transaction.category,
                     ),
-                    style: AppTextStyles.cardTitle.copyWith(fontSize: 14),
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 13),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -99,6 +99,7 @@ class TransactionTile extends StatelessWidget {
                     DateFormat('d MMM, yyyy').format(transaction.date),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.softText.withOpacity(0.3),
+                      fontSize: 10,
                     ),
                   ),
                 ],
@@ -115,7 +116,7 @@ class TransactionTile extends StatelessWidget {
                       : '$amountPrefix${CurrencyHelper.format(transaction.amount, context)}',
                   style: AppTextStyles.cardTitle.copyWith(
                     fontWeight: FontWeight.w800,
-                    fontSize: 16,
+                    fontSize: 15,
                     color: amountColor,
                   ),
                 ),
@@ -134,44 +135,38 @@ class TransactionTile extends StatelessWidget {
     );
 
     if (onDelete == null && onArchive == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: tile,
-      );
+      return tile;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Dismissible(
-        key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
-        direction: DismissDirection.horizontal,
-        onDismissed: (direction) {
-          if (direction == DismissDirection.startToEnd && onArchive != null) {
-            onArchive!();
-          } else if (onDelete != null) {
-            onDelete!();
-          }
-        },
-        background: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 20),
-          decoration: BoxDecoration(
-            color: AppColors.blue.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const Icon(Icons.archive_rounded, color: AppColors.blue),
+    return Dismissible(
+      key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
+      direction: DismissDirection.horizontal,
+      onDismissed: (direction) {
+        if (direction == DismissDirection.startToEnd && onArchive != null) {
+          onArchive!();
+        } else if (onDelete != null) {
+          onDelete!();
+        }
+      },
+      background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 20),
+        decoration: BoxDecoration(
+          color: AppColors.blue.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(20),
         ),
-        secondaryBackground: Container(
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 20),
-          decoration: BoxDecoration(
-            color: AppColors.expenseRed.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const Icon(Icons.delete_rounded, color: AppColors.expenseRed),
-        ),
-        child: tile,
+        child: const Icon(Icons.archive_rounded, color: AppColors.blue),
       ),
+      secondaryBackground: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: AppColors.expenseRed.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Icon(Icons.delete_rounded, color: AppColors.expenseRed),
+      ),
+      child: tile,
     );
   }
 }

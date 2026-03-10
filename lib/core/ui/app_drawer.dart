@@ -6,6 +6,7 @@ import '../controllers/app_action.dart';
 import 'app_colors.dart';
 import 'app_gradients.dart';
 import 'app_text_styles.dart';
+import 'widgets/gold_shimmer_text.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -51,7 +52,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _GoldShimmerText(text: '\$imple', isPro: isPro),
+                GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
                 Text(
                   'CONTROL FINANCIERO',
                   style: AppTextStyles.subLabel.copyWith(
@@ -201,77 +202,6 @@ class _DrawerItem extends StatelessWidget {
         onTap: onTap,
         dense: true,
       ),
-    );
-  }
-}
-
-class _GoldShimmerText extends StatefulWidget {
-  final String text;
-  final bool isPro;
-  const _GoldShimmerText({required this.text, required this.isPro});
-
-  @override
-  State<_GoldShimmerText> createState() => _GoldShimmerTextState();
-}
-
-class _GoldShimmerTextState extends State<_GoldShimmerText>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!widget.isPro) {
-      return Text(
-        widget.text,
-        style: AppTextStyles.titleLarge.copyWith(fontSize: 28),
-      );
-    }
-
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [
-                _controller.value - 0.2,
-                _controller.value,
-                _controller.value + 0.2,
-              ],
-              colors: [
-                const Color(0xFFD4AF37), // Metallic Gold
-                const Color(0xFFFFFACD).withOpacity(0.9), // Shine
-                const Color(0xFFD4AF37), // Metallic Gold
-              ],
-            ).createShader(bounds);
-          },
-          child: Text(
-            widget.text,
-            style: AppTextStyles.titleLarge.copyWith(
-              fontSize: 32,
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        );
-      },
     );
   }
 }

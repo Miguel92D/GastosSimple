@@ -6,6 +6,9 @@ import '../widgets/dashboard_widget.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 
+import '../../../core/ui/widgets/gold_shimmer_text.dart';
+import '../../../core/state/app_state.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -29,6 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "\$imple",
+      titleWidget: GoldShimmerText(
+        text: "\$imple",
+        isPro: AppState.instance.isPro,
+        fontSize: 24,
+      ),
       drawer: const AppDrawer(),
       floatingActionButton: const AppFAB(),
       body: const DashboardWidget(),

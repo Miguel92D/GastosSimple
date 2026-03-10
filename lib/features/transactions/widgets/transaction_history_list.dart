@@ -11,11 +11,15 @@ import '../../../../core/ui/app_text_styles.dart';
 class TransactionHistoryList extends StatelessWidget {
   final List<Transaction> transactions;
   final VoidCallback onRefresh;
+  final ScrollPhysics? physics;
+  final EdgeInsetsGeometry? padding;
 
   const TransactionHistoryList({
     super.key,
     required this.transactions,
     required this.onRefresh,
+    this.physics,
+    this.padding,
   });
 
   void _showOptionsModal(BuildContext context, Transaction transaction) {
@@ -107,8 +111,9 @@ class TransactionHistoryList extends StatelessWidget {
     }
 
     return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      padding: padding ?? EdgeInsets.zero,
+      shrinkWrap: physics == const NeverScrollableScrollPhysics(),
+      physics: physics ?? const BouncingScrollPhysics(),
       itemCount: transactions.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {

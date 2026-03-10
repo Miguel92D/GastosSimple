@@ -39,6 +39,7 @@ class RecentTransactionsList extends StatelessWidget {
           child: TransactionHistoryList(
             transactions: transactions,
             onRefresh: onRefresh,
+            physics: const NeverScrollableScrollPhysics(),
           ),
         ),
       ],
