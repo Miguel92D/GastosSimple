@@ -5,7 +5,7 @@ import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
-import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/glass_card.dart';
 import '../../../core/ui/design/app_colors.dart';
 
 class StatsScreen extends StatefulWidget {

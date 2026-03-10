@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Added for ImageFilter
+import 'dart:ui';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -9,6 +9,7 @@ class GlassCard extends StatelessWidget {
   final double? height;
   final double? width;
   final EdgeInsetsGeometry? padding;
+  final bool animate;
 
   const GlassCard({
     super.key,
@@ -19,6 +20,7 @@ class GlassCard extends StatelessWidget {
     this.height,
     this.width,
     this.padding,
+    this.animate = false,
   });
 
   @override
@@ -31,10 +33,8 @@ class GlassCard extends StatelessWidget {
         boxShadow: [
           if (glowColor != null)
             BoxShadow(
-              color: glowColor!.withOpacity(
-                0.2,
-              ), // Changed withValues to withOpacity
-              blurRadius: 20,
+              color: glowColor!.withOpacity(0.15),
+              blurRadius: 24,
               spreadRadius: 2,
             ),
         ],
@@ -42,14 +42,14 @@ class GlassCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Container(
             padding: padding ?? const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
-                width: 1.5,
+                color: Colors.white.withOpacity(0.1),
+                width: 1.2,
               ),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -57,8 +57,8 @@ class GlassCard extends StatelessWidget {
                 colors:
                     gradientColors ??
                     [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.white.withValues(alpha: 0.05),
+                      Colors.white.withOpacity(0.12),
+                      Colors.white.withOpacity(0.04),
                     ],
               ),
             ),

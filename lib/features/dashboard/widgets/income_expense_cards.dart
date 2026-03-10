@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/glass_card.dart';
 import '../../../core/ui/design/app_colors.dart';
 
 class IncomeExpenseCards extends StatelessWidget {

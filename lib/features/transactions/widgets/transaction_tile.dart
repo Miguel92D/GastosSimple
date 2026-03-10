@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/transaction.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
-import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/glass_card.dart';
 import '../../../core/ui/design/app_colors.dart';
 
 class TransactionTile extends StatelessWidget {

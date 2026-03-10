@@ -45,6 +45,10 @@ class GeneralFlowService {
     NavigationService.navigate("/privacy");
   }
 
+  static void openCategories() {
+    NavigationService.navigate("/categories");
+  }
+
   static void goBack() {
     NavigationService.goBack();
   }

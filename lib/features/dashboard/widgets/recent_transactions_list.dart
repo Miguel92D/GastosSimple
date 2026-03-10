@@ -20,11 +20,12 @@ class RecentTransactionsList extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            "Movimientos Recientes",
+            "ÚLTIMOS MOVIMIENTOS",
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.5,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              color: Colors.white54,
+              letterSpacing: 2.0,
             ),
           ),
         ),

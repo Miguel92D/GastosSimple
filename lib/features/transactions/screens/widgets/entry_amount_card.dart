@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/ui/glass_card.dart';
+import '../../../../core/ui/widgets/glass_card.dart';
 
 class EntryAmountCard extends StatefulWidget {
   final String title;

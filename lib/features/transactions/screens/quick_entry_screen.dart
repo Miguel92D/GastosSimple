@@ -7,7 +7,7 @@ import '../../../core/controllers/app_action.dart';
 import '../../../core/flow/transaction_flow_service.dart';
 import '../models/transaction.dart';
 import '../../../core/ui/design/app_colors.dart';
-import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/glass_card.dart';
 
 class QuickEntryScreen extends StatefulWidget {
   const QuickEntryScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/glass_card.dart';
 import '../../../core/ui/design/app_colors.dart';
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
@@ -54,52 +54,61 @@ class CategoriesScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("Categorías"), elevation: 0),
-      body: ListView.builder(
+      appBar: AppBar(title: const Text("Categorías")),
+      body: GridView.builder(
         padding: const EdgeInsets.all(24),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.85,
+        ),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final cat = categories[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: GlassCard(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              borderRadius: 20,
-              child: Row(
+          final color = cat['color'] as Color;
+
+          return GlassCard(
+            padding: const EdgeInsets.all(16),
+            borderRadius: 28,
+            glowColor: color.withOpacity(0.05),
+            child: InkWell(
+              onTap: () => ActionController.execute(
+                context,
+                AppAction.addExpense,
+                arguments: {'category': cat['name']},
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: cat['color'].withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      color: color.withOpacity(0.12),
+                      shape: BoxShape.circle,
                       border: Border.all(
-                        color: cat['color'].withValues(alpha: 0.2),
+                        color: color.withOpacity(0.3),
+                        width: 1.5,
                       ),
                     ),
-                    child: Icon(cat['icon'], color: cat['color'], size: 24),
+                    child: Icon(cat['icon'], color: color, size: 32),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(height: 16),
                   Text(
                     cat['name'],
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
                     ),
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: AppColors.primaryStart,
-                    ),
-                    onPressed: () {
-                      ActionController.execute(
-                        context,
-                        AppAction.addExpense,
-                        arguments: {'category': cat['name']},
-                      );
-                    },
+                  const SizedBox(height: 12),
+                  Icon(
+                    Icons.add_circle_outline_rounded,
+                    color: Colors.white.withOpacity(0.2),
+                    size: 20,
                   ),
                 ],
               ),

@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/ui/glass_card.dart';
-import '../../../core/ui/design/app_colors.dart';
-import '../../../core/state/app_mode_controller.dart';
+import 'glass_card.dart';
+import '../design/app_colors.dart';
 
 class BalanceCard extends StatelessWidget {
   final double balance;
-  final bool isVault;
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool isNegative;
+  final VoidCallback? onTap;
 
-  const BalanceCard({super.key, required this.balance, required this.isVault});
+  const BalanceCard({
+    super.key,
+    required this.balance,
+    this.title = "Balance disponible",
+    this.subtitle = "Marzo 2026",
+    this.icon = Icons.account_balance_wallet_rounded,
+    this.isNegative = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+    return GestureDetector(
+      onTap: onTap,
       child: GlassCard(
-        borderRadius: 24,
+        borderRadius: 32,
         glowColor: AppColors.primaryStart.withOpacity(0.3),
         gradientColors: [
           AppColors.primaryStart.withOpacity(0.9),
@@ -30,45 +41,36 @@ class BalanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      ((isVault || AppModeController.instance.isVault)
-                              ? "Balance privado"
-                              : "Balance disponible")
-                          .toUpperCase(),
-                      style: TextStyle(
+                      title.toUpperCase(),
+                      style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white70,
                         letterSpacing: 2.0,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      DateFormat('MMMM yyyy', 'es_ES').format(DateTime.now()),
+                      subtitle,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.5),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.15),
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(
-                    isVault
-                        ? Icons.lock_outline_rounded
-                        : Icons.account_balance_wallet_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  child: Icon(icon, color: Colors.white, size: 22),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -77,30 +79,30 @@ class BalanceCard extends StatelessWidget {
                 Text(
                   "\$",
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white.withOpacity(0.8),
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 8),
                 Text(
                   NumberFormat('#,###', 'es_ES').format(balance.abs()),
                   style: const TextStyle(
-                    fontSize: 48,
+                    fontSize: 54,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    letterSpacing: -1.0,
+                    letterSpacing: -1.5,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Container(
               height: 4,
-              width: 60,
+              width: 40,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(2),
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ],

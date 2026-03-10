@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../controllers/dashboard_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
-import 'balance_card.dart';
+import '../../../core/ui/widgets/balance_card.dart';
 import 'income_expense_cards.dart';
 import 'recent_transactions_list.dart';
 
@@ -69,7 +69,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BalanceCard(balance: balance, isVault: widget.isVault),
+          BalanceCard(balance: balance),
           IncomeExpenseCards(income: income, expenses: expenses),
           const SizedBox(height: 16),
           RecentTransactionsList(

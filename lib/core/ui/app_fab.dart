@@ -44,34 +44,36 @@ class AppFAB extends StatelessWidget {
     required String heroTag,
   }) {
     return Container(
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.4),
-            blurRadius: 20,
+            blurRadius: 28,
             spreadRadius: 2,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: FloatingActionButton(
-        heroTag: heroTag,
-        onPressed: onPressed,
-        backgroundColor: color,
-        elevation: 0,
-        shape: const CircleBorder(),
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [color, color.withOpacity(0.8)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          customBorder: const CircleBorder(),
+          child: Ink(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [color, color.withOpacity(0.7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(color: Colors.white24, width: 1.5),
             ),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-          child: Icon(icon, color: Colors.white, size: 28),
         ),
       ),
     );

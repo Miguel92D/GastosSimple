@@ -9,4 +9,5 @@ enum AppAction {
   openDebts,
   openGoals,
   openBudgets,
+  openCategories,
 }

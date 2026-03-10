@@ -57,6 +57,9 @@ class ActionController {
       case AppAction.openBudgets:
         GeneralFlowService.openBudgets();
         break;
+      case AppAction.openCategories:
+        GeneralFlowService.openCategories();
+        break;
     }
   }
 

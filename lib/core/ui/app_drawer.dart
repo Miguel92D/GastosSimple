@@ -121,9 +121,7 @@ class AppDrawer extends StatelessWidget {
                   title: 'Categorías',
                   onTap: () {
                     GeneralFlowService.goBack();
-                    // Assuming there's a way to open categories or using GeneralFlowService
-                    // ActionController.execute(context, AppAction.openCategories);
-                    // Let's stick to what's available or just the existing ones
+                    ActionController.execute(context, AppAction.openCategories);
                   },
                 ),
                 const Padding(
