@@ -281,33 +281,41 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   ),
                 ),
 
-              const SizedBox(height: 24),
-
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               GlassInput(
                 controller: _amountController,
                 focusNode: _amountFocusNode,
                 isCenter: true,
+                height: 85, // Closer to Note field height
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 onSubmitted: _saveMovement,
                 label: '',
                 style: TextStyle(
-                  fontSize: 54,
+                  fontSize:
+                      42, // Reduced slightly for better vertical fit in 85px
                   fontWeight: FontWeight.w900,
                   color: _tipo == 'gasto'
                       ? AppColors.expense
                       : AppColors.income,
-                  letterSpacing: -1,
+                  letterSpacing: -1.5,
                 ),
-                prefix: Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                hintText: 'Monto',
+                hintStyle: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white.withOpacity(0.15),
+                ),
+                prefix: Baseline(
+                  baseline: 30, // Adjusted for new font size
+                  baselineType: TextBaseline.alphabetic,
                   child: Text(
                     CurrencyHelper.getSymbol(context),
                     style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color:
                           (_tipo == 'gasto'
@@ -317,7 +325,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     ),
                   ),
                 ),
-                hintText: '0.00',
               ),
 
               const SizedBox(height: 24),
