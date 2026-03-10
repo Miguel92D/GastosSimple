@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/action_controller.dart';
-import '../controllers/app_action.dart';
+import '../flow/transaction_flow_service.dart';
 import './design/app_colors.dart';
 
 class AppFAB extends StatelessWidget {
@@ -18,8 +17,10 @@ class AppFAB extends StatelessWidget {
           context: context,
           icon: Icons.add_rounded,
           color: AppColors.income,
-          onPressed: () =>
-              ActionController.execute(context, AppAction.addIncome),
+          onPressed: () => TransactionFlowService.instance.startQuickEntry(
+            context,
+            type: 'income',
+          ),
           heroTag: "income_fab",
         ),
         const SizedBox(height: 16),
@@ -27,8 +28,10 @@ class AppFAB extends StatelessWidget {
           context: context,
           icon: Icons.remove_rounded,
           color: AppColors.expense,
-          onPressed: () =>
-              ActionController.execute(context, AppAction.addExpense),
+          onPressed: () => TransactionFlowService.instance.startQuickEntry(
+            context,
+            type: 'expense',
+          ),
           heroTag: "expense_fab",
         ),
         const SizedBox(height: 80), // Space for bottom navigation

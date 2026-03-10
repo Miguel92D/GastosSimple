@@ -55,7 +55,7 @@ class AppRouter {
           builder: (_) => AddTransactionScreen(
             movimientoToEdit: args['movimientoToEdit'],
             isFromQuickEntry: args['isFromQuickEntry'] ?? false,
-            initialTipo: args['initialTipo'] ?? args['type'],
+            type: args['initialTipo'] ?? args['type'],
             isVault: isVault,
           ),
         );

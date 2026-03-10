@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/flow/transaction_flow_service.dart';
+import '../../../core/ui/design/app_colors.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../goals/models/goal.dart';
@@ -9,14 +10,14 @@ import '../models/transaction.dart';
 class AddTransactionScreen extends StatefulWidget {
   final Transaction? movimientoToEdit;
   final bool isFromQuickEntry;
-  final String? initialTipo;
+  final String? type; // "income" or "expense"
   final bool isVault;
 
   const AddTransactionScreen({
     super.key,
     this.movimientoToEdit,
     this.isFromQuickEntry = false,
-    this.initialTipo,
+    this.type,
     this.isVault = false,
   });
 
@@ -40,19 +41,45 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   List<String> _categoriasGasto = [
     'Comida',
     'Transporte',
-    'Ocio',
     'Salud',
-    'Educación',
+    'Ocio',
+    'Compras',
+    'Suscripciones',
+    'Servicios',
+    'Tarjeta de Crédito',
+    'Préstamos',
+    'Regalos',
     'Otros',
   ];
 
   List<String> _categoriasIngreso = [
     'Salario',
-    'Venta',
-    'Regalo',
-    'Inversión',
+    'Freelance',
+    'Inversiones',
+    'Ventas',
+    'Regalos',
+    'Bonos',
     'Otros',
   ];
+
+  final Map<String, IconData> _categoryIcons = {
+    'Comida': Icons.restaurant_rounded,
+    'Transporte': Icons.directions_bus_rounded,
+    'Salud': Icons.local_hospital_rounded,
+    'Ocio': Icons.sports_esports_rounded,
+    'Compras': Icons.shopping_bag_rounded,
+    'Suscripciones': Icons.subscriptions_rounded,
+    'Servicios': Icons.receipt_long_rounded,
+    'Tarjeta de Crédito': Icons.credit_card_rounded,
+    'Préstamos': Icons.handshake_rounded,
+    'Regalos': Icons.card_giftcard_rounded,
+    'Otros': Icons.more_horiz_rounded,
+    'Salario': Icons.payments_rounded,
+    'Freelance': Icons.work_rounded,
+    'Inversiones': Icons.trending_up_rounded,
+    'Ventas': Icons.sell_rounded,
+    'Bonos': Icons.redeem_rounded,
+  };
 
   @override
   void initState() {
@@ -67,8 +94,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       _selectedCategory = mov.category;
       _noteController.text = mov.note ?? '';
     } else {
-      if (widget.initialTipo != null) {
-        _tipo = widget.initialTipo!;
+      if (widget.type != null) {
+        final String normalizedType = widget.type!.toLowerCase();
+        if (normalizedType == 'income' || normalizedType == 'ingreso') {
+          _tipo = 'ingreso';
+        } else {
+          _tipo = 'gasto';
+        }
+
         _selectedCategory = _tipo == 'gasto'
             ? _categoriasGasto.first
             : _categoriasIngreso.first;
@@ -198,49 +231,54 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Center(
-                child: ToggleButtons(
-                  borderRadius: BorderRadius.circular(12),
-                  isSelected: [_tipo == 'ingreso', _tipo == 'gasto'],
-                  onPressed: (index) {
-                    setState(() {
-                      _tipo = index == 0 ? 'ingreso' : 'gasto';
+              if (widget.type == null)
+                Center(
+                  child: ToggleButtons(
+                    borderRadius: BorderRadius.circular(12),
+                    isSelected: [_tipo == 'ingreso', _tipo == 'gasto'],
+                    onPressed: (index) {
+                      setState(() {
+                        _tipo = index == 0 ? 'ingreso' : 'gasto';
 
-                      _selectedCategory = _tipo == 'gasto'
-                          ? _categoriasGasto.first
-                          : _categoriasIngreso.first;
-                    });
-                  },
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_upward, color: Colors.green),
-                          SizedBox(width: 8),
-                          Text(
-                            AppLocalizations.of(context)!.income,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                        _selectedCategory = _tipo == 'gasto'
+                            ? _categoriasGasto.first
+                            : _categoriasIngreso.first;
+                      });
+                    },
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.arrow_upward, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppLocalizations.of(context)!.income,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_downward, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text(
-                            AppLocalizations.of(context)!.expense,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.arrow_downward, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppLocalizations.of(context)!.expense,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
               const SizedBox(height: 24),
 
@@ -265,6 +303,80 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
 
               const SizedBox(height: 24),
+
+              Text(
+                'CATEGORÍA',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white.withOpacity(0.5),
+                  letterSpacing: 1.2,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              SizedBox(
+                height: 50,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _tipo == 'gasto'
+                      ? _categoriasGasto.length
+                      : _categoriasIngreso.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final category = _tipo == 'gasto'
+                        ? _categoriasGasto[index]
+                        : _categoriasIngreso[index];
+                    final isSelected = _selectedCategory == category;
+                    final icon =
+                        _categoryIcons[category] ?? Icons.category_rounded;
+                    final color = _tipo == 'gasto'
+                        ? AppColors.expense
+                        : AppColors.income;
+
+                    return ChoiceChip(
+                      label: Row(
+                        children: [
+                          Icon(
+                            icon,
+                            size: 18,
+                            color: isSelected ? Colors.white : color,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(category),
+                        ],
+                      ),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                      },
+                      selectedColor: color,
+                      backgroundColor: color.withOpacity(0.1),
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white70,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        side: BorderSide(
+                          color: isSelected
+                              ? Colors.white24
+                              : color.withOpacity(0.3),
+                        ),
+                      ),
+                      showCheckmark: false,
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 32),
 
               TextField(
                 controller: _noteController,
