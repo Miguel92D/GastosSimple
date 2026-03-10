@@ -23,7 +23,6 @@ class IncomeExpenseCards extends StatelessWidget {
             child: _StatCard(
               label: "Ingresos",
               amount: income,
-              icon: Icons.arrow_upward_rounded,
               color: AppColors.income,
             ),
           ),
@@ -32,7 +31,6 @@ class IncomeExpenseCards extends StatelessWidget {
             child: _StatCard(
               label: "Gastos",
               amount: expenses,
-              icon: Icons.arrow_downward_rounded,
               color: AppColors.expense,
             ),
           ),
@@ -45,13 +43,11 @@ class IncomeExpenseCards extends StatelessWidget {
 class _StatCard extends StatelessWidget {
   final String label;
   final double amount;
-  final IconData icon;
   final Color color;
 
   const _StatCard({
     required this.label,
     required this.amount,
-    required this.icon,
     required this.color,
   });
 
@@ -64,30 +60,16 @@ class _StatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: color.withOpacity(0.3), width: 1),
-                ),
-                child: Icon(icon, color: color, size: 16),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           FittedBox(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -96,18 +78,18 @@ class _StatCard extends StatelessWidget {
                 Text(
                   "\$",
                   style: TextStyle(
-                    color: color.withOpacity(0.7),
-                    fontWeight: FontWeight.w600,
+                    color: color.withOpacity(0.6),
+                    fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
                 ),
-                const SizedBox(width: 2),
+                const SizedBox(width: 4),
                 Text(
                   NumberFormat('#,###', 'es_ES').format(amount.abs()),
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.w900,
-                    fontSize: 24,
+                    fontSize: 26,
                     letterSpacing: -0.5,
                   ),
                 ),
