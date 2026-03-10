@@ -29,6 +29,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   double expenses = 0;
   double balance = 0;
   bool isLoading = true;
+  String? _filter; // 'ingreso', 'gasto', or null
 
   @override
   void initState() {
@@ -64,11 +65,25 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     }
   }
 
+  void _toggleFilter(String type) {
+    setState(() {
+      if (_filter == type) {
+        _filter = null;
+      } else {
+        _filter = type;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    final filteredMovimientos = _filter == null
+        ? movimientos
+        : movimientos.where((m) => m.type == _filter).toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 100),
@@ -82,10 +97,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             ),
             child: BalanceCard(balance: balance),
           ),
-          IncomeExpenseCards(income: income, expenses: expenses),
+          IncomeExpenseCards(
+            income: income,
+            expenses: expenses,
+            selectedFilter: _filter,
+            onIncomeTap: () => _toggleFilter('ingreso'),
+            onExpenseTap: () => _toggleFilter('gasto'),
+          ),
           const SizedBox(height: AppSpacing.md),
           RecentTransactionsList(
-            transactions: movimientos,
+            transactions: filteredMovimientos,
             onRefresh: loadData,
           ),
         ],

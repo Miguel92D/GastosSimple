@@ -94,6 +94,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                         onTap: () => ActionController.execute(
                           context,
                           AppAction.addIncome,
+                          arguments: {"isFromQuickEntry": true},
                         ),
                       ),
                     ),
@@ -107,6 +108,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                         onTap: () => ActionController.execute(
                           context,
                           AppAction.addExpense,
+                          arguments: {"isFromQuickEntry": true},
                         ),
                       ),
                     ),

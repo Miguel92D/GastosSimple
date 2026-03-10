@@ -18,6 +18,7 @@ class GlassCard extends StatelessWidget {
   final List<Color>? gradientColors;
   final double? height;
   final double? width;
+  final BoxBorder? border;
 
   const GlassCard({
     super.key,
@@ -28,6 +29,7 @@ class GlassCard extends StatelessWidget {
     this.gradientColors,
     this.height,
     this.width,
+    this.border,
   });
 
   @override
@@ -54,7 +56,8 @@ class GlassCard extends StatelessWidget {
             padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(color: AppColors.cardBorder, width: 1.0),
+              border:
+                  border ?? Border.all(color: AppColors.cardBorder, width: 1.0),
               gradient: gradientColors != null
                   ? LinearGradient(
                       colors: gradientColors!,

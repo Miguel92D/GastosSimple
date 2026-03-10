@@ -209,6 +209,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         frequency: _frequency,
         goal: _selectedGoal,
         goalAmount: double.tryParse(_goalAmountController.text) ?? 0,
+        isFromQuickEntry: widget.isFromQuickEntry,
       );
     } catch (e) {
       if (mounted) {

@@ -10,11 +10,17 @@ import '../../../core/ui/app_radius.dart';
 class IncomeExpenseCards extends StatelessWidget {
   final double income;
   final double expenses;
+  final String? selectedFilter;
+  final VoidCallback? onIncomeTap;
+  final VoidCallback? onExpenseTap;
 
   const IncomeExpenseCards({
     super.key,
     required this.income,
     required this.expenses,
+    this.selectedFilter,
+    this.onIncomeTap,
+    this.onExpenseTap,
   });
 
   @override
@@ -34,6 +40,8 @@ class IncomeExpenseCards extends StatelessWidget {
                   label: "Ingresos",
                   amount: income,
                   color: AppColors.incomeGreen,
+                  isSelected: selectedFilter == 'ingreso',
+                  onTap: onIncomeTap,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -42,6 +50,8 @@ class IncomeExpenseCards extends StatelessWidget {
                   label: "Gastos",
                   amount: expenses,
                   color: AppColors.expenseRed,
+                  isSelected: selectedFilter == 'gasto',
+                  onTap: onExpenseTap,
                 ),
               ),
             ],
@@ -56,57 +66,75 @@ class _StatCard extends StatelessWidget {
   final String label;
   final double amount;
   final Color color;
+  final bool isSelected;
+  final VoidCallback? onTap;
 
   const _StatCard({
     required this.label,
     required this.amount,
     required this.color,
+    this.isSelected = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      glowColor: color.withOpacity(0.08),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      borderRadius: AppRadius.lg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withOpacity(0.4),
-              fontSize: 10,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          FittedBox(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  "\$",
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: color.withOpacity(0.4),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                  ),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        child: GlassCard(
+          glowColor: isSelected
+              ? color.withOpacity(0.3)
+              : color.withOpacity(0.08),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          borderRadius: AppRadius.lg,
+          border: isSelected
+              ? Border.all(color: color.withOpacity(0.5), width: 2)
+              : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label.toUpperCase(),
+                style: AppTextStyles.subLabel.copyWith(
+                  color: isSelected
+                      ? color.withOpacity(0.8)
+                      : AppColors.softText.withOpacity(0.4),
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  AppState.instance.hideBalance
-                      ? "••••••"
-                      : NumberFormat('#,###', 'es_ES').format(amount.abs()),
-                  style: AppTextStyles.incomeValue.copyWith(
-                    color: color,
-                    fontSize: 20,
-                  ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              FittedBox(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      "\$",
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: color.withOpacity(0.4),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      AppState.instance.hideBalance
+                          ? "••••••"
+                          : NumberFormat('#,###', 'es_ES').format(amount.abs()),
+                      style: AppTextStyles.incomeValue.copyWith(
+                        color: color,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

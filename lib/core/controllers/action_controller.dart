@@ -23,6 +23,7 @@ class ActionController {
           context,
           isVault: false,
           type: 'income',
+          arguments: arguments,
         );
         break;
 
@@ -31,6 +32,7 @@ class ActionController {
           context,
           isVault: false,
           type: 'expense',
+          arguments: arguments,
         );
         break;
 
