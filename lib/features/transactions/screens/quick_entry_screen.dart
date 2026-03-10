@@ -6,6 +6,8 @@ import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
 import '../../../core/flow/transaction_flow_service.dart';
 import '../models/transaction.dart';
+import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/glass_card.dart';
 
 class QuickEntryScreen extends StatefulWidget {
   const QuickEntryScreen({super.key});
@@ -46,86 +48,107 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 60),
-                Text(
-                  l10n.quick_entry_question,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
+      backgroundColor: AppColors.background,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.5),
+            radius: 1.5,
+            colors: [
+              AppColors.primaryStart.withValues(alpha: 0.1),
+              AppColors.background,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 60),
+                  Text(
+                    l10n.quick_entry_question,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -1.5,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                EntryAmountCard(
-                  title: l10n.income,
-                  color: Colors.green,
-                  icon: Icons.arrow_upward,
-                  onSubmit: (amount) {
-                    final transaction = Transaction(
-                      amount: amount,
-                      category: 'Otros',
-                      type: 'ingreso',
-                      date: DateTime.now(),
-                    );
-                    TransactionFlowService.instance.saveTransaction(
-                      context,
-                      transaction,
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                EntryAmountCard(
-                  title: l10n.expense,
-                  color: Colors.red,
-                  icon: Icons.arrow_downward,
-                  onSubmit: (amount) {
-                    final transaction = Transaction(
-                      amount: amount,
-                      category: 'Otros',
-                      type: 'gasto',
-                      date: DateTime.now(),
-                    );
-                    TransactionFlowService.instance.saveTransaction(
-                      context,
-                      transaction,
-                    );
-                  },
-                ),
-                const SizedBox(height: 48),
-                Center(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () {
-                        ActionController.execute(
-                          context,
-                          AppAction.openDashboard,
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.dashboard,
-                          color: Colors.grey,
-                          size: 36,
-                        ),
+                  const SizedBox(height: 48),
+                  EntryAmountCard(
+                    title: l10n.income,
+                    color: AppColors.income,
+                    icon: Icons.add_rounded,
+                    onSubmit: (amount) {
+                      final transaction = Transaction(
+                        amount: amount,
+                        category: 'Otros',
+                        type: 'ingreso',
+                        date: DateTime.now(),
+                      );
+                      TransactionFlowService.instance.saveTransaction(
+                        context,
+                        transaction,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  EntryAmountCard(
+                    title: l10n.expense,
+                    color: AppColors.expense,
+                    icon: Icons.remove_rounded,
+                    onSubmit: (amount) {
+                      final transaction = Transaction(
+                        amount: amount,
+                        category: 'Otros',
+                        type: 'gasto',
+                        date: DateTime.now(),
+                      );
+                      TransactionFlowService.instance.saveTransaction(
+                        context,
+                        transaction,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 60),
+                  GestureDetector(
+                    onTap: () {
+                      ActionController.execute(
+                        context,
+                        AppAction.openDashboard,
+                      );
+                    },
+                    child: GlassCard(
+                      borderRadius: 40,
+                      padding: const EdgeInsets.all(16),
+                      glowColor: AppColors.primaryStart,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.dashboard_rounded,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            "Ver Dashboard",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

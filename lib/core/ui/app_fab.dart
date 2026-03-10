@@ -1,54 +1,67 @@
 import 'package:flutter/material.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
-import 'quick_action_menu.dart';
+import './design/app_colors.dart';
 
 class AppFAB extends StatelessWidget {
-  final String mode; // "normal" o "vault"
+  final String mode;
 
   const AppFAB({super.key, this.mode = "normal"});
 
   @override
   Widget build(BuildContext context) {
-    if (mode == "normal") {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // INGRESO
-          FloatingActionButton(
-            heroTag: "income_btn",
-            backgroundColor: Colors.green,
-            elevation: 4,
-            onPressed: () {
-              ActionController.execute(context, AppAction.addIncome);
-            },
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        _buildFab(
+          context: context,
+          icon: Icons.add_rounded,
+          color: AppColors.income,
+          onPressed: () =>
+              ActionController.execute(context, AppAction.addIncome),
+          heroTag: "income_fab",
+        ),
+        const SizedBox(height: 16),
+        _buildFab(
+          context: context,
+          icon: Icons.remove_rounded,
+          color: AppColors.expense,
+          onPressed: () =>
+              ActionController.execute(context, AppAction.addExpense),
+          heroTag: "expense_fab",
+        ),
+        const SizedBox(height: 80), // Space for bottom navigation
+      ],
+    );
+  }
 
-          const SizedBox(height: 12),
-
-          // GASTO
-          FloatingActionButton(
-            heroTag: "expense_btn",
-            backgroundColor: Colors.red,
-            elevation: 4,
-            onPressed: () {
-              ActionController.execute(context, AppAction.addExpense);
-            },
-            child: const Icon(Icons.remove, color: Colors.white),
+  Widget _buildFab({
+    required BuildContext context,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+    required String heroTag,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.3),
+            blurRadius: 15,
+            spreadRadius: 2,
           ),
         ],
-      );
-    }
-
-    return FloatingActionButton(
-      onPressed: () {
-        QuickActionMenu.open(context, mode: mode);
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: const Icon(Icons.add),
+      ),
+      child: FloatingActionButton(
+        heroTag: heroTag,
+        onPressed: onPressed,
+        backgroundColor: color,
+        elevation: 0,
+        shape: const CircleBorder(),
+        child: Icon(icon, color: Colors.white, size: 28),
+      ),
     );
   }
 }

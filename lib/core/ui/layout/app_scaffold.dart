@@ -17,7 +17,22 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), elevation: 0),
+      backgroundColor:
+          Colors.transparent, // Background handled by parent or theme
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 24,
+            letterSpacing: -1,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
       drawer: drawer,
       body: body,
       floatingActionButton: floatingActionButton,

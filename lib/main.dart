@@ -20,6 +20,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
+import 'core/ui/design/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -134,21 +135,8 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
                 GlobalCupertinoLocalizations.delegate,
               ],
               themeMode: ThemeService.instance.themeMode,
-              theme: ThemeData(
-                primaryColor: Colors.deepPurple,
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                scaffoldBackgroundColor: Colors.grey[50],
-                useMaterial3: true,
-              ),
-              darkTheme: ThemeData(
-                brightness: Brightness.dark,
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.deepPurple,
-                  brightness: Brightness.dark,
-                ),
-                scaffoldBackgroundColor: const Color(0xFF121212),
-                useMaterial3: true,
-              ),
+              theme: AppTheme.neonTheme,
+              darkTheme: AppTheme.neonTheme,
               home: const InitialGuard(),
               onGenerateRoute: AppRouter.generateRoute,
             );

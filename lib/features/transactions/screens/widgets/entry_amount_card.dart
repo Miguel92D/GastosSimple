@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/ui/glass_card.dart';
 
 class EntryAmountCard extends StatefulWidget {
   final String title;
@@ -29,52 +30,55 @@ class _EntryAmountCardState extends State<EntryAmountCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: widget.color,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: widget.color.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return GlassCard(
+      glowColor: widget.color,
+      borderRadius: 24,
+      padding: const EdgeInsets.all(24),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(widget.icon, color: Colors.white),
-              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 24),
+              ),
+              const SizedBox(width: 12),
               Text(
                 widget.title,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           TextField(
             controller: controller,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 32,
+              fontSize: 40,
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
             ),
             decoration: InputDecoration(
-              hintText: "0",
-              hintStyle: const TextStyle(color: Colors.white54),
+              hintText: "0.00",
+              hintStyle: const TextStyle(color: Colors.white24),
               border: InputBorder.none,
-              prefixText: '\$',
-              prefixStyle: const TextStyle(color: Colors.white, fontSize: 32),
+              prefixText: '\$ ',
+              prefixStyle: TextStyle(
+                color: widget.color,
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+              ),
             ),
             onSubmitted: (value) {
               final amount = double.tryParse(value.replaceAll(',', '.')) ?? 0;

@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import '../models/transaction.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/design/app_colors.dart';
 
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
@@ -23,66 +25,57 @@ class TransactionTile extends StatelessWidget {
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'comida':
-        return Icons.restaurant;
+        return Icons.restaurant_rounded;
       case 'transporte':
-        return Icons.directions_bus;
+        return Icons.directions_bus_rounded;
       case 'ocio':
-        return Icons.sports_esports;
+        return Icons.sports_esports_rounded;
       case 'salud':
-        return Icons.local_hospital;
+        return Icons.local_hospital_rounded;
       case 'educación':
-        return Icons.school;
+        return Icons.school_rounded;
       case 'salario':
-        return Icons.attach_money;
+        return Icons.payments_rounded;
       case 'venta':
-        return Icons.storefront;
+        return Icons.storefront_rounded;
       case 'regalo':
-        return Icons.card_giftcard;
+        return Icons.card_giftcard_rounded;
       case 'inversión':
-        return Icons.trending_up;
+        return Icons.trending_up_rounded;
       default:
-        return Icons.receipt;
+        return Icons.receipt_long_rounded;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == 'ingreso';
-    final amountColor = isIncome ? Colors.green : Colors.red;
+    final amountColor = isIncome ? AppColors.income : AppColors.expense;
     final amountPrefix = isIncome ? '+' : '-';
 
-    Widget tile = InkWell(
+    Widget tile = GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        borderRadius: 20,
         child: Row(
           children: [
             // Icon Section
             Container(
-              height: 48,
-              width: 48,
+              height: 44,
+              width: 44,
               decoration: BoxDecoration(
                 color: amountColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: amountColor.withValues(alpha: 0.2)),
               ),
               child: Icon(
                 _getCategoryIcon(transaction.category),
                 color: amountColor,
-                size: 24,
+                size: 22,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             // Info Section
             Expanded(
               child: Column(
@@ -95,9 +88,9 @@ class TransactionTile extends StatelessWidget {
                       transaction.category,
                     ),
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: -0.2,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: Colors.white,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -105,7 +98,7 @@ class TransactionTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     DateFormat('MMM d, yyyy').format(transaction.date),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    style: const TextStyle(color: Colors.white54, fontSize: 11),
                   ),
                 ],
               ),
@@ -121,18 +114,17 @@ class TransactionTile extends StatelessWidget {
                       : '$amountPrefix${CurrencyHelper.format(transaction.amount, context)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    fontSize: 17,
+                    fontSize: 16,
                     color: amountColor,
-                    letterSpacing: -0.5,
                   ),
                 ),
                 if (transaction.isRecurring)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 2),
                     child: Icon(
                       Icons.repeat_rounded,
-                      size: 14,
-                      color: Colors.blue[300],
+                      size: 12,
+                      color: Colors.white38,
                     ),
                   ),
               ],
@@ -152,7 +144,7 @@ class TransactionTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Dismissible(
-        key: Key(transaction.id.toString()),
+        key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
         direction: DismissDirection.horizontal,
         onDismissed: (direction) {
           if (direction == DismissDirection.startToEnd && onArchive != null) {
@@ -165,19 +157,19 @@ class TransactionTile extends StatelessWidget {
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           decoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.blue.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(Icons.visibility_off, color: Colors.white),
+          child: const Icon(Icons.archive_rounded, color: Colors.blue),
         ),
         secondaryBackground: Container(
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 20),
           decoration: BoxDecoration(
-            color: Colors.redAccent,
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.red.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(Icons.delete, color: Colors.white),
+          child: const Icon(Icons.delete_rounded, color: Colors.red),
         ),
         child: tile,
       ),

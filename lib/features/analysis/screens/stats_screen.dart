@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/l10n_helper.dart';
-import '../../../services/pro_service.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/design/app_colors.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -45,130 +46,149 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Center(child: CircularProgressIndicator());
     }
 
     final catGastos = _catGastos;
     double totalGastos = catGastos.values.fold(0, (sum, val) => sum + val);
 
-    final List<Color> pieColors = [
-      Colors.deepPurple,
-      Colors.blue,
-      Colors.orange,
-      Colors.red,
-      Colors.green,
-      Colors.amber,
-      Colors.pink,
-      Colors.cyan,
+    final List<Color> chartColors = [
+      AppColors.primaryStart,
+      AppColors.primaryEnd,
+      const Color(0xFF4ADE80),
+      const Color(0xFFF87171),
+      const Color(0xFFFBBF24),
+      const Color(0xFF2DD4BF),
+      const Color(0xFFFB7185),
+      const Color(0xFFA78BFA),
     ];
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Flexible(
-          child: Text(
-            AppLocalizations.of(context)!.history,
-            style: TextStyle(
-              color: ProService.instance.isPro
-                  ? const Color(0xFFFFA000)
-                  : Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        elevation: 0,
+        title: Text(AppLocalizations.of(context)!.history),
+        centerTitle: true,
       ),
-      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 100),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  AppLocalizations.of(context)!.category_expenses,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                if (catGastos.isEmpty)
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.no_expenses_recorded,
-                    ),
-                  )
-                else ...[
-                  SizedBox(
-                    height: 250,
-                    child: PieChart(
-                      PieChartData(
-                        sections: catGastos.entries.map((e) {
-                          final index = catGastos.keys.toList().indexOf(e.key);
-                          final percentage = (e.value / totalGastos) * 100;
-                          return PieChartSectionData(
-                            value: e.value,
-                            title: '${percentage.toStringAsFixed(0)}%',
-                            color: pieColors[index % pieColors.length],
-                            radius: 100,
-                            titleStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          );
-                        }).toList(),
+                GlassCard(
+                  glowColor: AppColors.primaryStart,
+                  child: Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.category_expenses,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Legend
-                  ...catGastos.entries.map((e) {
-                    final index = catGastos.keys.toList().indexOf(e.key);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
+                      const SizedBox(height: 32),
+                      if (catGastos.isEmpty)
+                        Text(AppLocalizations.of(context)!.no_expenses_recorded)
+                      else ...[
+                        SizedBox(
+                          height: 200,
+                          child: PieChart(
+                            PieChartData(
+                              sectionsSpace: 4,
+                              centerSpaceRadius: 40,
+                              sections: catGastos.entries.map((e) {
+                                final index = catGastos.keys.toList().indexOf(
+                                  e.key,
+                                );
+                                final percentage =
+                                    (e.value / totalGastos) * 100;
+                                return PieChartSectionData(
+                                  value: e.value,
+                                  title: '${percentage.toStringAsFixed(0)}%',
+                                  color:
+                                      chartColors[index % chartColors.length],
+                                  radius: 50,
+                                  titleStyle: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        ...catGastos.entries.map((e) {
+                          final index = catGastos.keys.toList().indexOf(e.key);
+                          final percentage = e.value / totalGastos;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Column(
                               children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  color: pieColors[index % pieColors.length],
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    L10nHelper.getLocalizedCategory(
-                                      context,
-                                      e.key,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 12,
+                                          height: 12,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                chartColors[index %
+                                                    chartColors.length],
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          L10nHelper.getLocalizedCategory(
+                                            context,
+                                            e.key,
+                                          ),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    Text(
+                                      CurrencyHelper.format(e.value, context),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: percentage,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.05,
+                                    ),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      chartColors[index % chartColors.length],
+                                    ),
+                                    minHeight: 6,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              CurrencyHelper.format(e.value, context),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
+                          );
+                        }),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

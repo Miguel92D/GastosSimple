@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../features/dashboard/screens/home_screen.dart';
+import '../ui/layout/main_navigation_screen.dart';
 import '../../features/transactions/screens/quick_entry_screen.dart';
 import '../../features/transactions/screens/add_transaction_screen.dart';
 import '../../features/transactions/screens/movements_screen.dart';
@@ -20,6 +20,7 @@ import '../../features/settings/screens/premium_screen.dart';
 import '../../features/settings/screens/consent_screen.dart';
 import '../../features/settings/screens/backup_screen.dart';
 import '../../features/settings/screens/privacy_policy_screen.dart';
+import '../../features/transactions/screens/categories_screen.dart';
 
 class AppRouter {
   static Route generateRoute(RouteSettings settings) {
@@ -41,7 +42,7 @@ class AppRouter {
       case "/dashboard":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const HomeScreen(),
+          builder: (_) => const MainNavigationScreen(),
         );
 
       case "/add":
@@ -135,6 +136,12 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const PrivacyPolicyScreen(),
+        );
+
+      case "/categories":
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const CategoriesScreen(),
         );
 
       default:
