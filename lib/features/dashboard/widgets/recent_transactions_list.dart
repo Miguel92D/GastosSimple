@@ -3,6 +3,7 @@ import '../../transactions/models/transaction.dart';
 import '../../transactions/widgets/transaction_history_list.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_spacing.dart';
 
 class RecentTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -20,7 +21,10 @@ class RecentTransactionsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
           child: Text(
             "ÚLTIMOS MOVIMIENTOS",
             style: AppTextStyles.subLabel.copyWith(
@@ -29,9 +33,9 @@ class RecentTransactionsList extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: TransactionHistoryList(
             transactions: transactions,
             onRefresh: onRefresh,

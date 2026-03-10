@@ -62,6 +62,7 @@ class _BalanceCardState extends State<BalanceCard>
     return GestureDetector(
       onTap: widget.onTap,
       child: GlassCard(
+        width: double.infinity,
         borderRadius: AppRadius.xl,
         gradientColors: AppGradients.primaryGradient.colors,
         glowColor: AppColors.primaryPurple.withOpacity(0.35),
@@ -85,71 +86,74 @@ class _BalanceCardState extends State<BalanceCard>
               ),
 
               // 2 — Balance Content
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.xl,
-                  horizontal: AppSpacing.lg,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // 1 — Title
-                    Text(
-                      widget.title.toUpperCase(),
-                      style: AppTextStyles.cardTitle.copyWith(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    // 2 — Main Amount (Animated)
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(end: widget.balance),
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, animatedValue, child) {
-                        final String sign = animatedValue >= 0 ? '+' : '-';
-                        final String formattedValue = NumberFormat(
-                          '#,###',
-                          'es_ES',
-                        ).format(animatedValue.abs().round());
-
-                        return AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          style: AppTextStyles.balanceAmount.copyWith(
-                            color: targetColor,
-                            fontSize: 42,
-                          ),
-                          child: Text("$sign\$$formattedValue"),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // 3 — Month Label (Pill style)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                      ),
-                      child: Text(
-                        widget.subtitle,
-                        style: AppTextStyles.subtitle.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppSpacing.xl,
+                    horizontal: AppSpacing.lg,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // 1 — Title
+                      Text(
+                        widget.title.toUpperCase(),
+                        style: AppTextStyles.cardTitle.copyWith(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 12,
+                          letterSpacing: 1.2,
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // 2 — Main Amount (Animated)
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(end: widget.balance),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, animatedValue, child) {
+                          final String sign = animatedValue >= 0 ? '+' : '-';
+                          final String formattedValue = NumberFormat(
+                            '#,###',
+                            'es_ES',
+                          ).format(animatedValue.abs().round());
+
+                          return AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            style: AppTextStyles.balanceAmount.copyWith(
+                              color: targetColor,
+                              fontSize: 42,
+                            ),
+                            child: Text("$sign\$$formattedValue"),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // 3 — Month Label (Pill style)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
+                        ),
+                        child: Text(
+                          widget.subtitle,
+                          style: AppTextStyles.subtitle.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
