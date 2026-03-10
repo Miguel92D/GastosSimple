@@ -4,6 +4,7 @@ import '../../features/transactions/controllers/transaction_controller.dart';
 import '../../features/transactions/models/transaction.dart';
 import '../state/app_mode_controller.dart';
 
+import '../../features/vault/screens/vault_screen.dart';
 import '../../features/dashboard/screens/home_screen.dart';
 
 class TransactionFlowService {
@@ -55,11 +56,18 @@ class TransactionFlowService {
         }
       }
 
-      // After saving, navigate only to the Dashboard and clear stack
-      NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-        (route) => false,
-      );
+      // After saving, navigate back to the appropriate dashboard
+      if (transaction.isSecret == 1) {
+        NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const VaultScreen()),
+          (route) => false,
+        );
+      } else {
+        NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       debugPrint('Error saving transaction flow: $e');
       if (context.mounted) {

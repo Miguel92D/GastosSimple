@@ -22,6 +22,7 @@ class AppFAB extends StatelessWidget {
             onPressed: () => TransactionFlowService.instance.startQuickEntry(
               context,
               type: 'income',
+              isVault: mode == "vault",
             ),
             heroTag: "income_fab",
           ),
@@ -33,6 +34,7 @@ class AppFAB extends StatelessWidget {
             onPressed: () => TransactionFlowService.instance.startQuickEntry(
               context,
               type: 'expense',
+              isVault: mode == "vault",
             ),
             heroTag: "expense_fab",
           ),

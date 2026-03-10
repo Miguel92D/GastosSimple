@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/ui/app_text_styles.dart';
 
 class ProBadge extends StatefulWidget {
   const ProBadge({super.key});
