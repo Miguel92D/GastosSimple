@@ -400,6 +400,29 @@ class _DebtScreenState extends State<DebtScreen> {
                                 color: AppColors.softText,
                               ),
                             ),
+                            const Divider(
+                              height: 32,
+                              color: AppColors.cardBorder,
+                            ),
+                            Text(
+                              "Consejos para salir de deudas:",
+                              style: AppTextStyles.cardTitle.copyWith(
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildTipItem(
+                              Icons.trending_down_rounded,
+                              "Método Avalancha: Paga primero la deuda con mayor interés.",
+                            ),
+                            _buildTipItem(
+                              Icons.ac_unit_rounded,
+                              "Método Bola de Nieve: Paga la deuda más pequeña para ganar motivación.",
+                            ),
+                            _buildTipItem(
+                              Icons.block_rounded,
+                              "Deja de usar tarjetas: Evita generar nuevas deudas mientras pagas.",
+                            ),
                           ],
                         ),
                       ),
@@ -545,6 +568,26 @@ class _DebtScreenState extends State<DebtScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 6,
         child: const Icon(Icons.add_rounded),
+      ),
+    );
+  }
+
+  Widget _buildTipItem(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Icon(icon, color: AppColors.primaryPurple, size: 18),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.softText,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
