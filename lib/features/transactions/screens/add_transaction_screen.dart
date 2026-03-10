@@ -6,6 +6,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../goals/models/goal.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
+import '../../../core/ui/widgets/glass_input.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final Transaction? movimientoToEdit;
@@ -54,10 +56,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   List<String> _categoriasIngreso = [
     'Salario',
-    'Freelance',
     'Inversiones',
     'Ventas',
     'Regalos',
+    'Préstamos',
     'Bonos',
     'Otros',
   ];
@@ -75,7 +77,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     'Regalos': Icons.card_giftcard_rounded,
     'Otros': Icons.more_horiz_rounded,
     'Salario': Icons.payments_rounded,
-    'Freelance': Icons.work_rounded,
     'Inversiones': Icons.trending_up_rounded,
     'Ventas': Icons.sell_rounded,
     'Bonos': Icons.redeem_rounded,
@@ -282,24 +283,41 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 24),
 
-              TextField(
+              const SizedBox(height: 24),
+
+              GlassInput(
                 controller: _amountController,
                 focusNode: _amountFocusNode,
+                isCenter: true,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                onSubmitted: (_) => _saveMovement(),
+                onSubmitted: _saveMovement,
+                label: '',
                 style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: _tipo == 'gasto' ? Colors.red : Colors.green,
+                  fontSize: 54,
+                  fontWeight: FontWeight.w900,
+                  color: _tipo == 'gasto'
+                      ? AppColors.expense
+                      : AppColors.income,
+                  letterSpacing: -1,
                 ),
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  prefixText: CurrencyHelper.getSymbol(context),
-                  border: InputBorder.none,
-                  hintText: '0.00',
+                prefix: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    CurrencyHelper.getSymbol(context),
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          (_tipo == 'gasto'
+                                  ? AppColors.expense
+                                  : AppColors.income)
+                              .withOpacity(0.5),
+                    ),
+                  ),
                 ),
+                hintText: '0.00',
               ),
 
               const SizedBox(height: 24),
@@ -378,20 +396,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 32),
 
-              TextField(
+              GlassInput(
                 controller: _noteController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.note,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.note),
-                ),
+                label: AppLocalizations.of(context)!.note.toUpperCase(),
+                icon: Icons.note_rounded,
+                hintText: 'Ej: Cena con amigos...',
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
 
-              ElevatedButton(
-                onPressed: _saveMovement,
-                child: Text(AppLocalizations.of(context)!.save.toUpperCase()),
+              SizedBox(
+                width: double.infinity,
+                child: GradientButton(
+                  text: AppLocalizations.of(context)!.save.toUpperCase(),
+                  onPressed: _saveMovement,
+                  borderRadius: 24,
+                ),
               ),
             ],
           ),
