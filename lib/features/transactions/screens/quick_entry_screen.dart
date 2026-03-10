@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../l10n/app_localizations.dart';
-import 'widgets/entry_amount_card.dart';
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
-import '../../../core/flow/transaction_flow_service.dart';
-import '../models/transaction.dart';
 import '../../../core/ui/design/app_colors.dart';
 import '../../../core/ui/widgets/glass_card.dart';
 
@@ -61,96 +58,117 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 60),
-                  Text(
-                    l10n.quick_entry_question,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      letterSpacing: -1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 48),
-                  EntryAmountCard(
-                    title: l10n.income,
-                    color: AppColors.income,
-                    icon: Icons.add_rounded,
-                    onSubmit: (amount) {
-                      final transaction = Transaction(
-                        amount: amount,
-                        category: 'Otros',
-                        type: 'ingreso',
-                        date: DateTime.now(),
-                      );
-                      TransactionFlowService.instance.saveTransaction(
-                        context,
-                        transaction,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  EntryAmountCard(
-                    title: l10n.expense,
-                    color: AppColors.expense,
-                    icon: Icons.remove_rounded,
-                    onSubmit: (amount) {
-                      final transaction = Transaction(
-                        amount: amount,
-                        category: 'Otros',
-                        type: 'gasto',
-                        date: DateTime.now(),
-                      );
-                      TransactionFlowService.instance.saveTransaction(
-                        context,
-                        transaction,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 60),
-                  GestureDetector(
-                    onTap: () {
-                      ActionController.execute(
-                        context,
-                        AppAction.openDashboard,
-                      );
-                    },
-                    child: GlassCard(
-                      borderRadius: 40,
-                      padding: const EdgeInsets.all(16),
-                      glowColor: AppColors.primaryStart,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.dashboard_rounded,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            "Ver Dashboard",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Text(
+                l10n.quick_entry_question,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionCard(
+                        context: context,
+                        label: l10n.income,
+                        icon: Icons.add_rounded,
+                        color: AppColors.income,
+                        onTap: () => ActionController.execute(
+                          context,
+                          AppAction.addIncome,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildActionCard(
+                        context: context,
+                        label: l10n.expense,
+                        icon: Icons.remove_rounded,
+                        color: AppColors.expense,
+                        onTap: () => ActionController.execute(
+                          context,
+                          AppAction.addExpense,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              _buildDashboardButton(context),
+              const SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionCard({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        borderRadius: 32,
+        glowColor: color.withValues(alpha: 0.2),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: color.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(icon, color: color, size: 32),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 18,
+                letterSpacing: 0.5,
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => ActionController.execute(context, AppAction.openDashboard),
+      child: GlassCard(
+        borderRadius: 50,
+        padding: const EdgeInsets.all(16),
+        glowColor: AppColors.primaryStart.withValues(alpha: 0.3),
+        child: const Icon(
+          Icons.grid_view_rounded,
+          color: Colors.white,
+          size: 32,
         ),
       ),
     );

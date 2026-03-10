@@ -16,7 +16,7 @@ class IncomeExpenseCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
       child: Row(
         children: [
           Expanded(
@@ -26,7 +26,7 @@ class IncomeExpenseCards extends StatelessWidget {
               color: AppColors.income,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: _StatCard(
               label: "Gastos",
@@ -54,22 +54,22 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      glowColor: color.withOpacity(0.15),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      borderRadius: 24,
+      glowColor: color.withOpacity(0.12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      borderRadius: 20,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label.toUpperCase(),
             style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 11,
+              color: Colors.white.withOpacity(0.4),
+              fontSize: 10,
               fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
+              letterSpacing: 1.0,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           FittedBox(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -78,9 +78,9 @@ class _StatCard extends StatelessWidget {
                 Text(
                   "\$",
                   style: TextStyle(
-                    color: color.withOpacity(0.6),
+                    color: color.withOpacity(0.5),
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -89,7 +89,7 @@ class _StatCard extends StatelessWidget {
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.w900,
-                    fontSize: 26,
+                    fontSize: 22,
                     letterSpacing: -0.5,
                   ),
                 ),

@@ -69,7 +69,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BalanceCard(balance: balance),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 12.0,
+            ),
+            child: BalanceCard(balance: balance),
+          ),
           IncomeExpenseCards(income: income, expenses: expenses),
           const SizedBox(height: 16),
           RecentTransactionsList(

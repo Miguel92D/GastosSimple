@@ -18,20 +18,20 @@ class RecentTransactionsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Text(
             "ÚLTIMOS MOVIMIENTOS",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w900,
               color: Colors.white54,
-              letterSpacing: 2.0,
+              letterSpacing: 1.5,
             ),
           ),
         ),
         const SizedBox(height: 8),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: TransactionHistoryList(
             transactions: transactions,
             onRefresh: onRefresh,
