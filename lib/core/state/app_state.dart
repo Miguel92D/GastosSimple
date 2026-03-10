@@ -5,7 +5,7 @@ class AppState extends ChangeNotifier {
 
   AppState._();
 
-  bool isPro = false;
+  bool isPro = true;
   bool vaultOpen = false;
   bool _refreshDashboard = false;
 

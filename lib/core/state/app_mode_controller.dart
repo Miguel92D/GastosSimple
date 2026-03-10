@@ -6,7 +6,7 @@ class AppModeController extends ChangeNotifier {
 
   AppModeController._();
 
-  AppMode _mode = AppMode.normal;
+  AppMode _mode = AppMode.pro;
 
   AppMode get mode => _mode;
 

@@ -92,14 +92,6 @@ class AppDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 _DrawerItem(
-                  icon: Icons.dashboard_rounded,
-                  title: 'Dashboard',
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openDashboard);
-                  },
-                ),
-                _DrawerItem(
                   icon: Icons.swap_vert_rounded,
                   title: 'Transacciones',
                   onTap: () {
@@ -113,14 +105,6 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.layers_rounded,
-                  title: 'Categorías',
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openCategories);
                   },
                 ),
                 const Padding(
@@ -153,16 +137,7 @@ class AppDrawer extends StatelessWidget {
                       ActionController.execute(context, AppAction.openVault);
                     },
                   ),
-                  const SizedBox(height: 20),
                 ],
-                _DrawerItem(
-                  icon: Icons.settings_rounded,
-                  title: 'Configuraciones',
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openSettings);
-                  },
-                ),
               ],
             ),
           ),

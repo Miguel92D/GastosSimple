@@ -5,7 +5,7 @@ import '../core/flow/premium_flow_service.dart';
 class PremiumService extends ChangeNotifier {
   static final PremiumService instance = PremiumService._init();
   final _storage = const FlutterSecureStorage();
-  bool _isPremium = false;
+  bool _isPremium = true;
 
   PremiumService._init() {
     _loadPremiumState();
