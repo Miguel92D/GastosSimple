@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../ui/layout/main_navigation_screen.dart';
+import '../../features/dashboard/screens/home_screen.dart';
 import '../../features/transactions/screens/quick_entry_screen.dart';
 import '../../features/transactions/screens/add_transaction_screen.dart';
 import '../../features/transactions/screens/movements_screen.dart';
@@ -42,7 +42,7 @@ class AppRouter {
       case "/dashboard":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const MainNavigationScreen(),
+          builder: (_) => const HomeScreen(),
         );
 
       case "/add":
