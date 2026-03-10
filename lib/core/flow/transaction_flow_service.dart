@@ -4,9 +4,6 @@ import '../../features/transactions/controllers/transaction_controller.dart';
 import '../../features/transactions/models/transaction.dart';
 import '../state/app_mode_controller.dart';
 
-import '../../features/vault/screens/vault_screen.dart';
-import '../../features/dashboard/screens/home_screen.dart';
-
 class TransactionFlowService {
   static final TransactionFlowService instance = TransactionFlowService._();
   TransactionFlowService._();
@@ -56,18 +53,9 @@ class TransactionFlowService {
         }
       }
 
-      // After saving, navigate back to the appropriate dashboard
-      if (transaction.isSecret == 1) {
-        NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const VaultScreen()),
-          (route) => false,
-        );
-      } else {
-        NavigationService.navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-          (route) => false,
-        );
-      }
+      // After saving, go back to the previous screen.
+      // This preserves the navigation stack and fixes the back button issue.
+      NavigationService.goBack();
     } catch (e) {
       debugPrint('Error saving transaction flow: $e');
       if (context.mounted) {
