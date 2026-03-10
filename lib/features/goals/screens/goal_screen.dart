@@ -3,6 +3,9 @@ import '../models/goal.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../controllers/goal_controller.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/glass_card.dart';
 
 class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
@@ -41,33 +44,67 @@ class _GoalScreenState extends State<GoalScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: AppColors.darkBackground,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           goal == null
               ? AppLocalizations.of(context)!.new_goal
               : AppLocalizations.of(context)!.edit_goal,
+          style: AppTextStyles.cardTitle,
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
+              autofocus: true,
+              style: AppTextStyles.bodyMain,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.goal_name_label,
+                labelStyle: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.textMuted,
+                ),
+                enabledBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.cardBorder),
+                ),
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.primaryPurple),
+                ),
               ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: targetController,
+              style: AppTextStyles.bodyMain,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.target_label,
+                labelStyle: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.textMuted,
+                ),
+                prefixText: CurrencyHelper.getSymbol(context),
+                prefixStyle: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.primaryPurple,
+                ),
+                enabledBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.cardBorder),
+                ),
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.primaryPurple),
+                ),
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -85,6 +122,13 @@ class _GoalScreenState extends State<GoalScreen> {
                 Navigator.pop(context, true);
               }
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryPurple,
+              foregroundColor: AppColors.textPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
@@ -97,22 +141,27 @@ class _GoalScreenState extends State<GoalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        title: Flexible(
-          child: Text(
-            AppLocalizations.of(context)!.savings_goals,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+        title: Text(AppLocalizations.of(context)!.savings_goals),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _goals.isEmpty
-            ? Center(child: Text(AppLocalizations.of(context)!.no_goals_yet))
+            ? Center(
+                child: Text(
+                  AppLocalizations.of(context)!.no_goals_yet,
+                  style: AppTextStyles.bodyMain.copyWith(
+                    color: AppColors.softText,
+                  ),
+                ),
+              )
             : ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24),
                 itemCount: _goals.length,
                 itemBuilder: (context, index) {
                   final goal = _goals[index];
@@ -120,10 +169,11 @@ class _GoalScreenState extends State<GoalScreen> {
                     0.0,
                     1.0,
                   );
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GlassCard(
+                      borderRadius: 30,
+                      glowColor: AppColors.primaryPurple.withOpacity(0.05),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -133,10 +183,7 @@ class _GoalScreenState extends State<GoalScreen> {
                               Expanded(
                                 child: Text(
                                   goal.name,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: AppTextStyles.cardTitle,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -145,7 +192,11 @@ class _GoalScreenState extends State<GoalScreen> {
                                 children: [
                                   IconButton(
                                     onPressed: () => _addOrEditGoal(goal),
-                                    icon: const Icon(Icons.edit, size: 20),
+                                    icon: const Icon(
+                                      Icons.edit_rounded,
+                                      size: 20,
+                                      color: AppColors.softText,
+                                    ),
                                   ),
                                   IconButton(
                                     onPressed: () async {
@@ -153,9 +204,9 @@ class _GoalScreenState extends State<GoalScreen> {
                                       _loadGoals();
                                     },
                                     icon: const Icon(
-                                      Icons.delete,
+                                      Icons.delete_rounded,
                                       size: 20,
-                                      color: Colors.red,
+                                      color: AppColors.expenseRed,
                                     ),
                                   ),
                                 ],
@@ -163,21 +214,26 @@ class _GoalScreenState extends State<GoalScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Flexible(
-                            child: Text(
-                              '${CurrencyHelper.format(goal.savedAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                          Text(
+                            '${CurrencyHelper.format(goal.savedAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.softText,
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
-                          const SizedBox(height: 12),
-                          LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 8,
-                            borderRadius: BorderRadius.circular(4),
-                            backgroundColor: Colors.grey.shade200,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor,
+                          const SizedBox(height: 16),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: LinearProgressIndicator(
+                              value: progress,
+                              minHeight: 10,
+                              backgroundColor: AppColors.softText.withOpacity(
+                                0.08,
+                              ),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.primaryPurple,
+                              ),
                             ),
                           ),
                         ],
@@ -187,15 +243,13 @@ class _GoalScreenState extends State<GoalScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _addOrEditGoal(),
-        label: Text(
-          AppLocalizations.of(context)!.new_goal,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        icon: const Icon(Icons.add),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
+        backgroundColor: AppColors.primaryPurple,
+        foregroundColor: AppColors.textPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 6,
+        child: const Icon(Icons.add_rounded),
       ),
     );
   }

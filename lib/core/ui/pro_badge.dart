@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
+import 'app_text_styles.dart';
 
 class ProBadge extends StatelessWidget {
   const ProBadge({super.key});
@@ -8,13 +10,13 @@ class ProBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.orange,
+        color: AppColors.orange,
         borderRadius: BorderRadius.circular(6),
       ),
-      child: const Text(
+      child: Text(
         "PRO",
-        style: TextStyle(
-          color: Colors.white,
+        style: AppTextStyles.bodySmall.copyWith(
+          color: AppColors.textPrimary,
           fontSize: 9,
           fontWeight: FontWeight.bold,
         ),

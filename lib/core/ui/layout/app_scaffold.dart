@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_text_styles.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget body;
@@ -22,9 +23,7 @@ class AppScaffold extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w900,
+          style: AppTextStyles.titleLarge.copyWith(
             fontSize: 24,
             letterSpacing: -1,
           ),

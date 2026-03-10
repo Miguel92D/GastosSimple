@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../transactions/models/transaction.dart';
 import '../../transactions/widgets/transaction_history_list.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 
 class RecentTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -17,15 +19,13 @@ class RecentTransactionsList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Text(
             "ÚLTIMOS MOVIMIENTOS",
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              color: Colors.white54,
-              letterSpacing: 1.5,
+            style: AppTextStyles.subLabel.copyWith(
+              color: AppColors.softText.withOpacity(0.4),
+              fontSize: 10,
             ),
           ),
         ),

@@ -4,6 +4,10 @@ import '../../../services/purchase_service.dart';
 import '../../../services/premium_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -23,7 +27,6 @@ class _PremiumScreenState extends State<PremiumScreen> {
   }
 
   Future<void> _initStoreInfo() async {
-    // Products are already loaded in main via PurchaseService.instance.init()
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -45,7 +48,6 @@ class _PremiumScreenState extends State<PremiumScreen> {
     if (product != null) {
       PurchaseService.instance.buyProduct(product);
     } else {
-      // Mock purchase for testing if no products
       await PremiumService.instance.setPremium(true);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -62,6 +64,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
         title: Text(l10n.simple_pro),
         elevation: 0,
@@ -76,122 +79,113 @@ class _PremiumScreenState extends State<PremiumScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Icon(Icons.stars, size: 80, color: Colors.orange),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryPurple.withOpacity(0.2),
+                              blurRadius: 40,
+                              spreadRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.stars_rounded,
+                          size: 80,
+                          color: AppColors.primaryPurple,
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       Text(
                         l10n.simple_pro,
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.titleLarge.copyWith(fontSize: 32),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         l10n.unlock_advanced_tools,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                        style: AppTextStyles.bodyMain.copyWith(
+                          color: AppColors.softText.withOpacity(0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 40),
-                      _buildFeature(Icons.psychology, l10n.benefit_strategies),
+                      const SizedBox(height: 48),
                       _buildFeature(
-                        Icons.trending_up,
+                        Icons.psychology_rounded,
+                        l10n.benefit_strategies,
+                      ),
+                      _buildFeature(
+                        Icons.auto_graph_rounded,
                         l10n.benefit_predictions,
                       ),
-                      _buildFeature(Icons.analytics, l10n.benefit_analytics),
                       _buildFeature(
-                        Icons.lightbulb_outline,
+                        Icons.analytics_rounded,
+                        l10n.benefit_analytics,
+                      ),
+                      _buildFeature(
+                        Icons.lightbulb_outline_rounded,
                         l10n.smart_insights,
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 48),
                       if (!ProService.instance.isPro) ...[
                         Row(
                           children: [
                             Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedProductId = 'simple_pro_monthly';
-                                  });
-                                },
-                                child: _buildPlanCard(
-                                  l10n.monthly_plan,
-                                  l10n.monthly_price,
-                                  _selectedProductId == 'simple_pro_monthly',
-                                ),
+                              child: _buildPlanCard(
+                                l10n.monthly_plan,
+                                l10n.monthly_price,
+                                'simple_pro_monthly',
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedProductId = 'simple_pro_lifetime';
-                                  });
-                                },
-                                child: _buildPlanCard(
-                                  l10n.lifetime_plan,
-                                  l10n.lifetime_price,
-                                  _selectedProductId == 'simple_pro_lifetime',
-                                ),
+                              child: _buildPlanCard(
+                                l10n.lifetime_plan,
+                                l10n.lifetime_price,
+                                'simple_pro_lifetime',
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 32),
-                        ElevatedButton(
+                        const SizedBox(height: 40),
+                        GradientButton(
+                          text: l10n.activate_pro.toUpperCase(),
                           onPressed: _buyPremium,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            backgroundColor: Colors.orange,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            l10n.activate_pro,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          borderRadius: 24,
                         ),
+                        const SizedBox(height: 8),
                         TextButton(
                           onPressed: _restorePurchase,
                           child: Text(
                             l10n.restore_purchase,
-                            style: const TextStyle(color: Colors.grey),
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.softText.withOpacity(0.4),
+                            ),
                           ),
                         ),
                       ] else
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.green),
+                        GlassCard(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 32,
+                            horizontal: 24,
                           ),
+                          borderRadius: 30,
+                          glowColor: AppColors.incomeGreen.withOpacity(0.1),
                           child: Column(
                             children: [
                               const Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 48,
+                                Icons.check_circle_rounded,
+                                color: AppColors.incomeGreen,
+                                size: 56,
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               Text(
                                 l10n.pro_active,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
+                                style: AppTextStyles.cardTitle.copyWith(
+                                  fontSize: 22,
+                                  color: AppColors.incomeGreen,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -206,58 +200,58 @@ class _PremiumScreenState extends State<PremiumScreen> {
     );
   }
 
-  Widget _buildPlanCard(String title, String price, bool selected) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: selected
-            ? Colors.orange.withValues(alpha: 0.05)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: selected ? Colors.orange : Colors.grey.withValues(alpha: 0.3),
-          width: selected ? 2 : 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: selected ? Colors.orange : null,
+  Widget _buildPlanCard(String title, String price, String productId) {
+    final selected = _selectedProductId == productId;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedProductId = productId),
+      child: GlassCard(
+        padding: const EdgeInsets.all(20),
+        borderRadius: 24,
+        glowColor: selected ? AppColors.primaryPurple : Colors.transparent,
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.cardTitle.copyWith(
+                fontSize: 14,
+                color: selected ? AppColors.primaryPurple : AppColors.softText,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            price,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 12),
+            Text(
+              price,
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+                color: selected ? AppColors.textPrimary : AppColors.softText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFeature(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
+      padding: const EdgeInsets.only(bottom: 24.0),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.1),
+              color: AppColors.primaryPurple.withOpacity(0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Colors.orange, size: 20),
+            child: Icon(icon, color: AppColors.primaryPurple, size: 22),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              style: AppTextStyles.bodyMain.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

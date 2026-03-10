@@ -3,7 +3,9 @@ import '../flow/general_flow_service.dart';
 import '../../core/state/app_state.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
-import 'design/app_colors.dart';
+import 'app_colors.dart';
+import 'app_gradients.dart';
+import 'app_text_styles.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -13,20 +15,22 @@ class AppDrawer extends StatelessWidget {
     final bool isPro = AppState.instance.isPro;
 
     return Drawer(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.darkBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
       child: Column(
         children: [
           Container(
             width: double.infinity,
             height: 240,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isPro
-                    ? [const Color(0xFF6A5AE0), const Color(0xFF9F7AEA)]
-                    : [AppColors.background, AppColors.cardBackground],
-              ),
+              gradient: isPro
+                  ? AppGradients.primaryGradient
+                  : AppGradients.glassGradient,
             ),
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -36,38 +40,36 @@ class AppDrawer extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    color: AppColors.glassSurface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.cardBorder),
                   ),
                   child: const Icon(
                     Icons.account_balance_wallet_rounded,
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     size: 32,
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   '\$imple',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -1.0,
-                  ),
+                  style: AppTextStyles.titleLarge.copyWith(fontSize: 28),
                 ),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     Container(
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: isPro ? AppColors.neonCyan : Colors.grey,
+                        color: isPro
+                            ? AppColors.incomeGreen
+                            : AppColors.softText,
                         shape: BoxShape.circle,
                         boxShadow: [
                           if (isPro)
                             BoxShadow(
-                              color: AppColors.neonCyan.withOpacity(0.5),
+                              color: AppColors.incomeGreen.withOpacity(0.5),
                               blurRadius: 10,
                             ),
                         ],
@@ -76,11 +78,8 @@ class AppDrawer extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       isPro ? 'PREMIUM' : 'FREE ACCOUNT',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.0,
+                      style: AppTextStyles.subLabel.copyWith(
+                        color: AppColors.textPrimary.withOpacity(0.7),
                       ),
                     ),
                   ],
@@ -126,19 +125,18 @@ class AppDrawer extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: Divider(color: Colors.white10, height: 1),
+                  child: Divider(color: AppColors.cardBorder, height: 1),
                 ),
                 if (isPro) ...[
-                  Text(
-                    'PRO FEATURES',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white.withOpacity(0.3),
-                      letterSpacing: 2.0,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, bottom: 12),
+                    child: Text(
+                      'PRO FEATURES',
+                      style: AppTextStyles.subLabel.copyWith(
+                        color: AppColors.softText.withOpacity(0.3),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
                   _DrawerItem(
                     icon: Icons.auto_graph_rounded,
                     title: 'Inteligencia AI',
@@ -188,14 +186,21 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: ListTile(
-        leading: Icon(icon, size: 24),
+        leading: Icon(
+          icon,
+          size: 22,
+          color: AppColors.softText.withOpacity(0.7),
+        ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          style: AppTextStyles.bodyMain.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onTap: onTap,
         dense: true,
       ),

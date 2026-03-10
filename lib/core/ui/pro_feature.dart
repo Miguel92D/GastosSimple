@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/pro_service.dart';
+import 'app_colors.dart';
+import 'app_text_styles.dart';
 
 class ProFeature extends StatelessWidget {
   final Widget child;
@@ -15,19 +17,15 @@ class ProFeature extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.lock, size: 60, color: Colors.amber),
-
-          SizedBox(height: 16),
-
+        children: [
+          const Icon(Icons.lock_rounded, size: 64, color: AppColors.orange),
+          const SizedBox(height: 20),
+          Text("Función PRO", style: AppTextStyles.titleLarge),
+          const SizedBox(height: 12),
           Text(
-            "Función PRO",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            "Actualiza para desbloquear esta función",
+            style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
           ),
-
-          SizedBox(height: 8),
-
-          Text("Actualiza para desbloquear esta función"),
         ],
       ),
     );

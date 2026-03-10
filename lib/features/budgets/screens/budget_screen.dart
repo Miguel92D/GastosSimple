@@ -3,6 +3,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../controllers/budget_controller.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/glass_card.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -54,26 +57,57 @@ class _BudgetScreenState extends State<BudgetScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: AppColors.darkBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: Text(
             AppLocalizations.of(
               context,
             )!.budget_title(L10nHelper.getLocalizedCategory(context, category)),
+            style: AppTextStyles.cardTitle,
           ),
           content: TextField(
             controller: controllerText,
+            style: AppTextStyles.bodyMain,
+            autofocus: true,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.budget_example,
+              hintStyle: AppTextStyles.bodyMain.copyWith(
+                color: AppColors.textMuted,
+              ),
               prefixText: CurrencyHelper.getSymbol(context),
+              prefixStyle: AppTextStyles.bodyMain.copyWith(
+                color: AppColors.primaryPurple,
+              ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.cardBorder),
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.primaryPurple),
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.softText,
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, controllerText.text),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryPurple,
+                foregroundColor: AppColors.textPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
@@ -93,21 +127,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        title: Flexible(
-          child: Text(
-            AppLocalizations.of(context)!.budgets,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+        title: Text(AppLocalizations.of(context)!.budgets),
         elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24),
                 itemCount: _categoriasGasto.length,
                 itemBuilder: (context, index) {
                   final cat = _categoriasGasto[index];
@@ -120,77 +151,86 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       ? (spent / limit).clamp(0.0, 1.0)
                       : 0.0;
 
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      onTap: () => _setBudget(cat),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    L10nHelper.getLocalizedCategory(
-                                      context,
-                                      cat,
-                                    ),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                if (hasBudget)
-                                  Flexible(
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GlassCard(
+                      borderRadius: 30,
+                      glowColor:
+                          (exceeded
+                                  ? AppColors.expenseRed
+                                  : AppColors.primaryPurple)
+                              .withOpacity(0.05),
+                      padding: EdgeInsets.zero,
+                      child: InkWell(
+                        onTap: () => _setBudget(cat),
+                        borderRadius: BorderRadius.circular(30),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
                                     child: Text(
-                                      '${CurrencyHelper.format(spent, context)} / ${CurrencyHelper.format(limit, context)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: exceeded
-                                            ? Colors.red
-                                            : Colors.grey.shade700,
+                                      L10nHelper.getLocalizedCategory(
+                                        context,
+                                        cat,
                                       ),
+                                      style: AppTextStyles.cardTitle,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
                                   ),
-                                if (!hasBudget)
-                                  Flexible(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.not_set,
-                                      style: const TextStyle(
-                                        color: Colors.grey,
+                                  const SizedBox(width: 8),
+                                  if (hasBudget)
+                                    Flexible(
+                                      child: Text(
+                                        '${CurrencyHelper.format(spent, context)} / ${CurrencyHelper.format(limit, context)}',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: exceeded
+                                              ? AppColors.expenseRed
+                                              : AppColors.softText,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
                                     ),
-                                  ),
-                              ],
-                            ),
-                            if (hasBudget) ...[
-                              const SizedBox(height: 12),
-                              LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: Colors.grey.shade200,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  exceeded ? Colors.red : Colors.green,
-                                ),
-                                minHeight: 8,
-                                borderRadius: BorderRadius.circular(4),
+                                  if (!hasBudget)
+                                    Flexible(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.not_set,
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.textMuted,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                ],
                               ),
+                              if (hasBudget) ...[
+                                const SizedBox(height: 16),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: AppColors.softText
+                                        .withOpacity(0.08),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      exceeded
+                                          ? AppColors.expenseRed
+                                          : AppColors.incomeGreen,
+                                    ),
+                                    minHeight: 10,
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),

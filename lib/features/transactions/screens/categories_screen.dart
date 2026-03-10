@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/ui/widgets/glass_card.dart';
-import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
 
@@ -13,48 +14,55 @@ class CategoriesScreen extends StatelessWidget {
       {
         'name': 'Comida',
         'icon': Icons.restaurant_rounded,
-        'color': Colors.orange,
+        'color': AppColors.orange,
       },
       {
         'name': 'Transporte',
         'icon': Icons.directions_bus_rounded,
-        'color': Colors.blue,
+        'color': AppColors.blue,
       },
       {
         'name': 'Ocio',
         'icon': Icons.sports_esports_rounded,
-        'color': Colors.purple,
+        'color': AppColors.purple,
       },
       {
         'name': 'Salud',
         'icon': Icons.local_hospital_rounded,
-        'color': Colors.red,
+        'color': AppColors.expenseRed,
       },
       {
         'name': 'Educación',
         'icon': Icons.school_rounded,
-        'color': Colors.indigo,
+        'color': AppColors.indigo,
       },
       {
         'name': 'Salario',
         'icon': Icons.payments_rounded,
-        'color': Colors.green,
+        'color': AppColors.incomeGreen,
       },
       {
         'name': 'Inversión',
         'icon': Icons.trending_up_rounded,
-        'color': Colors.teal,
+        'color': AppColors.teal,
       },
       {
         'name': 'Regalo',
         'icon': Icons.card_giftcard_rounded,
-        'color': Colors.pink,
+        'color': AppColors.pink,
       },
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("Categorías")),
+      backgroundColor: AppColors.darkBackground,
+      appBar: AppBar(
+        title: Text(
+          "Categorías",
+          style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: GridView.builder(
         padding: const EdgeInsets.all(24),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -69,8 +77,8 @@ class CategoriesScreen extends StatelessWidget {
           final color = cat['color'] as Color;
 
           return GlassCard(
-            padding: const EdgeInsets.all(16),
-            borderRadius: 28,
+            padding: EdgeInsets.zero,
+            borderRadius: 30,
             glowColor: color.withOpacity(0.05),
             child: InkWell(
               onTap: () => ActionController.execute(
@@ -78,6 +86,7 @@ class CategoriesScreen extends StatelessWidget {
                 AppAction.addExpense,
                 arguments: {'category': cat['name']},
               ),
+              borderRadius: BorderRadius.circular(30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -97,17 +106,12 @@ class CategoriesScreen extends StatelessWidget {
                   Text(
                     cat['name'],
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.2,
-                    ),
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 12),
                   Icon(
                     Icons.add_circle_outline_rounded,
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppColors.softText.withOpacity(0.15),
                     size: 20,
                   ),
                 ],

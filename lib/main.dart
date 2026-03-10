@@ -20,7 +20,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
-import 'core/ui/theme/app_theme.dart';
+import 'core/ui/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

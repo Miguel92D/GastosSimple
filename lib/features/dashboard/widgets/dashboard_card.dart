@@ -1,6 +1,14 @@
+/**
+ * This project uses a centralized design system.
+ * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
+ * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+ */
 import 'package:flutter/material.dart';
-import '../../../core/ui/design/app_design.dart';
-import '../../../core/ui/design/pro_design.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_gradients.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_shadows.dart';
 import '../../../core/state/app_mode_controller.dart';
 
 class DashboardCard extends StatelessWidget {
@@ -14,26 +22,25 @@ class DashboardCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xl,
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isPro
-              ? ProDesign.dashboardGradient
-              : AppDesign.dashboardGradient,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        gradient: isPro
+            ? AppGradients.primaryGradient
+            : AppGradients.glassGradient,
+        border: isPro ? null : Border.all(color: AppColors.cardBorder),
         boxShadow: [
-          BoxShadow(
-            color:
-                (isPro
-                        ? ProDesign.dashboardGradient.first
-                        : AppDesign.dashboardGradient.first)
-                    .withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
+          if (isPro)
+            BoxShadow(
+              color: AppColors.primaryPurple.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          else
+            AppShadows.softShadow,
         ],
       ),
       child: child,

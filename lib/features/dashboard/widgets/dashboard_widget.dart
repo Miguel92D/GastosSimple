@@ -1,8 +1,14 @@
+/**
+ * This project uses a centralized design system.
+ * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
+ * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+ */
 import 'package:flutter/material.dart';
 import '../controllers/dashboard_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/widgets/balance_card.dart';
+import '../../../core/ui/app_spacing.dart';
 import 'income_expense_cards.dart';
 import 'recent_transactions_list.dart';
 
@@ -71,13 +77,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 12.0,
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
             ),
             child: BalanceCard(balance: balance),
           ),
           IncomeExpenseCards(income: income, expenses: expenses),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           RecentTransactionsList(
             transactions: movimientos,
             onRefresh: loadData,

@@ -1,6 +1,15 @@
+/**
+ * This project uses a centralized design system.
+ * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
+ * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+ */
 import 'package:flutter/material.dart';
 import '../../../core/flow/transaction_flow_service.dart';
-import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_gradients.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../goals/models/goal.dart';
@@ -193,7 +202,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         goalAmount: double.tryParse(_goalAmountController.text),
       );
 
-      // Call centralized flow service - Navigation is handled inside the service
       await TransactionFlowService.instance.saveTransaction(
         context,
         newMovement,
@@ -224,122 +232,97 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: AppSpacing.lg,
+            bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (widget.type == null)
                 Center(
-                  child: ToggleButtons(
-                    borderRadius: BorderRadius.circular(12),
-                    isSelected: [_tipo == 'ingreso', _tipo == 'gasto'],
-                    onPressed: (index) {
-                      setState(() {
-                        _tipo = index == 0 ? 'ingreso' : 'gasto';
-
-                        _selectedCategory = _tipo == 'gasto'
-                            ? _categoriasGasto.first
-                            : _categoriasIngreso.first;
-                      });
-                    },
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.arrow_upward, color: Colors.green),
-                            const SizedBox(width: 8),
-                            Text(
-                              AppLocalizations.of(context)!.income,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    decoration: BoxDecoration(
+                      color: AppColors.glassSurface,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _ToggleOption(
+                          label: AppLocalizations.of(context)!.income,
+                          isSelected: _tipo == 'ingreso',
+                          color: AppColors.incomeGreen,
+                          onTap: () => setState(() {
+                            _tipo = 'ingreso';
+                            _selectedCategory = _categoriasIngreso.first;
+                          }),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.arrow_downward, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text(
-                              AppLocalizations.of(context)!.expense,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(width: 4),
+                        _ToggleOption(
+                          label: AppLocalizations.of(context)!.expense,
+                          isSelected: _tipo == 'gasto',
+                          color: AppColors.expenseRed,
+                          onTap: () => setState(() {
+                            _tipo = 'gasto';
+                            _selectedCategory = _categoriasGasto.first;
+                          }),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               GlassInput(
                 controller: _amountController,
                 focusNode: _amountFocusNode,
                 isCenter: true,
-                height: 85, // Closer to Note field height
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                height: 85,
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 onSubmitted: _saveMovement,
                 label: '',
-                style: TextStyle(
-                  fontSize:
-                      42, // Reduced slightly for better vertical fit in 85px
-                  fontWeight: FontWeight.w900,
+                style: AppTextStyles.balanceAmount.copyWith(
+                  fontSize: 42,
                   color: _tipo == 'gasto'
-                      ? AppColors.expense
-                      : AppColors.income,
-                  letterSpacing: -1.5,
+                      ? AppColors.expenseRed
+                      : AppColors.incomeGreen,
                 ),
                 hintText: 'Monto',
-                hintStyle: TextStyle(
+                hintStyle: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white.withOpacity(0.15),
+                  color: AppColors.softText.withOpacity(0.1),
                 ),
                 prefix: Baseline(
-                  baseline: 30, // Adjusted for new font size
+                  baseline: 30,
                   baselineType: TextBaseline.alphabetic,
                   child: Text(
                     CurrencyHelper.getSymbol(context),
-                    style: TextStyle(
+                    style: AppTextStyles.bodyMain.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color:
                           (_tipo == 'gasto'
-                                  ? AppColors.expense
-                                  : AppColors.income)
+                                  ? AppColors.expenseRed
+                                  : AppColors.incomeGreen)
                               .withOpacity(0.5),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
 
-              Text(
-                'CATEGORÍA',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white.withOpacity(0.5),
-                  letterSpacing: 1.2,
-                ),
-              ),
+              Text('CATEGORÍA', style: AppTextStyles.subLabel),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               SizedBox(
                 height: 50,
@@ -349,7 +332,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ? _categoriasGasto.length
                       : _categoriasIngreso.length,
                   separatorBuilder: (context, index) =>
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final category = _tipo == 'gasto'
                         ? _categoriasGasto[index]
@@ -358,8 +341,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     final icon =
                         _categoryIcons[category] ?? Icons.category_rounded;
                     final color = _tipo == 'gasto'
-                        ? AppColors.expense
-                        : AppColors.income;
+                        ? AppColors.expenseRed
+                        : AppColors.incomeGreen;
 
                     return ChoiceChip(
                       label: Row(
@@ -367,7 +350,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           Icon(
                             icon,
                             size: 18,
-                            color: isSelected ? Colors.white : color,
+                            color: isSelected ? AppColors.textPrimary : color,
                           ),
                           const SizedBox(width: 8),
                           Text(category),
@@ -380,19 +363,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         });
                       },
                       selectedColor: color,
-                      backgroundColor: color.withOpacity(0.1),
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.white70,
+                      backgroundColor: color.withOpacity(0.08),
+                      labelStyle: AppTextStyles.bodySmall.copyWith(
+                        color: isSelected
+                            ? AppColors.textPrimary
+                            : AppColors.softText,
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
                         side: BorderSide(
                           color: isSelected
-                              ? Colors.white24
-                              : color.withOpacity(0.3),
+                              ? AppColors.cardBorder
+                              : color.withOpacity(0.15),
                         ),
                       ),
                       showCheckmark: false,
@@ -401,7 +386,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
 
               GlassInput(
                 controller: _noteController,
@@ -410,17 +395,56 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 hintText: 'Ej: Cena con amigos...',
               ),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: AppSpacing.xxl),
 
               SizedBox(
                 width: double.infinity,
                 child: GradientButton(
                   text: AppLocalizations.of(context)!.save.toUpperCase(),
                   onPressed: _saveMovement,
-                  borderRadius: 24,
+                  borderRadius: AppRadius.lg,
+                  gradientColors: AppGradients.primaryGradient.colors,
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ToggleOption extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ToggleOption({
+    required this.label,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? color : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.bodySmall.copyWith(
+            color: isSelected ? AppColors.textPrimary : AppColors.softText,
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+            letterSpacing: 0.5,
           ),
         ),
       ),

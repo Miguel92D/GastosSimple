@@ -4,6 +4,8 @@ import '../models/transaction.dart';
 import '../widgets/transaction_history_list.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 
 class MovementsScreen extends StatefulWidget {
   const MovementsScreen({super.key});
@@ -63,11 +65,13 @@ class _MovementsScreenState extends State<MovementsScreen> {
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.search,
                   border: InputBorder.none,
-                  hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                  hintStyle: AppTextStyles.bodyMain.copyWith(
+                    color: AppColors.softText.withOpacity(0.5),
                   ),
                 ),
-                style: const TextStyle(color: Colors.white),
+                style: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.textPrimary,
+                ),
                 onChanged: (_) => _loadData(),
               )
             : Text(AppLocalizations.of(context)!.movements),

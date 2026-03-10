@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../flow/transaction_flow_service.dart';
-import './design/app_colors.dart';
+import './app_colors.dart';
 
 class AppFAB extends StatelessWidget {
   final String mode;
@@ -9,33 +9,35 @@ class AppFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        _buildFab(
-          context: context,
-          icon: Icons.add_rounded,
-          color: AppColors.income,
-          onPressed: () => TransactionFlowService.instance.startQuickEntry(
-            context,
-            type: 'income',
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          _buildFab(
+            context: context,
+            icon: Icons.add_rounded,
+            color: AppColors.incomeGreen,
+            onPressed: () => TransactionFlowService.instance.startQuickEntry(
+              context,
+              type: 'income',
+            ),
+            heroTag: "income_fab",
           ),
-          heroTag: "income_fab",
-        ),
-        const SizedBox(height: 16),
-        _buildFab(
-          context: context,
-          icon: Icons.remove_rounded,
-          color: AppColors.expense,
-          onPressed: () => TransactionFlowService.instance.startQuickEntry(
-            context,
-            type: 'expense',
+          const SizedBox(height: 16),
+          _buildFab(
+            context: context,
+            icon: Icons.remove_rounded,
+            color: AppColors.expenseRed,
+            onPressed: () => TransactionFlowService.instance.startQuickEntry(
+              context,
+              type: 'expense',
+            ),
+            heroTag: "expense_fab",
           ),
-          heroTag: "expense_fab",
-        ),
-        const SizedBox(height: 80), // Space for bottom navigation
-      ],
+        ],
+      ),
     );
   }
 
@@ -47,15 +49,15 @@ class AppFAB extends StatelessWidget {
     required String heroTag,
   }) {
     return Container(
-      width: 60,
-      height: 60,
+      width: 56,
+      height: 56,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.4),
-            blurRadius: 28,
-            spreadRadius: 2,
+            color: color.withOpacity(0.25),
+            blurRadius: 20,
+            spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
         ],
@@ -68,14 +70,10 @@ class AppFAB extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [color, color.withOpacity(0.7)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              border: Border.all(color: Colors.white24, width: 1.5),
+              color: color,
+              border: Border.all(color: AppColors.cardBorder, width: 1.0),
             ),
-            child: Icon(icon, color: Colors.white, size: 28),
+            child: Icon(icon, color: AppColors.textPrimary, size: 26),
           ),
         ),
       ),

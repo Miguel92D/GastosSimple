@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -12,7 +15,12 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final isSpanish = locale.languageCode == 'es';
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.privacy_policy), elevation: 0),
+      backgroundColor: AppColors.darkBackground,
+      appBar: AppBar(
+        title: Text(l10n.privacy_policy),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -22,7 +30,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               isSpanish
                   ? 'Tu Privacidad es Primero'
                   : 'Your Privacy Comes First',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: 24),
             _buildSection(
@@ -48,20 +56,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Center(
-              child: ElevatedButton(
+              child: GradientButton(
                 onPressed: () async {
-                  final url = Uri.parse(
-                    'https://example.com/privacy-policy',
-                  ); // Replace with real URL
+                  final url = Uri.parse('https://example.com/privacy-policy');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   }
                 },
-                child: Text(
-                  isSpanish
-                      ? 'Ver política completa online'
-                      : 'View full policy online',
-                ),
+                text: isSpanish
+                    ? 'Ver política completa online'
+                    : 'View full policy online',
               ),
             ),
           ],
@@ -78,18 +82,17 @@ class PrivacyPolicyScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF7E57C2),
+            style: AppTextStyles.cardTitle.copyWith(
+              color: AppColors.primaryPurple,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             content,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontSize: 15, height: 1.5),
+            style: AppTextStyles.bodyText.copyWith(
+              height: 1.5,
+              color: AppColors.softText,
+            ),
           ),
         ],
       ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/ui/widgets/glass_card.dart';
-import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_radius.dart';
 
 class IncomeExpenseCards extends StatelessWidget {
   final double income;
@@ -16,22 +19,25 @@ class IncomeExpenseCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
       child: Row(
         children: [
           Expanded(
             child: _StatCard(
               label: "Ingresos",
               amount: income,
-              color: AppColors.income,
+              color: AppColors.incomeGreen,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: _StatCard(
               label: "Gastos",
               amount: expenses,
-              color: AppColors.expense,
+              color: AppColors.expenseRed,
             ),
           ),
         ],
@@ -54,22 +60,20 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      glowColor: color.withOpacity(0.12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      borderRadius: 20,
+      glowColor: color.withOpacity(0.08),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      borderRadius: AppRadius.lg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label.toUpperCase(),
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
+            style: AppTextStyles.subLabel.copyWith(
+              color: AppColors.softText.withOpacity(0.4),
               fontSize: 10,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           FittedBox(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -77,8 +81,8 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   "\$",
-                  style: TextStyle(
-                    color: color.withOpacity(0.5),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: color.withOpacity(0.4),
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                   ),
@@ -86,11 +90,9 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   NumberFormat('#,###', 'es_ES').format(amount.abs()),
-                  style: TextStyle(
+                  style: AppTextStyles.incomeValue.copyWith(
                     color: color,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 22,
-                    letterSpacing: -0.5,
+                    fontSize: 20,
                   ),
                 ),
               ],

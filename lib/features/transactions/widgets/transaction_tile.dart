@@ -3,8 +3,9 @@ import 'package:intl/intl.dart';
 import '../models/transaction.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
-import '../../../core/ui/widgets/glass_card.dart';
-import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
@@ -50,7 +51,7 @@ class TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == 'ingreso';
-    final amountColor = isIncome ? AppColors.income : AppColors.expense;
+    final amountColor = isIncome ? AppColors.incomeGreen : AppColors.expenseRed;
     final amountPrefix = isIncome ? '+' : '-';
 
     Widget tile = GestureDetector(
@@ -89,22 +90,15 @@ class TransactionTile extends StatelessWidget {
                       context,
                       transaction.category,
                     ),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Colors.white,
-                      letterSpacing: -0.2,
-                    ),
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 14),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     DateFormat('d MMM, yyyy').format(transaction.date),
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.3),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.softText.withOpacity(0.3),
                     ),
                   ),
                 ],
@@ -119,20 +113,16 @@ class TransactionTile extends StatelessWidget {
                   hideAmount
                       ? '••••••'
                       : '$amountPrefix${CurrencyHelper.format(transaction.amount, context)}',
-                  style: TextStyle(
+                  style: AppTextStyles.cardTitle.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     color: amountColor,
-                    letterSpacing: -0.5,
                   ),
                 ),
                 if (transaction.note != null && transaction.note!.isNotEmpty)
                   Text(
                     transaction.note!,
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Colors.white.withOpacity(0.25),
-                    ),
+                    style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -166,19 +156,19 @@ class TransactionTile extends StatelessWidget {
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.2),
+            color: AppColors.blue.withOpacity(0.2),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(Icons.archive_rounded, color: Colors.blue),
+          child: const Icon(Icons.archive_rounded, color: AppColors.blue),
         ),
         secondaryBackground: Container(
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 20),
           decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.2),
+            color: AppColors.expenseRed.withOpacity(0.2),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(Icons.delete_rounded, color: Colors.red),
+          child: const Icon(Icons.delete_rounded, color: AppColors.expenseRed),
         ),
         child: tile,
       ),

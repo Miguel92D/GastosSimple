@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'glass_card.dart';
+import '../glass_card.dart';
+import '../app_colors.dart';
+import '../app_text_styles.dart';
 
 class GlassInput extends StatelessWidget {
   final TextEditingController controller;
@@ -42,8 +44,9 @@ class GlassInput extends StatelessWidget {
     return GlassCard(
       height: height,
       padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      borderRadius: 24,
+          padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      borderRadius: 30,
+      glowColor: AppColors.primaryPurple.withOpacity(0.02),
       child: Center(
         child: TextField(
           controller: controller,
@@ -53,20 +56,24 @@ class GlassInput extends StatelessWidget {
           onChanged: onChanged,
           onSubmitted: (_) => onSubmitted?.call(),
           textAlign: isCenter ? TextAlign.center : TextAlign.start,
-          style: style ?? const TextStyle(color: Colors.white, fontSize: 16),
+          style: style ?? AppTextStyles.bodyMain.copyWith(fontSize: 16),
           decoration: InputDecoration(
             labelText: label.isEmpty ? null : label,
-            labelStyle: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+            labelStyle: AppTextStyles.subLabel.copyWith(
+              color: AppColors.softText.withOpacity(0.4),
             ),
             hintText: hintText,
             hintStyle:
                 hintStyle ??
-                TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 16),
+                AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.softText.withOpacity(0.2),
+                ),
             prefixIcon: icon != null
-                ? Icon(icon, color: Colors.white.withOpacity(0.7), size: 20)
+                ? Icon(
+                    icon,
+                    color: AppColors.softText.withOpacity(0.6),
+                    size: 18,
+                  )
                 : null,
             prefix: prefix,
             border: InputBorder.none,

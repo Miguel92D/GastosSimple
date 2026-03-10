@@ -5,8 +5,9 @@ import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
-import '../../../core/ui/widgets/glass_card.dart';
-import '../../../core/ui/design/app_colors.dart';
+import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -53,18 +54,18 @@ class _StatsScreenState extends State<StatsScreen> {
     double totalGastos = catGastos.values.fold(0, (sum, val) => sum + val);
 
     final List<Color> chartColors = [
-      AppColors.primaryStart,
-      AppColors.neonCyan,
-      AppColors.income,
-      AppColors.neonPurple,
-      AppColors.expense,
+      AppColors.primaryPurple,
+      const Color(0xFFC084FC),
+      const Color(0xFF6366F1),
+      AppColors.incomeGreen,
+      const Color(0xFF38BDF8),
       const Color(0xFFFBBF24),
-      const Color(0xFF2DD4BF),
+      AppColors.expenseRed,
       const Color(0xFFFB7185),
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.history),
         centerTitle: true,
@@ -78,18 +79,13 @@ class _StatsScreenState extends State<StatsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 GlassCard(
-                  borderRadius: 32,
-                  glowColor: AppColors.primaryStart.withOpacity(0.1),
+                  borderRadius: 30,
+                  glowColor: AppColors.primaryPurple.withOpacity(0.08),
                   child: Column(
                     children: [
                       Text(
                         AppLocalizations.of(context)!.category_expenses,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
+                        style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
                       ),
                       const SizedBox(height: 48),
                       if (catGastos.isEmpty)
@@ -103,21 +99,11 @@ class _StatsScreenState extends State<StatsScreen> {
                               Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    "TOTAL",
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 2.0,
-                                    ),
-                                  ),
+                                  Text("TOTAL", style: AppTextStyles.subLabel),
                                   Text(
                                     CurrencyHelper.format(totalGastos, context),
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: AppTextStyles.cardTitle.copyWith(
                                       fontSize: 24,
-                                      fontWeight: FontWeight.w900,
                                     ),
                                   ),
                                 ],
@@ -193,11 +179,8 @@ class _StatsScreenState extends State<StatsScreen> {
                                               context,
                                               e.key,
                                             ),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                            style: AppTextStyles.cardTitle
+                                                .copyWith(fontSize: 16),
                                           ),
                                         ],
                                       ),
@@ -211,21 +194,12 @@ class _StatsScreenState extends State<StatsScreen> {
                                             e.value,
                                             context,
                                           ),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                          ),
+                                          style: AppTextStyles.cardTitle
+                                              .copyWith(fontSize: 16),
                                         ),
                                         Text(
                                           '${(percentage * 100).toStringAsFixed(1)}%',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.4,
-                                            ),
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: AppTextStyles.bodySmall,
                                         ),
                                       ],
                                     ),
@@ -236,9 +210,8 @@ class _StatsScreenState extends State<StatsScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                   child: LinearProgressIndicator(
                                     value: percentage,
-                                    backgroundColor: Colors.white.withOpacity(
-                                      0.05,
-                                    ),
+                                    backgroundColor: AppColors.softText
+                                        .withOpacity(0.05),
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       color,
                                     ),
@@ -276,7 +249,7 @@ class _Badge extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.darkBackground,
         shape: BoxShape.circle,
         border: Border.all(color: borderColor, width: 2),
         boxShadow: [
@@ -291,10 +264,10 @@ class _Badge extends StatelessWidget {
       child: Center(
         child: Text(
           text,
-          style: TextStyle(
+          style: AppTextStyles.bodySmall.copyWith(
             fontSize: size * .2,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.textPrimary,
           ),
         ),
       ),
