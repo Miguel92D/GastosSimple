@@ -7,6 +7,7 @@ import '../../../../core/flow/general_flow_service.dart';
 import '../../../../core/flow/transaction_flow_service.dart';
 import '../../../../core/ui/app_colors.dart';
 import '../../../../core/ui/app_text_styles.dart';
+import '../../../../core/state/app_state.dart';
 
 class TransactionHistoryList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -110,24 +111,32 @@ class TransactionHistoryList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      padding: padding ?? EdgeInsets.zero,
-      shrinkWrap: physics == const NeverScrollableScrollPhysics(),
-      physics: physics ?? const BouncingScrollPhysics(),
-      itemCount: transactions.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final transaction = transactions[index];
-        return TransactionTile(
-          transaction: transaction,
-          onDelete: () async {
-            if (transaction.id != null) {
-              await TransactionController.deleteTransaction(transaction.id!);
-              onRefresh();
-            }
+    return ListenableBuilder(
+      listenable: AppState.instance,
+      builder: (context, child) {
+        return ListView.separated(
+          padding: padding ?? EdgeInsets.zero,
+          shrinkWrap: physics == const NeverScrollableScrollPhysics(),
+          physics: physics ?? const BouncingScrollPhysics(),
+          itemCount: transactions.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          itemBuilder: (context, index) {
+            final transaction = transactions[index];
+            return TransactionTile(
+              transaction: transaction,
+              hideAmount: AppState.instance.hideBalance,
+              onDelete: () async {
+                if (transaction.id != null) {
+                  await TransactionController.deleteTransaction(
+                    transaction.id!,
+                  );
+                  onRefresh();
+                }
+              },
+              onArchive: () {},
+              onTap: () => _showOptionsModal(context, transaction),
+            );
           },
-          onArchive: () {},
-          onTap: () => _showOptionsModal(context, transaction),
         );
       },
     );

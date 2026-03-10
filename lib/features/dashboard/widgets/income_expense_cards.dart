@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../core/state/app_state.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -18,30 +19,35 @@ class IncomeExpenseCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.xs,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _StatCard(
-              label: "Ingresos",
-              amount: income,
-              color: AppColors.incomeGreen,
-            ),
+    return ListenableBuilder(
+      listenable: AppState.instance,
+      builder: (context, _) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.xs,
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: _StatCard(
-              label: "Gastos",
-              amount: expenses,
-              color: AppColors.expenseRed,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _StatCard(
+                  label: "Ingresos",
+                  amount: income,
+                  color: AppColors.incomeGreen,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: _StatCard(
+                  label: "Gastos",
+                  amount: expenses,
+                  color: AppColors.expenseRed,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -89,7 +95,9 @@ class _StatCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  NumberFormat('#,###', 'es_ES').format(amount.abs()),
+                  AppState.instance.hideBalance
+                      ? "••••••"
+                      : NumberFormat('#,###', 'es_ES').format(amount.abs()),
                   style: AppTextStyles.incomeValue.copyWith(
                     color: color,
                     fontSize: 20,

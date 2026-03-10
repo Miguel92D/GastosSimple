@@ -7,6 +7,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/state/app_state.dart';
 
 class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key});
@@ -88,20 +89,25 @@ class _PredictionScreenState extends State<PredictionScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSummaryCard(l10n),
-                  const SizedBox(height: 24),
-                  _buildProjectionCard(l10n, isNegative),
-                  if (isNegative) ...[
-                    const SizedBox(height: 24),
-                    _buildWarningCard(l10n),
-                  ],
-                ],
-              ),
+          : ListenableBuilder(
+              listenable: AppState.instance,
+              builder: (context, _) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSummaryCard(l10n),
+                      const SizedBox(height: 24),
+                      _buildProjectionCard(l10n, isNegative),
+                      if (isNegative) ...[
+                        const SizedBox(height: 24),
+                        _buildWarningCard(l10n),
+                      ],
+                    ],
+                  ),
+                );
+              },
             ),
     );
   }
@@ -215,7 +221,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
         const SizedBox(width: 8),
         Flexible(
           child: Text(
-            CurrencyHelper.format(value, context),
+            AppState.instance.hideBalance
+                ? "••••••"
+                : CurrencyHelper.format(value, context),
             style: AppTextStyles.cardTitle.copyWith(fontSize: 18, color: color),
             textAlign: TextAlign.right,
             overflow: TextOverflow.ellipsis,
@@ -249,7 +257,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
         const SizedBox(width: 8),
         Flexible(
           child: Text(
-            CurrencyHelper.format(value, context),
+            AppState.instance.hideBalance
+                ? "••••••"
+                : CurrencyHelper.format(value, context),
             style: AppTextStyles.cardTitle.copyWith(
               color: color,
               fontSize: large ? 28 : 20,

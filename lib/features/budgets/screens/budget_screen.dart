@@ -6,6 +6,7 @@ import '../controllers/budget_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/state/app_state.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -134,109 +135,121 @@ class _BudgetScreenState extends State<BudgetScreen> {
         backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                padding: const EdgeInsets.all(24),
-                itemCount: _categoriasGasto.length,
-                itemBuilder: (context, index) {
-                  final cat = _categoriasGasto[index];
-                  final limit = _budgets[cat] ?? 0;
-                  final spent = _spent[cat] ?? 0;
+      body: ListenableBuilder(
+        listenable: AppState.instance,
+        builder: (context, child) {
+          return SafeArea(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: const EdgeInsets.all(24),
+                    itemCount: _categoriasGasto.length,
+                    itemBuilder: (context, index) {
+                      final cat = _categoriasGasto[index];
+                      final limit = _budgets[cat] ?? 0;
+                      final spent = _spent[cat] ?? 0;
 
-                  bool hasBudget = limit > 0;
-                  bool exceeded = hasBudget && spent > limit;
-                  double progress = hasBudget
-                      ? (spent / limit).clamp(0.0, 1.0)
-                      : 0.0;
+                      bool hasBudget = limit > 0;
+                      bool exceeded = hasBudget && spent > limit;
+                      double progress = hasBudget
+                          ? (spent / limit).clamp(0.0, 1.0)
+                          : 0.0;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: GlassCard(
-                      borderRadius: 30,
-                      glowColor:
-                          (exceeded
-                                  ? AppColors.expenseRed
-                                  : AppColors.primaryPurple)
-                              .withOpacity(0.05),
-                      padding: EdgeInsets.zero,
-                      child: InkWell(
-                        onTap: () => _setBudget(cat),
-                        borderRadius: BorderRadius.circular(30),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: GlassCard(
+                          borderRadius: 30,
+                          glowColor:
+                              (exceeded
+                                      ? AppColors.expenseRed
+                                      : AppColors.primaryPurple)
+                                  .withOpacity(0.05),
+                          padding: EdgeInsets.zero,
+                          child: InkWell(
+                            onTap: () => _setBudget(cat),
+                            borderRadius: BorderRadius.circular(30),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      L10nHelper.getLocalizedCategory(
-                                        context,
-                                        cat,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          L10nHelper.getLocalizedCategory(
+                                            context,
+                                            cat,
+                                          ),
+                                          style: AppTextStyles.cardTitle,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
-                                      style: AppTextStyles.cardTitle,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
+                                      const SizedBox(width: 8),
+                                      if (hasBudget)
+                                        Flexible(
+                                          child: Text(
+                                            AppState.instance.hideBalance
+                                                ? "•••••• / ••••••"
+                                                : '${CurrencyHelper.format(spent, context)} / ${CurrencyHelper.format(limit, context)}',
+                                            style: AppTextStyles.bodySmall
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: exceeded
+                                                      ? AppColors.expenseRed
+                                                      : AppColors.softText,
+                                                ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      if (!hasBudget)
+                                        Flexible(
+                                          child: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.not_set,
+                                            style: AppTextStyles.bodySmall
+                                                .copyWith(
+                                                  color: AppColors.textMuted,
+                                                ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 8),
-                                  if (hasBudget)
-                                    Flexible(
-                                      child: Text(
-                                        '${CurrencyHelper.format(spent, context)} / ${CurrencyHelper.format(limit, context)}',
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: exceeded
-                                              ? AppColors.expenseRed
-                                              : AppColors.softText,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
+                                  if (hasBudget) ...[
+                                    const SizedBox(height: 16),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: LinearProgressIndicator(
+                                        value: progress,
+                                        backgroundColor: AppColors.softText
+                                            .withOpacity(0.08),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              exceeded
+                                                  ? AppColors.expenseRed
+                                                  : AppColors.incomeGreen,
+                                            ),
+                                        minHeight: 10,
                                       ),
                                     ),
-                                  if (!hasBudget)
-                                    Flexible(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.not_set,
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          color: AppColors.textMuted,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
+                                  ],
                                 ],
                               ),
-                              if (hasBudget) ...[
-                                const SizedBox(height: 16),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: LinearProgressIndicator(
-                                    value: progress,
-                                    backgroundColor: AppColors.softText
-                                        .withOpacity(0.08),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      exceeded
-                                          ? AppColors.expenseRed
-                                          : AppColors.incomeGreen,
-                                    ),
-                                    minHeight: 10,
-                                  ),
-                                ),
-                              ],
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
+          );
+        },
       ),
     );
   }

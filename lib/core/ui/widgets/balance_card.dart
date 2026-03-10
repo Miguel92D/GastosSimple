@@ -5,6 +5,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../state/app_state.dart';
 import 'dart:math' as math;
 import '../glass_card.dart';
 import '../app_colors.dart';
@@ -42,10 +43,17 @@ class _BalanceCardState extends State<BalanceCard>
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat();
+    // Listen to AppState to rebuild when hideBalance changes
+    AppState.instance.addListener(_onStateChange);
+  }
+
+  void _onStateChange() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    AppState.instance.removeListener(_onStateChange);
     _waveController.dispose();
     super.dispose();
   }
@@ -97,14 +105,29 @@ class _BalanceCardState extends State<BalanceCard>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // 1 — Title
-                      Text(
-                        widget.title.toUpperCase(),
-                        style: AppTextStyles.cardTitle.copyWith(
-                          color: Colors.white.withOpacity(0.7),
-                          fontSize: 12,
-                          letterSpacing: 1.2,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.title.toUpperCase(),
+                            style: AppTextStyles.cardTitle.copyWith(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 12,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: AppState.instance.toggleHideBalance,
+                            child: Icon(
+                              AppState.instance.hideBalance
+                                  ? Icons.visibility_off_rounded
+                                  : Icons.visibility_rounded,
+                              size: 16,
+                              color: Colors.white.withOpacity(0.5),
+                            ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: AppSpacing.md),
@@ -115,10 +138,13 @@ class _BalanceCardState extends State<BalanceCard>
                         duration: const Duration(milliseconds: 400),
                         curve: Curves.easeOutCubic,
                         builder: (context, animatedValue, child) {
-                          final String formattedValue = NumberFormat(
-                            '#,###',
-                            'es_ES',
-                          ).format(animatedValue.abs().round());
+                          final String formattedValue =
+                              AppState.instance.hideBalance
+                              ? "••••••"
+                              : NumberFormat(
+                                  '#,###',
+                                  'es_ES',
+                                ).format(animatedValue.abs().round());
 
                           return AnimatedDefaultTextStyle(
                             duration: const Duration(milliseconds: 300),
@@ -127,7 +153,11 @@ class _BalanceCardState extends State<BalanceCard>
                               color: targetColor,
                               fontSize: 42,
                             ),
-                            child: Text("\$$formattedValue"),
+                            child: Text(
+                              AppState.instance.hideBalance
+                                  ? formattedValue
+                                  : "\$$formattedValue",
+                            ),
                           );
                         },
                       ),

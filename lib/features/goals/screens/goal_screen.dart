@@ -6,6 +6,7 @@ import '../controllers/goal_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/state/app_state.dart';
 
 class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
@@ -23,6 +24,11 @@ class _GoalScreenState extends State<GoalScreen> {
   void initState() {
     super.initState();
     _loadGoals();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _loadGoals() async {
@@ -148,100 +154,108 @@ class _GoalScreenState extends State<GoalScreen> {
         backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _goals.isEmpty
-            ? Center(
-                child: Text(
-                  AppLocalizations.of(context)!.no_goals_yet,
-                  style: AppTextStyles.bodyMain.copyWith(
-                    color: AppColors.softText,
-                  ),
-                ),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.all(24),
-                itemCount: _goals.length,
-                itemBuilder: (context, index) {
-                  final goal = _goals[index];
-                  final progress = (goal.savedAmount / goal.targetAmount).clamp(
-                    0.0,
-                    1.0,
-                  );
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: GlassCard(
-                      borderRadius: 30,
-                      glowColor: AppColors.primaryPurple.withOpacity(0.05),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: ListenableBuilder(
+        listenable: AppState.instance,
+        builder: (context, child) {
+          return SafeArea(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _goals.isEmpty
+                ? Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.no_goals_yet,
+                      style: AppTextStyles.bodyMain.copyWith(
+                        color: AppColors.softText,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(24),
+                    itemCount: _goals.length,
+                    itemBuilder: (context, index) {
+                      final goal = _goals[index];
+                      final progress = (goal.savedAmount / goal.targetAmount)
+                          .clamp(0.0, 1.0);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: GlassCard(
+                          borderRadius: 30,
+                          glowColor: AppColors.primaryPurple.withOpacity(0.05),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  goal.name,
-                                  style: AppTextStyles.cardTitle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  IconButton(
-                                    onPressed: () => _addOrEditGoal(goal),
-                                    icon: const Icon(
-                                      Icons.edit_rounded,
-                                      size: 20,
-                                      color: AppColors.softText,
+                                  Expanded(
+                                    child: Text(
+                                      goal.name,
+                                      style: AppTextStyles.cardTitle,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      await _controller.deleteGoal(goal.id!);
-                                      _loadGoals();
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete_rounded,
-                                      size: 20,
-                                      color: AppColors.expenseRed,
-                                    ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => _addOrEditGoal(goal),
+                                        icon: const Icon(
+                                          Icons.edit_rounded,
+                                          size: 20,
+                                          color: AppColors.softText,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          await _controller.deleteGoal(
+                                            goal.id!,
+                                          );
+                                          _loadGoals();
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete_rounded,
+                                          size: 20,
+                                          color: AppColors.expenseRed,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 8),
+                              Text(
+                                AppState.instance.hideBalance
+                                    ? "•••••• / ••••••"
+                                    : '${CurrencyHelper.format(goal.savedAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.softText,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              const SizedBox(height: 16),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  minHeight: 10,
+                                  backgroundColor: AppColors.softText
+                                      .withOpacity(0.08),
+                                  valueColor:
+                                      const AlwaysStoppedAnimation<Color>(
+                                        AppColors.primaryPurple,
+                                      ),
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${CurrencyHelper.format(goal.savedAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.softText,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                          const SizedBox(height: 16),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              minHeight: 10,
-                              backgroundColor: AppColors.softText.withOpacity(
-                                0.08,
-                              ),
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppColors.primaryPurple,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      );
+                    },
+                  ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addOrEditGoal(),

@@ -7,9 +7,15 @@ class AppState extends ChangeNotifier {
 
   bool isPro = true;
   bool vaultOpen = false;
+  bool hideBalance = false;
   bool _refreshDashboard = false;
 
   bool get refreshDashboard => _refreshDashboard;
+
+  void toggleHideBalance() {
+    hideBalance = !hideBalance;
+    notifyListeners();
+  }
 
   void setPro(bool value) {
     isPro = value;

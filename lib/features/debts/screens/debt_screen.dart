@@ -8,6 +8,7 @@ import '../controllers/debt_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/state/app_state.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -340,226 +341,242 @@ class _DebtScreenState extends State<DebtScreen> {
         backgroundColor: Colors.transparent,
       ),
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                padding: const EdgeInsets.all(24),
-                children: [
-                  if (ProService.instance.isPro)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 24),
-                      child: GlassCard(
-                        borderRadius: 30,
-                        glowColor: AppColors.primaryPurple.withOpacity(0.1),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+      body: ListenableBuilder(
+        listenable: AppState.instance,
+        builder: (context, _) {
+          return SafeArea(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+                    padding: const EdgeInsets.all(24),
+                    children: [
+                      if (ProService.instance.isPro)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: GlassCard(
+                            borderRadius: 30,
+                            glowColor: AppColors.primaryPurple.withOpacity(0.1),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    l10n.debt_exit_plan,
-                                    style: AppTextStyles.cardTitle,
-                                  ),
-                                ),
-                                const ProBadge(),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            TextField(
-                              keyboardType: TextInputType.number,
-                              style: AppTextStyles.bodyMain,
-                              decoration: InputDecoration(
-                                labelText: l10n.extra_monthly_amount,
-                                labelStyle: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textMuted,
-                                ),
-                                isDense: true,
-                                enabledBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: AppColors.cardBorder,
-                                  ),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: AppColors.primaryPurple,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (val) {
-                                setState(() {
-                                  _extraPayment = double.tryParse(val) ?? 0;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _getPlanTips(context),
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.softText,
-                              ),
-                            ),
-                            const Divider(
-                              height: 32,
-                              color: AppColors.cardBorder,
-                            ),
-                            Text(
-                              "Consejos para salir de deudas:",
-                              style: AppTextStyles.cardTitle.copyWith(
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildTipItem(
-                              Icons.trending_down_rounded,
-                              "Método Avalancha: Paga primero la deuda con mayor interés.",
-                            ),
-                            _buildTipItem(
-                              Icons.ac_unit_rounded,
-                              "Método Bola de Nieve: Paga la deuda más pequeña para ganar motivación.",
-                            ),
-                            _buildTipItem(
-                              Icons.block_rounded,
-                              "Deja de usar tarjetas: Evita generar nuevas deudas mientras pagas.",
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ..._debts.map(
-                    (debt) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: GlassCard(
-                        borderRadius: 30,
-                        padding: EdgeInsets.zero,
-                        glowColor: AppColors.expenseRed.withOpacity(0.05),
-                        child: Theme(
-                          data: Theme.of(
-                            context,
-                          ).copyWith(dividerColor: Colors.transparent),
-                          child: ExpansionTile(
-                            title: Text(
-                              debt.nombre,
-                              style: AppTextStyles.cardTitle,
-                            ),
-                            subtitle: Text(
-                              l10n.remaining_amount(
-                                CurrencyHelper.format(debt.remaining, context),
-                              ),
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.softText,
-                              ),
-                            ),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
+                                Row(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: LinearProgressIndicator(
-                                        value: debt.progress,
-                                        backgroundColor: AppColors.softText
-                                            .withOpacity(0.08),
-                                        valueColor:
-                                            const AlwaysStoppedAnimation<Color>(
-                                              AppColors.expenseRed,
-                                            ),
-                                        minHeight: 10,
+                                    Expanded(
+                                      child: Text(
+                                        l10n.debt_exit_plan,
+                                        style: AppTextStyles.cardTitle,
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            l10n.min_pay_amount(
-                                              CurrencyHelper.format(
-                                                debt.pagoMinimo,
-                                                context,
-                                              ),
-                                            ),
-                                            style: AppTextStyles.bodySmall
-                                                .copyWith(
-                                                  color: AppColors.softText,
-                                                ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '${l10n.vence_dia}${debt.fechaVencimiento}',
-                                          style: AppTextStyles.bodySmall
-                                              .copyWith(
-                                                color: AppColors.softText,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      '${l10n.cierre_dia}${debt.diaCierre}',
-                                      style: AppTextStyles.bodySmall.copyWith(
-                                        color: AppColors.softText,
-                                      ),
-                                    ),
-                                    if (debt.tasaInteres != null)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 8),
-                                        child: Text(
-                                          l10n.interest_annual(
-                                            debt.tasaInteres.toString(),
-                                          ),
-                                          style: AppTextStyles.bodySmall
-                                              .copyWith(
-                                                color: AppColors.softText,
-                                              ),
-                                        ),
-                                      ),
-                                    const SizedBox(height: 20),
-                                    Wrap(
-                                      alignment: WrapAlignment.spaceEvenly,
-                                      spacing: 8,
-                                      children: [
-                                        _buildActionButton(
-                                          Icons.payment_rounded,
-                                          l10n.pay,
-                                          AppColors.incomeGreen,
-                                          () => _showPayForm(debt),
-                                        ),
-                                        _buildActionButton(
-                                          Icons.edit_rounded,
-                                          l10n.edit,
-                                          AppColors.softText,
-                                          () => _showDebtForm(debt: debt),
-                                        ),
-                                        _buildActionButton(
-                                          Icons.delete_rounded,
-                                          l10n.delete,
-                                          AppColors.expenseRed,
-                                          () async {
-                                            await _controller.deleteDebt(
-                                              debt.id!,
-                                            );
-                                            _loadDebts();
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                    const ProBadge(),
                                   ],
                                 ),
+                                const SizedBox(height: 20),
+                                TextField(
+                                  keyboardType: TextInputType.number,
+                                  style: AppTextStyles.bodyMain,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.extra_monthly_amount,
+                                    labelStyle: AppTextStyles.bodySmall
+                                        .copyWith(color: AppColors.textMuted),
+                                    isDense: true,
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.cardBorder,
+                                      ),
+                                    ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.primaryPurple,
+                                      ),
+                                    ),
+                                  ),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _extraPayment = double.tryParse(val) ?? 0;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _getPlanTips(context),
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: AppColors.softText,
+                                  ),
+                                ),
+                                const Divider(
+                                  height: 32,
+                                  color: AppColors.cardBorder,
+                                ),
+                                Text(
+                                  "Consejos para salir de deudas:",
+                                  style: AppTextStyles.cardTitle.copyWith(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                _buildTipItem(
+                                  Icons.trending_down_rounded,
+                                  "Método Avalancha: Paga primero la deuda con mayor interés.",
+                                ),
+                                _buildTipItem(
+                                  Icons.ac_unit_rounded,
+                                  "Método Bola de Nieve: Paga la deuda más pequeña para ganar motivación.",
+                                ),
+                                _buildTipItem(
+                                  Icons.block_rounded,
+                                  "Deja de usar tarjetas: Evita generar nuevas deudas mientras pagas.",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ..._debts.map(
+                        (debt) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: GlassCard(
+                            borderRadius: 30,
+                            padding: EdgeInsets.zero,
+                            glowColor: AppColors.expenseRed.withOpacity(0.05),
+                            child: Theme(
+                              data: Theme.of(
+                                context,
+                              ).copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                title: Text(
+                                  debt.nombre,
+                                  style: AppTextStyles.cardTitle,
+                                ),
+                                subtitle: Text(
+                                  l10n.remaining_amount(
+                                    AppState.instance.hideBalance
+                                        ? "••••••"
+                                        : CurrencyHelper.format(
+                                            debt.remaining,
+                                            context,
+                                          ),
+                                  ),
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: AppColors.softText,
+                                  ),
+                                ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child: LinearProgressIndicator(
+                                            value: debt.progress,
+                                            backgroundColor: AppColors.softText
+                                                .withOpacity(0.08),
+                                            valueColor:
+                                                const AlwaysStoppedAnimation<
+                                                  Color
+                                                >(AppColors.expenseRed),
+                                            minHeight: 10,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                l10n.min_pay_amount(
+                                                  AppState.instance.hideBalance
+                                                      ? "••••••"
+                                                      : CurrencyHelper.format(
+                                                          debt.pagoMinimo,
+                                                          context,
+                                                        ),
+                                                ),
+                                                style: AppTextStyles.bodySmall
+                                                    .copyWith(
+                                                      color: AppColors.softText,
+                                                    ),
+                                              ),
+                                            ),
+                                            Text(
+                                              '${l10n.vence_dia}${debt.fechaVencimiento}',
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                    color: AppColors.softText,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          '${l10n.cierre_dia}${debt.diaCierre}',
+                                          style: AppTextStyles.bodySmall
+                                              .copyWith(
+                                                color: AppColors.softText,
+                                              ),
+                                        ),
+                                        if (debt.tasaInteres != null)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                            ),
+                                            child: Text(
+                                              l10n.interest_annual(
+                                                debt.tasaInteres.toString(),
+                                              ),
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                    color: AppColors.softText,
+                                                  ),
+                                            ),
+                                          ),
+                                        const SizedBox(height: 20),
+                                        Wrap(
+                                          alignment: WrapAlignment.spaceEvenly,
+                                          spacing: 8,
+                                          children: [
+                                            _buildActionButton(
+                                              Icons.payment_rounded,
+                                              l10n.pay,
+                                              AppColors.incomeGreen,
+                                              () => _showPayForm(debt),
+                                            ),
+                                            _buildActionButton(
+                                              Icons.edit_rounded,
+                                              l10n.edit,
+                                              AppColors.softText,
+                                              () => _showDebtForm(debt: debt),
+                                            ),
+                                            _buildActionButton(
+                                              Icons.delete_rounded,
+                                              l10n.delete,
+                                              AppColors.expenseRed,
+                                              () async {
+                                                await _controller.deleteDebt(
+                                                  debt.id!,
+                                                );
+                                                _loadDebts();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showDebtForm(),
