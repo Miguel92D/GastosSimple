@@ -8,7 +8,9 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.background,
       primaryColor: AppColors.primaryStart,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primaryStart,
+        brightness: Brightness.dark,
         primary: AppColors.primaryStart,
         secondary: AppColors.primaryEnd,
         surface: AppColors.cardBackground,
@@ -20,25 +22,38 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: TextStyle(
           color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.5,
         ),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w800,
+          fontSize: 32,
+          letterSpacing: -1.0,
         ),
         headlineMedium: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
+          fontSize: 24,
+          letterSpacing: -0.5,
         ),
-        bodyLarge: TextStyle(color: Colors.white),
-        bodyMedium: TextStyle(color: Color(0xFF8E8E93)),
+        bodyLarge: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        bodyMedium: TextStyle(color: Color(0xFF8E8E93), fontSize: 14),
       ),
       cardTheme: CardThemeData(
         color: AppColors.cardBackground,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: Colors.white.withOpacity(0.05)),
+        ),
       ),
     );
   }

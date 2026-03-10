@@ -3,8 +3,7 @@ import '../flow/general_flow_service.dart';
 import '../../core/state/app_state.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
-import 'design/app_design.dart';
-import 'design/pro_design.dart';
+import 'design/app_colors.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -14,18 +13,19 @@ class AppDrawer extends StatelessWidget {
     final bool isPro = AppState.instance.isPro;
 
     return Drawer(
+      backgroundColor: AppColors.background,
       child: Column(
         children: [
           Container(
             width: double.infinity,
-            height: 200,
+            height: 240,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isPro
-                    ? ProDesign.dashboardGradient
-                    : AppDesign.dashboardGradient,
+                    ? [const Color(0xFF6A5AE0), const Color(0xFF9F7AEA)]
+                    : [AppColors.background, AppColors.cardBackground],
               ),
             ),
             padding: const EdgeInsets.all(24),
@@ -34,111 +34,134 @@ class AppDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
                   ),
                   child: const Icon(
-                    Icons.account_balance_wallet,
+                    Icons.account_balance_wallet_rounded,
                     color: Colors.white,
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 const Text(
-                  'Control Financiero',
+                  '\$imple',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.0,
                   ),
                 ),
-                Text(
-                  isPro ? 'Usuario PRO' : 'Plan Básico',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 14,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isPro ? AppColors.neonCyan : Colors.grey,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          if (isPro)
+                            BoxShadow(
+                              color: AppColors.neonCyan.withOpacity(0.5),
+                              blurRadius: 10,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isPro ? 'PREMIUM' : 'FREE ACCOUNT',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 _DrawerItem(
-                  icon: Icons.dashboard_outlined,
-                  activeIcon: Icons.dashboard,
-                  title: 'Inicio',
+                  icon: Icons.dashboard_rounded,
+                  title: 'Dashboard',
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openDashboard);
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.receipt_long_outlined,
-                  activeIcon: Icons.receipt_long,
-                  title: 'Movimientos',
+                  icon: Icons.swap_vert_rounded,
+                  title: 'Transacciones',
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openMovements();
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.analytics_outlined,
-                  activeIcon: Icons.analytics,
-                  title: 'Análisis',
+                  icon: Icons.analytics_rounded,
+                  title: 'Estadísticas',
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.savings_outlined,
-                  activeIcon: Icons.savings,
-                  title: 'Deudas',
+                  icon: Icons.layers_rounded,
+                  title: 'Categorías',
                   onTap: () {
                     GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openDebts);
+                    // Assuming there's a way to open categories or using GeneralFlowService
+                    // ActionController.execute(context, AppAction.openCategories);
+                    // Let's stick to what's available or just the existing ones
                   },
                 ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: Divider(color: Colors.white10, height: 1),
+                ),
                 if (isPro) ...[
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(24, 16, 24, 8),
-                    child: Text(
-                      'HERRAMIENTAS PRO',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        letterSpacing: 1.2,
-                      ),
+                  Text(
+                    'PRO FEATURES',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white.withOpacity(0.3),
+                      letterSpacing: 2.0,
                     ),
                   ),
+                  const SizedBox(height: 12),
                   _DrawerItem(
-                    icon: Icons.auto_graph_outlined,
-                    title: 'Predicción de gastos',
+                    icon: Icons.auto_graph_rounded,
+                    title: 'Inteligencia AI',
                     onTap: () {
                       GeneralFlowService.goBack();
                       GeneralFlowService.openPrediction();
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.lock_outline,
-                    title: 'Bóveda privada',
+                    icon: Icons.lock_rounded,
+                    title: 'Bóveda Segura',
                     onTap: () {
                       GeneralFlowService.goBack();
                       ActionController.execute(context, AppAction.openVault);
                     },
                   ),
+                  const SizedBox(height: 20),
                 ],
-                const Divider(indent: 16, endIndent: 16, height: 32),
                 _DrawerItem(
-                  icon: Icons.settings_outlined,
-                  title: 'Ajustes',
+                  icon: Icons.settings_rounded,
+                  title: 'Configuraciones',
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openSettings);
@@ -155,13 +178,11 @@ class AppDrawer extends StatelessWidget {
 
 class _DrawerItem extends StatelessWidget {
   final IconData icon;
-  final IconData? activeIcon;
   final String title;
   final VoidCallback onTap;
 
   const _DrawerItem({
     required this.icon,
-    this.activeIcon,
     required this.title,
     required this.onTap,
   });

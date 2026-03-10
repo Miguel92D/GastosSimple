@@ -48,8 +48,8 @@ class AppFAB extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.3),
-            blurRadius: 15,
+            color: color.withOpacity(0.4),
+            blurRadius: 20,
             spreadRadius: 2,
           ),
         ],
@@ -60,7 +60,19 @@ class AppFAB extends StatelessWidget {
         backgroundColor: color,
         elevation: 0,
         shape: const CircleBorder(),
-        child: Icon(icon, color: Colors.white, size: 28),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [color, color.withOpacity(0.8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Icon(icon, color: Colors.white, size: 28),
+        ),
       ),
     );
   }

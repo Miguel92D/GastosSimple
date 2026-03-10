@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/design/app_colors.dart';
 
@@ -57,39 +58,60 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      glowColor: color,
-      padding: const EdgeInsets.all(16),
+      glowColor: color.withOpacity(0.15),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      borderRadius: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              border: Border.all(color: color.withValues(alpha: 0.2)),
-            ),
-            child: Icon(icon, color: color, size: 18),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          FittedBox(
-            child: Text(
-              "\$${amount.toStringAsFixed(0)}",
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w900,
-                fontSize: 22,
-                letterSpacing: -0.5,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: color.withOpacity(0.3), width: 1),
+                ),
+                child: Icon(icon, color: color, size: 16),
               ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          FittedBox(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  "\$",
+                  style: TextStyle(
+                    color: color.withOpacity(0.7),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Text(
+                  NumberFormat('#,###', 'es_ES').format(amount.abs()),
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

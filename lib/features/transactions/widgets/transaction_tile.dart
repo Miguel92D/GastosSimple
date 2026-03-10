@@ -56,26 +56,30 @@ class TransactionTile extends StatelessWidget {
     Widget tile = GestureDetector(
       onTap: onTap,
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        borderRadius: 20,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        borderRadius: 24,
+        glowColor: amountColor.withOpacity(0.05),
         child: Row(
           children: [
             // Icon Section
             Container(
-              height: 44,
-              width: 44,
+              height: 48,
+              width: 48,
               decoration: BoxDecoration(
-                color: amountColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: amountColor.withValues(alpha: 0.2)),
+                color: amountColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: amountColor.withOpacity(0.2),
+                  width: 1,
+                ),
               ),
               child: Icon(
                 _getCategoryIcon(transaction.category),
                 color: amountColor,
-                size: 22,
+                size: 24,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             // Info Section
             Expanded(
               child: Column(
@@ -88,17 +92,40 @@ class TransactionTile extends StatelessWidget {
                       transaction.category,
                     ),
                     style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
                       color: Colors.white,
+                      letterSpacing: -0.3,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    DateFormat('MMM d, yyyy').format(transaction.date),
-                    style: const TextStyle(color: Colors.white54, fontSize: 11),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        size: 10,
+                        color: Colors.white.withOpacity(0.4),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        DateFormat('MMM d, yyyy').format(transaction.date),
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (transaction.isRecurring) ...[
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.repeat_rounded,
+                          size: 12,
+                          color: AppColors.primaryEnd.withOpacity(0.6),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
@@ -113,18 +140,24 @@ class TransactionTile extends StatelessWidget {
                       ? '••••••'
                       : '$amountPrefix${CurrencyHelper.format(transaction.amount, context)}',
                   style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
                     color: amountColor,
+                    letterSpacing: -0.5,
                   ),
                 ),
-                if (transaction.isRecurring)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Icon(
-                      Icons.repeat_rounded,
-                      size: 12,
-                      color: Colors.white38,
+                if (transaction.note != null && transaction.note!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      transaction.note!,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.white.withOpacity(0.35),
+                        fontStyle: FontStyle.italic,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
               ],

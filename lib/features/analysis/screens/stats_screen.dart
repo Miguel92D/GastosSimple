@@ -54,17 +54,17 @@ class _StatsScreenState extends State<StatsScreen> {
 
     final List<Color> chartColors = [
       AppColors.primaryStart,
-      AppColors.primaryEnd,
-      const Color(0xFF4ADE80),
-      const Color(0xFFF87171),
+      AppColors.neonCyan,
+      AppColors.income,
+      AppColors.neonPurple,
+      AppColors.expense,
       const Color(0xFFFBBF24),
       const Color(0xFF2DD4BF),
       const Color(0xFFFB7185),
-      const Color(0xFFA78BFA),
     ];
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.history),
         centerTitle: true,
@@ -78,107 +78,171 @@ class _StatsScreenState extends State<StatsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 GlassCard(
-                  glowColor: AppColors.primaryStart,
+                  borderRadius: 32,
+                  glowColor: AppColors.primaryStart.withOpacity(0.1),
                   child: Column(
                     children: [
                       Text(
                         AppLocalizations.of(context)!.category_expenses,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 48),
                       if (catGastos.isEmpty)
                         Text(AppLocalizations.of(context)!.no_expenses_recorded)
                       else ...[
                         SizedBox(
-                          height: 200,
-                          child: PieChart(
-                            PieChartData(
-                              sectionsSpace: 4,
-                              centerSpaceRadius: 40,
-                              sections: catGastos.entries.map((e) {
-                                final index = catGastos.keys.toList().indexOf(
-                                  e.key,
-                                );
-                                final percentage =
-                                    (e.value / totalGastos) * 100;
-                                return PieChartSectionData(
-                                  value: e.value,
-                                  title: '${percentage.toStringAsFixed(0)}%',
-                                  color:
-                                      chartColors[index % chartColors.length],
-                                  radius: 50,
-                                  titleStyle: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                          height: 240,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "TOTAL",
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.5),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 2.0,
+                                    ),
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                  Text(
+                                    CurrencyHelper.format(totalGastos, context),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              PieChart(
+                                PieChartData(
+                                  sectionsSpace: 6,
+                                  centerSpaceRadius: 65,
+                                  sections: catGastos.entries.map((e) {
+                                    final index = catGastos.keys
+                                        .toList()
+                                        .indexOf(e.key);
+                                    final percentage =
+                                        (e.value / totalGastos) * 100;
+                                    return PieChartSectionData(
+                                      value: e.value,
+                                      title: '',
+                                      color:
+                                          chartColors[index %
+                                              chartColors.length],
+                                      radius: 20,
+                                      badgeWidget: _Badge(
+                                        '${percentage.toStringAsFixed(0)}%',
+                                        size: 40,
+                                        borderColor:
+                                            chartColors[index %
+                                                chartColors.length],
+                                      ),
+                                      badgePositionPercentageOffset: .98,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 56),
                         ...catGastos.entries.map((e) {
                           final index = catGastos.keys.toList().indexOf(e.key);
                           final percentage = e.value / totalGastos;
+                          final color = chartColors[index % chartColors.length];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.only(bottom: 24),
                             child: Column(
                               children: [
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                chartColors[index %
-                                                    chartColors.length],
-                                            shape: BoxShape.circle,
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: 32,
+                                            width: 32,
+                                            decoration: BoxDecoration(
+                                              color: color.withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: color.withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              Icons.layers_rounded,
+                                              size: 16,
+                                              color: color,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 12),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            L10nHelper.getLocalizedCategory(
+                                              context,
+                                              e.key,
+                                            ),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
                                         Text(
-                                          L10nHelper.getLocalizedCategory(
+                                          CurrencyHelper.format(
+                                            e.value,
                                             context,
-                                            e.key,
                                           ),
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 14,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${(percentage * 100).toStringAsFixed(1)}%',
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(
+                                              0.4,
+                                            ),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    Text(
-                                      CurrencyHelper.format(e.value, context),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 12),
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(10),
                                   child: LinearProgressIndicator(
                                     value: percentage,
-                                    backgroundColor: Colors.white.withValues(
-                                      alpha: 0.05,
+                                    backgroundColor: Colors.white.withOpacity(
+                                      0.05,
                                     ),
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      chartColors[index % chartColors.length],
+                                      color,
                                     ),
-                                    minHeight: 6,
+                                    minHeight: 8,
                                   ),
                                 ),
                               ],
@@ -191,6 +255,46 @@ class _StatsScreenState extends State<StatsScreen> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Badge extends StatelessWidget {
+  final String text;
+  final double size;
+  final Color borderColor;
+
+  const _Badge(this.text, {required this.size, required this.borderColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: PieChart.defaultDuration,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        shape: BoxShape.circle,
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: borderColor.withOpacity(0.3),
+            offset: const Offset(0, 3),
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(size * .15),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: size * .2,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ),

@@ -15,69 +15,92 @@ class BalanceCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       child: GlassCard(
-        glowColor: AppColors.primaryStart,
+        borderRadius: 24,
+        glowColor: AppColors.primaryStart.withOpacity(0.3),
         gradientColors: [
-          AppColors.primaryStart.withValues(alpha: 0.8),
-          AppColors.primaryEnd.withValues(alpha: 0.6),
+          AppColors.primaryStart.withOpacity(0.9),
+          AppColors.primaryEnd.withOpacity(0.7),
         ],
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  ((isVault || AppModeController.instance.isVault)
-                          ? "Balance privado"
-                          : "Balance mensual")
-                      .toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.white70,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ((isVault || AppModeController.instance.isVault)
+                              ? "Balance privado"
+                              : "Balance disponible")
+                          .toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.8),
+                        letterSpacing: 2.0,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('MMMM yyyy', 'es_ES').format(DateTime.now()),
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                Icon(
-                  isVault
-                      ? Icons.lock_outline_rounded
-                      : Icons.account_balance_wallet_rounded,
-                  color: Colors.white70,
-                  size: 20,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isVault
+                        ? Icons.lock_outline_rounded
+                        : Icons.account_balance_wallet_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              "\$${balance.toStringAsFixed(0)}",
-              style: const TextStyle(
-                fontSize: 52,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                letterSpacing: -1.5,
-                shadows: [
-                  Shadow(
-                    color: Colors.black26,
-                    offset: Offset(0, 4),
-                    blurRadius: 10,
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  "\$",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withOpacity(0.8),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.white24),
-              ),
-              child: Text(
-                DateFormat('MMMM yyyy').format(DateTime.now()),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
                 ),
+                const SizedBox(width: 4),
+                Text(
+                  NumberFormat('#,###', 'es_ES').format(balance.abs()),
+                  style: const TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: -1.0,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              height: 4,
+              width: 60,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ],
