@@ -92,78 +92,81 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl + 8,
-                ),
-                child: Text(
-                  l10n.quick_entry_question,
-                  style: AppTextStyles.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildActionCard(
-                    context: context,
-                    icon: Icons.add_rounded,
-                    color: AppColors.incomeGreen,
-                    onTap: () {
-                      ActionController.execute(
-                        context,
-                        AppAction.addIncome,
-                        arguments: {"isFromQuickEntry": true},
-                      );
-                      // Give it a small delay since action might be navigating
-                      Future.delayed(
-                        const Duration(milliseconds: 500),
-                        _loadBalance,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl + 8,
+                    ),
+                    child: Text(
+                      l10n.quick_entry_question,
+                      style: AppTextStyles.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xxl + 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildActionCard(
+                        context: context,
+                        icon: Icons.add_rounded,
+                        color: AppColors.incomeGreen,
+                        onTap: () {
+                          ActionController.execute(
+                            context,
+                            AppAction.addIncome,
+                            arguments: {"isFromQuickEntry": true},
+                          );
+                          // Give it a small delay since action might be navigating
+                          Future.delayed(
+                            const Duration(milliseconds: 500),
+                            _loadBalance,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: AppSpacing.xl + 8),
+                      _buildActionCard(
+                        context: context,
+                        icon: Icons.remove_rounded,
+                        color: AppColors.expenseRed,
+                        onTap: () {
+                          ActionController.execute(
+                            context,
+                            AppAction.addExpense,
+                            arguments: {"isFromQuickEntry": true},
+                          );
+                          Future.delayed(
+                            const Duration(milliseconds: 500),
+                            _loadBalance,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 48),
+                  // THE MOUTH
+                  AnimatedBuilder(
+                    animation: _mouthController,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        size: const Size(120, 40),
+                        painter: _MouthPainter(
+                          balance: _balance,
+                          animationValue: _mouthController.value,
+                        ),
                       );
                     },
                   ),
-                  const SizedBox(width: AppSpacing.xl + 8),
-                  _buildActionCard(
-                    context: context,
-                    icon: Icons.remove_rounded,
-                    color: AppColors.expenseRed,
-                    onTap: () {
-                      ActionController.execute(
-                        context,
-                        AppAction.addExpense,
-                        arguments: {"isFromQuickEntry": true},
-                      );
-                      Future.delayed(
-                        const Duration(milliseconds: 500),
-                        _loadBalance,
-                      );
-                    },
-                  ),
+                  const SizedBox(height: 64),
+                  _buildDashboardButton(context),
                 ],
               ),
-              const SizedBox(height: 40),
-              // THE MOUTH
-              AnimatedBuilder(
-                animation: _mouthController,
-                builder: (context, child) {
-                  return CustomPaint(
-                    size: const Size(120, 40),
-                    painter: _MouthPainter(
-                      balance: _balance,
-                      animationValue: _mouthController.value,
-                    ),
-                  );
-                },
-              ),
-              const Spacer(),
-              _buildDashboardButton(context),
-              const SizedBox(height: AppSpacing.xxl),
-            ],
+            ),
           ),
         ),
       ),
@@ -223,34 +226,45 @@ class _MouthPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Color color = balance >= 0
-        ? AppColors.incomeGreen
-        : AppColors.expenseRed;
+    final Color color;
+    final double curveDirection;
+    final bool isNeutral = balance == 0;
+
+    if (balance > 0) {
+      color = AppColors.incomeGreen;
+      curveDirection = 1.0; // Happy smile
+    } else if (balance < 0) {
+      color = AppColors.expenseRed;
+      curveDirection = -1.0; // Sad frown
+    } else {
+      color = AppColors.primaryPurple; // Coherent brand color
+      curveDirection = 0.0; // Neutral straight line
+    }
 
     final paint = Paint()
-      ..color = color.withOpacity(0.8 * animationValue)
+      ..color = color.withOpacity(0.9 * animationValue)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 4;
+      ..strokeWidth = 5;
 
-    // Neon Glow
+    // Neon Glow - Enhanced for neutral state to be more visible
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.2 * animationValue)
+      ..color = color.withOpacity((isNeutral ? 0.4 : 0.25) * animationValue)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 10
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      ..strokeWidth = isNeutral ? 14 : 12
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, isNeutral ? 10 : 8);
 
     final path = Path();
-    final double midY = size.height / 2;
-    // Curvature: positive balance = happy (downward arc), negative = sad (upward arc)
-    final double curveOffset = balance >= 0 ? size.height : -size.height;
-    final double currentCurve = curveOffset * animationValue;
+    final double midY = size.height * 0.4;
+
+    final double currentCurveHeight =
+        (size.height * 0.6) * curveDirection * animationValue;
 
     path.moveTo(0, midY);
     path.quadraticBezierTo(
       size.width / 2,
-      midY + currentCurve,
+      midY + currentCurveHeight,
       size.width,
       midY,
     );
