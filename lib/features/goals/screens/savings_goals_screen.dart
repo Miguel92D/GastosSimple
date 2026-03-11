@@ -44,6 +44,20 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
     );
   }
 
+  void _showAddMoneyModal(Goal goal) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _AddMoneyModal(
+        goal: goal,
+        onAdd: (amount) async {
+          await _controller.addMoneyToGoal(goal.id!, amount);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +91,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                         goal: goal,
                         onEdit: () => _showCreateGoalModal(goal),
                         onDelete: () => _controller.deleteGoal(goal.id!),
+                        onAddMoney: () => _showAddMoneyModal(goal),
                       ),
                     )),
                 if (_controller.goals.isEmpty)
@@ -172,11 +187,13 @@ class _GoalItemCard extends StatelessWidget {
   final Goal goal;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onAddMoney;
 
   const _GoalItemCard({
     required this.goal,
     required this.onEdit,
     required this.onDelete,
+    required this.onAddMoney,
   });
 
   @override
@@ -205,9 +222,16 @@ class _GoalItemCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            Text(
-              '${CurrencyHelper.format(goal.currentAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
-              style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w700),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: goal.currentAmount),
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, _) {
+                return Text(
+                  '${CurrencyHelper.format(value, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
+                  style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w700),
+                );
+              },
             ),
             const SizedBox(height: AppSpacing.sm),
             Stack(
@@ -250,7 +274,49 @@ class _GoalItemCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Necesitas ahorrar:', style: AppTextStyles.subLabel),
+                    Text(
+                      '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / mes',
+                      style: AppTextStyles.bodyMain.copyWith(
+                        color: AppColors.incomeGreen,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                TextButton(
+                  onPressed: onAddMoney,
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppColors.primaryPurple.withOpacity(0.1),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.add_rounded, size: 18, color: AppColors.primaryPurple),
+                      const SizedBox(width: 4),
+                      Text(
+                        '+ Agregar dinero',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.primaryPurple,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Meta estimada: ${dateFormat.format(goal.targetDate)}',
               style: AppTextStyles.bodySmall,
@@ -426,6 +492,7 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                       currentAmount: widget.goal?.currentAmount ?? 0,
                       targetDate: _targetDate,
                       icon: _selectedIcon,
+                      createdAt: widget.goal?.createdAt ?? DateTime.now(),
                     ));
                     Navigator.pop(context);
                   }
@@ -493,6 +560,93 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
         border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: child,
+    );
+  }
+}
+
+class _AddMoneyModal extends StatefulWidget {
+  final Goal goal;
+  final Function(double) onAdd;
+
+  const _AddMoneyModal({required this.goal, required this.onAdd});
+
+  @override
+  State<_AddMoneyModal> createState() => _AddMoneyModalState();
+}
+
+class _AddMoneyModalState extends State<_AddMoneyModal> {
+  final _amountController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: GlassCard(
+            borderRadius: 30,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Agregar dinero a ${widget.goal.name}',
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Monto a agregar', style: AppTextStyles.subLabel),
+                  const SizedBox(height: AppSpacing.sm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    ),
+                    child: TextField(
+                      controller: _amountController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      autofocus: true,
+                      style: AppTextStyles.bodyMain,
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+                        border: InputBorder.none,
+                        prefixText: CurrencyHelper.getSymbol(context) + ' ',
+                        prefixStyle: AppTextStyles.bodyMain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  ElevatedButton(
+                    onPressed: () {
+                      final amount = double.tryParse(_amountController.text) ?? 0;
+                      if (amount > 0) {
+                        widget.onAdd(amount);
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
+                    ),
+                    child: const Text('Agregar', style: AppTextStyles.buttonLabel),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

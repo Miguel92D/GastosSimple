@@ -18,6 +18,7 @@ class _DebtScreenState extends State<DebtScreen> {
   final _controller = DebtController.instance;
   List<Debt> _debts = [];
   bool _isLoading = true;
+  String _selectedStrategy = 'none'; // 'avalanche', 'snowball', 'none'
 
   @override
   void initState() {
@@ -30,9 +31,25 @@ class _DebtScreenState extends State<DebtScreen> {
     if (mounted) {
       setState(() {
         _debts = debts;
+        _sortDebts();
         _isLoading = false;
       });
     }
+  }
+
+  void _sortDebts() {
+    if (_selectedStrategy == 'avalanche') {
+      _debts.sort((a, b) => (b.tasaInteres ?? 0).compareTo(a.tasaInteres ?? 0));
+    } else if (_selectedStrategy == 'snowball') {
+      _debts.sort((a, b) => a.remaining.compareTo(b.remaining));
+    }
+  }
+
+  void _selectStrategy(String strategy) {
+    setState(() {
+      _selectedStrategy = strategy;
+      _sortDebts();
+    });
   }
 
   void _showInfoDialog(BuildContext context, String title, String content) {
@@ -436,6 +453,8 @@ class _DebtScreenState extends State<DebtScreen> {
             desc: "Ahorra intereses",
             icon: Icons.bolt_rounded,
             color: Colors.blueAccent,
+            isSelected: _selectedStrategy == 'avalanche',
+            onTap: () => _selectStrategy('avalanche'),
           ),
           const SizedBox(height: 12),
           _buildStrategyCard(
@@ -443,6 +462,8 @@ class _DebtScreenState extends State<DebtScreen> {
             desc: "Aumenta motivación",
             icon: Icons.ac_unit_rounded,
             color: AppColors.primaryPurple,
+            isSelected: _selectedStrategy == 'snowball',
+            onTap: () => _selectStrategy('snowball'),
           ),
           const SizedBox(height: 24),
           Text(
@@ -463,64 +484,102 @@ class _DebtScreenState extends State<DebtScreen> {
     required String desc,
     required IconData icon,
     required Color color,
+    required bool isSelected,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
-        gradient: LinearGradient(
-          colors: [color.withOpacity(0.15), color.withOpacity(0.02)],
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryPurple : color.withOpacity(0.3),
+            width: isSelected ? 2 : 1.5,
+          ),
+          gradient: LinearGradient(
+            colors: isSelected
+                ? [
+                    AppColors.primaryPurple.withOpacity(0.1),
+                    AppColors.primaryPurple.withOpacity(0.05)
+                  ]
+                : [color.withOpacity(0.15), color.withOpacity(0.02)],
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primaryPurple.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
+              : [],
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              shape: BoxShape.circle,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
-                ),
-                Text(
-                  desc,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.softText,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.glassSurface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.cardBorder),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  "Elegir",
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    desc,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.softText,
+                    ),
                   ),
-                ),
-                const Icon(Icons.chevron_right_rounded, size: 16),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primaryPurple.withOpacity(0.12)
+                    : AppColors.glassSurface,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? AppColors.primaryPurple : AppColors.cardBorder,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Center(
+                child: isSelected
+                    ? Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryPurple,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryPurple.withOpacity(0.5),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      )
+                    : const Icon(Icons.chevron_right_rounded,
+                        size: 20, color: AppColors.softText),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

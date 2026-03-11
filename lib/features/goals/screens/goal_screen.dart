@@ -124,6 +124,7 @@ class _GoalScreenState extends State<GoalScreen> {
                   currentAmount: goal?.currentAmount ?? 0.0,
                   targetDate: DateTime.now(),
                   icon: '🚗',
+                  createdAt: goal?.createdAt ?? DateTime.now(),
                 );
                 await _controller.saveGoal(newGoal);
                 if (!context.mounted) return;

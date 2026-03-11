@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 10, // Added target_date and icon to goals
+      version: 11, // Added created_at to goals
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -56,7 +56,8 @@ CREATE TABLE goals (
   target_amount $numType,
   saved_amount $numType DEFAULT 0,
   target_date TEXT,
-  icon TEXT
+  icon TEXT,
+  created_at TEXT
 )
 ''');
 
@@ -194,10 +195,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         debugPrint('Migration error: $e');
       }
     }
-    if (oldVersion < 10) {
+    if (oldVersion < 11) {
       try {
-        await db.execute('ALTER TABLE goals ADD COLUMN target_date TEXT');
-        await db.execute('ALTER TABLE goals ADD COLUMN icon TEXT');
+        await db.execute('ALTER TABLE goals ADD COLUMN created_at TEXT');
       } catch (_) {}
     }
   }
@@ -289,6 +289,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'saved_amount': map['currentAmount'],
         'target_date': map['targetDate'],
         'icon': map['icon'],
+        'created_at': map['createdAt'],
       });
     } catch (e) {
       debugPrint('DB Error (insertGoal): $e');
@@ -310,6 +311,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
               ? DateTime.parse(json['target_date'] as String)
               : DateTime.now(),
           icon: (json['icon'] as String?) ?? '🚗',
+          createdAt: json['created_at'] != null
+              ? DateTime.parse(json['created_at'] as String)
+              : DateTime.now(),
         );
       }).toList();
     } catch (e) {
@@ -330,6 +334,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
           'saved_amount': map['currentAmount'],
           'target_date': map['targetDate'],
           'icon': map['icon'],
+          'created_at': map['createdAt'],
         },
         where: 'id = ?',
         whereArgs: [goal.id],

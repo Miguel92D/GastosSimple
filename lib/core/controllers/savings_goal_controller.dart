@@ -56,4 +56,20 @@ class SavingsGoalController extends ChangeNotifier {
     if (goal.targetAmount <= 0) return 0.0;
     return (goal.currentAmount / goal.targetAmount).clamp(0.0, 1.0);
   }
+
+  double calculateMonthlySaving(Goal goal) {
+    final remainingAmount = goal.targetAmount - goal.currentAmount;
+    if (remainingAmount <= 0) return 0.0;
+
+    final today = DateTime.now();
+    final targetDate = goal.targetDate;
+
+    // Calculate months remaining
+    int monthsRemaining = (targetDate.year - today.year) * 12 + (targetDate.month - today.month);
+    
+    // If target date is in the same month but after today, or in the past
+    if (monthsRemaining <= 0) return remainingAmount;
+
+    return remainingAmount / monthsRemaining;
+  }
 }

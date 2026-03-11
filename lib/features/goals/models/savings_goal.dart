@@ -5,6 +5,7 @@ class SavingsGoal {
   final double targetAmount;
   final DateTime targetDate;
   final String icon;
+  final DateTime createdAt;
 
   SavingsGoal({
     this.id,
@@ -13,6 +14,7 @@ class SavingsGoal {
     required this.targetAmount,
     required this.targetDate,
     required this.icon,
+    required this.createdAt,
   });
 
   double get progress => (currentAmount / targetAmount).clamp(0.0, 1.0);
@@ -25,6 +27,7 @@ class SavingsGoal {
       'targetAmount': targetAmount,
       'targetDate': targetDate.toIso8601String(),
       'icon': icon,
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 
@@ -36,6 +39,9 @@ class SavingsGoal {
       targetAmount: map['targetAmount'],
       targetDate: DateTime.parse(map['targetDate']),
       icon: map['icon'],
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'])
+          : DateTime.now(),
     );
   }
 
@@ -46,6 +52,7 @@ class SavingsGoal {
     double? targetAmount,
     DateTime? targetDate,
     String? icon,
+    DateTime? createdAt,
   }) {
     return SavingsGoal(
       id: id ?? this.id,
@@ -54,6 +61,7 @@ class SavingsGoal {
       targetAmount: targetAmount ?? this.targetAmount,
       targetDate: targetDate ?? this.targetDate,
       icon: icon ?? this.icon,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
