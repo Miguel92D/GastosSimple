@@ -157,29 +157,32 @@ class _TransactionTileState extends State<TransactionTile>
             ),
           ),
           const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.hideAmount
-                    ? '••••••'
-                    : '$amountPrefix${CurrencyHelper.format(widget.transaction.amount, context)}',
-                style: AppTextStyles.cardTitle.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                  color: amountColor,
-                ),
-              ),
-              if (widget.transaction.note != null &&
-                  widget.transaction.note!.isNotEmpty)
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  widget.transaction.note!,
-                  style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
-                  maxLines: 1,
+                  widget.hideAmount
+                      ? '••••••'
+                      : '$amountPrefix${CurrencyHelper.format(widget.transaction.amount, context)}',
+                  style: AppTextStyles.cardTitle.copyWith(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: amountColor,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
-            ],
+                if (widget.transaction.note != null &&
+                    widget.transaction.note!.isNotEmpty)
+                  Text(
+                    widget.transaction.note!,
+                    style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
           ),
         ],
       ),

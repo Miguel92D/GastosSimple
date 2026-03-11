@@ -164,10 +164,60 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     GeneralFlowService.openGoals();
                   },
                 ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: AnimatedBuilder(
+                    animation: _shimmerController,
+                    builder: (context, child) {
+                      return ShaderMask(
+                        shaderCallback: (bounds) {
+                          return LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            stops: [
+                              _shimmerController.value - 0.2,
+                              _shimmerController.value,
+                              _shimmerController.value + 0.2,
+                            ],
+                            colors: [
+                              const Color(0xFFD4AF37),
+                              const Color(0xFFFFFACD).withOpacity(0.9),
+                              const Color(0xFFD4AF37),
+                            ],
+                          ).createShader(bounds);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.8),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: const Text(
+                            'PRO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 12,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
                 _DrawerItem(
                   icon: Icons.auto_awesome_rounded,
                   title: 'Inteligencia AI',
-                  isPro: true,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openPrediction();
@@ -176,7 +226,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 _DrawerItem(
                   icon: Icons.account_balance_rounded,
                   title: 'Deudas',
-                  isPro: true,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openDebts();
@@ -185,7 +234,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 _DrawerItem(
                   icon: Icons.lock_rounded,
                   title: 'Bóveda',
-                  isPro: true,
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openVault);
@@ -284,13 +332,11 @@ class _DrawerItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final bool isPro;
 
   const _DrawerItem({
     required this.icon,
     required this.title,
     required this.onTap,
-    this.isPro = false,
   });
 
   @override
@@ -303,34 +349,12 @@ class _DrawerItem extends StatelessWidget {
           size: 22,
           color: AppColors.softText.withOpacity(0.7),
         ),
-        title: Row(
-          children: [
-            Text(
-              title,
-              style: AppTextStyles.bodyMain.copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (isPro) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  gradient: AppGradients.primaryGradient,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text(
-                  'PRO',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
-          ],
+        title: Text(
+          title,
+          style: AppTextStyles.bodyMain.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onTap: onTap,
