@@ -264,7 +264,7 @@ class _GoalItemCard extends StatelessWidget {
                   icon: const Icon(Icons.edit_outlined, size: 16),
                   label: const Text('Editar'),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.softText,
+                    foregroundColor: AppColors.primaryPurple,
                     textStyle: AppTextStyles.bodySmall,
                   ),
                 ),
@@ -316,18 +316,21 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: GlassCard(
-        borderRadius: 30,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: GlassCard(
+            borderRadius: 30,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
               Text(
                 widget.goal == null ? 'Nueva Meta' : 'Editar Meta',
                 style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
@@ -443,8 +446,10 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildFieldLabel(String label) {
     return Text(label, style: AppTextStyles.subLabel);
