@@ -269,10 +269,15 @@ class _DebtScreenState extends State<DebtScreen> {
         backgroundColor: Colors.transparent,
         centerTitle: true,
       ),
+      floatingActionButton: _buildAddDebtFab(context),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: _buildBottomActionButton(context, l10n),
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -280,11 +285,37 @@ class _DebtScreenState extends State<DebtScreen> {
                   const SizedBox(height: 24),
                   _buildStrategySection(context),
                   const SizedBox(height: 32),
-                  _buildBottomActionButton(context, l10n),
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildAddDebtFab(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8), // Pequeño ajuste sobre el botón inferior
+      child: GlassCard(
+        width: 56,
+        height: 56,
+        borderRadius: 18,
+        padding: EdgeInsets.zero,
+        glowColor: AppColors.primaryPurple.withOpacity(0.3),
+        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.4), width: 2.0),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _showDebtForm(),
+            borderRadius: BorderRadius.circular(18),
+            child: const Center(
+              child: Icon(
+                Icons.add_rounded,
+                color: AppColors.primaryPurple,
+                size: 28,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -586,13 +617,21 @@ class _DebtScreenState extends State<DebtScreen> {
 
   Widget _buildBottomActionButton(BuildContext context, AppLocalizations l10n) {
     return GestureDetector(
-      onTap: () => _showDebtForm(),
+      onTap: () {
+        // En el futuro esto podría abrir un selector de deuda para pagar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Toca una deuda arriba para gestionar sus pagos"),
+            backgroundColor: AppColors.primaryPurple,
+          ),
+        );
+      },
       child: GlassCard(
-        height: 64,
-        borderRadius: 32,
+        height: 60,
+        borderRadius: 30,
         padding: EdgeInsets.zero,
         glowColor: AppColors.primaryPurple.withOpacity(0.3),
-        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.5)),
+        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.5), width: 1.5),
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -603,14 +642,15 @@ class _DebtScreenState extends State<DebtScreen> {
                   color: AppColors.primaryPurple,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.add, color: Colors.white, size: 20),
+                child: const Icon(Icons.payments_rounded, color: Colors.white, size: 18),
               ),
               const SizedBox(width: 12),
               Text(
-                "Agregar pago",
+                "Registrar Pago",
                 style: AppTextStyles.buttonLabel.copyWith(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
