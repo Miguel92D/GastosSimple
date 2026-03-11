@@ -12,6 +12,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 
 class QuickEntryScreen extends StatefulWidget {
   const QuickEntryScreen({super.key});
@@ -20,11 +21,36 @@ class QuickEntryScreen extends StatefulWidget {
   State<QuickEntryScreen> createState() => _QuickEntryScreenState();
 }
 
-class _QuickEntryScreenState extends State<QuickEntryScreen> {
+class _QuickEntryScreenState extends State<QuickEntryScreen>
+    with SingleTickerProviderStateMixin {
+  double _balance = 0;
+  late AnimationController _mouthController;
+  final DashboardController _dashboardController = DashboardController();
+
   @override
   void initState() {
     super.initState();
+    _mouthController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..forward();
     _checkPendingAction();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    final balance = await _dashboardController.getBalance(false);
+    if (mounted) {
+      setState(() {
+        _balance = balance;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _mouthController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkPendingAction() async {
@@ -88,24 +114,51 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                     context: context,
                     icon: Icons.add_rounded,
                     color: AppColors.incomeGreen,
-                    onTap: () => ActionController.execute(
-                      context,
-                      AppAction.addIncome,
-                      arguments: {"isFromQuickEntry": true},
-                    ),
+                    onTap: () {
+                      ActionController.execute(
+                        context,
+                        AppAction.addIncome,
+                        arguments: {"isFromQuickEntry": true},
+                      );
+                      // Give it a small delay since action might be navigating
+                      Future.delayed(
+                        const Duration(milliseconds: 500),
+                        _loadBalance,
+                      );
+                    },
                   ),
                   const SizedBox(width: AppSpacing.xl + 8),
                   _buildActionCard(
                     context: context,
                     icon: Icons.remove_rounded,
                     color: AppColors.expenseRed,
-                    onTap: () => ActionController.execute(
-                      context,
-                      AppAction.addExpense,
-                      arguments: {"isFromQuickEntry": true},
-                    ),
+                    onTap: () {
+                      ActionController.execute(
+                        context,
+                        AppAction.addExpense,
+                        arguments: {"isFromQuickEntry": true},
+                      );
+                      Future.delayed(
+                        const Duration(milliseconds: 500),
+                        _loadBalance,
+                      );
+                    },
                   ),
                 ],
+              ),
+              const SizedBox(height: 40),
+              // THE MOUTH
+              AnimatedBuilder(
+                animation: _mouthController,
+                builder: (context, child) {
+                  return CustomPaint(
+                    size: const Size(120, 40),
+                    painter: _MouthPainter(
+                      balance: _balance,
+                      animationValue: _mouthController.value,
+                    ),
+                  );
+                },
               ),
               const Spacer(),
               _buildDashboardButton(context),
@@ -160,4 +213,54 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
       ),
     );
   }
+}
+
+class _MouthPainter extends CustomPainter {
+  final double balance;
+  final double animationValue;
+
+  _MouthPainter({required this.balance, required this.animationValue});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Color color = balance >= 0
+        ? AppColors.incomeGreen
+        : AppColors.expenseRed;
+
+    final paint = Paint()
+      ..color = color.withOpacity(0.8 * animationValue)
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 4;
+
+    // Neon Glow
+    final glowPaint = Paint()
+      ..color = color.withOpacity(0.2 * animationValue)
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 10
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+
+    final path = Path();
+    final double midY = size.height / 2;
+    // Curvature: positive balance = happy (downward arc), negative = sad (upward arc)
+    final double curveOffset = balance >= 0 ? size.height : -size.height;
+    final double currentCurve = curveOffset * animationValue;
+
+    path.moveTo(0, midY);
+    path.quadraticBezierTo(
+      size.width / 2,
+      midY + currentCurve,
+      size.width,
+      midY,
+    );
+
+    canvas.drawPath(path, glowPaint);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MouthPainter oldDelegate) =>
+      oldDelegate.balance != balance ||
+      oldDelegate.animationValue != animationValue;
 }
