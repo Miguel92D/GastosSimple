@@ -147,11 +147,15 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
         padding: EdgeInsets.zero,
         glowColor: AppColors.primaryPurple.withOpacity(0.4),
         border: Border.all(
-          color: AppColors.primaryPurple.withOpacity(0.4),
+          color: AppColors.primaryPurple.withOpacity(0.5),
           width: 2.0,
         ),
         child: const Center(
-          child: Icon(Icons.grid_view_rounded, color: Colors.white, size: 32),
+          child: Icon(
+            Icons.grid_view_rounded,
+            color: AppColors.primaryPurple,
+            size: 32,
+          ),
         ),
       ),
     );
