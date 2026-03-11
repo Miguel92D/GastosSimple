@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/currency_helper.dart';
@@ -16,7 +17,9 @@ class PredictionScreen extends StatefulWidget {
   State<PredictionScreen> createState() => _PredictionScreenState();
 }
 
-class _PredictionScreenState extends State<PredictionScreen> {
+class _PredictionScreenState extends State<PredictionScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _waveController;
   bool _isLoading = true;
   double _currentIncome = 0;
   double _currentExpense = 0;
@@ -28,12 +31,17 @@ class _PredictionScreenState extends State<PredictionScreen> {
   @override
   void initState() {
     super.initState();
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
     TransactionNotifier.instance.addListener(_calculatePrediction);
     _calculatePrediction();
   }
 
   @override
   void dispose() {
+    _waveController.dispose();
     TransactionNotifier.instance.removeListener(_calculatePrediction);
     super.dispose();
   }
@@ -145,7 +153,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
   Widget _buildProjectionCard(AppLocalizations l10n, bool isNegative) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: AppGradients.primaryGradient,
         borderRadius: BorderRadius.circular(30),
@@ -157,37 +164,51 @@ class _PredictionScreenState extends State<PredictionScreen> {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Text(
-            l10n.prediction.toUpperCase(),
-            style: AppTextStyles.subLabel.copyWith(
-              color: Colors.white.withOpacity(0.7),
-              letterSpacing: 2.0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: _waveController,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _WavePainter(_waveController.value),
+                  );
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          _buildProjectionRow(
-            "Gasto estimado fin de mes",
-            _predictedExpense,
-            AppColors.expenseRed,
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Opacity(
-              opacity: 0.2,
-              child: Divider(color: Colors.white, height: 1, thickness: 0.5),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Text(
+                    l10n.prediction.toUpperCase(),
+                    style: AppTextStyles.subLabel.copyWith(
+                      color: Colors.white.withOpacity(0.7),
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildProjectionRow(
+                    "Gasto estimado fin de mes",
+                    _predictedExpense,
+                    AppColors.expenseRed,
+                  ),
+                  const SizedBox(height: 32),
+                  _buildProjectionRow(
+                    "Balance estimado",
+                    _predictedBalance,
+                    _predictedBalance >= 0
+                        ? AppColors.incomeGreen
+                        : AppColors.expenseRed,
+                    large: true,
+                  ),
+                ],
+              ),
             ),
-          ),
-          _buildProjectionRow(
-            "Balance estimado",
-            _predictedBalance,
-            _predictedBalance >= 0
-                ? AppColors.incomeGreen
-                : AppColors.expenseRed,
-            large: true,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -303,4 +324,76 @@ class _PredictionScreenState extends State<PredictionScreen> {
       ],
     );
   }
+}
+
+class _WavePainter extends CustomPainter {
+  final double animationValue;
+
+  _WavePainter(this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+
+    final path = Path();
+    final double yCenter = size.height * 0.52;
+    final double amplitude = 18.0;
+
+    path.moveTo(0, yCenter);
+
+    for (double x = 0; x <= size.width; x += 1) {
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) + (animationValue * 2 * math.pi);
+      final double y = yCenter + amplitude * math.sin(waveExpression);
+      path.lineTo(x, y);
+    }
+
+    canvas.drawPath(path, paint);
+
+    // Draw secondary fainter line
+    final secondaryPaint = Paint()
+      ..color = Colors.white.withOpacity(0.05)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+
+    final secondaryPath = Path();
+    secondaryPath.moveTo(0, yCenter + 15);
+    for (double x = 0; x <= size.width; x += 1) {
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) - (animationValue * 2 * math.pi);
+      final double y =
+          yCenter + 15 + (amplitude * 0.6) * math.cos(waveExpression);
+      secondaryPath.lineTo(x, y);
+    }
+    canvas.drawPath(secondaryPath, secondaryPaint);
+
+    // Draw glowing dots along the main path
+    final dotPaint = Paint()
+      ..color = Colors.white.withOpacity(0.25)
+      ..style = PaintingStyle.fill;
+
+    final glowPaint = Paint()
+      ..color = Colors.white.withOpacity(0.05)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+
+    for (int i = 1; i < 4; i++) {
+      final x = (size.width / 4) * i;
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) + (animationValue * 2 * math.pi);
+      final double y = yCenter + amplitude * math.sin(waveExpression);
+
+      canvas.drawCircle(Offset(x, y), 5, glowPaint);
+      canvas.drawCircle(Offset(x, y), 2.5, dotPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavePainter oldDelegate) =>
+      oldDelegate.animationValue != animationValue;
 }
