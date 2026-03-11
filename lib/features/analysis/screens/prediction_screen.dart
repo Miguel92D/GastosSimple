@@ -121,13 +121,20 @@ class _PredictionScreenState extends State<PredictionScreen> {
         children: [
           Text(
             l10n.current_balance.toUpperCase(),
-            style: AppTextStyles.subLabel,
+            style: AppTextStyles.subLabel.copyWith(
+              color: AppColors.softText.withOpacity(0.5),
+              letterSpacing: 2.0,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildRow(l10n.income, _currentIncome, AppColors.incomeGreen),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(color: AppColors.cardBorder, height: 1),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(
+              color: AppColors.cardBorder,
+              height: 1,
+              thickness: 0.5,
+            ),
           ),
           _buildRow(l10n.expense, _currentExpense, AppColors.expenseRed),
         ],
@@ -144,8 +151,8 @@ class _PredictionScreenState extends State<PredictionScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryPurple.withOpacity(0.3),
-            blurRadius: 20,
+            color: AppColors.primaryPurple.withOpacity(0.2),
+            blurRadius: 30,
             offset: const Offset(0, 10),
           ),
         ],
@@ -155,23 +162,29 @@ class _PredictionScreenState extends State<PredictionScreen> {
           Text(
             l10n.prediction.toUpperCase(),
             style: AppTextStyles.subLabel.copyWith(
-              color: AppColors.textPrimary.withOpacity(0.7),
+              color: Colors.white.withOpacity(0.7),
+              letterSpacing: 2.0,
             ),
           ),
           const SizedBox(height: 24),
           _buildProjectionRow(
             "Gasto estimado fin de mes",
             _predictedExpense,
-            AppColors.textPrimary,
+            Colors.white,
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(color: AppColors.cardBorder, height: 1),
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Opacity(
+              opacity: 0.2,
+              child: Divider(color: Colors.white, height: 1, thickness: 0.5),
+            ),
           ),
           _buildProjectionRow(
             "Balance estimado",
             _predictedBalance,
-            isNegative ? Colors.orangeAccent : AppColors.incomeGreen,
+            isNegative
+                ? Colors.white
+                : Colors.white, // Both white for contrast on purple
             large: true,
           ),
         ],
@@ -180,24 +193,32 @@ class _PredictionScreenState extends State<PredictionScreen> {
   }
 
   Widget _buildWarningCard(AppLocalizations l10n) {
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.expenseRed.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.expenseRed.withOpacity(0.2)),
-      ),
+      borderRadius: 24,
+      glowColor: AppColors.expenseRed.withOpacity(0.1),
       child: Row(
         children: [
-          const Icon(Icons.warning_amber_rounded, color: AppColors.expenseRed),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.expenseRed.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.warning_amber_rounded,
+              color: AppColors.expenseRed,
+              size: 24,
+            ),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              "⚠️ Si continúas gastando a este ritmo terminarás el mes en negativo.",
-              style: AppTextStyles.bodyText.copyWith(
+              "Si continúas gastando a este ritmo terminarás el mes en negativo.",
+              style: AppTextStyles.bodyMain.copyWith(
                 color: AppColors.expenseRed,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
               ),
             ),
           ),
@@ -213,21 +234,28 @@ class _PredictionScreenState extends State<PredictionScreen> {
         Expanded(
           child: Text(
             label,
-            style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w600),
+            style: AppTextStyles.bodyMain.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary.withOpacity(0.8),
+            ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         Flexible(
-          child: Text(
-            AppState.instance.hideBalance
-                ? "••••••"
-                : CurrencyHelper.format(value, context),
-            style: AppTextStyles.cardTitle.copyWith(fontSize: 18, color: color),
-            textAlign: TextAlign.right,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              AppState.instance.hideBalance
+                  ? "••••••"
+                  : CurrencyHelper.format(value, context),
+              style: AppTextStyles.cardTitle.copyWith(
+                fontSize: 20,
+                color: color,
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.right,
+            ),
           ),
         ),
       ],
@@ -247,26 +275,29 @@ class _PredictionScreenState extends State<PredictionScreen> {
           child: Text(
             label,
             style: AppTextStyles.bodyMain.copyWith(
-              color: AppColors.textPrimary.withOpacity(0.9),
-              fontWeight: FontWeight.w600,
+              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w700,
+              fontSize: large ? 16 : 14,
             ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+            maxLines: 2,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         Flexible(
-          child: Text(
-            AppState.instance.hideBalance
-                ? "••••••"
-                : CurrencyHelper.format(value, context),
-            style: AppTextStyles.cardTitle.copyWith(
-              color: color,
-              fontSize: large ? 28 : 20,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              AppState.instance.hideBalance
+                  ? "••••••"
+                  : CurrencyHelper.format(value, context),
+              style: AppTextStyles.cardTitle.copyWith(
+                color: color,
+                fontSize: large ? 32 : 22,
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.right,
             ),
-            textAlign: TextAlign.right,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
           ),
         ),
       ],

@@ -106,25 +106,40 @@ class _StatsScreenState extends State<StatsScreen> {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "TOTAL",
-                                        style: AppTextStyles.subLabel,
+                                  Container(
+                                    width:
+                                        120, // Slightly less than 2x centerSpaceRadius
+                                    padding: const EdgeInsets.all(8),
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            "TOTAL",
+                                            style: AppTextStyles.subLabel
+                                                .copyWith(
+                                                  color: AppColors.softText
+                                                      .withOpacity(0.5),
+                                                  letterSpacing: 2.0,
+                                                ),
+                                          ),
+                                          Text(
+                                            AppState.instance.hideBalance
+                                                ? "••••••"
+                                                : CurrencyHelper.format(
+                                                    totalGastos,
+                                                    context,
+                                                  ),
+                                            style: AppTextStyles.balanceAmount
+                                                .copyWith(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        AppState.instance.hideBalance
-                                            ? "••••••"
-                                            : CurrencyHelper.format(
-                                                totalGastos,
-                                                context,
-                                              ),
-                                        style: AppTextStyles.cardTitle.copyWith(
-                                          fontSize: 24,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                   PieChart(
                                     PieChartData(
@@ -147,7 +162,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                             AppState.instance.hideBalance
                                                 ? "••%"
                                                 : '${percentage.toStringAsFixed(0)}%',
-                                            size: 40,
+                                            size: 48,
                                             borderColor:
                                                 chartColors[index %
                                                     chartColors.length],
@@ -222,7 +237,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                             Text(
                                               AppState.instance.hideBalance
                                                   ? "••%"
-                                                  : '${(percentage * 100).toStringAsFixed(1)}%',
+                                                  : '${(percentage * 100).toStringAsFixed(percentage * 100 == (percentage * 100).toInt() ? 0 : 1)}%',
                                               style: AppTextStyles.bodySmall,
                                             ),
                                           ],
@@ -291,10 +306,13 @@ class _Badge extends StatelessWidget {
       child: Center(
         child: Text(
           text,
+          textAlign: TextAlign.center,
+          maxLines: 1,
           style: AppTextStyles.bodySmall.copyWith(
-            fontSize: size * .2,
-            fontWeight: FontWeight.bold,
+            fontSize: size * 0.28,
+            fontWeight: FontWeight.w900,
             color: AppColors.textPrimary,
+            height: 1,
           ),
         ),
       ),

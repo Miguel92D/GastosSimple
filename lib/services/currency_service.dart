@@ -41,10 +41,11 @@ class CurrencyService extends ChangeNotifier {
       String numericPart = formatted
           .replaceAll(instance._currencySymbol, '')
           .trim();
-      return '${instance._currencySymbol}$numericPart';
+      final space = instance._currencySymbol.length > 1 ? ' ' : '';
+      return '${instance._currencySymbol}$space$numericPart';
     }
 
-    // If for some reason the symbol is missing, add it
-    return '${instance._currencySymbol}$formatted';
+    final space = instance._currencySymbol.length > 1 ? ' ' : '';
+    return '${instance._currencySymbol}$space$formatted';
   }
 }
