@@ -56,13 +56,21 @@ class AppScaffold extends StatelessWidget {
                 builder: (scaffoldContext) => GestureDetector(
                   onTap: () => Scaffold.of(scaffoldContext).openDrawer(),
                   child: GlassCard(
-                    borderRadius: 50,
-                    padding: const EdgeInsets.all(16),
-                    glowColor: AppColors.primaryPurple.withOpacity(0.3),
-                    child: const Icon(
-                      Icons.menu_rounded,
-                      color: Colors.white,
-                      size: 28,
+                    width: 56,
+                    height: 56,
+                    borderRadius: 18,
+                    padding: EdgeInsets.zero,
+                    glowColor: AppColors.primaryPurple.withOpacity(0.4),
+                    border: Border.all(
+                      color: AppColors.primaryPurple.withOpacity(0.4),
+                      width: 1.5,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.menu_rounded,
+                        color: Colors.white,
+                        size: 26,
+                      ),
                     ),
                   ),
                 ),

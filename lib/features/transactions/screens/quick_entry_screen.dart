@@ -130,9 +130,9 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
         width: 100,
         height: 100,
         padding: EdgeInsets.zero,
-        borderRadius: 50,
-        glowColor: color.withOpacity(0.2),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        borderRadius: 32,
+        glowColor: color.withOpacity(0.3),
+        border: Border.all(color: color.withOpacity(0.4), width: 2.0),
         child: Center(child: Icon(icon, color: color, size: 48)),
       ),
     );
@@ -142,14 +142,17 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
     return GestureDetector(
       onTap: () => ActionController.execute(context, AppAction.openDashboard),
       child: GlassCard(
-        borderRadius:
-            50, // Keep 50 for perfectly circular button feel or use AppRadius if suitable
-        padding: const EdgeInsets.all(AppSpacing.md),
-        glowColor: AppColors.primaryPurple.withOpacity(0.2),
-        child: const Icon(
-          Icons.grid_view_rounded,
-          color: Colors.white,
-          size: 32,
+        width: 80,
+        height: 80,
+        borderRadius: 32,
+        padding: EdgeInsets.zero,
+        glowColor: AppColors.primaryPurple.withOpacity(0.4),
+        border: Border.all(
+          color: AppColors.primaryPurple.withOpacity(0.4),
+          width: 2.0,
+        ),
+        child: const Center(
+          child: Icon(Icons.grid_view_rounded, color: Colors.white, size: 32),
         ),
       ),
     );

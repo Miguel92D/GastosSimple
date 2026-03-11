@@ -54,11 +54,11 @@ class AppFAB extends StatelessWidget {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.25),
-            blurRadius: 20,
+            color: color.withOpacity(0.35),
+            blurRadius: 15,
             spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
@@ -68,14 +68,17 @@ class AppFAB extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          customBorder: const CircleBorder(),
+          borderRadius: BorderRadius.circular(18),
           child: Ink(
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
+              borderRadius: BorderRadius.circular(18),
               color: color,
-              border: Border.all(color: AppColors.cardBorder, width: 1.0),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 2.0,
+              ),
             ),
-            child: Icon(icon, color: AppColors.textPrimary, size: 26),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
         ),
       ),
