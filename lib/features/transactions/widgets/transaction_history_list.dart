@@ -8,6 +8,7 @@ import '../../../../core/flow/transaction_flow_service.dart';
 import '../../../../core/ui/app_colors.dart';
 import '../../../../core/ui/app_text_styles.dart';
 import '../../../../core/state/app_state.dart';
+import '../../vault/controllers/vault_controller.dart';
 
 class TransactionHistoryList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -136,7 +137,10 @@ class TransactionHistoryList extends StatelessWidget {
                   onRefresh();
                 }
               },
-              onArchive: () {},
+              onArchive: () async {
+                await VaultController.moveToVault(transaction);
+                onRefresh();
+              },
               onTap: () => _showOptionsModal(context, transaction),
             );
           },

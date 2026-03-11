@@ -206,19 +206,19 @@ class _TransactionTileState extends State<TransactionTile>
             clipBehavior: Clip.antiAlias,
             child: Stack(
               children: [
-                // Archive Background (Left side)
+                // Private Vault Background (Left side - Swipe Right)
                 if (currentOffset > 0)
                   Positioned.fill(
                     child: Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 24),
                       decoration: BoxDecoration(
-                        color: AppColors.blue.withOpacity(0.4),
+                        color: AppColors.primaryPurple.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                       child: const Icon(
-                        Icons.archive_rounded,
-                        color: AppColors.blue,
+                        Icons.lock_rounded,
+                        color: AppColors.primaryPurple,
                         size: 28,
                       ),
                     ),
