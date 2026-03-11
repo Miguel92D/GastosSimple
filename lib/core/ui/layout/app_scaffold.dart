@@ -68,7 +68,7 @@ class AppScaffold extends StatelessWidget {
                     child: const Center(
                       child: Icon(
                         Icons.menu_rounded,
-                        color: Colors.white,
+                        color: AppColors.primaryPurple,
                         size: 26,
                       ),
                     ),

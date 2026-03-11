@@ -11,7 +11,6 @@ import '../../../core/controllers/app_action.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
-import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/glass_card.dart';
 
 class QuickEntryScreen extends StatefulWidget {

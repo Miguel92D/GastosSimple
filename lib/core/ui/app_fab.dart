@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../flow/transaction_flow_service.dart';
 import './app_colors.dart';
+import './glass_card.dart';
 
 class AppFAB extends StatelessWidget {
   final String mode;
@@ -50,36 +51,19 @@ class AppFAB extends StatelessWidget {
     required VoidCallback onPressed,
     required String heroTag,
   }) {
-    return Container(
+    return GlassCard(
       width: 56,
       height: 56,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.35),
-            blurRadius: 15,
-            spreadRadius: 1,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      borderRadius: 18,
+      padding: EdgeInsets.zero,
+      glowColor: color.withOpacity(0.3),
+      border: Border.all(color: color.withOpacity(0.4), width: 2.0),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(18),
-          child: Ink(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              color: color,
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 2.0,
-              ),
-            ),
-            child: Icon(icon, color: Colors.white, size: 28),
-          ),
+          child: Center(child: Icon(icon, color: color, size: 28)),
         ),
       ),
     );
