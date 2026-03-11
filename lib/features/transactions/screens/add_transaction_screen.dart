@@ -236,7 +236,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             left: AppSpacing.lg,
             right: AppSpacing.lg,
             top: AppSpacing.lg,
-            bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
+            bottom: AppSpacing.lg,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

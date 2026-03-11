@@ -96,104 +96,108 @@ class _DebtScreenState extends State<DebtScreen> {
             right: 24,
             top: 24,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBorder,
-                    borderRadius: BorderRadius.circular(2),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBorder,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                debt == null ? l10n.new_debt : l10n.edit_debt,
-                style: AppTextStyles.titleLarge,
-              ),
-              const SizedBox(height: 24),
-              _buildField(l10n.debt_name_label, nombreController),
-              _buildField(
-                l10n.total_amount,
-                montoTotalController,
-                keyboard: TextInputType.number,
-              ),
-              _buildField(
-                l10n.min_payment,
-                pagoMinimoController,
-                keyboard: TextInputType.number,
-              ),
-              _buildField(
-                l10n.interest_rate_optional,
-                tasaInteresController,
-                keyboard: TextInputType.number,
-                helpTitle: l10n.interest_rate_title,
-                helpDesc: l10n.interest_rate_desc,
-                context: context,
-              ),
-              _buildField(
-                l10n.card_closing_label,
-                diaCierreController,
-                keyboard: TextInputType.number,
-                helpTitle: l10n.card_closing_title,
-                helpDesc: l10n.card_closing_desc,
-                context: context,
-              ),
-              _buildField(
-                l10n.due_day_label,
-                fechaVencimientoController,
-                keyboard: TextInputType.number,
-                helpTitle: l10n.due_date_title,
-                helpDesc: l10n.due_date_desc,
-                context: context,
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () async {
-                  final newDebt = Debt(
-                    id: debt?.id,
-                    nombre: nombreController.text,
-                    montoTotal: double.tryParse(montoTotalController.text) ?? 0,
-                    pagoMinimo: double.tryParse(pagoMinimoController.text) ?? 0,
-                    tasaInteres: double.tryParse(tasaInteresController.text),
-                    fechaVencimiento: fechaVencimientoController.text,
-                    diaCierre: int.tryParse(diaCierreController.text),
-                    montoPagado: debt?.montoPagado ?? 0,
-                  );
-
-                  if (newDebt.diaCierre != null &&
-                      (newDebt.diaCierre! < 1 || newDebt.diaCierre! > 31)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context)!.closing_day_error,
-                        ),
-                      ),
+                const SizedBox(height: 24),
+                Text(
+                  debt == null ? l10n.new_debt : l10n.edit_debt,
+                  style: AppTextStyles.titleLarge,
+                ),
+                const SizedBox(height: 24),
+                _buildField(l10n.debt_name_label, nombreController),
+                _buildField(
+                  l10n.total_amount,
+                  montoTotalController,
+                  keyboard: TextInputType.number,
+                ),
+                _buildField(
+                  l10n.min_payment,
+                  pagoMinimoController,
+                  keyboard: TextInputType.number,
+                ),
+                _buildField(
+                  l10n.interest_rate_optional,
+                  tasaInteresController,
+                  keyboard: TextInputType.number,
+                  helpTitle: l10n.interest_rate_title,
+                  helpDesc: l10n.interest_rate_desc,
+                  context: context,
+                ),
+                _buildField(
+                  l10n.card_closing_label,
+                  diaCierreController,
+                  keyboard: TextInputType.number,
+                  helpTitle: l10n.card_closing_title,
+                  helpDesc: l10n.card_closing_desc,
+                  context: context,
+                ),
+                _buildField(
+                  l10n.due_day_label,
+                  fechaVencimientoController,
+                  keyboard: TextInputType.number,
+                  helpTitle: l10n.due_date_title,
+                  helpDesc: l10n.due_date_desc,
+                  context: context,
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () async {
+                    final newDebt = Debt(
+                      id: debt?.id,
+                      nombre: nombreController.text,
+                      montoTotal:
+                          double.tryParse(montoTotalController.text) ?? 0,
+                      pagoMinimo:
+                          double.tryParse(pagoMinimoController.text) ?? 0,
+                      tasaInteres: double.tryParse(tasaInteresController.text),
+                      fechaVencimiento: fechaVencimientoController.text,
+                      diaCierre: int.tryParse(diaCierreController.text),
+                      montoPagado: debt?.montoPagado ?? 0,
                     );
-                    return;
-                  }
 
-                  await _controller.saveDebt(newDebt);
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                  _loadDebts();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
-                  foregroundColor: AppColors.textPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    if (newDebt.diaCierre != null &&
+                        (newDebt.diaCierre! < 1 || newDebt.diaCierre! > 31)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)!.closing_day_error,
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    await _controller.saveDebt(newDebt);
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                    _loadDebts();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryPurple,
+                    foregroundColor: AppColors.textPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
+                  child: Text(l10n.save, style: AppTextStyles.buttonLabel),
                 ),
-                child: Text(l10n.save, style: AppTextStyles.buttonLabel),
-              ),
-              const SizedBox(height: 12),
-            ],
+                const SizedBox(height: 12),
+              ],
+            ),
           ),
         );
       },

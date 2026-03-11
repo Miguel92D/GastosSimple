@@ -54,6 +54,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           gradient: RadialGradient(
