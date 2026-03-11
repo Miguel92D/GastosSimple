@@ -6,8 +6,10 @@ import '../../../core/utils/l10n_helper.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
 
-class TransactionTile extends StatelessWidget {
+class TransactionTile extends StatefulWidget {
   final Transaction transaction;
   final VoidCallback? onDelete;
   final VoidCallback? onArchive;
@@ -22,6 +24,55 @@ class TransactionTile extends StatelessWidget {
     this.onTap,
     this.hideAmount = false,
   });
+
+  @override
+  State<TransactionTile> createState() => _TransactionTileState();
+}
+
+class _TransactionTileState extends State<TransactionTile>
+    with SingleTickerProviderStateMixin {
+  double _dragExtent = 0;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+    _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragExtent += details.delta.dx;
+    });
+  }
+
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    if (_dragExtent < -120 && widget.onDelete != null) {
+      widget.onDelete!();
+    } else if (_dragExtent > 120 && widget.onArchive != null) {
+      widget.onArchive!();
+    }
+
+    _animation = Tween<double>(
+      begin: _dragExtent,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward(from: 0).then((_) {
+      _dragExtent = 0;
+    });
+  }
 
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
@@ -50,149 +101,166 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isIncome = transaction.type == 'ingreso';
+    final isIncome = widget.transaction.type == 'ingreso';
     final amountColor = isIncome ? AppColors.incomeGreen : AppColors.expenseRed;
     final amountPrefix = isIncome ? '+' : '-';
 
-    Widget tile = GestureDetector(
-      onTap: onTap,
-      child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        borderRadius: 20,
-        // Remove glowColor to prevent dark shadow artifacts during swiping
-        child: Row(
-          children: [
-            Container(
-              height: 36,
-              width: 36,
-              decoration: BoxDecoration(
-                color: amountColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: amountColor.withOpacity(0.15),
-                  width: 1,
-                ),
-              ),
-              child: Icon(
-                _getCategoryIcon(transaction.category),
-                color: amountColor,
-                size: 18,
+    Widget tileContent = GlassCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      borderRadius: AppRadius.lg,
+      child: Row(
+        children: [
+          Container(
+            height: 36,
+            width: 36,
+            decoration: BoxDecoration(
+              color: amountColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: amountColor.withOpacity(0.15),
+                width: 1,
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    L10nHelper.getLocalizedCategory(
-                      context,
-                      transaction.category,
-                    ),
-                    style: AppTextStyles.cardTitle.copyWith(fontSize: 13),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    DateFormat('d MMM, yyyy').format(transaction.date),
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.softText.withOpacity(0.3),
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
+            child: Icon(
+              _getCategoryIcon(widget.transaction.category),
+              color: amountColor,
+              size: 18,
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  hideAmount
-                      ? '••••••'
-                      : '$amountPrefix${CurrencyHelper.format(transaction.amount, context)}',
-                  style: AppTextStyles.cardTitle.copyWith(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    color: amountColor,
+                  L10nHelper.getLocalizedCategory(
+                    context,
+                    widget.transaction.category,
+                  ),
+                  style: AppTextStyles.cardTitle.copyWith(fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  DateFormat('d MMM, yyyy').format(widget.transaction.date),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.softText.withOpacity(0.3),
+                    fontSize: 10,
                   ),
                 ),
-                if (transaction.note != null && transaction.note!.isNotEmpty)
-                  Text(
-                    transaction.note!,
-                    style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.hideAmount
+                    ? '••••••'
+                    : '$amountPrefix${CurrencyHelper.format(widget.transaction.amount, context)}',
+                style: AppTextStyles.cardTitle.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  color: amountColor,
+                ),
+              ),
+              if (widget.transaction.note != null &&
+                  widget.transaction.note!.isNotEmpty)
+                Text(
+                  widget.transaction.note!,
+                  style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+            ],
+          ),
+        ],
       ),
     );
 
-    if (onDelete == null && onArchive == null) {
-      return tile;
+    if (widget.onDelete == null && widget.onArchive == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        child: GestureDetector(onTap: widget.onTap, child: tileContent),
+      );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Dismissible(
-          key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
-          direction: DismissDirection.horizontal,
-          onDismissed: (direction) {
-            if (direction == DismissDirection.startToEnd && onArchive != null) {
-              onArchive!();
-            } else if (onDelete != null) {
-              onDelete!();
-            }
-          },
-          background: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.blue.withOpacity(0.4),
-                  AppColors.blue.withOpacity(0.15),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-            ),
-            child: const Icon(
-              Icons.archive_rounded,
-              color: AppColors.blue,
-              size: 28,
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        final currentOffset = _controller.isAnimating
+            ? _animation.value
+            : _dragExtent;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              children: [
+                // Archive Background (Left side)
+                if (currentOffset > 0)
+                  Positioned.fill(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.blue.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: const Icon(
+                        Icons.archive_rounded,
+                        color: AppColors.blue,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                // Delete Background (Right side)
+                if (currentOffset < 0)
+                  Positioned.fill(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.expenseRed.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: const Icon(
+                        Icons.delete_rounded,
+                        color: AppColors.expenseRed,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                // Moving Card
+                GestureDetector(
+                  onTap: widget.onTap,
+                  onHorizontalDragUpdate: _onHorizontalDragUpdate,
+                  onHorizontalDragEnd: _onHorizontalDragEnd,
+                  child: Transform.translate(
+                    offset: Offset(currentOffset, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.darkBackground,
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: tileContent,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          secondaryBackground: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: 24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.expenseRed.withOpacity(0.15),
-                  AppColors.expenseRed.withOpacity(0.4),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-            ),
-            child: const Icon(
-              Icons.delete_rounded,
-              color: AppColors.expenseRed,
-              size: 28,
-            ),
-          ),
-          child: tile,
-        ),
-      ),
+        );
+      },
     );
   }
 }
