@@ -170,7 +170,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
           _buildProjectionRow(
             "Gasto estimado fin de mes",
             _predictedExpense,
-            Colors.white,
+            AppColors.expenseRed,
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
