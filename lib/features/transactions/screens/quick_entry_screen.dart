@@ -82,37 +82,31 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildActionCard(
-                        context: context,
-                        icon: Icons.add_rounded,
-                        color: AppColors.incomeGreen,
-                        onTap: () => ActionController.execute(
-                          context,
-                          AppAction.addIncome,
-                          arguments: {"isFromQuickEntry": true},
-                        ),
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildActionCard(
+                    context: context,
+                    icon: Icons.add_rounded,
+                    color: AppColors.incomeGreen,
+                    onTap: () => ActionController.execute(
+                      context,
+                      AppAction.addIncome,
+                      arguments: {"isFromQuickEntry": true},
                     ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _buildActionCard(
-                        context: context,
-                        icon: Icons.remove_rounded,
-                        color: AppColors.expenseRed,
-                        onTap: () => ActionController.execute(
-                          context,
-                          AppAction.addExpense,
-                          arguments: {"isFromQuickEntry": true},
-                        ),
-                      ),
+                  ),
+                  const SizedBox(width: AppSpacing.xl + 8),
+                  _buildActionCard(
+                    context: context,
+                    icon: Icons.remove_rounded,
+                    color: AppColors.expenseRed,
+                    onTap: () => ActionController.execute(
+                      context,
+                      AppAction.addExpense,
+                      arguments: {"isFromQuickEntry": true},
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               const Spacer(),
               _buildDashboardButton(context),
@@ -133,20 +127,13 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
     return GestureDetector(
       onTap: onTap,
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
-        borderRadius: AppRadius.xl,
-        glowColor: color.withOpacity(0.12),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(AppSpacing.sm + 4),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-              border: Border.all(color: color.withOpacity(0.25), width: 1.5),
-            ),
-            child: Icon(icon, color: color, size: 40),
-          ),
-        ),
+        width: 100,
+        height: 100,
+        padding: EdgeInsets.zero,
+        borderRadius: 50,
+        glowColor: color.withOpacity(0.2),
+        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        child: Center(child: Icon(icon, color: color, size: 48)),
       ),
     );
   }
