@@ -16,6 +16,15 @@ class AppGradients {
     end: Alignment.bottomRight,
   );
 
+  static final progressGradient = LinearGradient(
+    colors: [
+      const Color(0xFF3DDC97), // incomeGreen
+      const Color(0xFF7B5CFF), // primaryPurple
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
   // Glassmorphism Base Gradient
   static const glassGradient = LinearGradient(
     colors: [

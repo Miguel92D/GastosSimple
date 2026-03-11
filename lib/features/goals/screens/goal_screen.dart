@@ -121,7 +121,9 @@ class _GoalScreenState extends State<GoalScreen> {
                   id: goal?.id,
                   name: name,
                   targetAmount: target,
-                  savedAmount: goal?.savedAmount ?? 0.0,
+                  currentAmount: goal?.currentAmount ?? 0.0,
+                  targetDate: DateTime.now(),
+                  icon: '🚗',
                 );
                 await _controller.saveGoal(newGoal);
                 if (!context.mounted) return;
@@ -174,7 +176,7 @@ class _GoalScreenState extends State<GoalScreen> {
                     itemCount: _goals.length,
                     itemBuilder: (context, index) {
                       final goal = _goals[index];
-                      final progress = (goal.savedAmount / goal.targetAmount)
+                      final progress = (goal.currentAmount / goal.targetAmount)
                           .clamp(0.0, 1.0);
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16),
@@ -227,7 +229,7 @@ class _GoalScreenState extends State<GoalScreen> {
                               Text(
                                 AppState.instance.hideBalance
                                     ? "•••••• / ••••••"
-                                    : '${CurrencyHelper.format(goal.savedAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
+                                    : '${CurrencyHelper.format(goal.currentAmount, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.softText,
                                 ),

@@ -158,7 +158,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.flag_rounded,
-                  title: 'Metas',
+                  title: 'Metas de ahorro',
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openGoals();

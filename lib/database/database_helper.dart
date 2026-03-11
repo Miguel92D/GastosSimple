@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 9, // Increment version for table renaming
+      version: 10, // Added target_date and icon to goals
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -54,7 +54,9 @@ CREATE TABLE goals (
   id $idType,
   name $textType,
   target_amount $numType,
-  saved_amount $numType DEFAULT 0
+  saved_amount $numType DEFAULT 0,
+  target_date TEXT,
+  icon TEXT
 )
 ''');
 
@@ -192,6 +194,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         debugPrint('Migration error: $e');
       }
     }
+    if (oldVersion < 10) {
+      try {
+        await db.execute('ALTER TABLE goals ADD COLUMN target_date TEXT');
+        await db.execute('ALTER TABLE goals ADD COLUMN icon TEXT');
+      } catch (_) {}
+    }
   }
 
   Future<int> insertTransaction(model.Transaction mov) async {
@@ -272,7 +280,16 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<int> insertGoal(Goal goal) async {
     try {
       final db = await instance.database;
-      return await db.insert('goals', goal.toMap());
+      final map = goal.toMap();
+      // Map naming convention if needed, though SavingsGoal.toMap() should be consistent
+      return await db.insert('goals', {
+        'id': map['id'],
+        'name': map['name'],
+        'target_amount': map['targetAmount'],
+        'saved_amount': map['currentAmount'],
+        'target_date': map['targetDate'],
+        'icon': map['icon'],
+      });
     } catch (e) {
       debugPrint('DB Error (insertGoal): $e');
       return -1;
@@ -283,7 +300,18 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await instance.database;
       final result = await db.query('goals');
-      return result.map((json) => Goal.fromMap(json)).toList();
+      return result.map((json) {
+        return Goal(
+          id: json['id'] as int?,
+          name: json['name'] as String,
+          targetAmount: (json['target_amount'] as num).toDouble(),
+          currentAmount: (json['saved_amount'] as num).toDouble(),
+          targetDate: json['target_date'] != null
+              ? DateTime.parse(json['target_date'] as String)
+              : DateTime.now(),
+          icon: (json['icon'] as String?) ?? '🚗',
+        );
+      }).toList();
     } catch (e) {
       debugPrint('DB Error (getGoals): $e');
       return [];
@@ -293,9 +321,16 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<int> updateGoal(Goal goal) async {
     try {
       final db = await instance.database;
+      final map = goal.toMap();
       return await db.update(
         'goals',
-        goal.toMap(),
+        {
+          'name': map['name'],
+          'target_amount': map['targetAmount'],
+          'saved_amount': map['currentAmount'],
+          'target_date': map['targetDate'],
+          'icon': map['icon'],
+        },
         where: 'id = ?',
         whereArgs: [goal.id],
       );

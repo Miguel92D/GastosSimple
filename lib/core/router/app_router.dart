@@ -9,7 +9,7 @@ import '../../features/analysis/screens/stats_screen.dart';
 import '../../features/analysis/screens/prediction_screen.dart';
 
 import '../../features/debts/screens/debt_screen.dart';
-import '../../features/goals/screens/goal_screen.dart';
+import '../../features/goals/screens/savings_goals_screen.dart';
 import '../../features/budgets/screens/budget_screen.dart';
 
 import '../../features/settings/screens/settings_screen.dart';
@@ -93,7 +93,7 @@ class AppRouter {
       case "/goals":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const GoalScreen(),
+          builder: (_) => const SavingsGoalsScreen(),
         );
 
       case "/budgets":
