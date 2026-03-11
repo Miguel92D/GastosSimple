@@ -59,7 +59,7 @@ class TransactionTile extends StatelessWidget {
       child: GlassCard(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         borderRadius: 20,
-        glowColor: amountColor.withOpacity(0.04),
+        // Remove glowColor to prevent dark shadow artifacts during swiping
         child: Row(
           children: [
             Container(
@@ -138,35 +138,61 @@ class TransactionTile extends StatelessWidget {
       return tile;
     }
 
-    return Dismissible(
-      key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
-      direction: DismissDirection.horizontal,
-      onDismissed: (direction) {
-        if (direction == DismissDirection.startToEnd && onArchive != null) {
-          onArchive!();
-        } else if (onDelete != null) {
-          onDelete!();
-        }
-      },
-      background: Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 20),
-        decoration: BoxDecoration(
-          color: AppColors.blue.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Dismissible(
+          key: Key(transaction.id?.toString() ?? UniqueKey().toString()),
+          direction: DismissDirection.horizontal,
+          onDismissed: (direction) {
+            if (direction == DismissDirection.startToEnd && onArchive != null) {
+              onArchive!();
+            } else if (onDelete != null) {
+              onDelete!();
+            }
+          },
+          background: Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.blue.withOpacity(0.4),
+                  AppColors.blue.withOpacity(0.15),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+            child: const Icon(
+              Icons.archive_rounded,
+              color: AppColors.blue,
+              size: 28,
+            ),
+          ),
+          secondaryBackground: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.expenseRed.withOpacity(0.15),
+                  AppColors.expenseRed.withOpacity(0.4),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+            child: const Icon(
+              Icons.delete_rounded,
+              color: AppColors.expenseRed,
+              size: 28,
+            ),
+          ),
+          child: tile,
         ),
-        child: const Icon(Icons.archive_rounded, color: AppColors.blue),
       ),
-      secondaryBackground: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.expenseRed.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Icon(Icons.delete_rounded, color: AppColors.expenseRed),
-      ),
-      child: tile,
     );
   }
 }

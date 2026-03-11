@@ -19,6 +19,7 @@ class GlassCard extends StatelessWidget {
   final double? height;
   final double? width;
   final BoxBorder? border;
+  final EdgeInsetsGeometry? margin;
 
   const GlassCard({
     super.key,
@@ -30,6 +31,7 @@ class GlassCard extends StatelessWidget {
     this.height,
     this.width,
     this.border,
+    this.margin,
   });
 
   @override
@@ -37,6 +39,7 @@ class GlassCard extends StatelessWidget {
     return Container(
       height: height,
       width: width,
+      margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
