@@ -216,8 +216,10 @@ class _TransactionTileState extends State<TransactionTile>
                         color: AppColors.primaryPurple.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
-                      child: const Icon(
-                        Icons.lock_rounded,
+                      child: Icon(
+                        widget.transaction.isSecret == 1
+                            ? Icons.lock_open_rounded
+                            : Icons.lock_rounded,
                         color: AppColors.primaryPurple,
                         size: 28,
                       ),

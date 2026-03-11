@@ -138,7 +138,11 @@ class TransactionHistoryList extends StatelessWidget {
                 }
               },
               onArchive: () async {
-                await VaultController.moveToVault(transaction);
+                if (transaction.isSecret == 1) {
+                  await VaultController.removeFromVault(transaction);
+                } else {
+                  await VaultController.moveToVault(transaction);
+                }
                 onRefresh();
               },
               onTap: () => _showOptionsModal(context, transaction),
