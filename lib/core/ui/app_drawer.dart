@@ -142,7 +142,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               children: [
                 _DrawerItem(
                   icon: Icons.swap_vert_rounded,
-                  title: 'Transacciones',
+                  title: 'Movimientos',
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openMovements();
@@ -165,85 +165,40 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
+                  icon: Icons.auto_awesome_rounded,
+                  title: 'Inteligencia AI',
+                  isPro: true,
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openPrediction();
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.account_balance_rounded,
+                  title: 'Deudas',
+                  isPro: true,
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openDebts();
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.lock_rounded,
+                  title: 'Bóveda',
+                  isPro: true,
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    ActionController.execute(context, AppAction.openVault);
+                  },
+                ),
+                _DrawerItem(
                   icon: Icons.settings_rounded,
-                  title: 'Configuraciones',
+                  title: 'Ajustes',
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openSettings();
                   },
                 ),
-                const SizedBox(height: 24),
-                if (isPro) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, bottom: 16),
-                    child: AnimatedBuilder(
-                      animation: _shimmerController,
-                      builder: (context, child) {
-                        return ShaderMask(
-                          shaderCallback: (bounds) {
-                            return LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              stops: [
-                                _shimmerController.value - 0.2,
-                                _shimmerController.value,
-                                _shimmerController.value + 0.2,
-                              ],
-                              colors: [
-                                const Color(0xFFD4AF37),
-                                const Color(0xFFFFFACD).withOpacity(0.9),
-                                const Color(0xFFD4AF37),
-                              ],
-                            ).createShader(bounds);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: const Text(
-                              'PRO',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 12,
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  _DrawerItem(
-                    icon: Icons.auto_graph_rounded,
-                    title: 'Inteligencia AI',
-                    onTap: () {
-                      GeneralFlowService.goBack();
-                      GeneralFlowService.openPrediction();
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.lock_rounded,
-                    title: 'Bóveda Segura',
-                    onTap: () {
-                      GeneralFlowService.goBack();
-                      ActionController.execute(context, AppAction.openVault);
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.account_balance_rounded,
-                    title: 'Deudas',
-                    onTap: () {
-                      GeneralFlowService.goBack();
-                      GeneralFlowService.openDebts();
-                    },
-                  ),
-                ],
               ],
             ),
           ),
@@ -329,11 +284,13 @@ class _DrawerItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final bool isPro;
 
   const _DrawerItem({
     required this.icon,
     required this.title,
     required this.onTap,
+    this.isPro = false,
   });
 
   @override
@@ -346,12 +303,34 @@ class _DrawerItem extends StatelessWidget {
           size: 22,
           color: AppColors.softText.withOpacity(0.7),
         ),
-        title: Text(
-          title,
-          style: AppTextStyles.bodyMain.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+        title: Row(
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.bodyMain.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (isPro) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  gradient: AppGradients.primaryGradient,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'PRO',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onTap: onTap,
