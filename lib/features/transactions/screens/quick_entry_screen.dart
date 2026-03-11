@@ -88,7 +88,6 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                     Expanded(
                       child: _buildActionCard(
                         context: context,
-                        label: l10n.income,
                         icon: Icons.add_rounded,
                         color: AppColors.incomeGreen,
                         onTap: () => ActionController.execute(
@@ -102,7 +101,6 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
                     Expanded(
                       child: _buildActionCard(
                         context: context,
-                        label: l10n.expense,
                         icon: Icons.remove_rounded,
                         color: AppColors.expenseRed,
                         onTap: () => ActionController.execute(
@@ -127,7 +125,6 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
 
   Widget _buildActionCard({
     required BuildContext context,
-    required String label,
     required IconData icon,
     required Color color,
     required VoidCallback onTap,
@@ -135,29 +132,19 @@ class _QuickEntryScreenState extends State<QuickEntryScreen> {
     return GestureDetector(
       onTap: onTap,
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl - 8),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
         borderRadius: AppRadius.xl,
         glowColor: color.withOpacity(0.12),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.sm + 4),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
-                border: Border.all(color: color.withOpacity(0.25), width: 1.5),
-              ),
-              child: Icon(icon, color: color, size: 32),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.sm + 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.25), width: 1.5),
             ),
-            const SizedBox(height: AppSpacing.lg - 4),
-            Text(
-              label,
-              style: AppTextStyles.cardTitle.copyWith(
-                fontSize: 18,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
+            child: Icon(icon, color: color, size: 40),
+          ),
         ),
       ),
     );

@@ -203,7 +203,7 @@ class _GoalScreenState extends State<GoalScreen> {
                                         icon: const Icon(
                                           Icons.edit_rounded,
                                           size: 20,
-                                          color: AppColors.softText,
+                                          color: AppColors.primaryPurple,
                                         ),
                                       ),
                                       IconButton(

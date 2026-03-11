@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/vault_dashboard.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_fab.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -15,6 +16,7 @@ class _VaultScreenState extends State<VaultScreen> {
   Widget build(BuildContext context) {
     return const AppScaffold(
       title: "Bóveda privada",
+      drawer: AppDrawer(),
       body: VaultDashboard(),
       floatingActionButton: AppFAB(mode: "vault"),
     );

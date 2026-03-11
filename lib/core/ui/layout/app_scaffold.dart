@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app_text_styles.dart';
+import '../app_colors.dart';
+import '../glass_card.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget body;
@@ -23,6 +25,8 @@ class AppScaffold extends StatelessWidget {
       backgroundColor:
           Colors.transparent, // Background handled by parent or theme
       appBar: AppBar(
+        automaticallyImplyLeading:
+            false, // Desactivamos el menú de arriba a la izquierda
         title:
             titleWidget ??
             Text(
@@ -38,7 +42,41 @@ class AppScaffold extends StatelessWidget {
       ),
       drawer: drawer,
       body: body,
-      floatingActionButton: floatingActionButton,
+      // Usamos el FAB para posicionar tanto el menú abajo al centro como las acciones a la derecha
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            // Botón de menú central (solo si hay drawer)
+            if (drawer != null)
+              Builder(
+                builder: (scaffoldContext) => GestureDetector(
+                  onTap: () => Scaffold.of(scaffoldContext).openDrawer(),
+                  child: GlassCard(
+                    borderRadius: 50,
+                    padding: const EdgeInsets.all(16),
+                    glowColor: AppColors.primaryPurple.withOpacity(0.3),
+                    child: const Icon(
+                      Icons.menu_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+
+            // Acciones a la derecha (Ingreso/Gasto)
+            if (floatingActionButton != null)
+              Align(
+                alignment: Alignment.bottomRight,
+                child: floatingActionButton!,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

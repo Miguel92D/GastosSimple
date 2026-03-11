@@ -548,7 +548,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                             _buildActionButton(
                                               Icons.edit_rounded,
                                               l10n.edit,
-                                              AppColors.softText,
+                                              AppColors.primaryPurple,
                                               () => _showDebtForm(debt: debt),
                                             ),
                                             _buildActionButton(

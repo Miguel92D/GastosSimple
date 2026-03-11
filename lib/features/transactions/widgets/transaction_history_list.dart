@@ -48,7 +48,10 @@ class TransactionHistoryList extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.edit_rounded, color: AppColors.blue),
+                leading: const Icon(
+                  Icons.edit_rounded,
+                  color: AppColors.primaryPurple,
+                ),
                 title: Text(
                   AppLocalizations.of(context)!.edit,
                   style: AppTextStyles.bodyMain,
