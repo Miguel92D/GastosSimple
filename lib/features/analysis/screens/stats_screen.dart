@@ -135,6 +135,9 @@ class _StatsScreenState extends State<StatsScreen> {
                                                 .copyWith(
                                                   fontSize: 28,
                                                   fontWeight: FontWeight.w900,
+                                                  color: totalGastos > 0
+                                                      ? AppColors.expenseRed
+                                                      : Colors.white,
                                                 ),
                                           ),
                                         ],

@@ -182,9 +182,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
           _buildProjectionRow(
             "Balance estimado",
             _predictedBalance,
-            isNegative
-                ? Colors.white
-                : Colors.white, // Both white for contrast on purple
+            _predictedBalance >= 0
+                ? AppColors.incomeGreen
+                : AppColors.expenseRed,
             large: true,
           ),
         ],
@@ -292,7 +292,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
                   ? "••••••"
                   : CurrencyHelper.format(value, context),
               style: AppTextStyles.cardTitle.copyWith(
-                color: color,
+                color: value == 0 ? Colors.white : color,
                 fontSize: large ? 32 : 22,
                 fontWeight: FontWeight.w900,
               ),
