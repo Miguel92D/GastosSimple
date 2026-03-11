@@ -270,10 +270,6 @@ class _DebtScreenState extends State<DebtScreen> {
         centerTitle: true,
       ),
       floatingActionButton: _buildAddDebtFab(context),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: _buildBottomActionButton(context, l10n),
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -281,13 +277,95 @@ class _DebtScreenState extends State<DebtScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeaderSummary(context, totalRemaining),
+                  _buildTotalSummary(context, totalRemaining),
+                  const SizedBox(height: 16),
+                  ..._debts.map((debt) => _buildDebtItem(context, debt)),
                   const SizedBox(height: 24),
                   _buildStrategySection(context),
                   const SizedBox(height: 32),
                 ],
               ),
             ),
+    );
+  }
+
+  void _showPaymentModal(Debt debt) {
+    final amountController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: GlassCard(
+              borderRadius: 30,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Registrar pago para ${debt.nombre}',
+                      style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    Text('Monto del pago', style: AppTextStyles.subLabel),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      child: TextField(
+                        controller: amountController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        autofocus: true,
+                        style: AppTextStyles.bodyMain,
+                        decoration: InputDecoration(
+                          hintText: '0.00',
+                          hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+                          border: InputBorder.none,
+                          prefixText: CurrencyHelper.getSymbol(context) + ' ',
+                          prefixStyle: AppTextStyles.bodyMain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final amount = double.tryParse(amountController.text) ?? 0;
+                        if (amount > 0) {
+                          await _controller.makePayment(debt.id!, amount);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                          _loadDebts();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryPurple,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text('Confirmar Pago', style: AppTextStyles.buttonLabel),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -319,111 +397,212 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  Widget _buildHeaderSummary(BuildContext context, double total) {
-    return GlassCard(
-      padding: const EdgeInsets.all(24),
-      borderRadius: 32,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildTotalSummary(BuildContext context, double total) {
+    return Center(
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        borderRadius: 20,
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
             children: [
-              Text(
-                "TUS DEUDAS",
+              TextSpan(
+                text: "DEUDA TOTAL: ",
                 style: AppTextStyles.subLabel.copyWith(
-                  letterSpacing: 1.2,
                   color: AppColors.softText.withOpacity(0.6),
+                  letterSpacing: 1.0,
                 ),
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "TOTAL: ",
-                      style: AppTextStyles.subLabel.copyWith(
-                        color: AppColors.softText.withOpacity(0.6),
-                      ),
-                    ),
-                    TextSpan(
-                      text: CurrencyHelper.format(total, context),
-                      style: AppTextStyles.cardTitle.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
+              TextSpan(
+                text: CurrencyHelper.format(total, context),
+                style: AppTextStyles.cardTitle.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          ..._debts.map((debt) => _buildDebtItem(context, debt)),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildDebtItem(BuildContext context, Debt debt) {
+    final bool isPaid = debt.progress >= 0.999;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.glassSurface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cardBorder),
-                ),
-                child: Center(
-                  child: Icon(
-                    debt.nombre.toLowerCase().contains('bbva')
-                        ? Icons.account_balance_rounded
-                        : Icons.credit_card_rounded,
-                    color: AppColors.textPrimary,
-                    size: 20,
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GlassCard(
+        padding: const EdgeInsets.all(20),
+        borderRadius: 24,
+        glowColor: isPaid ? AppColors.incomeGreen : null,
+        border: isPaid ? Border.all(color: AppColors.incomeGreen.withOpacity(0.4), width: 1.5) : null,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isPaid ? AppColors.incomeGreen.withOpacity(0.15) : AppColors.glassSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isPaid ? AppColors.incomeGreen.withOpacity(0.4) : AppColors.cardBorder,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      isPaid
+                          ? Icons.check_circle_rounded
+                          : (debt.nombre.toLowerCase().contains('bbva')
+                              ? Icons.account_balance_rounded
+                              : Icons.credit_card_rounded),
+                      color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
+                      size: isPaid ? 24 : 20,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              debt.nombre,
+                              style: AppTextStyles.cardTitle.copyWith(
+                                fontSize: 18,
+                                color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          if (isPaid) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.incomeGreen,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                "SALDADA",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      _buildCustomProgressBar(debt.progress, debt.nombre),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      debt.nombre,
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                      isPaid ? "PAGADO" : CurrencyHelper.format(debt.remaining, context),
+                      style: AppTextStyles.cardTitle.copyWith(
+                        fontSize: 16,
+                        color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    _buildCustomProgressBar(debt.progress, debt.nombre),
+                    Text(
+                      "${(debt.progress * 100).toInt()}%",
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: isPaid ? AppColors.incomeGreen.withOpacity(0.7) : AppColors.softText,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    CurrencyHelper.format(debt.remaining, context),
-                    style: AppTextStyles.cardTitle.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${(debt.progress * 100).toInt()}%",
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.softText,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildActionButton(
+                  icon: Icons.payments_rounded,
+                  color: AppColors.incomeGreen,
+                  onTap: () => _showPaymentModal(debt),
+                ),
+                const SizedBox(width: 12),
+                _buildActionButton(
+                  icon: Icons.edit_outlined,
+                  color: AppColors.primaryPurple,
+                  onTap: () => _showDebtForm(debt: debt),
+                ),
+                const SizedBox(width: 12),
+                _buildActionButton(
+                  icon: Icons.delete_outline_rounded,
+                  color: AppColors.expenseRed,
+                  onTap: () => _confirmDeleteDebt(debt),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        ),
+        child: Center(
+          child: Icon(icon, size: 18, color: color),
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteDebt(Debt debt) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.darkBackground,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text("¿Eliminar deuda?", style: AppTextStyles.cardTitle),
+        content: Text("¿Estás seguro de que quieres eliminar '${debt.nombre}'?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("CANCELAR", style: TextStyle(color: AppColors.softText)),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _controller.deleteDebt(debt.id!);
+              if (!context.mounted) return;
+              Navigator.pop(context);
+              _loadDebts();
+            },
+            child: const Text("ELIMINAR", style: TextStyle(color: AppColors.expenseRed)),
           ),
         ],
       ),
@@ -431,9 +610,13 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   Widget _buildCustomProgressBar(double progress, String name) {
-    final color = name.toLowerCase().contains('bbva')
-        ? AppColors.orange
-        : AppColors.primaryPurple;
+    final bool isPaid = progress >= 0.999;
+    
+    final color = isPaid 
+        ? AppColors.incomeGreen 
+        : (name.toLowerCase().contains('bbva')
+            ? AppColors.orange
+            : AppColors.primaryPurple);
 
     return Container(
       height: 8,
@@ -615,48 +798,4 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  Widget _buildBottomActionButton(BuildContext context, AppLocalizations l10n) {
-    return GestureDetector(
-      onTap: () {
-        // En el futuro esto podría abrir un selector de deuda para pagar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Toca una deuda arriba para gestionar sus pagos"),
-            backgroundColor: AppColors.primaryPurple,
-          ),
-        );
-      },
-      child: GlassCard(
-        height: 60,
-        borderRadius: 30,
-        padding: EdgeInsets.zero,
-        glowColor: AppColors.primaryPurple.withOpacity(0.3),
-        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.5), width: 1.5),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryPurple,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.payments_rounded, color: Colors.white, size: 18),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                "Registrar Pago",
-                style: AppTextStyles.buttonLabel.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
