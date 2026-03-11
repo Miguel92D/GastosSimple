@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../flow/general_flow_service.dart';
 import '../../core/state/app_state.dart';
@@ -8,8 +9,36 @@ import 'app_gradients.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
+  late AnimationController _waveController;
+  late AnimationController _shimmerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _waveController.dispose();
+    _shimmerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +56,7 @@ class AppDrawer extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: 240,
+            height: 260,
             decoration: BoxDecoration(
               gradient: isPro
                   ? AppGradients.primaryGradient
@@ -51,7 +80,20 @@ class AppDrawer extends StatelessWidget {
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 30,
+                  width: double.infinity,
+                  child: AnimatedBuilder(
+                    animation: _waveController,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        painter: _WavePainter(_waveController.value),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
                 GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
                 Text(
                   'CONTROL FINANCIERO',
@@ -115,11 +157,11 @@ class AppDrawer extends StatelessWidget {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.account_balance_rounded,
-                  title: 'Deudas',
+                  icon: Icons.flag_rounded,
+                  title: 'Metas',
                   onTap: () {
                     GeneralFlowService.goBack();
-                    GeneralFlowService.openDebts();
+                    GeneralFlowService.openGoals();
                   },
                 ),
                 _DrawerItem(
@@ -130,18 +172,51 @@ class AppDrawer extends StatelessWidget {
                     GeneralFlowService.openSettings();
                   },
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: Divider(color: AppColors.cardBorder, height: 1),
-                ),
+                const SizedBox(height: 24),
                 if (isPro) ...[
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, bottom: 12),
-                    child: Text(
-                      'PRO FEATURES',
-                      style: AppTextStyles.subLabel.copyWith(
-                        color: AppColors.softText.withOpacity(0.3),
-                      ),
+                    padding: const EdgeInsets.only(left: 16, bottom: 16),
+                    child: AnimatedBuilder(
+                      animation: _shimmerController,
+                      builder: (context, child) {
+                        return ShaderMask(
+                          shaderCallback: (bounds) {
+                            return LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [
+                                _shimmerController.value - 0.2,
+                                _shimmerController.value,
+                                _shimmerController.value + 0.2,
+                              ],
+                              colors: [
+                                const Color(0xFFD4AF37),
+                                const Color(0xFFFFFACD).withOpacity(0.9),
+                                const Color(0xFFD4AF37),
+                              ],
+                            ).createShader(bounds);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Text(
+                              'PRO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   _DrawerItem(
@@ -160,6 +235,14 @@ class AppDrawer extends StatelessWidget {
                       ActionController.execute(context, AppAction.openVault);
                     },
                   ),
+                  _DrawerItem(
+                    icon: Icons.account_balance_rounded,
+                    title: 'Deudas',
+                    onTap: () {
+                      GeneralFlowService.goBack();
+                      GeneralFlowService.openDebts();
+                    },
+                  ),
                 ],
               ],
             ),
@@ -168,6 +251,78 @@ class AppDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+class _WavePainter extends CustomPainter {
+  final double animationValue;
+
+  _WavePainter(this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.12)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    final path = Path();
+    final double yCenter = size.height * 0.5;
+    final double amplitude = 8.0;
+
+    path.moveTo(0, yCenter);
+
+    for (double x = 0; x <= size.width; x += 2) {
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) + (animationValue * 2 * math.pi);
+      final double y = yCenter + amplitude * math.sin(waveExpression);
+      path.lineTo(x, y);
+    }
+
+    canvas.drawPath(path, paint);
+
+    // Secondary line
+    final secondaryPaint = Paint()
+      ..color = Colors.white.withOpacity(0.04)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.6;
+
+    final secondaryPath = Path();
+    secondaryPath.moveTo(0, yCenter + 8);
+    for (double x = 0; x <= size.width; x += 2) {
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) - (animationValue * 2 * math.pi);
+      final double y =
+          yCenter + 8 + (amplitude * 0.5) * math.cos(waveExpression);
+      secondaryPath.lineTo(x, y);
+    }
+    canvas.drawPath(secondaryPath, secondaryPaint);
+
+    // Glowing dots
+    final dotPaint = Paint()
+      ..color = Colors.white.withOpacity(0.2)
+      ..style = PaintingStyle.fill;
+
+    final glowPaint = Paint()
+      ..color = Colors.white.withOpacity(0.03)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+
+    for (int i = 1; i < 3; i++) {
+      final x = (size.width / 3) * i;
+      final double normalizedX = x / size.width;
+      final double waveExpression =
+          (normalizedX * 2 * math.pi) + (animationValue * 2 * math.pi);
+      final double y = yCenter + amplitude * math.sin(waveExpression);
+
+      canvas.drawCircle(Offset(x, y), 4, glowPaint);
+      canvas.drawCircle(Offset(x, y), 1.5, dotPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavePainter oldDelegate) =>
+      oldDelegate.animationValue != animationValue;
 }
 
 class _DrawerItem extends StatelessWidget {
