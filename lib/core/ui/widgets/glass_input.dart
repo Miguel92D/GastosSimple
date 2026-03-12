@@ -19,6 +19,7 @@ class GlassInput extends StatelessWidget {
   final Widget? prefix;
   final double? height;
   final EdgeInsetsGeometry? padding;
+  final TextInputAction? textInputAction;
 
   const GlassInput({
     super.key,
@@ -37,6 +38,7 @@ class GlassInput extends StatelessWidget {
     this.prefix,
     this.height,
     this.padding,
+    this.textInputAction,
   });
 
   @override
@@ -52,6 +54,7 @@ class GlassInput extends StatelessWidget {
           controller: controller,
           focusNode: focusNode,
           keyboardType: keyboardType,
+          textInputAction: textInputAction ?? TextInputAction.done,
           maxLines: maxLines,
           onChanged: onChanged,
           onSubmitted: (_) => onSubmitted?.call(),

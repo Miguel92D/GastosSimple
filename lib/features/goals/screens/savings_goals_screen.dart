@@ -527,11 +527,15 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
     required String hintText,
     TextInputType? keyboardType,
     Widget? prefix,
+    VoidCallback? onSubmitted,
+    TextInputAction? textInputAction,
   }) {
     return _buildGlassInputContainer(
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        textInputAction: textInputAction ?? TextInputAction.done,
+        onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
         style: AppTextStyles.bodyMain,
         decoration: InputDecoration(
           hintText: hintText,
@@ -612,6 +616,14 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                     child: TextField(
                       controller: _amountController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (value) {
+                        final amount = double.tryParse(value) ?? 0;
+                        if (amount > 0) {
+                          widget.onAdd(amount);
+                          Navigator.pop(context);
+                        }
+                      },
                       autofocus: true,
                       style: AppTextStyles.bodyMain,
                       decoration: InputDecoration(

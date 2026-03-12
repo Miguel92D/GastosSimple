@@ -73,6 +73,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
             style: AppTextStyles.bodyMain,
             autofocus: true,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textInputAction: TextInputAction.done,
+            onSubmitted: (value) => Navigator.pop(context, value),
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.budget_example,
               hintStyle: AppTextStyles.bodyMain.copyWith(

@@ -164,6 +164,38 @@ class _DebtScreenState extends State<DebtScreen> {
                   helpTitle: l10n.due_date_title,
                   helpDesc: l10n.due_date_desc,
                   context: context,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: () async {
+                    final newDebt = Debt(
+                      id: debt?.id,
+                      nombre: nombreController.text,
+                      montoTotal:
+                          double.tryParse(montoTotalController.text) ?? 0,
+                      pagoMinimo:
+                          double.tryParse(pagoMinimoController.text) ?? 0,
+                      tasaInteres: double.tryParse(tasaInteresController.text),
+                      fechaVencimiento: fechaVencimientoController.text,
+                      diaCierre: int.tryParse(diaCierreController.text),
+                      montoPagado: debt?.montoPagado ?? 0,
+                    );
+
+                    if (newDebt.diaCierre != null &&
+                        (newDebt.diaCierre! < 1 || newDebt.diaCierre! > 31)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)!.closing_day_error,
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    await _controller.saveDebt(newDebt);
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                    _loadDebts();
+                  },
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
@@ -224,10 +256,14 @@ class _DebtScreenState extends State<DebtScreen> {
     String? helpTitle,
     String? helpDesc,
     BuildContext? context,
+    VoidCallback? onSubmitted,
+    TextInputAction? textInputAction,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboard,
+      textInputAction: textInputAction,
+      onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
       style: AppTextStyles.bodyMain,
       decoration: InputDecoration(
         labelText: label,
@@ -328,6 +364,16 @@ class _DebtScreenState extends State<DebtScreen> {
                       child: TextField(
                         controller: amountController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) async {
+                          final amount = double.tryParse(amountController.text) ?? 0;
+                          if (amount > 0) {
+                            await _controller.makePayment(debt.id!, amount);
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            _loadDebts();
+                          }
+                        },
                         autofocus: true,
                         style: AppTextStyles.bodyMain,
                         decoration: InputDecoration(
