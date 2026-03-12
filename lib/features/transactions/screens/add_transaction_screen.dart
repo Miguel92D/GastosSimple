@@ -19,6 +19,7 @@ import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
 import '../../../core/ui/widgets/glass_input.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
+import '../../../core/utils/l10n_helper.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final Transaction? movimientoToEdit;
@@ -325,7 +326,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               const SizedBox(height: AppSpacing.md),
 
               SizedBox(
-                height: 60,
+                height: 85,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _tipo == 'gasto'
@@ -343,31 +344,62 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     final color = _tipo == 'gasto'
                         ? AppColors.expenseRed
                         : AppColors.incomeGreen;
+                    
+                    final localizedName = L10nHelper.getLocalizedCategory(context, category);
 
                     return GestureDetector(
                       onTap: () => setState(() => _selectedCategory = category),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        width: 54,
+                        width: 75,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           color: isSelected ? color : color.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isSelected ? Colors.white.withOpacity(0.2) : color.withOpacity(0.1),
+                            color: isSelected
+                                ? Colors.white.withOpacity(0.2)
+                                : color.withOpacity(0.1),
                             width: 1.5,
                           ),
-                          boxShadow: isSelected ? [
-                            BoxShadow(
-                              color: color.withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ] : [],
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: color.withOpacity(0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ]
+                              : [],
                         ),
-                        child: Icon(
-                          icon,
-                          color: isSelected ? Colors.white : color.withOpacity(0.7),
-                          size: 24,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              icon,
+                              color: isSelected
+                                  ? Colors.white
+                                  : color.withOpacity(0.7),
+                              size: 24,
+                            ),
+                            const SizedBox(height: 4),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                localizedName.toUpperCase(),
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : color.withOpacity(0.5),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
