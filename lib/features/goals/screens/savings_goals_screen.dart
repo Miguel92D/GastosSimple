@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui';
 import '../../../core/controllers/savings_goal_controller.dart';
 import '../models/goal.dart';
 import '../../../core/ui/app_colors.dart';
@@ -107,26 +108,30 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
           );
         },
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: AppGradients.primaryGradient,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryPurple.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+      floatingActionButton: _buildAddGoalFab(context),
+    );
+  }
+
+  Widget _buildAddGoalFab(BuildContext context) {
+    return GlassCard(
+      width: 56,
+      height: 56,
+      borderRadius: 18,
+      padding: EdgeInsets.zero,
+      glowColor: AppColors.primaryPurple.withOpacity(0.3),
+      border: Border.all(color: AppColors.primaryPurple.withOpacity(0.4), width: 2.0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showCreateGoalModal(),
+          borderRadius: BorderRadius.circular(18),
+          child: const Center(
+            child: Icon(
+              Icons.add_rounded,
+              color: AppColors.primaryPurple,
+              size: 28,
             ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () => _showCreateGoalModal(),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
-          child: const Icon(Icons.add_rounded, color: Colors.white, size: 32),
         ),
       ),
     );

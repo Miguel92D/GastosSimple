@@ -141,6 +141,14 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               children: [
                 _DrawerItem(
+                  icon: Icons.dashboard_rounded,
+                  title: 'Dashboard',
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openDashboard();
+                  },
+                ),
+                _DrawerItem(
                   icon: Icons.swap_vert_rounded,
                   title: 'Movimientos',
                   onTap: () {
