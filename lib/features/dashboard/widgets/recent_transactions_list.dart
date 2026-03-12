@@ -4,6 +4,7 @@ import '../../transactions/widgets/transaction_history_list.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 
 class RecentTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -26,7 +27,7 @@ class RecentTransactionsList extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           child: Text(
-            "ÚLTIMOS MOVIMIENTOS",
+            AppLocalizations.of(context)!.recent_movements,
             style: AppTextStyles.subLabel.copyWith(
               color: AppColors.softText.withOpacity(0.4),
               fontSize: 10,

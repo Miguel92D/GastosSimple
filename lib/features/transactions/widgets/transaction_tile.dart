@@ -77,22 +77,31 @@ class _TransactionTileState extends State<TransactionTile>
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'comida':
+      case 'cat_food':
         return Icons.restaurant_rounded;
       case 'transporte':
+      case 'cat_transport':
         return Icons.directions_bus_rounded;
       case 'ocio':
+      case 'cat_leisure':
         return Icons.sports_esports_rounded;
       case 'salud':
+      case 'cat_health':
         return Icons.local_hospital_rounded;
       case 'educación':
+      case 'cat_education':
         return Icons.school_rounded;
       case 'salario':
+      case 'cat_salary':
         return Icons.payments_rounded;
       case 'venta':
+      case 'cat_sale':
         return Icons.storefront_rounded;
       case 'regalo':
+      case 'cat_gift':
         return Icons.card_giftcard_rounded;
       case 'inversión':
+      case 'cat_investment':
         return Icons.trending_up_rounded;
       default:
         return Icons.receipt_long_rounded;

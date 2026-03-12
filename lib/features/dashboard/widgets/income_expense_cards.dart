@@ -6,6 +6,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
+import '../../../l10n/app_localizations.dart';
 
 class IncomeExpenseCards extends StatelessWidget {
   final double income;
@@ -37,7 +38,7 @@ class IncomeExpenseCards extends StatelessWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  label: "Ingresos",
+                  label: AppLocalizations.of(context)!.income,
                   amount: income,
                   color: AppColors.incomeGreen,
                   isSelected: selectedFilter == 'ingreso',
@@ -47,7 +48,7 @@ class IncomeExpenseCards extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: _StatCard(
-                  label: "Gastos",
+                  label: AppLocalizations.of(context)!.expense,
                   amount: expenses,
                   color: AppColors.expenseRed,
                   isSelected: selectedFilter == 'gasto',

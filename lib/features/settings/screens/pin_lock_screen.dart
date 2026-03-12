@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 
 class PinLockScreen extends StatefulWidget {
   final Widget nextScreen;
@@ -23,6 +26,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
       if (_input.length == 4) {
         final success = await SecurityService.instance.authenticatePin(_input);
         if (success) {
+          SecurityService.instance.unlock();
           if (mounted) {
             Navigator.pushReplacement(
               context,
@@ -32,7 +36,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
         } else {
           setState(() {
             _input = '';
-            _error = 'PIN incorrecto';
+            _error = AppLocalizations.of(context)!.wrong_pin;
           });
         }
       }
@@ -58,11 +62,14 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   Future<void> _tryBiometric() async {
     final success = await SecurityService.instance.authenticateBiometric();
-    if (success && mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => widget.nextScreen),
-      );
+    if (success) {
+      SecurityService.instance.unlock();
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => widget.nextScreen),
+        );
+      }
     }
   }
 
@@ -75,9 +82,9 @@ class _PinLockScreenState extends State<PinLockScreen> {
             const Spacer(),
             const Icon(Icons.lock_outline, size: 64, color: Colors.deepPurple),
             const SizedBox(height: 16),
-            const Text(
-              'App Bloqueada',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.app_locked,
+              style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: 32),
             Row(

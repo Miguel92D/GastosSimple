@@ -154,9 +154,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle('CLOUD BACKUP (PRO)'),
+            _buildSectionTitle(l10n.cloud_backup_title),
             _buildItem(
-              title: 'Backup Now',
+              title: l10n.backup_now_label,
               leading: Icons.cloud_upload_rounded,
               onTap: () async {
                 if (!ProService.instance.isPro) {
@@ -169,18 +169,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (!context.mounted) return;
                 if (user != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Starting backup...')),
+                    SnackBar(content: Text(l10n.starting_backup_msg)),
                   );
                   await CloudBackupService.instance.backupData();
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Backup successful!')),
+                    SnackBar(content: Text(l10n.backup_success_msg)),
                   );
                 }
               },
             ),
             _buildItem(
-              title: 'Restore Backup',
+              title: l10n.restore_backup_label,
               leading: Icons.cloud_download_rounded,
               onTap: () async {
                 if (!ProService.instance.isPro) {
@@ -193,25 +193,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (!context.mounted) return;
                 if (user != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Restoring backup...')),
+                    SnackBar(content: Text(l10n.restoring_backup_msg)),
                   );
                   await CloudBackupService.instance.restoreData();
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Restore successful!')),
+                    SnackBar(content: Text(l10n.restore_success_msg)),
                   );
                 }
               },
             ),
             SwitchListTile(
               title: Text(
-                'Automatic Backup',
+                l10n.auto_backup_label,
                 style: AppTextStyles.bodyMain.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
               ),
               subtitle: Text(
-                'Backup after every new record',
+                l10n.auto_backup_desc,
                 style: AppTextStyles.bodySmall,
               ),
               activeColor: AppColors.primaryPurple,
@@ -342,6 +343,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showSetPinDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -389,9 +391,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (context.mounted) GeneralFlowService.goBack();
               }
             },
-            child: const Text(
-              'SAVE',
-              style: TextStyle(
+            child: Text(
+              l10n.save.toUpperCase(),
+              style: const TextStyle(
                 color: AppColors.primaryPurple,
                 fontWeight: FontWeight.bold,
               ),

@@ -1,0 +1,27 @@
+﻿Analyzing app_drawer.dart...                                    
+
+  error - The getter 'financial_control' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:100:49 - undefined_getter
+  error - The getter 'account_premium' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:130:59 - undefined_getter
+  error - The getter 'account_free' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:131:59 - undefined_getter
+  error - The getter 'statistics' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:164:56 - undefined_getter
+  error - The getter 'ai_intelligence' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:231:56 - undefined_getter
+  error - The getter 'vault_label' isn't defined for the type 'AppLocalizations' - lib\core\ui\app_drawer.dart:247:56 - undefined_getter
+
+flutter : 6 issues found. 
+(ran in 0.7s)
+En línea: 1 Carácter: 1
++ flutter analyze 
+lib/core/ui/app_drawer.dart 
+> analyze_out.txt 2>&1; G 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (6 iss  
+  ues found. (ran in 0.7s   
+ ):String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 

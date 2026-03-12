@@ -296,7 +296,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ? AppColors.expenseRed
                       : AppColors.incomeGreen,
                 ),
-                hintText: 'Monto',
+                hintText: AppLocalizations.of(context)!.amount,
                 hintStyle: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 32,
                   color: AppColors.softText.withOpacity(0.1),
@@ -321,7 +321,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
-              Text('CATEGORÍA', style: AppTextStyles.subLabel),
+              Text(AppLocalizations.of(context)!.category_section_label, style: AppTextStyles.subLabel),
 
               const SizedBox(height: AppSpacing.md),
 
@@ -413,7 +413,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 controller: _noteController,
                 label: AppLocalizations.of(context)!.note.toUpperCase(),
                 icon: Icons.note_rounded,
-                hintText: 'Ej: Cena con amigos...',
+                hintText: AppLocalizations.of(context)!.note_hint,
               ),
 
               const SizedBox(height: AppSpacing.xxl),

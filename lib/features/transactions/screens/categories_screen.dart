@@ -6,57 +6,68 @@ import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     final List<Map<String, dynamic>> categories = [
       {
-        'name': 'Comida',
+        'name': l10n.cat_food,
+        'id': 'cat_food',
         'icon': Icons.restaurant_rounded,
         'color': AppColors.orange,
       },
       {
-        'name': 'Transporte',
+        'name': l10n.cat_transport,
+        'id': 'cat_transport',
         'icon': Icons.directions_bus_rounded,
         'color': AppColors.blue,
       },
       {
-        'name': 'Ocio',
+        'name': l10n.cat_leisure,
+        'id': 'cat_leisure',
         'icon': Icons.sports_esports_rounded,
         'color': AppColors.purple,
       },
       {
-        'name': 'Salud',
+        'name': l10n.cat_health,
+        'id': 'cat_health',
         'icon': Icons.local_hospital_rounded,
         'color': AppColors.expenseRed,
       },
       {
-        'name': 'Educación',
+        'name': l10n.cat_education,
+        'id': 'cat_education',
         'icon': Icons.school_rounded,
         'color': AppColors.indigo,
       },
       {
-        'name': 'Salario',
+        'name': l10n.cat_salary,
+        'id': 'cat_salary',
         'icon': Icons.payments_rounded,
         'color': AppColors.incomeGreen,
       },
       {
-        'name': 'Inversión',
+        'name': l10n.cat_investment,
+        'id': 'cat_investment',
         'icon': Icons.trending_up_rounded,
         'color': AppColors.teal,
       },
       {
-        'name': 'Regalo',
+        'name': l10n.cat_gift,
+        'id': 'cat_gift',
         'icon': Icons.card_giftcard_rounded,
         'color': AppColors.pink,
       },
     ];
 
     return AppScaffold(
-      title: "Categorías",
+      title: l10n.categories,
       drawer: const AppDrawer(),
       body: GridView.builder(
         padding: const EdgeInsets.all(24),
@@ -79,7 +90,7 @@ class CategoriesScreen extends StatelessWidget {
               onTap: () => ActionController.execute(
                 context,
                 AppAction.addExpense,
-                arguments: {'category': cat['name']},
+                arguments: {'category': cat['id']}, // Enviamos la llave ID para guardar en DB de forma neutra
               ),
               borderRadius: BorderRadius.circular(30),
               child: Column(

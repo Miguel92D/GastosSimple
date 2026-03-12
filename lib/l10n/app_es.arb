@@ -173,5 +173,100 @@
   "secret_expenses": "Bóveda privada",
   "hide_movement": "Ocultar (Privado)",
   "restore_movement": "Restaurar movimiento",
-  "add_transaction_fab": "Agregar movimiento"
+  "add_transaction_fab": "Agregar movimiento",
+  "categories": "Categorías",
+  "cloud_backup_title": "Respaldo en la Nube (PRO)",
+  "backup_now_label": "Respaldar Ahora",
+  "restore_backup_label": "Restaurar Respaldo",
+  "auto_backup_label": "Respaldo Automático",
+  "auto_backup_desc": "Respaldar tras cada nuevo registro",
+  "starting_backup_msg": "Iniciando respaldo...",
+  "backup_success_msg": "¡Respaldo exitoso!",
+  "restoring_backup_msg": "Restaurando respaldo...",
+  "restore_success_msg": "¡Restauración exitosa!",
+  "wrong_pin": "PIN incorrecto",
+  "app_locked": "App Bloqueada",
+  "splash_slogan": "Tu dinero, simplificado",
+  "account_premium": "Cuenta Premium",
+  "account_free": "Cuenta Gratuita",
+  "statistics": "Estadísticas",
+  "ai_intelligence": "Inteligencia Artificial",
+  "vault_label": "Bóveda",
+  "estimated_spending": "Gasto estimado",
+  "estimated_balance": "Balance estimado",
+  "prediction_negative_warning": "¡Peligro: Se predice un balance negativo!",
+  "recent_movements": "Movimientos recientes",
+  "save_debt": "Guardar deuda",
+  "complete_name_and_amount": "Por favor, completa nombre y monto",
+  "no_debts_empty": "Sin deudas",
+  "no_debts_subtitle": "Agrega tu primera deuda para comenzar",
+  "add_first_debt": "Agregar primera deuda",
+  "payment_amount_for": "Monto de pago para {name}",
+  "payment_amount_hint": "Monto a pagar",
+  "confirm_payment": "Confirmar pago",
+  "paid_label": "Pagado",
+  "delete_debt_title": "¿Eliminar deuda?",
+  "choose_strategy": "Elige estrategia",
+  "avalanche_strategy": "Avalancha (Mayor interés primero)",
+  "snowball_strategy": "Bola de nieve (Menor balance primero)",
+  "category_section_label": "Categoría",
+  "note_hint": "Añadir nota...",
+  "@days_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@closing_day": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "@priority_tip": {
+    "placeholders": {
+      "name": {},
+      "rate": {}
+    }
+  },
+  "@extra_payment_tip": {
+    "placeholders": {
+      "amount": {},
+      "name": {},
+      "months": {}
+    }
+  },
+  "@snowball_method": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@interest_annual": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "@remaining_amount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "@min_pay_amount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "@budget_title": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "@top_category_insight": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "@payment_amount_for": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }

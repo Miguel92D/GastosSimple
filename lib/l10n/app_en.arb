@@ -173,5 +173,100 @@
   "secret_expenses": "Private Vault",
   "hide_movement": "Hide (Private)",
   "restore_movement": "Restore movement",
-  "add_transaction_fab": "Add movement"
+  "add_transaction_fab": "Add movement",
+  "categories": "Categories",
+  "cloud_backup_title": "Cloud Backup (PRO)",
+  "backup_now_label": "Backup Now",
+  "restore_backup_label": "Restore Backup",
+  "auto_backup_label": "Automatic Backup",
+  "auto_backup_desc": "Backup after every new record",
+  "starting_backup_msg": "Starting backup...",
+  "backup_success_msg": "Backup successful!",
+  "restoring_backup_msg": "Restoring backup...",
+  "restore_success_msg": "Restoration successful!",
+  "wrong_pin": "Wrong PIN",
+  "app_locked": "App Locked",
+  "splash_slogan": "Your money, simplified",
+  "account_premium": "Premium Account",
+  "account_free": "Free Account",
+  "statistics": "Statistics",
+  "ai_intelligence": "AI Intelligence",
+  "vault_label": "Vault",
+  "estimated_spending": "Estimated spending",
+  "estimated_balance": "Estimated balance",
+  "prediction_negative_warning": "Warning: Negative balance predicted!",
+  "recent_movements": "Recent movements",
+  "save_debt": "Save debt",
+  "complete_name_and_amount": "Please enter name and amount",
+  "no_debts_empty": "No debts yet",
+  "no_debts_subtitle": "Add your first debt to start tracking",
+  "add_first_debt": "Add first debt",
+  "payment_amount_for": "Payment amount for {name}",
+  "payment_amount_hint": "Amount to pay",
+  "confirm_payment": "Confirm payment",
+  "paid_label": "Paid",
+  "delete_debt_title": "Delete debt?",
+  "choose_strategy": "Choose strategy",
+  "avalanche_strategy": "Avalanche (Highest interest first)",
+  "snowball_strategy": "Snowball (Lowest balance first)",
+  "category_section_label": "Category",
+  "note_hint": "Add a note...",
+  "@days_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@closing_day": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "@priority_tip": {
+    "placeholders": {
+      "name": {},
+      "rate": {}
+    }
+  },
+  "@extra_payment_tip": {
+    "placeholders": {
+      "amount": {},
+      "name": {},
+      "months": {}
+    }
+  },
+  "@snowball_method": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@interest_annual": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "@remaining_amount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "@min_pay_amount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "@budget_title": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "@top_category_insight": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "@payment_amount_for": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }

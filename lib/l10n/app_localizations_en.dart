@@ -394,7 +394,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String extra_payment_tip(Object amount, Object months, Object name) {
+  String extra_payment_tip(Object amount, Object name, Object months) {
     return 'With $amount extra, you will pay off $name in $months months.';
   }
 
@@ -559,4 +559,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_transaction_fab => 'Add movement';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get cloud_backup_title => 'Cloud Backup (PRO)';
+
+  @override
+  String get backup_now_label => 'Backup Now';
+
+  @override
+  String get restore_backup_label => 'Restore Backup';
+
+  @override
+  String get auto_backup_label => 'Automatic Backup';
+
+  @override
+  String get auto_backup_desc => 'Backup after every new record';
+
+  @override
+  String get starting_backup_msg => 'Starting backup...';
+
+  @override
+  String get backup_success_msg => 'Backup successful!';
+
+  @override
+  String get restoring_backup_msg => 'Restoring backup...';
+
+  @override
+  String get restore_success_msg => 'Restoration successful!';
+
+  @override
+  String get wrong_pin => 'Wrong PIN';
+
+  @override
+  String get app_locked => 'App Locked';
+
+  @override
+  String get splash_slogan => 'Your money, simplified';
+
+  @override
+  String get account_premium => 'Premium Account';
+
+  @override
+  String get account_free => 'Free Account';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get ai_intelligence => 'AI Intelligence';
+
+  @override
+  String get vault_label => 'Vault';
+
+  @override
+  String get estimated_spending => 'Estimated spending';
+
+  @override
+  String get estimated_balance => 'Estimated balance';
+
+  @override
+  String get prediction_negative_warning =>
+      'Warning: Negative balance predicted!';
+
+  @override
+  String get recent_movements => 'Recent movements';
+
+  @override
+  String get save_debt => 'Save debt';
+
+  @override
+  String get complete_name_and_amount => 'Please enter name and amount';
+
+  @override
+  String get no_debts_empty => 'No debts yet';
+
+  @override
+  String get no_debts_subtitle => 'Add your first debt to start tracking';
+
+  @override
+  String get add_first_debt => 'Add first debt';
+
+  @override
+  String payment_amount_for(Object name) {
+    return 'Payment amount for $name';
+  }
+
+  @override
+  String get payment_amount_hint => 'Amount to pay';
+
+  @override
+  String get confirm_payment => 'Confirm payment';
+
+  @override
+  String get paid_label => 'Paid';
+
+  @override
+  String get delete_debt_title => 'Delete debt?';
+
+  @override
+  String get choose_strategy => 'Choose strategy';
+
+  @override
+  String get avalanche_strategy => 'Avalanche (Highest interest first)';
+
+  @override
+  String get snowball_strategy => 'Snowball (Lowest balance first)';
+
+  @override
+  String get category_section_label => 'Category';
+
+  @override
+  String get note_hint => 'Add a note...';
 }

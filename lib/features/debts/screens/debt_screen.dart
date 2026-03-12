@@ -85,93 +85,96 @@ class _DebtScreenState extends State<DebtScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: const BoxDecoration(
-            color: Color(0xFF1A172B),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      builder: (context) {
+        final innerL10n = AppLocalizations.of(context)!;
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  debt == null ? "Nueva Deuda" : "Editar Deuda",
-                  style: AppTextStyles.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w900),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                _buildField("Nombre (ej. Banco BBVA, Visa...)", nombreController, icon: Icons.badge_rounded),
-                _buildField("Monto Total de la Deuda", montoTotalController, keyboard: TextInputType.number, icon: Icons.account_balance_wallet_rounded),
-                _buildField("Pago Mínimo Mensual", pagoMinimoController, keyboard: TextInputType.number, icon: Icons.payment_rounded),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildField("Interés %", tasaInteresController, keyboard: TextInputType.number, icon: Icons.percent_rounded),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildField(
-                        "Día Venc.", 
-                        fechaVencimientoController, 
-                        keyboard: TextInputType.number, 
-                        icon: Icons.calendar_today_rounded,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: () => _saveDebt(
-                          debt,
-                          nombreController,
-                          montoTotalController,
-                          pagoMinimoController,
-                          tasaInteresController,
-                          fechaVencimientoController,
-                          diaCierreController,
-                        ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1A172B),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () => _saveDebt(
-                    debt,
-                    nombreController,
-                    montoTotalController,
-                    pagoMinimoController,
-                    tasaInteresController,
-                    fechaVencimientoController,
-                    diaCierreController,
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryPurple,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    elevation: 5,
-                    shadowColor: AppColors.primaryPurple.withOpacity(0.5),
+                  const SizedBox(height: 24),
+                  Text(
+                    debt == null ? innerL10n.new_debt : innerL10n.edit_debt,
+                    style: AppTextStyles.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w900),
+                    textAlign: TextAlign.center,
                   ),
-                  child: const Text("GUARDAR DEUDA", style: AppTextStyles.buttonLabel),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 32),
+                  _buildField(innerL10n.debt_name_label, nombreController, icon: Icons.badge_rounded),
+                  _buildField(innerL10n.total_amount, montoTotalController, keyboard: TextInputType.number, icon: Icons.account_balance_wallet_rounded),
+                  _buildField(innerL10n.min_payment, pagoMinimoController, keyboard: TextInputType.number, icon: Icons.payment_rounded),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildField(innerL10n.interest_rate_optional, tasaInteresController, keyboard: TextInputType.number, icon: Icons.percent_rounded),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildField(
+                          innerL10n.due_day_label,
+                          fechaVencimientoController,
+                          keyboard: TextInputType.number,
+                          icon: Icons.calendar_today_rounded,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: () => _saveDebt(
+                            debt,
+                            nombreController,
+                            montoTotalController,
+                            pagoMinimoController,
+                            tasaInteresController,
+                            fechaVencimientoController,
+                            diaCierreController,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () => _saveDebt(
+                      debt,
+                      nombreController,
+                      montoTotalController,
+                      pagoMinimoController,
+                      tasaInteresController,
+                      fechaVencimientoController,
+                      diaCierreController,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      elevation: 5,
+                      shadowColor: AppColors.primaryPurple.withOpacity(0.5),
+                    ),
+                    child: Text(innerL10n.save_debt, style: AppTextStyles.buttonLabel),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -186,7 +189,7 @@ class _DebtScreenState extends State<DebtScreen> {
   ) async {
     if (nombreController.text.isEmpty || montoTotalController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Por favor completa el nombre y el monto total")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.complete_name_and_amount)),
       );
       return;
     }
@@ -283,7 +286,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              "No tienes deudas registradas",
+                              l10n.no_debts_empty,
                               style: AppTextStyles.titleLarge.copyWith(
                                 fontSize: 18,
                                 color: AppColors.textPrimary.withOpacity(0.7),
@@ -292,7 +295,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Controla tus pagos y mejora tu historial",
+                              l10n.no_debts_subtitle,
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.softText.withOpacity(0.5),
                               ),
@@ -309,7 +312,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                   border: Border.all(color: AppColors.primaryPurple.withOpacity(0.3)),
                                 ),
                                 child: Text(
-                                  "AGREGAR MI PRIMERA DEUDA",
+                                  l10n.add_first_debt,
                                   style: AppTextStyles.buttonLabel.copyWith(color: AppColors.primaryPurple, fontSize: 12),
                                 ),
                               ),
@@ -350,12 +353,12 @@ class _DebtScreenState extends State<DebtScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Registrar pago para ${debt.nombre}',
+                      AppLocalizations.of(context)!.payment_amount_for(debt.nombre),
                       style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-                    Text('Monto del pago', style: AppTextStyles.subLabel),
+                    Text(AppLocalizations.of(context)!.payment_amount_hint, style: AppTextStyles.subLabel),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -406,7 +409,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text('Confirmar Pago', style: AppTextStyles.buttonLabel),
+                      child: Text(AppLocalizations.of(context)!.confirm_payment, style: AppTextStyles.buttonLabel),
                     ),
                   ],
                 ),
@@ -543,9 +546,9 @@ class _DebtScreenState extends State<DebtScreen> {
                                 color: AppColors.incomeGreen,
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
-                                "SALDADA",
-                                style: TextStyle(
+                              child: Text(
+                                AppLocalizations.of(context)!.paid_label,
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
@@ -565,7 +568,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      isPaid ? "PAGADO" : CurrencyHelper.format(debt.remaining, context),
+                      isPaid ? AppLocalizations.of(context)!.paid_label : CurrencyHelper.format(debt.remaining, context),
                       style: AppTextStyles.cardTitle.copyWith(
                         fontSize: 16,
                         color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
@@ -637,27 +640,30 @@ class _DebtScreenState extends State<DebtScreen> {
   void _confirmDeleteDebt(Debt debt) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.darkBackground,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text("¿Eliminar deuda?", style: AppTextStyles.cardTitle),
-        content: Text("¿Estás seguro de que quieres eliminar '${debt.nombre}'?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("CANCELAR", style: TextStyle(color: AppColors.softText)),
-          ),
-          TextButton(
-            onPressed: () async {
-              await _controller.deleteDebt(debt.id!);
-              if (!context.mounted) return;
-              Navigator.pop(context);
-              _loadDebts();
-            },
-            child: const Text("ELIMINAR", style: TextStyle(color: AppColors.expenseRed)),
-          ),
-        ],
-      ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          backgroundColor: AppColors.darkBackground,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(l10n.delete_debt_title, style: AppTextStyles.cardTitle),
+          content: Text(l10n.confirm_delete.replaceFirst('movimiento', "'${debt.nombre}'")),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel.toUpperCase(), style: const TextStyle(color: AppColors.softText)),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _controller.deleteDebt(debt.id!);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+                _loadDebts();
+              },
+              child: Text(l10n.delete.toUpperCase(), style: const TextStyle(color: AppColors.expenseRed)),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -704,6 +710,7 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   Widget _buildStrategySection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GlassCard(
       padding: const EdgeInsets.all(24),
       borderRadius: 32,
@@ -711,7 +718,7 @@ class _DebtScreenState extends State<DebtScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "ELIGE UNA ESTRATEGIA",
+            l10n.choose_strategy,
             style: AppTextStyles.subLabel.copyWith(
               letterSpacing: 1.2,
               color: AppColors.softText.withOpacity(0.6),
@@ -719,7 +726,7 @@ class _DebtScreenState extends State<DebtScreen> {
           ),
           const SizedBox(height: 24),
           _buildStrategyCard(
-            title: "Avalancha",
+            title: l10n.avalanche_strategy,
             icon: Icons.bolt_rounded,
             color: Colors.blueAccent,
             isSelected: _selectedStrategy == 'avalanche',
@@ -727,7 +734,7 @@ class _DebtScreenState extends State<DebtScreen> {
           ),
           const SizedBox(height: 12),
           _buildStrategyCard(
-            title: "Bola de Nieve",
+            title: l10n.snowball_strategy,
             icon: Icons.ac_unit_rounded,
             color: AppColors.primaryPurple,
             isSelected: _selectedStrategy == 'snowball',

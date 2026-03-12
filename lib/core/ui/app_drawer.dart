@@ -8,6 +8,7 @@ import 'app_colors.dart';
 import 'app_gradients.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
+import '../../l10n/app_localizations.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -96,11 +97,11 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 10),
                 GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
                 Text(
-                  'CONTROL FINANCIERO',
+                  AppLocalizations.of(context)!.financial_control_drawer,
                   style: AppTextStyles.subLabel.copyWith(
                     fontSize: 10,
                     letterSpacing: 2,
-                    color: AppColors.textPrimary.withOpacity(0.5),
+                    color: AppColors.textPrimary.withValues(alpha: 0.5),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -117,7 +118,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                         boxShadow: [
                           if (isPro)
                             BoxShadow(
-                              color: AppColors.incomeGreen.withOpacity(0.5),
+                              color: AppColors.incomeGreen.withValues(alpha: 0.5),
                               blurRadius: 10,
                             ),
                         ],
@@ -125,10 +126,12 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      isPro ? 'CUENTA PREMIUM' : 'CUENTA GRATIS',
+                      isPro
+                          ? AppLocalizations.of(context)!.account_premium
+                          : AppLocalizations.of(context)!.account_free,
                       style: AppTextStyles.subLabel.copyWith(
                         fontSize: 11,
-                        color: AppColors.textPrimary.withOpacity(0.7),
+                        color: AppColors.textPrimary.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -142,7 +145,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               children: [
                 _DrawerItem(
                   icon: Icons.dashboard_rounded,
-                  title: 'Dashboard',
+                  title: AppLocalizations.of(context)!.dashboard,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openDashboard();
@@ -150,7 +153,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.swap_vert_rounded,
-                  title: 'Movimientos',
+                  title: AppLocalizations.of(context)!.movements,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openMovements();
@@ -158,7 +161,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.analytics_rounded,
-                  title: 'Estadísticas',
+                  title: AppLocalizations.of(context)!.statistics,
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
@@ -166,7 +169,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.flag_rounded,
-                  title: 'Metas de ahorro',
+                  title: AppLocalizations.of(context)!.savings_goals,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openGoals();
@@ -190,7 +193,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                             ],
                             colors: [
                               const Color(0xFFD4AF37),
-                              const Color(0xFFFFFACD).withOpacity(0.9),
+                              const Color(0xFFFFFACD).withValues(alpha: 0.9),
                               const Color(0xFFD4AF37),
                             ],
                           ).createShader(bounds);
@@ -204,7 +207,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                               width: 1.5,
                             ),
                           ),
@@ -225,7 +228,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 8),
                 _DrawerItem(
                   icon: Icons.auto_awesome_rounded,
-                  title: 'Inteligencia AI',
+                  title: AppLocalizations.of(context)!.ai_intelligence,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openPrediction();
@@ -233,7 +236,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.account_balance_rounded,
-                  title: 'Deudas',
+                  title: AppLocalizations.of(context)!.debts,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openDebts();
@@ -241,7 +244,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.lock_rounded,
-                  title: 'Bóveda',
+                  title: AppLocalizations.of(context)!.vault_label,
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openVault);
@@ -249,7 +252,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.settings_rounded,
-                  title: 'Ajustes',
+                  title: AppLocalizations.of(context)!.settings,
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openSettings();
@@ -272,7 +275,7 @@ class _WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.12)
+      ..color = Colors.white.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -294,7 +297,7 @@ class _WavePainter extends CustomPainter {
 
     // Secondary line
     final secondaryPaint = Paint()
-      ..color = Colors.white.withOpacity(0.04)
+      ..color = Colors.white.withValues(alpha: 0.04)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.6;
 
@@ -312,11 +315,11 @@ class _WavePainter extends CustomPainter {
 
     // Glowing dots
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
+      ..color = Colors.white.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
 
     final glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
+      ..color = Colors.white.withValues(alpha: 0.03)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
 
     for (int i = 1; i < 3; i++) {
@@ -355,7 +358,7 @@ class _DrawerItem extends StatelessWidget {
         leading: Icon(
           icon,
           size: 22,
-          color: AppColors.softText.withOpacity(0.7),
+          color: AppColors.softText.withValues(alpha: 0.7),
         ),
         title: Text(
           title,
@@ -371,3 +374,4 @@ class _DrawerItem extends StatelessWidget {
     );
   }
 }
+

@@ -189,13 +189,13 @@ class _PredictionScreenState extends State<PredictionScreen>
                   ),
                   const SizedBox(height: 24),
                   _buildProjectionRow(
-                    "Gasto estimado fin de mes",
+                    l10n.estimated_spending,
                     _predictedExpense,
                     AppColors.expenseRed,
                   ),
                   const SizedBox(height: 32),
                   _buildProjectionRow(
-                    "Balance estimado",
+                    l10n.estimated_balance,
                     _predictedBalance,
                     _predictedBalance >= 0
                         ? AppColors.incomeGreen
@@ -233,7 +233,7 @@ class _PredictionScreenState extends State<PredictionScreen>
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              "Si continúas gastando a este ritmo terminarás el mes en negativo.",
+              l10n.prediction_negative_warning,
               style: AppTextStyles.bodyMain.copyWith(
                 color: AppColors.expenseRed,
                 fontWeight: FontWeight.w800,

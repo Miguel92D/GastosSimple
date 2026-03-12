@@ -840,7 +840,7 @@ abstract class AppLocalizations {
   ///
   /// In es, this message translates to:
   /// **'Con {amount} extra, liquidarás {name} en {months} meses.'**
-  String extra_payment_tip(Object amount, Object months, Object name);
+  String extra_payment_tip(Object amount, Object name, Object months);
 
   /// No description provided for @snowball_method.
   ///
@@ -1141,6 +1141,228 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Agregar movimiento'**
   String get add_transaction_fab;
+
+  /// No description provided for @categories.
+  ///
+  /// In es, this message translates to:
+  /// **'Categorías'**
+  String get categories;
+
+  /// No description provided for @cloud_backup_title.
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldo en la Nube (PRO)'**
+  String get cloud_backup_title;
+
+  /// No description provided for @backup_now_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldar Ahora'**
+  String get backup_now_label;
+
+  /// No description provided for @restore_backup_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Restaurar Respaldo'**
+  String get restore_backup_label;
+
+  /// No description provided for @auto_backup_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldo Automático'**
+  String get auto_backup_label;
+
+  /// No description provided for @auto_backup_desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldar tras cada nuevo registro'**
+  String get auto_backup_desc;
+
+  /// No description provided for @starting_backup_msg.
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciando respaldo...'**
+  String get starting_backup_msg;
+
+  /// No description provided for @backup_success_msg.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Respaldo exitoso!'**
+  String get backup_success_msg;
+
+  /// No description provided for @restoring_backup_msg.
+  ///
+  /// In es, this message translates to:
+  /// **'Restaurando respaldo...'**
+  String get restoring_backup_msg;
+
+  /// No description provided for @restore_success_msg.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Restauración exitosa!'**
+  String get restore_success_msg;
+
+  /// No description provided for @wrong_pin.
+  ///
+  /// In es, this message translates to:
+  /// **'PIN incorrecto'**
+  String get wrong_pin;
+
+  /// No description provided for @app_locked.
+  ///
+  /// In es, this message translates to:
+  /// **'App Bloqueada'**
+  String get app_locked;
+
+  /// No description provided for @splash_slogan.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu dinero, simplificado'**
+  String get splash_slogan;
+
+  /// No description provided for @account_premium.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta Premium'**
+  String get account_premium;
+
+  /// No description provided for @account_free.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta Gratuita'**
+  String get account_free;
+
+  /// No description provided for @statistics.
+  ///
+  /// In es, this message translates to:
+  /// **'Estadísticas'**
+  String get statistics;
+
+  /// No description provided for @ai_intelligence.
+  ///
+  /// In es, this message translates to:
+  /// **'Inteligencia Artificial'**
+  String get ai_intelligence;
+
+  /// No description provided for @vault_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Bóveda'**
+  String get vault_label;
+
+  /// No description provided for @estimated_spending.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasto estimado'**
+  String get estimated_spending;
+
+  /// No description provided for @estimated_balance.
+  ///
+  /// In es, this message translates to:
+  /// **'Balance estimado'**
+  String get estimated_balance;
+
+  /// No description provided for @prediction_negative_warning.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Peligro: Se predice un balance negativo!'**
+  String get prediction_negative_warning;
+
+  /// No description provided for @recent_movements.
+  ///
+  /// In es, this message translates to:
+  /// **'Movimientos recientes'**
+  String get recent_movements;
+
+  /// No description provided for @save_debt.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar deuda'**
+  String get save_debt;
+
+  /// No description provided for @complete_name_and_amount.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor, completa nombre y monto'**
+  String get complete_name_and_amount;
+
+  /// No description provided for @no_debts_empty.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin deudas'**
+  String get no_debts_empty;
+
+  /// No description provided for @no_debts_subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega tu primera deuda para comenzar'**
+  String get no_debts_subtitle;
+
+  /// No description provided for @add_first_debt.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar primera deuda'**
+  String get add_first_debt;
+
+  /// No description provided for @payment_amount_for.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto de pago para {name}'**
+  String payment_amount_for(Object name);
+
+  /// No description provided for @payment_amount_hint.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto a pagar'**
+  String get payment_amount_hint;
+
+  /// No description provided for @confirm_payment.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar pago'**
+  String get confirm_payment;
+
+  /// No description provided for @paid_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagado'**
+  String get paid_label;
+
+  /// No description provided for @delete_debt_title.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar deuda?'**
+  String get delete_debt_title;
+
+  /// No description provided for @choose_strategy.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige estrategia'**
+  String get choose_strategy;
+
+  /// No description provided for @avalanche_strategy.
+  ///
+  /// In es, this message translates to:
+  /// **'Avalancha (Mayor interés primero)'**
+  String get avalanche_strategy;
+
+  /// No description provided for @snowball_strategy.
+  ///
+  /// In es, this message translates to:
+  /// **'Bola de nieve (Menor balance primero)'**
+  String get snowball_strategy;
+
+  /// No description provided for @category_section_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría'**
+  String get category_section_label;
+
+  /// No description provided for @note_hint.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir nota...'**
+  String get note_hint;
 }
 
 class _AppLocalizationsDelegate
