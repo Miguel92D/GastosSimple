@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/currency_helper.dart';
@@ -93,7 +93,7 @@ class _StatsScreenState extends State<StatsScreen> {
                               fontSize: 20,
                             ),
                           ),
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 32),
                           if (catGastos.isEmpty)
                             Text(
                               AppLocalizations.of(
@@ -101,84 +101,36 @@ class _StatsScreenState extends State<StatsScreen> {
                               )!.no_expenses_recorded,
                             )
                           else ...[
-                            SizedBox(
-                              height: 240,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    width:
-                                        120, // Slightly less than 2x centerSpaceRadius
-                                    padding: const EdgeInsets.all(8),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "TOTAL",
-                                            style: AppTextStyles.subLabel
-                                                .copyWith(
-                                                  color: AppColors.softText
-                                                      .withOpacity(0.5),
-                                                  letterSpacing: 2.0,
-                                                ),
-                                          ),
-                                          Text(
-                                            AppState.instance.hideBalance
-                                                ? "••••••"
-                                                : CurrencyHelper.format(
-                                                    totalGastos,
-                                                    context,
-                                                  ),
-                                            style: AppTextStyles.balanceAmount
-                                                .copyWith(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w900,
-                                                  color: totalGastos > 0
-                                                      ? AppColors.expenseRed
-                                                      : Colors.white,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                            Column(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .monthly_total
+                                      .toUpperCase(),
+                                  style: AppTextStyles.subLabel.copyWith(
+                                    color: AppColors.softText.withOpacity(0.5),
+                                    letterSpacing: 2.0,
                                   ),
-                                  PieChart(
-                                    PieChartData(
-                                      sectionsSpace: 6,
-                                      centerSpaceRadius: 65,
-                                      sections: catGastos.entries.map((e) {
-                                        final index = catGastos.keys
-                                            .toList()
-                                            .indexOf(e.key);
-                                        final percentage =
-                                            (e.value / totalGastos) * 100;
-                                        return PieChartSectionData(
-                                          value: e.value,
-                                          title: '',
-                                          color:
-                                              chartColors[index %
-                                                  chartColors.length],
-                                          radius: 20,
-                                          badgeWidget: _Badge(
-                                            AppState.instance.hideBalance
-                                                ? "••%"
-                                                : '${percentage.toStringAsFixed(0)}%',
-                                            size: 48,
-                                            borderColor:
-                                                chartColors[index %
-                                                    chartColors.length],
-                                          ),
-                                          badgePositionPercentageOffset: .98,
-                                        );
-                                      }).toList(),
-                                    ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  AppState.instance.hideBalance
+                                      ? "••••••"
+                                      : CurrencyHelper.format(
+                                          totalGastos,
+                                          context,
+                                        ),
+                                  style: AppTextStyles.balanceAmount.copyWith(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w900,
+                                    color: totalGastos > 0
+                                        ? AppColors.expenseRed
+                                        : Colors.white,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 56),
+                            const SizedBox(height: 48),
                             ...catGastos.entries.map((e) {
                               final index = catGastos.keys.toList().indexOf(
                                 e.key,
@@ -280,45 +232,3 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 }
 
-class _Badge extends StatelessWidget {
-  final String text;
-  final double size;
-  final Color borderColor;
-
-  const _Badge(this.text, {required this.size, required this.borderColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: PieChart.defaultDuration,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.darkBackground,
-        shape: BoxShape.circle,
-        border: Border.all(color: borderColor, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: borderColor.withOpacity(0.3),
-            offset: const Offset(0, 3),
-            blurRadius: 6,
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(size * .15),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          style: AppTextStyles.bodySmall.copyWith(
-            fontSize: size * 0.28,
-            fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
-            height: 1,
-          ),
-        ),
-      ),
-    );
-  }
-}
