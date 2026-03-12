@@ -57,9 +57,13 @@ class AppScaffold extends StatelessWidget {
             ),
           ),
           // Content
-          Padding(
-            padding: const EdgeInsets.only(top: kToolbarHeight + 40), // Offset for transparent AppBar
-            child: body,
+          Positioned.fill(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20), // Small additional offset below the AppBar area
+                child: body,
+              ),
+            ),
           ),
         ],
       ),
