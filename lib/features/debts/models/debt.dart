@@ -36,10 +36,10 @@ class Debt {
     return Debt(
       id: map['id'],
       nombre: map['nombre'],
-      montoTotal: map['monto_total'],
-      montoPagado: map['monto_pagado'] ?? 0.0,
-      pagoMinimo: map['pago_minimo'],
-      tasaInteres: map['tasa_interes'],
+      montoTotal: (map['monto_total'] as num).toDouble(),
+      montoPagado: (map['monto_pagado'] as num?)?.toDouble() ?? 0.0,
+      pagoMinimo: (map['pago_minimo'] as num).toDouble(),
+      tasaInteres: (map['tasa_interes'] as num?)?.toDouble(),
       fechaVencimiento: map['fecha_vencimiento'],
       diaCierre: map['dia_cierre'],
     );

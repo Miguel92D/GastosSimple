@@ -46,26 +46,23 @@ class AppScaffold extends StatelessWidget {
         actions: actions,
       ),
       extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // Fixed background gradient - covers whole screen
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: AppGradients.mainBackgroundRadial,
-              ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: AppGradients.mainBackgroundRadial,
+        ),
+        child: Column(
+          children: [
+            // Reserved space for the transparent AppBar
+            SizedBox(
+              height: MediaQuery.of(context).padding.top + kToolbarHeight,
             ),
-          ),
-          // Content
-          Positioned.fill(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20), // Small additional offset below the AppBar area
-                child: body,
-              ),
+            Expanded(
+              child: body,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
