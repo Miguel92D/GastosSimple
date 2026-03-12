@@ -1,10 +1,12 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../dashboard/screens/home_screen.dart';
 import 'consent_screen.dart';
 import 'pin_lock_screen.dart';
 import '../../../services/security_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../l10n/app_localizations.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -86,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              AppLocalizations.of(context)!.splash_slogan,
+              context.watch<AppLocaleController>().text('splash_slogan'),
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 16,

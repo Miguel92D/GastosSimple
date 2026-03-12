@@ -1,6 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 
@@ -36,7 +38,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
         } else {
           setState(() {
             _input = '';
-            _error = AppLocalizations.of(context)!.wrong_pin;
+            _error = context.watch<AppLocaleController>().text('wrong_pin');
           });
         }
       }
@@ -83,7 +85,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
             const Icon(Icons.lock_outline, size: 64, color: Colors.deepPurple),
             const SizedBox(height: 16),
             Text(
-              AppLocalizations.of(context)!.app_locked,
+              context.watch<AppLocaleController>().text('app_locked'),
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: 32),

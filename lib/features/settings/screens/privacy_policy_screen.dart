@@ -1,6 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
@@ -10,14 +12,14 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
     final locale = Localizations.localeOf(context);
     final isSpanish = locale.languageCode == 'es';
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        title: Text(l10n.privacy_policy),
+        title: Text(l10n.text('privacy_policy')),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),

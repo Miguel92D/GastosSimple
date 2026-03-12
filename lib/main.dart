@@ -1,7 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/theme_service.dart';
-import 'services/language_service.dart';
 import 'services/security_service.dart';
 import 'services/purchase_service.dart';
 import 'services/error_service.dart';
@@ -14,7 +15,7 @@ import 'core/state/app_mode_controller.dart';
 import 'core/router/navigation_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:home_widget/home_widget.dart';
-import 'l10n/app_localizations.dart';
+
 import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/state/app_state.dart';
@@ -44,7 +45,12 @@ void main() async {
     );
   };
 
-  runApp(ErrorGuard(child: const GastosSimpleApp()));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppLocaleController(),
+      child: ErrorGuard(child: const GastosSimpleApp()),
+    ),
+  );
 }
 
 class GastosSimpleApp extends StatefulWidget {
@@ -115,21 +121,20 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
         return ListenableBuilder(
           listenable: Listenable.merge([
             ThemeService.instance,
-            LanguageService.instance,
             SecurityService.instance,
             CurrencyService.instance,
             ProService.instance,
             AppModeController.instance,
           ]),
           builder: (context, _) {
+            final localeString = context.watch<AppLocaleController>().locale;
             return MaterialApp(
               title: r'$imple',
               navigatorKey: NavigationService.navigatorKey,
               debugShowCheckedModeBanner: false,
-              locale: LanguageService.instance.locale,
+              locale: Locale(localeString),
               supportedLocales: const [Locale('es'), Locale('en')],
               localizationsDelegates: const [
-                AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,

@@ -1,9 +1,11 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../../services/purchase_service.dart';
 import '../../../services/premium_service.dart';
 import '../../../services/pro_service.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
@@ -54,7 +56,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.premium_test_unlocked),
+          content: Text(context.watch<AppLocaleController>().text('premium_test_unlocked')),
         ),
       );
       Navigator.pop(context);
@@ -63,10 +65,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
 
     return AppScaffold(
-      title: l10n.simple_pro,
+      title: l10n.text('simple_pro'),
       drawer: const AppDrawer(),
       body: _isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -96,13 +98,13 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        l10n.simple_pro,
+                        l10n.text('simple_pro'),
                         style: AppTextStyles.titleLarge.copyWith(fontSize: 32),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        l10n.unlock_advanced_tools,
+                        l10n.text('unlock_advanced_tools'),
                         style: AppTextStyles.bodyMain.copyWith(
                           color: AppColors.softText.withOpacity(0.7),
                         ),
@@ -111,19 +113,19 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       const SizedBox(height: 48),
                       _buildFeature(
                         Icons.psychology_rounded,
-                        l10n.benefit_strategies,
+                        l10n.text('benefit_strategies'),
                       ),
                       _buildFeature(
                         Icons.auto_graph_rounded,
-                        l10n.benefit_predictions,
+                        l10n.text('benefit_predictions'),
                       ),
                       _buildFeature(
                         Icons.analytics_rounded,
-                        l10n.benefit_analytics,
+                        l10n.text('benefit_analytics'),
                       ),
                       _buildFeature(
                         Icons.lightbulb_outline_rounded,
-                        l10n.smart_insights,
+                        l10n.text('smart_insights'),
                       ),
                       const SizedBox(height: 48),
                       if (!ProService.instance.isPro) ...[
@@ -131,16 +133,16 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           children: [
                             Expanded(
                               child: _buildPlanCard(
-                                l10n.monthly_plan,
-                                l10n.monthly_price,
+                                l10n.text('monthly_plan'),
+                                l10n.text('monthly_price'),
                                 'simple_pro_monthly',
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: _buildPlanCard(
-                                l10n.lifetime_plan,
-                                l10n.lifetime_price,
+                                l10n.text('lifetime_plan'),
+                                l10n.text('lifetime_price'),
                                 'simple_pro_lifetime',
                               ),
                             ),
@@ -148,7 +150,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         ),
                         const SizedBox(height: 40),
                         GradientButton(
-                          text: l10n.activate_pro.toUpperCase(),
+                          text: l10n.text('activate_pro').toUpperCase(),
                           onPressed: _buyPremium,
                           borderRadius: 24,
                         ),
@@ -156,7 +158,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         TextButton(
                           onPressed: _restorePurchase,
                           child: Text(
-                            l10n.restore_purchase,
+                            l10n.text('restore_purchase'),
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.softText.withOpacity(0.4),
                             ),
@@ -179,7 +181,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                l10n.pro_active,
+                                l10n.text('pro_active'),
                                 style: AppTextStyles.cardTitle.copyWith(
                                   fontSize: 22,
                                   color: AppColors.incomeGreen,

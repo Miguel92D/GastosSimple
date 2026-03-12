@@ -1,8 +1,10 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
 import '../widgets/transaction_history_list.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -67,7 +69,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.search,
+                hintText: context.watch<AppLocaleController>().text('search'),
                 border: InputBorder.none,
                 hintStyle: AppTextStyles.bodyMain.copyWith(
                   color: AppColors.softText.withOpacity(0.5),
@@ -79,7 +81,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
               onChanged: (_) => _loadData(),
             )
           : Text(
-              AppLocalizations.of(context)!.movements,
+              context.watch<AppLocaleController>().text('movements'),
               style: AppTextStyles.titleLarge.copyWith(fontSize: 24, letterSpacing: -1),
             ),
       actions: [

@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../flow/general_flow_service.dart';
@@ -8,7 +10,7 @@ import 'app_colors.dart';
 import 'app_gradients.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
-import '../../l10n/app_localizations.dart';
+
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -97,7 +99,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 10),
                 GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
                 Text(
-                  AppLocalizations.of(context)!.financial_control_drawer,
+                  context.watch<AppLocaleController>().text('financial_control_drawer'),
                   style: AppTextStyles.subLabel.copyWith(
                     fontSize: 10,
                     letterSpacing: 2,
@@ -127,8 +129,8 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     const SizedBox(width: 8),
                     Text(
                       isPro
-                          ? AppLocalizations.of(context)!.account_premium
-                          : AppLocalizations.of(context)!.account_free,
+                          ? context.watch<AppLocaleController>().text('account_premium')
+                          : context.watch<AppLocaleController>().text('account_free'),
                       style: AppTextStyles.subLabel.copyWith(
                         fontSize: 11,
                         color: AppColors.textPrimary.withValues(alpha: 0.7),
@@ -145,7 +147,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               children: [
                 _DrawerItem(
                   icon: Icons.dashboard_rounded,
-                  title: AppLocalizations.of(context)!.dashboard,
+                  title: context.watch<AppLocaleController>().text('dashboard'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openDashboard();
@@ -153,7 +155,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.swap_vert_rounded,
-                  title: AppLocalizations.of(context)!.movements,
+                  title: context.watch<AppLocaleController>().text('movements'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openMovements();
@@ -161,7 +163,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.analytics_rounded,
-                  title: AppLocalizations.of(context)!.statistics,
+                  title: context.watch<AppLocaleController>().text('statistics'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
@@ -169,7 +171,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.flag_rounded,
-                  title: AppLocalizations.of(context)!.savings_goals,
+                  title: context.watch<AppLocaleController>().text('savings_goals'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openGoals();
@@ -228,7 +230,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 8),
                 _DrawerItem(
                   icon: Icons.auto_awesome_rounded,
-                  title: AppLocalizations.of(context)!.ai_intelligence,
+                  title: context.watch<AppLocaleController>().text('ai_intelligence'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openPrediction();
@@ -236,7 +238,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.account_balance_rounded,
-                  title: AppLocalizations.of(context)!.debts,
+                  title: context.watch<AppLocaleController>().text('debts'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openDebts();
@@ -244,7 +246,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.lock_rounded,
-                  title: AppLocalizations.of(context)!.vault_label,
+                  title: context.watch<AppLocaleController>().text('vault_label'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openVault);
@@ -252,7 +254,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.settings_rounded,
-                  title: AppLocalizations.of(context)!.settings,
+                  title: context.watch<AppLocaleController>().text('settings'),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openSettings();

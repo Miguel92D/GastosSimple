@@ -1,8 +1,10 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
 import '../widgets/transaction_history_list.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -66,8 +68,8 @@ class _FilteredHistoryScreenState extends State<FilteredHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final title = widget.tipo == 'ingreso'
-        ? AppLocalizations.of(context)!.income_history
-        : AppLocalizations.of(context)!.expense_history;
+        ? context.watch<AppLocaleController>().text('income_history')
+        : context.watch<AppLocaleController>().text('expense_history');
 
     return AppScaffold(
       title: title,
@@ -77,7 +79,7 @@ class _FilteredHistoryScreenState extends State<FilteredHistoryScreen> {
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.search,
+                hintText: context.watch<AppLocaleController>().text('search'),
                 border: InputBorder.none,
                 hintStyle: AppTextStyles.bodyMain.copyWith(
                   color: AppColors.softText.withOpacity(0.5),

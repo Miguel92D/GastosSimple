@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/debt.dart';
-import '../../../l10n/app_localizations.dart';
+import '../../../core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../controllers/debt_controller.dart';
 import '../../../core/ui/app_colors.dart';
@@ -86,7 +87,7 @@ class _DebtScreenState extends State<DebtScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final innerL10n = AppLocalizations.of(context)!;
+        final innerL10n = context.read<AppLocaleController>();
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -114,23 +115,23 @@ class _DebtScreenState extends State<DebtScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    debt == null ? innerL10n.new_debt : innerL10n.edit_debt,
+                    debt == null ? innerL10n.text('new_debt') : innerL10n.text('edit_debt'),
                     style: AppTextStyles.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w900),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
-                  _buildField(innerL10n.debt_name_label, nombreController, icon: Icons.badge_rounded),
-                  _buildField(innerL10n.total_amount, montoTotalController, keyboard: TextInputType.number, icon: Icons.account_balance_wallet_rounded),
-                  _buildField(innerL10n.min_payment, pagoMinimoController, keyboard: TextInputType.number, icon: Icons.payment_rounded),
+                  _buildField(innerL10n.text('debt_name_label'), nombreController, icon: Icons.badge_rounded),
+                  _buildField(innerL10n.text('total_amount'), montoTotalController, keyboard: TextInputType.number, icon: Icons.account_balance_wallet_rounded),
+                  _buildField(innerL10n.text('min_payment'), pagoMinimoController, keyboard: TextInputType.number, icon: Icons.payment_rounded),
                   Row(
                     children: [
                       Expanded(
-                        child: _buildField(innerL10n.interest_rate_optional, tasaInteresController, keyboard: TextInputType.number, icon: Icons.percent_rounded),
+                        child: _buildField(innerL10n.text('interest_rate_optional'), tasaInteresController, keyboard: TextInputType.number, icon: Icons.percent_rounded),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: _buildField(
-                          innerL10n.due_day_label,
+                          innerL10n.text('due_day_label'),
                           fechaVencimientoController,
                           keyboard: TextInputType.number,
                           icon: Icons.calendar_today_rounded,
@@ -166,7 +167,7 @@ class _DebtScreenState extends State<DebtScreen> {
                       elevation: 5,
                       shadowColor: AppColors.primaryPurple.withOpacity(0.5),
                     ),
-                    child: Text(innerL10n.save_debt, style: AppTextStyles.buttonLabel),
+                    child: Text(innerL10n.text('save_debt'), style: AppTextStyles.buttonLabel),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -189,7 +190,7 @@ class _DebtScreenState extends State<DebtScreen> {
   ) async {
     if (nombreController.text.isEmpty || montoTotalController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.complete_name_and_amount)),
+        SnackBar(content: Text(context.read<AppLocaleController>().text('complete_name_and_amount'))),
       );
       return;
     }
@@ -245,11 +246,11 @@ class _DebtScreenState extends State<DebtScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
     final totalRemaining = _debts.fold(0.0, (sum, d) => sum + d.remaining);
 
     return AppScaffold(
-      title: l10n.debts,
+      title: l10n.text('debts'),
       drawer: const AppDrawer(),
       floatingActionButton: _buildAddDebtFab(context),
       body: _isLoading
@@ -286,7 +287,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              l10n.no_debts_empty,
+                              l10n.text('no_debts_empty'),
                               style: AppTextStyles.titleLarge.copyWith(
                                 fontSize: 18,
                                 color: AppColors.textPrimary.withOpacity(0.7),
@@ -295,7 +296,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              l10n.no_debts_subtitle,
+                              l10n.text('no_debts_subtitle'),
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.softText.withOpacity(0.5),
                               ),
@@ -312,7 +313,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                   border: Border.all(color: AppColors.primaryPurple.withOpacity(0.3)),
                                 ),
                                 child: Text(
-                                  l10n.add_first_debt,
+                                  l10n.text('add_first_debt'),
                                   style: AppTextStyles.buttonLabel.copyWith(color: AppColors.primaryPurple, fontSize: 12),
                                 ),
                               ),
@@ -353,12 +354,12 @@ class _DebtScreenState extends State<DebtScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.payment_amount_for(debt.nombre),
+                      context.read<AppLocaleController>().text('payment_amount_for', {'name': debt.nombre}),
                       style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.payment_amount_hint, style: AppTextStyles.subLabel),
+                    Text(context.read<AppLocaleController>().text('payment_amount_hint'), style: AppTextStyles.subLabel),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -409,7 +410,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: Text(AppLocalizations.of(context)!.confirm_payment, style: AppTextStyles.buttonLabel),
+                      child: Text(context.read<AppLocaleController>().text('confirm_payment'), style: AppTextStyles.buttonLabel),
                     ),
                   ],
                 ),
@@ -547,7 +548,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                AppLocalizations.of(context)!.paid_label,
+                                context.read<AppLocaleController>().text('paid_label'),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 8,
@@ -568,7 +569,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      isPaid ? AppLocalizations.of(context)!.paid_label : CurrencyHelper.format(debt.remaining, context),
+                      isPaid ? context.read<AppLocaleController>().text('paid_label') : CurrencyHelper.format(debt.remaining, context),
                       style: AppTextStyles.cardTitle.copyWith(
                         fontSize: 16,
                         color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
@@ -641,16 +642,16 @@ class _DebtScreenState extends State<DebtScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = context.watch<AppLocaleController>();
         return AlertDialog(
           backgroundColor: AppColors.darkBackground,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text(l10n.delete_debt_title, style: AppTextStyles.cardTitle),
-          content: Text(l10n.confirm_delete.replaceFirst('movimiento', "'${debt.nombre}'")),
+          title: Text(l10n.text('delete_debt_title'), style: AppTextStyles.cardTitle),
+          content: Text(l10n.text('confirm_delete').replaceFirst('movimiento', "'${debt.nombre}'")),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel.toUpperCase(), style: const TextStyle(color: AppColors.softText)),
+              child: Text(l10n.text('cancel').toUpperCase(), style: const TextStyle(color: AppColors.softText)),
             ),
             TextButton(
               onPressed: () async {
@@ -659,7 +660,7 @@ class _DebtScreenState extends State<DebtScreen> {
                 Navigator.pop(context);
                 _loadDebts();
               },
-              child: Text(l10n.delete.toUpperCase(), style: const TextStyle(color: AppColors.expenseRed)),
+              child: Text(l10n.text('delete').toUpperCase(), style: const TextStyle(color: AppColors.expenseRed)),
             ),
           ],
         );
@@ -710,7 +711,7 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   Widget _buildStrategySection(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
     return GlassCard(
       padding: const EdgeInsets.all(24),
       borderRadius: 32,
@@ -718,7 +719,7 @@ class _DebtScreenState extends State<DebtScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.choose_strategy,
+            l10n.text('choose_strategy'),
             style: AppTextStyles.subLabel.copyWith(
               letterSpacing: 1.2,
               color: AppColors.softText.withOpacity(0.6),
@@ -726,7 +727,7 @@ class _DebtScreenState extends State<DebtScreen> {
           ),
           const SizedBox(height: 24),
           _buildStrategyCard(
-            title: l10n.avalanche_strategy,
+            title: l10n.text('avalanche_strategy'),
             icon: Icons.bolt_rounded,
             color: Colors.blueAccent,
             isSelected: _selectedStrategy == 'avalanche',
@@ -734,7 +735,7 @@ class _DebtScreenState extends State<DebtScreen> {
           ),
           const SizedBox(height: 12),
           _buildStrategyCard(
-            title: l10n.snowball_strategy,
+            title: l10n.text('snowball_strategy'),
             icon: Icons.ac_unit_rounded,
             color: AppColors.primaryPurple,
             isSelected: _selectedStrategy == 'snowball',

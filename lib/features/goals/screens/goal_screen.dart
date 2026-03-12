@@ -1,6 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../models/goal.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/utils/currency_helper.dart';
 import '../controllers/goal_controller.dart';
 import '../../../core/ui/app_colors.dart';
@@ -54,8 +56,8 @@ class _GoalScreenState extends State<GoalScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           goal == null
-              ? AppLocalizations.of(context)!.new_goal
-              : AppLocalizations.of(context)!.edit_goal,
+              ? context.watch<AppLocaleController>().text('new_goal')
+              : context.watch<AppLocaleController>().text('edit_goal'),
           style: AppTextStyles.cardTitle,
         ),
         content: Column(
@@ -66,7 +68,7 @@ class _GoalScreenState extends State<GoalScreen> {
               autofocus: true,
               style: AppTextStyles.bodyMain,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.goal_name_label,
+                labelText: context.watch<AppLocaleController>().text('goal_name_label'),
                 labelStyle: AppTextStyles.bodyMain.copyWith(
                   color: AppColors.textMuted,
                 ),
@@ -83,7 +85,7 @@ class _GoalScreenState extends State<GoalScreen> {
               controller: targetController,
               style: AppTextStyles.bodyMain,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.target_label,
+                labelText: context.watch<AppLocaleController>().text('target_label'),
                 labelStyle: AppTextStyles.bodyMain.copyWith(
                   color: AppColors.textMuted,
                 ),
@@ -108,7 +110,7 @@ class _GoalScreenState extends State<GoalScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              AppLocalizations.of(context)!.cancel,
+              context.watch<AppLocaleController>().text('cancel'),
               style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
             ),
           ),
@@ -138,7 +140,7 @@ class _GoalScreenState extends State<GoalScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(AppLocalizations.of(context)!.save),
+            child: Text(context.watch<AppLocaleController>().text('save')),
           ),
         ],
       ),
@@ -152,7 +154,7 @@ class _GoalScreenState extends State<GoalScreen> {
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.savings_goals),
+        title: Text(context.watch<AppLocaleController>().text('savings_goals')),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -166,7 +168,7 @@ class _GoalScreenState extends State<GoalScreen> {
                 : _goals.isEmpty
                 ? Center(
                     child: Text(
-                      AppLocalizations.of(context)!.no_goals_yet,
+                      context.watch<AppLocaleController>().text('no_goals_yet'),
                       style: AppTextStyles.bodyMain.copyWith(
                         color: AppColors.softText,
                       ),

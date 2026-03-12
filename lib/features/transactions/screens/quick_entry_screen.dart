@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 /**
  * This project uses a centralized design system.
  * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
@@ -5,7 +7,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
 import '../../../core/ui/app_colors.dart';
@@ -76,7 +78,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
 
     return AppScaffold(
       title: "",
@@ -91,7 +93,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
                       horizontal: AppSpacing.xl + 8,
                     ),
                     child: Text(
-                      l10n.quick_entry_question,
+                      l10n.text('quick_entry_question'),
                       style: AppTextStyles.titleLarge,
                       textAlign: TextAlign.center,
                     ),

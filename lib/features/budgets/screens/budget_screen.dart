@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../l10n/app_localizations.dart';
+import '../../../core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../controllers/budget_controller.dart';
@@ -65,9 +66,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
             borderRadius: BorderRadius.circular(24),
           ),
           title: Text(
-            AppLocalizations.of(
-              context,
-            )!.budget_title(L10nHelper.getLocalizedCategory(context, category)),
+            context.watch<AppLocaleController>().text('budget_title', {'category': L10nHelper.getLocalizedCategory(context, category)}),
             style: AppTextStyles.cardTitle,
           ),
           content: TextField(
@@ -78,7 +77,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
             textInputAction: TextInputAction.done,
             onSubmitted: (value) => Navigator.pop(context, value),
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.budget_example,
+              hintText: context.read<AppLocaleController>().text('budget_example'),
               hintStyle: AppTextStyles.bodyMain.copyWith(
                 color: AppColors.textMuted,
               ),
@@ -98,7 +97,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                AppLocalizations.of(context)!.cancel,
+                context.read<AppLocaleController>().text('cancel'),
                 style: AppTextStyles.bodyMain.copyWith(
                   color: AppColors.softText,
                 ),
@@ -113,7 +112,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(AppLocalizations.of(context)!.save),
+              child: Text(context.read<AppLocaleController>().text('save')),
             ),
           ],
         );
@@ -132,7 +131,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      title: AppLocalizations.of(context)!.budgets,
+      title: context.read<AppLocaleController>().text('budgets'),
       drawer: const AppDrawer(),
       resizeToAvoidBottomInset: true,
       body: ListenableBuilder(
@@ -208,9 +207,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                       if (!hasBudget)
                                         Flexible(
                                           child: Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.not_set,
+                                            context.watch<AppLocaleController>().text('not_set'),
                                             style: AppTextStyles.bodySmall
                                                 .copyWith(
                                                   color: AppColors.textMuted,

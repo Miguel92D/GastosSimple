@@ -55,6 +55,7 @@ dependencies:
   cloud_firestore: any
   firebase_auth: any
   google_sign_in: any
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icon/app_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default:21
+  remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

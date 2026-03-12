@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 /**
  * This project uses a centralized design system.
  * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
@@ -11,7 +13,7 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../goals/models/goal.dart';
@@ -182,7 +184,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (amount == null || amount <= 0) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.amount_error)),
+          SnackBar(content: Text(context.watch<AppLocaleController>().text('amount_error'))),
         );
       }
       return;
@@ -228,8 +230,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     return AppScaffold(
       title: isEditing
-          ? AppLocalizations.of(context)!.edit_movement
-          : AppLocalizations.of(context)!.new_movement,
+          ? context.watch<AppLocaleController>().text('edit_movement')
+          : context.watch<AppLocaleController>().text('new_movement'),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
           padding: EdgeInsets.only(
@@ -254,7 +256,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _ToggleOption(
-                          label: AppLocalizations.of(context)!.income,
+                          label: context.watch<AppLocaleController>().text('income'),
                           isSelected: _tipo == 'ingreso',
                           color: AppColors.incomeGreen,
                           onTap: () => setState(() {
@@ -264,7 +266,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                         const SizedBox(width: 4),
                         _ToggleOption(
-                          label: AppLocalizations.of(context)!.expense,
+                          label: context.watch<AppLocaleController>().text('expense'),
                           isSelected: _tipo == 'gasto',
                           color: AppColors.expenseRed,
                           onTap: () => setState(() {
@@ -296,7 +298,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ? AppColors.expenseRed
                       : AppColors.incomeGreen,
                 ),
-                hintText: AppLocalizations.of(context)!.amount,
+                hintText: context.watch<AppLocaleController>().text('amount'),
                 hintStyle: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 32,
                   color: AppColors.softText.withOpacity(0.1),
@@ -321,7 +323,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
-              Text(AppLocalizations.of(context)!.category_section_label, style: AppTextStyles.subLabel),
+              Text(context.watch<AppLocaleController>().text('category_section_label'), style: AppTextStyles.subLabel),
 
               const SizedBox(height: AppSpacing.md),
 
@@ -411,9 +413,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               GlassInput(
                 controller: _noteController,
-                label: AppLocalizations.of(context)!.note.toUpperCase(),
+                label: context.watch<AppLocaleController>().text('note').toUpperCase(),
                 icon: Icons.note_rounded,
-                hintText: AppLocalizations.of(context)!.note_hint,
+                hintText: context.watch<AppLocaleController>().text('note_hint'),
               ),
 
               const SizedBox(height: AppSpacing.xxl),
@@ -421,7 +423,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               SizedBox(
                 width: double.infinity,
                 child: GradientButton(
-                  text: AppLocalizations.of(context)!.save.toUpperCase(),
+                  text: context.watch<AppLocaleController>().text('save').toUpperCase(),
                   onPressed: _saveMovement,
                   borderRadius: AppRadius.lg,
                   gradientColors: AppGradients.primaryGradient.colors,

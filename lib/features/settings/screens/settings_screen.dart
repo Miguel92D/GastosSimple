@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/language_service.dart';
 import '../../../services/theme_service.dart';
@@ -5,7 +7,7 @@ import '../../../services/security_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/flow/general_flow_service.dart';
 import '../../../core/flow/premium_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
@@ -39,15 +41,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
 
     return AppScaffold(
-      title: l10n.settings,
+      title: l10n.text('settings'),
       drawer: const AppDrawer(),
       body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 16),
           children: [
-            _buildSectionTitle(l10n.language),
+            _buildSectionTitle(l10n.text('language')),
             _buildItem(
               title: 'Español',
               leading: Icons.language_rounded,
@@ -74,12 +76,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.dark_mode),
+            _buildSectionTitle(l10n.text('dark_mode')),
             ListenableBuilder(
               listenable: ThemeService.instance,
               builder: (context, _) => SwitchListTile(
                 title: Text(
-                  l10n.dark_mode,
+                  l10n.text('dark_mode'),
                   style: AppTextStyles.bodyMain.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -99,20 +101,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.security),
+            _buildSectionTitle(l10n.text('security')),
             ListenableBuilder(
               listenable: SecurityService.instance,
               builder: (context, _) => Column(
                 children: [
                   SwitchListTile(
                     title: Text(
-                      l10n.enable_pin,
+                      l10n.text('enable_pin'),
                       style: AppTextStyles.bodyMain.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     subtitle: Text(
-                      l10n.pin_subtitle,
+                      l10n.text('pin_subtitle'),
                       style: AppTextStyles.bodySmall,
                     ),
                     activeColor: AppColors.primaryPurple,
@@ -127,13 +129,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   SwitchListTile(
                     title: Text(
-                      l10n.biometric_unlock,
+                      l10n.text('biometric_unlock'),
                       style: AppTextStyles.bodyMain.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     subtitle: Text(
-                      l10n.biometric_subtitle,
+                      l10n.text('biometric_subtitle'),
                       style: AppTextStyles.bodySmall,
                     ),
                     activeColor: AppColors.primaryPurple,
@@ -143,7 +145,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   if (SecurityService.instance.hasPin)
                     _buildItem(
-                      title: l10n.change_pin,
+                      title: l10n.text('change_pin'),
                       leading: Icons.vpn_key_rounded,
                       onTap: () => _showSetPinDialog(context),
                     ),
@@ -154,9 +156,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.cloud_backup_title),
+            _buildSectionTitle(l10n.text('cloud_backup_title')),
             _buildItem(
-              title: l10n.backup_now_label,
+              title: l10n.text('backup_now_label'),
               leading: Icons.cloud_upload_rounded,
               onTap: () async {
                 if (!ProService.instance.isPro) {
@@ -169,18 +171,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (!context.mounted) return;
                 if (user != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.starting_backup_msg)),
+                    SnackBar(content: Text(l10n.text('starting_backup_msg'))),
                   );
                   await CloudBackupService.instance.backupData();
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.backup_success_msg)),
+                    SnackBar(content: Text(l10n.text('backup_success_msg'))),
                   );
                 }
               },
             ),
             _buildItem(
-              title: l10n.restore_backup_label,
+              title: l10n.text('restore_backup_label'),
               leading: Icons.cloud_download_rounded,
               onTap: () async {
                 if (!ProService.instance.isPro) {
@@ -193,26 +195,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (!context.mounted) return;
                 if (user != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.restoring_backup_msg)),
+                    SnackBar(content: Text(l10n.text('restoring_backup_msg'))),
                   );
                   await CloudBackupService.instance.restoreData();
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.restore_success_msg)),
+                    SnackBar(content: Text(l10n.text('restore_success_msg'))),
                   );
                 }
               },
             ),
             SwitchListTile(
               title: Text(
-                l10n.auto_backup_label,
+                l10n.text('auto_backup_label'),
                 style: AppTextStyles.bodyMain.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
               subtitle: Text(
-                l10n.auto_backup_desc,
+                l10n.text('auto_backup_desc'),
                 style: AppTextStyles.bodySmall,
               ),
               activeColor: AppColors.primaryPurple,
@@ -237,12 +239,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.currency),
+            _buildSectionTitle(l10n.text('currency')),
             ListenableBuilder(
               listenable: CurrencyService.instance,
               builder: (context, _) => _buildItem(
                 leading: Icons.payments_rounded,
-                title: l10n.currency,
+                title: l10n.text('currency'),
                 subtitle: CurrencyService.instance.currencySymbol,
                 onTap: () => _showCurrencySelector(context),
               ),
@@ -251,9 +253,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.legal),
+            _buildSectionTitle(l10n.text('legal')),
             _buildItem(
-              title: l10n.privacy_policy,
+              title: l10n.text('privacy_policy'),
               leading: Icons.shield_rounded,
               onTap: () {
                 GeneralFlowService.openPrivacy();
@@ -343,7 +345,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showSetPinDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -355,7 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           side: const BorderSide(color: AppColors.cardBorder),
         ),
         title: Text(
-          AppLocalizations.of(context)!.set_pin,
+          context.watch<AppLocaleController>().text('set_pin'),
           style: AppTextStyles.cardTitle,
         ),
         content: TextField(
@@ -365,7 +367,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           obscureText: true,
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.new_pin_label,
+            labelText: context.watch<AppLocaleController>().text('new_pin_label'),
             labelStyle: TextStyle(color: AppColors.softText.withOpacity(0.5)),
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: AppColors.cardBorder),
@@ -379,7 +381,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(
             onPressed: () => GeneralFlowService.goBack(),
             child: Text(
-              AppLocalizations.of(context)!.delete,
+              context.watch<AppLocaleController>().text('delete'),
               style: const TextStyle(color: AppColors.softText),
             ),
           ),
@@ -392,7 +394,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             },
             child: Text(
-              l10n.save.toUpperCase(),
+              l10n.text('save').toUpperCase(),
               style: const TextStyle(
                 color: AppColors.primaryPurple,
                 fontWeight: FontWeight.bold,

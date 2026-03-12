@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/state/app_state.dart';
@@ -6,7 +8,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
-import '../../../l10n/app_localizations.dart';
+
 
 class IncomeExpenseCards extends StatelessWidget {
   final double income;
@@ -38,7 +40,7 @@ class IncomeExpenseCards extends StatelessWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.income,
+                  label: context.watch<AppLocaleController>().text('income'),
                   amount: income,
                   color: AppColors.incomeGreen,
                   isSelected: selectedFilter == 'ingreso',
@@ -48,7 +50,7 @@ class IncomeExpenseCards extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: _StatCard(
-                  label: AppLocalizations.of(context)!.expense,
+                  label: context.watch<AppLocaleController>().text('expense'),
                   amount: expenses,
                   color: AppColors.expenseRed,
                   isSelected: selectedFilter == 'gasto',

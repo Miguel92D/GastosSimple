@@ -1,6 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
@@ -87,11 +89,11 @@ class _PredictionScreenState extends State<PredictionScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.watch<AppLocaleController>();
     final isNegative = _predictedBalance < 0;
 
     return AppScaffold(
-      title: l10n.spending_predictions,
+      title: l10n.text('spending_predictions'),
       drawer: const AppDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -118,7 +120,7 @@ class _PredictionScreenState extends State<PredictionScreen>
     );
   }
 
-  Widget _buildSummaryCard(AppLocalizations l10n) {
+  Widget _buildSummaryCard(AppLocaleController l10n) {
     return GlassCard(
       borderRadius: 30,
       glowColor: AppColors.primaryPurple.withOpacity(0.05),
@@ -126,14 +128,14 @@ class _PredictionScreenState extends State<PredictionScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.current_balance.toUpperCase(),
+            l10n.text('current_balance').toUpperCase(),
             style: AppTextStyles.subLabel.copyWith(
               color: AppColors.softText.withOpacity(0.5),
               letterSpacing: 2.0,
             ),
           ),
           const SizedBox(height: 20),
-          _buildRow(l10n.income, _currentIncome, AppColors.incomeGreen),
+          _buildRow(l10n.text('income'), _currentIncome, AppColors.incomeGreen),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(
@@ -142,13 +144,13 @@ class _PredictionScreenState extends State<PredictionScreen>
               thickness: 0.5,
             ),
           ),
-          _buildRow(l10n.expense, _currentExpense, AppColors.expenseRed),
+          _buildRow(l10n.text('expense'), _currentExpense, AppColors.expenseRed),
         ],
       ),
     );
   }
 
-  Widget _buildProjectionCard(AppLocalizations l10n, bool isNegative) {
+  Widget _buildProjectionCard(AppLocaleController l10n, bool isNegative) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -181,7 +183,7 @@ class _PredictionScreenState extends State<PredictionScreen>
               child: Column(
                 children: [
                   Text(
-                    l10n.prediction.toUpperCase(),
+                    l10n.text('prediction').toUpperCase(),
                     style: AppTextStyles.subLabel.copyWith(
                       color: Colors.white.withOpacity(0.7),
                       letterSpacing: 2.0,
@@ -189,13 +191,13 @@ class _PredictionScreenState extends State<PredictionScreen>
                   ),
                   const SizedBox(height: 24),
                   _buildProjectionRow(
-                    l10n.estimated_spending,
+                    l10n.text('estimated_spending'),
                     _predictedExpense,
                     AppColors.expenseRed,
                   ),
                   const SizedBox(height: 32),
                   _buildProjectionRow(
-                    l10n.estimated_balance,
+                    l10n.text('estimated_balance'),
                     _predictedBalance,
                     _predictedBalance >= 0
                         ? AppColors.incomeGreen
@@ -211,7 +213,7 @@ class _PredictionScreenState extends State<PredictionScreen>
     );
   }
 
-  Widget _buildWarningCard(AppLocalizations l10n) {
+  Widget _buildWarningCard(AppLocaleController l10n) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
       borderRadius: 24,
@@ -233,7 +235,7 @@ class _PredictionScreenState extends State<PredictionScreen>
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              l10n.prediction_negative_warning,
+              l10n.text('prediction_negative_warning'),
               style: AppTextStyles.bodyMain.copyWith(
                 color: AppColors.expenseRed,
                 fontWeight: FontWeight.w800,

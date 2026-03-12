@@ -1,6 +1,8 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import '../../../l10n/app_localizations.dart';
+
 import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
@@ -61,7 +63,7 @@ class _StatsScreenState extends State<StatsScreen> {
     ];
 
     return AppScaffold(
-      title: AppLocalizations.of(context)!.history,
+      title: context.watch<AppLocaleController>().text('history'),
       drawer: const AppDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -82,17 +84,17 @@ class _StatsScreenState extends State<StatsScreen> {
                         child: Column(
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.category_expenses,
+                              context.watch<AppLocaleController>().text('category_expenses'),
                               style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
                             ),
                             const SizedBox(height: 32),
                             if (catGastos.isEmpty)
-                              Text(AppLocalizations.of(context)!.no_expenses_recorded)
+                              Text(context.watch<AppLocaleController>().text('no_expenses_recorded'))
                             else ...[
                               Column(
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.monthly_total.toUpperCase(),
+                                    context.watch<AppLocaleController>().text('monthly_total').toUpperCase(),
                                     style: AppTextStyles.subLabel.copyWith(
                                       color: AppColors.softText.withOpacity(0.5),
                                       letterSpacing: 2.0,

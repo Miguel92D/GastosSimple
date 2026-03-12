@@ -1,7 +1,9 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import 'transaction_tile.dart';
-import '../../../l10n/app_localizations.dart';
+
 import '../controllers/transaction_controller.dart';
 import '../../../../core/flow/general_flow_service.dart';
 import '../../../../core/flow/transaction_flow_service.dart';
@@ -54,7 +56,7 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.primaryPurple,
                 ),
                 title: Text(
-                  AppLocalizations.of(context)!.edit,
+                  context.watch<AppLocaleController>().text('edit'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () async {
@@ -72,7 +74,7 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.expenseRed,
                 ),
                 title: Text(
-                  AppLocalizations.of(context)!.delete,
+                  context.watch<AppLocaleController>().text('delete'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () async {
@@ -91,7 +93,7 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.softText,
                 ),
                 title: Text(
-                  AppLocalizations.of(context)!.cancel,
+                  context.watch<AppLocaleController>().text('cancel'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () => GeneralFlowService.goBack(),
@@ -109,7 +111,7 @@ class TransactionHistoryList extends StatelessWidget {
     if (transactions.isEmpty) {
       return Center(
         child: Text(
-          AppLocalizations.of(context)!.no_movements_recorded,
+          context.watch<AppLocaleController>().text('no_movements_recorded'),
           style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
         ),
       );
