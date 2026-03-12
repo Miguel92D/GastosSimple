@@ -230,6 +230,8 @@ class _GoalItemCard extends StatelessWidget {
                 return Text(
                   '${CurrencyHelper.format(value, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
                   style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w700),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 );
               },
             ),
@@ -278,38 +280,19 @@ class _GoalItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Necesitas ahorrar:', style: AppTextStyles.subLabel),
-                    Text(
-                      '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / mes',
-                      style: AppTextStyles.bodyMain.copyWith(
-                        color: AppColors.incomeGreen,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                TextButton(
-                  onPressed: onAddMoney,
-                  style: TextButton.styleFrom(
-                    backgroundColor: AppColors.primaryPurple.withOpacity(0.1),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
-                  ),
-                  child: Row(
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.add_rounded, size: 18, color: AppColors.primaryPurple),
-                      const SizedBox(width: 4),
+                      const Text('Necesitas ahorrar:', style: AppTextStyles.subLabel),
                       Text(
-                        '+ Agregar dinero',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.primaryPurple,
+                        '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / mes',
+                        style: AppTextStyles.bodyMain.copyWith(
+                          color: AppColors.incomeGreen,
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -325,27 +308,48 @@ class _GoalItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined, size: 16),
-                  label: const Text('Editar'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primaryPurple,
-                    textStyle: AppTextStyles.bodySmall,
-                  ),
+                _buildActionButton(
+                  icon: Icons.payments_rounded,
+                  color: AppColors.incomeGreen,
+                  onTap: onAddMoney,
                 ),
-                TextButton.icon(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete_outline, size: 16),
-                  label: const Text('Eliminar'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.expenseRed.withOpacity(0.7),
-                    textStyle: AppTextStyles.bodySmall,
-                  ),
+                const SizedBox(width: 12),
+                _buildActionButton(
+                  icon: Icons.edit_outlined,
+                  color: AppColors.primaryPurple,
+                  onTap: onEdit,
+                ),
+                const SizedBox(width: 12),
+                _buildActionButton(
+                  icon: Icons.delete_outline_rounded,
+                  color: AppColors.expenseRed,
+                  onTap: onDelete,
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        ),
+        child: Center(
+          child: Icon(icon, size: 18, color: color),
         ),
       ),
     );
