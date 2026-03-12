@@ -16,6 +16,7 @@ class GlassInput extends StatelessWidget {
   final TextStyle? hintStyle;
   final FocusNode? focusNode;
   final VoidCallback? onSubmitted;
+  final VoidCallback? onEditingComplete;
   final Widget? prefix;
   final double? height;
   final EdgeInsetsGeometry? padding;
@@ -35,6 +36,7 @@ class GlassInput extends StatelessWidget {
     this.hintStyle,
     this.focusNode,
     this.onSubmitted,
+    this.onEditingComplete,
     this.prefix,
     this.height,
     this.padding,
@@ -58,6 +60,7 @@ class GlassInput extends StatelessWidget {
           maxLines: maxLines,
           onChanged: onChanged,
           onSubmitted: (_) => onSubmitted?.call(),
+          onEditingComplete: onEditingComplete,
           textAlign: isCenter ? TextAlign.center : TextAlign.start,
           style: style ?? AppTextStyles.bodyMain.copyWith(fontSize: 16),
           decoration: InputDecoration(

@@ -4,6 +4,7 @@
  * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
  */
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class AppGradients {
   // Brand Identity Gradient
@@ -59,6 +60,18 @@ class AppGradients {
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
+  );
+
+  // Background Depth Gradient
+  static RadialGradient get mainBackgroundRadial => RadialGradient(
+    center: const Alignment(0.4, -0.7), // Offset for more dynamic look
+    radius: 1.5,
+    colors: [
+      AppColors.primaryPurple.withOpacity(0.25), // Stronger glow
+      AppColors.primaryPurple.withOpacity(0.08), // Middle layer
+      AppColors.darkBackground,                  // Edge
+    ],
+    stops: const [0.0, 0.4, 1.0],
   );
 
   // Helper methods

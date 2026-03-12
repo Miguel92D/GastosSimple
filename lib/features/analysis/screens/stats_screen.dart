@@ -9,6 +9,8 @@ import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -47,13 +49,6 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final catGastos = _catGastos;
-    double totalGastos = catGastos.values.fold(0, (sum, val) => sum + val);
-
     final List<Color> chartColors = [
       AppColors.primaryPurple,
       const Color(0xFFC084FC),
@@ -65,170 +60,137 @@ class _StatsScreenState extends State<StatsScreen> {
       const Color(0xFFFB7185),
     ];
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.history),
-        centerTitle: true,
-      ),
-      body: ListenableBuilder(
-        listenable: AppState.instance,
-        builder: (context, child) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    GlassCard(
-                      borderRadius: 30,
-                      glowColor: AppColors.primaryPurple.withOpacity(0.08),
-                      child: Column(
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.category_expenses,
-                            style: AppTextStyles.titleLarge.copyWith(
-                              fontSize: 20,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          if (catGastos.isEmpty)
+    return AppScaffold(
+      title: AppLocalizations.of(context)!.history,
+      drawer: const AppDrawer(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListenableBuilder(
+              listenable: AppState.instance,
+              builder: (context, child) {
+                final catGastos = _catGastos;
+                double totalGastos = catGastos.values.fold(0, (sum, val) => sum + val);
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      GlassCard(
+                        borderRadius: 30,
+                        glowColor: AppColors.primaryPurple.withOpacity(0.08),
+                        child: Column(
+                          children: [
                             Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.no_expenses_recorded,
-                            )
-                          else ...[
-                            Column(
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .monthly_total
-                                      .toUpperCase(),
-                                  style: AppTextStyles.subLabel.copyWith(
-                                    color: AppColors.softText.withOpacity(0.5),
-                                    letterSpacing: 2.0,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppState.instance.hideBalance
-                                      ? "••••••"
-                                      : CurrencyHelper.format(
-                                          totalGastos,
-                                          context,
-                                        ),
-                                  style: AppTextStyles.balanceAmount.copyWith(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w900,
-                                    color: totalGastos > 0
-                                        ? AppColors.expenseRed
-                                        : Colors.white,
-                                  ),
-                                ),
-                              ],
+                              AppLocalizations.of(context)!.category_expenses,
+                              style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
                             ),
-                            const SizedBox(height: 48),
-                            ...catGastos.entries.map((e) {
-                              final index = catGastos.keys.toList().indexOf(
-                                e.key,
-                              );
-                              final percentage = e.value / totalGastos;
-                              final color =
-                                  chartColors[index % chartColors.length];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 24),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                height: 32,
-                                                width: 32,
-                                                decoration: BoxDecoration(
-                                                  color: color.withOpacity(0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                    color: color.withOpacity(
-                                                      0.3,
-                                                    ),
+                            const SizedBox(height: 32),
+                            if (catGastos.isEmpty)
+                              Text(AppLocalizations.of(context)!.no_expenses_recorded)
+                            else ...[
+                              Column(
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!.monthly_total.toUpperCase(),
+                                    style: AppTextStyles.subLabel.copyWith(
+                                      color: AppColors.softText.withOpacity(0.5),
+                                      letterSpacing: 2.0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    AppState.instance.hideBalance
+                                        ? "••••••"
+                                        : CurrencyHelper.format(totalGastos, context),
+                                    style: AppTextStyles.balanceAmount.copyWith(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w900,
+                                      color: totalGastos > 0 ? AppColors.expenseRed : Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 48),
+                              ...catGastos.entries.map((e) {
+                                final index = catGastos.keys.toList().indexOf(e.key);
+                                final percentage = totalGastos > 0 ? e.value / totalGastos : 0.0;
+                                final color = chartColors[index % chartColors.length];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 24),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  decoration: BoxDecoration(
+                                                    color: color.withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(color: color.withOpacity(0.3)),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Text(
-                                                L10nHelper.getLocalizedCategory(
-                                                  context,
-                                                  e.key,
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    L10nHelper.getLocalizedCategory(context, e.key),
+                                                    style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                                style: AppTextStyles.cardTitle
-                                                    .copyWith(fontSize: 16),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                AppState.instance.hideBalance
+                                                    ? "••••••"
+                                                    : CurrencyHelper.format(e.value, context),
+                                                style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+                                              ),
+                                              Text(
+                                                AppState.instance.hideBalance
+                                                    ? "••%"
+                                                    : '${(percentage * 100).toStringAsFixed(1)}%',
+                                                style: AppTextStyles.bodySmall,
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              AppState.instance.hideBalance
-                                                  ? "••••••"
-                                                  : CurrencyHelper.format(
-                                                      e.value,
-                                                      context,
-                                                    ),
-                                              style: AppTextStyles.cardTitle
-                                                  .copyWith(fontSize: 16),
-                                            ),
-                                            Text(
-                                              AppState.instance.hideBalance
-                                                  ? "••%"
-                                                  : '${(percentage * 100).toStringAsFixed(percentage * 100 == (percentage * 100).toInt() ? 0 : 1)}%',
-                                              style: AppTextStyles.bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: LinearProgressIndicator(
-                                        value: percentage,
-                                        backgroundColor: AppColors.softText
-                                            .withOpacity(0.05),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              color,
-                                            ),
-                                        minHeight: 8,
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
+                                      const SizedBox(height: 12),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: LinearProgressIndicator(
+                                          value: percentage,
+                                          backgroundColor: AppColors.softText.withOpacity(0.05),
+                                          valueColor: AlwaysStoppedAnimation<Color>(color),
+                                          minHeight: 8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                      const SizedBox(height: 100), // Espacio para el FAB flotante
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
-

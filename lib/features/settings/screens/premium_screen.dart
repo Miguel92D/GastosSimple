@@ -8,6 +8,8 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -63,15 +65,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.simple_pro),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: SafeArea(
-        child: _isLoading
+    return AppScaffold(
+      title: l10n.simple_pro,
+      drawer: const AppDrawer(),
+      body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
                 child: Padding(
@@ -196,7 +193,6 @@ class _PremiumScreenState extends State<PremiumScreen> {
                   ),
                 ),
               ),
-      ),
     );
   }
 

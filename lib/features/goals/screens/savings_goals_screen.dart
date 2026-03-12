@@ -9,6 +9,8 @@ import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class SavingsGoalsScreen extends StatefulWidget {
   const SavingsGoalsScreen({super.key});
@@ -60,14 +62,9 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: const Text('Metas de ahorro'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
+    return AppScaffold(
+      title: 'Metas de ahorro',
+      drawer: const AppDrawer(),
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, _) {

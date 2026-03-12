@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app_text_styles.dart';
 import '../app_colors.dart';
+import '../app_gradients.dart';
 import '../glass_card.dart';
 
 class AppScaffold extends StatelessWidget {
@@ -9,6 +10,8 @@ class AppScaffold extends StatelessWidget {
   final Widget? titleWidget;
   final Widget? floatingActionButton;
   final Widget? drawer;
+  final bool? resizeToAvoidBottomInset;
+  final List<Widget>? actions;
 
   const AppScaffold({
     super.key,
@@ -17,18 +20,19 @@ class AppScaffold extends StatelessWidget {
     this.titleWidget,
     this.floatingActionButton,
     this.drawer,
+    this.resizeToAvoidBottomInset,
+    this.actions,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.transparent, // Background handled by parent or theme
+      backgroundColor: AppColors.darkBackground,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      drawer: drawer,
       appBar: AppBar(
-        automaticallyImplyLeading:
-            false, // Desactivamos el menú de arriba a la izquierda
-        title:
-            titleWidget ??
+        automaticallyImplyLeading: false,
+        title: titleWidget ??
             Text(
               title,
               style: AppTextStyles.titleLarge.copyWith(
@@ -39,10 +43,26 @@ class AppScaffold extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        actions: actions,
       ),
-      drawer: drawer,
-      body: body,
-      // Usamos el FAB para posicionar tanto el menú abajo al centro como las acciones a la derecha
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        children: [
+          // Fixed background gradient - covers whole screen
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppGradients.mainBackgroundRadial,
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.only(top: kToolbarHeight + 40), // Offset for transparent AppBar
+            child: body,
+          ),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
         width: double.infinity,
@@ -50,7 +70,6 @@ class AppScaffold extends StatelessWidget {
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            // Botón de menú central (solo si hay drawer)
             if (drawer != null)
               Builder(
                 builder: (scaffoldContext) => GestureDetector(
@@ -75,8 +94,6 @@ class AppScaffold extends StatelessWidget {
                   ),
                 ),
               ),
-
-            // Acciones a la derecha (Ingreso/Gasto)
             if (floatingActionButton != null)
               Align(
                 alignment: Alignment.bottomRight,

@@ -9,6 +9,8 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key});
@@ -88,13 +90,9 @@ class _PredictionScreenState extends State<PredictionScreen>
     final l10n = AppLocalizations.of(context)!;
     final isNegative = _predictedBalance < 0;
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.spending_predictions),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+    return AppScaffold(
+      title: l10n.spending_predictions,
+      drawer: const AppDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListenableBuilder(

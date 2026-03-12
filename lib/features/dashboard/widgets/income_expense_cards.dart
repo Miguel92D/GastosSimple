@@ -128,6 +128,8 @@ class _StatCard extends StatelessWidget {
                         color: color,
                         fontSize: 20,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

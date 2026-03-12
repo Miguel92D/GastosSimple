@@ -7,6 +7,8 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -129,19 +131,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.budgets),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+    return AppScaffold(
+      title: AppLocalizations.of(context)!.budgets,
+      drawer: const AppDrawer(),
       resizeToAvoidBottomInset: true,
       body: ListenableBuilder(
         listenable: AppState.instance,
         builder: (context, child) {
-          return SafeArea(
-            child: _isLoading
+          return _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     padding: const EdgeInsets.all(24),
@@ -249,8 +246,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         ),
                       );
                     },
-                  ),
-          );
+                  );
         },
       ),
     );

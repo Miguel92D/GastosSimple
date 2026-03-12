@@ -12,6 +12,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class QuickEntryScreen extends StatefulWidget {
@@ -77,22 +78,9 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: const Alignment(0, -0.6),
-            radius: 1.2,
-            colors: [
-              AppColors.primaryPurple.withOpacity(0.1),
-              AppColors.darkBackground,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
+    return AppScaffold(
+      title: "",
+      body: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
               child: Column(
@@ -168,8 +156,6 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
               ),
             ),
           ),
-        ),
-      ),
     );
   }
 

@@ -4,6 +4,8 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
@@ -53,16 +55,9 @@ class CategoriesScreen extends StatelessWidget {
       },
     ];
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(
-          "Categorías",
-          style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+    return AppScaffold(
+      title: "Categorías",
+      drawer: const AppDrawer(),
       body: GridView.builder(
         padding: const EdgeInsets.all(24),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

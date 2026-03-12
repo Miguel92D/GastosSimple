@@ -157,6 +157,8 @@ class _BalanceCardState extends State<BalanceCard>
                               AppState.instance.hideBalance
                                   ? formattedValue
                                   : "\$$formattedValue",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           );
                         },

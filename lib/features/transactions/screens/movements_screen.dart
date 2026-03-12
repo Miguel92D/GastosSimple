@@ -7,6 +7,8 @@ import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class MovementsScreen extends StatefulWidget {
   const MovementsScreen({super.key});
@@ -57,40 +59,43 @@ class _MovementsScreenState extends State<MovementsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.search,
-                  border: InputBorder.none,
-                  hintStyle: AppTextStyles.bodyMain.copyWith(
-                    color: AppColors.softText.withOpacity(0.5),
-                  ),
+    return AppScaffold(
+      title: "",
+      drawer: const AppDrawer(),
+      titleWidget: _isSearching
+          ? TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.search,
+                border: InputBorder.none,
+                hintStyle: AppTextStyles.bodyMain.copyWith(
+                  color: AppColors.softText.withOpacity(0.5),
                 ),
-                style: AppTextStyles.bodyMain.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-                onChanged: (_) => _loadData(),
-              )
-            : Text(AppLocalizations.of(context)!.movements),
-        actions: [
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                if (_isSearching) {
-                  _searchController.clear();
-                  _loadData();
-                }
-                _isSearching = !_isSearching;
-              });
-            },
-          ),
-        ],
-      ),
+              ),
+              style: AppTextStyles.bodyMain.copyWith(
+                color: AppColors.textPrimary,
+              ),
+              onChanged: (_) => _loadData(),
+            )
+          : Text(
+              AppLocalizations.of(context)!.movements,
+              style: AppTextStyles.titleLarge.copyWith(fontSize: 24, letterSpacing: -1),
+            ),
+      actions: [
+        IconButton(
+          icon: Icon(_isSearching ? Icons.close : Icons.search),
+          onPressed: () {
+            setState(() {
+              if (_isSearching) {
+                _searchController.clear();
+                _loadData();
+              }
+              _isSearching = !_isSearching;
+            });
+          },
+        ),
+      ],
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(

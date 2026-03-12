@@ -12,6 +12,8 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 import '../../goals/models/goal.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
@@ -171,6 +173,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   void _saveMovement() async {
     if (_isSaving) return;
+    FocusScope.of(context).unfocus();
 
     final amountText = _amountController.text.replaceAll(',', '.');
     final amount = double.tryParse(amountText);
@@ -222,16 +225,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.movimientoToEdit != null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          isEditing
-              ? AppLocalizations.of(context)!.edit_movement
-              : AppLocalizations.of(context)!.new_movement,
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return AppScaffold(
+      title: isEditing
+          ? AppLocalizations.of(context)!.edit_movement
+          : AppLocalizations.of(context)!.new_movement,
+      drawer: const AppDrawer(),
+      body: SingleChildScrollView(
           padding: EdgeInsets.only(
             left: AppSpacing.lg,
             right: AppSpacing.lg,
@@ -285,10 +284,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 isCenter: true,
                 height: 85,
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.done,
                 onSubmitted: _saveMovement,
+                onEditingComplete: _saveMovement,
                 label: '',
                 style: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 42,
@@ -326,14 +325,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               const SizedBox(height: AppSpacing.md),
 
               SizedBox(
-                height: 50,
+                height: 60,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _tipo == 'gasto'
                       ? _categoriasGasto.length
                       : _categoriasIngreso.length,
                   separatorBuilder: (context, index) =>
-                      const SizedBox(width: AppSpacing.sm),
+                      const SizedBox(width: AppSpacing.md),
                   itemBuilder: (context, index) {
                     final category = _tipo == 'gasto'
                         ? _categoriasGasto[index]
@@ -345,43 +344,32 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ? AppColors.expenseRed
                         : AppColors.incomeGreen;
 
-                    return ChoiceChip(
-                      label: Row(
-                        children: [
-                          Icon(
-                            icon,
-                            size: 18,
-                            color: isSelected ? AppColors.textPrimary : color,
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedCategory = category),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 54,
+                        decoration: BoxDecoration(
+                          color: isSelected ? color : color.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isSelected ? Colors.white.withOpacity(0.2) : color.withOpacity(0.1),
+                            width: 1.5,
                           ),
-                          const SizedBox(width: 8),
-                          Text(category),
-                        ],
-                      ),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                      },
-                      selectedColor: color,
-                      backgroundColor: color.withOpacity(0.08),
-                      labelStyle: AppTextStyles.bodySmall.copyWith(
-                        color: isSelected
-                            ? AppColors.textPrimary
-                            : AppColors.softText,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                        side: BorderSide(
-                          color: isSelected
-                              ? AppColors.cardBorder
-                              : color.withOpacity(0.15),
+                          boxShadow: isSelected ? [
+                            BoxShadow(
+                              color: color.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            )
+                          ] : [],
+                        ),
+                        child: Icon(
+                          icon,
+                          color: isSelected ? Colors.white : color.withOpacity(0.7),
+                          size: 24,
                         ),
                       ),
-                      showCheckmark: false,
                     );
                   },
                 ),
@@ -410,7 +398,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 }

@@ -11,6 +11,8 @@ import '../../../core/flow/premium_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/app_drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -39,15 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.settings),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: SafeArea(
-        child: ListView(
+    return AppScaffold(
+      title: l10n.settings,
+      drawer: const AppDrawer(),
+      body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 16),
           children: [
             _buildSectionTitle(l10n.language),
@@ -263,7 +260,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 
