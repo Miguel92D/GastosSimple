@@ -509,10 +509,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get set_pin => 'Set PIN';
 
   @override
+  String get enter_pin => 'Enter your PIN';
+
+  @override
   String get security => 'Security';
 
   @override
   String get new_pin_label => 'New PIN';
+
+  @override
+  String get vault_only_pin => 'Vault Only PIN';
+
+  @override
+  String get vault_only_pin_desc =>
+      'App opens normally, but the vault will require PIN';
 
   @override
   String get new_movement => 'New movement';
@@ -592,6 +602,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wrong_pin => 'Wrong PIN';
+
+  @override
+  String get vault_locked => 'Vault Locked';
 
   @override
   String get app_locked => 'App Locked';

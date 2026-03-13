@@ -174,8 +174,8 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
         height: 100,
         padding: EdgeInsets.zero,
         borderRadius: 32,
-        glowColor: color.withOpacity(0.3),
-        border: Border.all(color: color.withOpacity(0.4), width: 2.0),
+        glowColor: color.withValues(alpha: 0.3),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 2.0),
         child: Center(child: Icon(icon, color: color, size: 48)),
       ),
     );
@@ -189,9 +189,9 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
         height: 80,
         borderRadius: 32,
         padding: EdgeInsets.zero,
-        glowColor: AppColors.primaryPurple.withOpacity(0.4),
+        glowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
         border: Border.all(
-          color: AppColors.primaryPurple.withOpacity(0.5),
+          color: AppColors.primaryPurple.withValues(alpha: 0.5),
           width: 2.0,
         ),
         child: const Center(
@@ -230,14 +230,14 @@ class _MouthPainter extends CustomPainter {
     }
 
     final paint = Paint()
-      ..color = color.withOpacity(0.9 * animationValue)
+      ..color = color.withValues(alpha: 0.9 * animationValue)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 5;
 
     // Neon Glow - Enhanced for neutral state to be more visible
     final glowPaint = Paint()
-      ..color = color.withOpacity((isNeutral ? 0.4 : 0.25) * animationValue)
+      ..color = color.withValues(alpha: (isNeutral ? 0.4 : 0.25) * animationValue)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = isNeutral ? 14 : 12

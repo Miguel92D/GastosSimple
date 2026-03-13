@@ -72,7 +72,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                 hintText: context.watch<AppLocaleController>().text('search'),
                 border: InputBorder.none,
                 hintStyle: AppTextStyles.bodyMain.copyWith(
-                  color: AppColors.softText.withOpacity(0.5),
+                  color: AppColors.softText.withValues(alpha: 0.5),
                 ),
               ),
               style: AppTextStyles.bodyMain.copyWith(

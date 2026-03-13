@@ -2,7 +2,6 @@ import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/language_service.dart';
-import '../../../services/theme_service.dart';
 import '../../../services/security_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
@@ -76,31 +75,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Divider(color: AppColors.cardBorder),
             ),
-            _buildSectionTitle(l10n.text('dark_mode')),
-            ListenableBuilder(
-              listenable: ThemeService.instance,
-              builder: (context, _) => SwitchListTile(
-                title: Text(
-                  l10n.text('dark_mode'),
-                  style: AppTextStyles.bodyMain.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                secondary: Icon(
-                  ThemeService.instance.themeMode == ThemeMode.dark
-                      ? Icons.dark_mode_rounded
-                      : Icons.light_mode_rounded,
-                  color: AppColors.primaryPurple,
-                ),
-                activeColor: AppColors.primaryPurple,
-                value: ThemeService.instance.themeMode == ThemeMode.dark,
-                onChanged: (val) => ThemeService.instance.toggleTheme(),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Divider(color: AppColors.cardBorder),
-            ),
             _buildSectionTitle(l10n.text('security')),
             ListenableBuilder(
               listenable: SecurityService.instance,
@@ -127,6 +101,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }
                     },
                   ),
+                  if (SecurityService.instance.isPinActive)
+                    SwitchListTile(
+                      title: Text(
+                        l10n.text('vault_only_pin'),
+                        style: AppTextStyles.bodyMain.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(
+                        l10n.text('vault_only_pin_desc'),
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      activeColor: AppColors.primaryPurple,
+                      value: SecurityService.instance.isVaultOnly,
+                      onChanged: (val) =>
+                          SecurityService.instance.setVaultOnly(val),
+                    ),
                   SwitchListTile(
                     title: Text(
                       l10n.text('biometric_unlock'),
@@ -290,7 +281,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
       leading: Icon(
         leading,
-        color: AppColors.softText.withOpacity(0.7),
+        color: AppColors.softText.withValues(alpha: 0.7),
         size: 22,
       ),
       title: Text(
@@ -351,7 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.darkBackground,
-        surfaceTintColor: AppColors.primaryPurple.withOpacity(0.1),
+        surfaceTintColor: AppColors.primaryPurple.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
           side: const BorderSide(color: AppColors.cardBorder),
@@ -368,7 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: const TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             labelText: context.watch<AppLocaleController>().text('new_pin_label'),
-            labelStyle: TextStyle(color: AppColors.softText.withOpacity(0.5)),
+            labelStyle: TextStyle(color: AppColors.softText.withValues(alpha: 0.5)),
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: AppColors.cardBorder),
             ),

@@ -84,7 +84,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryPurple.withOpacity(0.2),
+                              color: AppColors.primaryPurple.withValues(alpha: 0.2),
                               blurRadius: 40,
                               spreadRadius: 10,
                             ),
@@ -106,7 +106,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       Text(
                         l10n.text('unlock_advanced_tools'),
                         style: AppTextStyles.bodyMain.copyWith(
-                          color: AppColors.softText.withOpacity(0.7),
+                          color: AppColors.softText.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -160,7 +160,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           child: Text(
                             l10n.text('restore_purchase'),
                             style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.softText.withOpacity(0.4),
+                              color: AppColors.softText.withValues(alpha: 0.4),
                             ),
                           ),
                         ),
@@ -171,7 +171,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             horizontal: 24,
                           ),
                           borderRadius: 30,
-                          glowColor: AppColors.incomeGreen.withOpacity(0.1),
+                          glowColor: AppColors.incomeGreen.withValues(alpha: 0.1),
                           child: Column(
                             children: [
                               const Icon(
@@ -238,7 +238,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primaryPurple.withOpacity(0.12),
+              color: AppColors.primaryPurple.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: AppColors.primaryPurple, size: 22),

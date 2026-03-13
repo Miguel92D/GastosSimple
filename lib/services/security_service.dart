@@ -9,6 +9,7 @@ class SecurityService extends ChangeNotifier {
 
   bool _isPinActive = false;
   bool _isBiometricActive = false;
+  bool _isVaultOnly = false;
   bool _isUnlocked = false;
   String? _pin;
 
@@ -18,6 +19,7 @@ class SecurityService extends ChangeNotifier {
 
   bool get isPinActive => _isPinActive;
   bool get isBiometricActive => _isBiometricActive;
+  bool get isVaultOnly => _isVaultOnly;
   bool get isUnlocked => _isUnlocked;
   bool get hasPin => _pin != null && _pin!.isNotEmpty;
 
@@ -35,6 +37,7 @@ class SecurityService extends ChangeNotifier {
     _isPinActive = (await _storage.read(key: 'is_pin_active')) == 'true';
     _isBiometricActive =
         (await _storage.read(key: 'is_biometric_active')) == 'true';
+    _isVaultOnly = (await _storage.read(key: 'is_vault_only')) == 'true';
     _pin = await _storage.read(key: 'pin');
     notifyListeners();
   }
@@ -42,6 +45,12 @@ class SecurityService extends ChangeNotifier {
   Future<void> setPinActive(bool value) async {
     await _storage.write(key: 'is_pin_active', value: value.toString());
     _isPinActive = value;
+    notifyListeners();
+  }
+
+  Future<void> setVaultOnly(bool value) async {
+    await _storage.write(key: 'is_vault_only', value: value.toString());
+    _isVaultOnly = value;
     notifyListeners();
   }
 
@@ -76,8 +85,10 @@ class SecurityService extends ChangeNotifier {
 
       return await _auth.authenticate(
         localizedReason: 'Autentícate para acceder a tus finanzas',
-        // Note: 'options' and 'AuthenticationOptions' are not supported
-        // by the current local_auth version in this environment.
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
       );
     } catch (e) {
       debugPrint("Security: Error in biometric auth: $e");

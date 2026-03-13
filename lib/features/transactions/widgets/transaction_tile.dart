@@ -126,10 +126,10 @@ class _TransactionTileState extends State<TransactionTile>
             height: 36,
             width: 36,
             decoration: BoxDecoration(
-              color: amountColor.withOpacity(0.1),
+              color: amountColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: amountColor.withOpacity(0.15),
+                color: amountColor.withValues(alpha: 0.15),
                 width: 1,
               ),
             ),
@@ -158,7 +158,7 @@ class _TransactionTileState extends State<TransactionTile>
                 Text(
                   DateFormat('d MMM, yyyy').format(widget.transaction.date),
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.softText.withOpacity(0.3),
+                    color: AppColors.softText.withValues(alpha: 0.3),
                     fontSize: 10,
                   ),
                 ),
@@ -225,7 +225,7 @@ class _TransactionTileState extends State<TransactionTile>
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 24),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryPurple.withOpacity(0.4),
+                        color: AppColors.primaryPurple.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                       child: Icon(
@@ -244,7 +244,7 @@ class _TransactionTileState extends State<TransactionTile>
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 24),
                       decoration: BoxDecoration(
-                        color: AppColors.expenseRed.withOpacity(0.4),
+                        color: AppColors.expenseRed.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                       child: const Icon(

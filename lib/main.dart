@@ -25,7 +25,11 @@ import 'core/ui/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase init failed: $e");
+  }
   await CurrencyService.instance.loadCurrency();
 
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -46,9 +50,17 @@ void main() async {
   };
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppLocaleController(),
-      child: ErrorGuard(child: const GastosSimpleApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppLocaleController()),
+        ChangeNotifierProvider.value(value: AppState.instance),
+        ChangeNotifierProvider.value(value: ThemeService.instance),
+        ChangeNotifierProvider.value(value: SecurityService.instance),
+        ChangeNotifierProvider.value(value: CurrencyService.instance),
+        ChangeNotifierProvider.value(value: ProService.instance),
+        ChangeNotifierProvider.value(value: AppModeController.instance),
+      ],
+      child: const ErrorGuard(child: GastosSimpleApp()),
     ),
   );
 }
@@ -115,39 +127,25 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: AppState.instance,
-      builder: (context, _) {
-        return ListenableBuilder(
-          listenable: Listenable.merge([
-            ThemeService.instance,
-            SecurityService.instance,
-            CurrencyService.instance,
-            ProService.instance,
-            AppModeController.instance,
-          ]),
-          builder: (context, _) {
-            final localeString = context.watch<AppLocaleController>().locale;
-            return MaterialApp(
-              title: r'$imple',
-              navigatorKey: NavigationService.navigatorKey,
-              debugShowCheckedModeBanner: false,
-              locale: Locale(localeString),
-              supportedLocales: const [Locale('es'), Locale('en')],
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              themeMode: ThemeService.instance.themeMode,
-              theme: AppTheme.neonTheme,
-              darkTheme: AppTheme.neonTheme,
-              home: const InitialGuard(),
-              onGenerateRoute: AppRouter.generateRoute,
-            );
-          },
-        );
-      },
+    final localeString = context.watch<AppLocaleController>().locale;
+    final themeMode = context.watch<ThemeService>().themeMode;
+
+    return MaterialApp(
+      title: r'$imple',
+      navigatorKey: NavigationService.navigatorKey,
+      debugShowCheckedModeBanner: false,
+      locale: Locale(localeString),
+      supportedLocales: const [Locale('es'), Locale('en')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      themeMode: themeMode,
+      theme: AppTheme.neonTheme,
+      darkTheme: AppTheme.neonTheme,
+      home: const InitialGuard(),
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }

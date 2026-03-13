@@ -60,7 +60,7 @@ class _GoldShimmerTextState extends State<GoldShimmerText>
               ],
               colors: [
                 const Color(0xFFD4AF37), // Metallic Gold
-                const Color(0xFFFFFACD).withOpacity(0.9), // Shine
+                const Color(0xFFFFFACD).withValues(alpha: 0.9), // Shine
                 const Color(0xFFD4AF37), // Metallic Gold
               ],
             ).createShader(bounds);

@@ -161,7 +161,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                               (exceeded
                                       ? AppColors.expenseRed
                                       : AppColors.primaryPurple)
-                                  .withOpacity(0.05),
+                                  .withValues(alpha: 0.05),
                           padding: EdgeInsets.zero,
                           child: InkWell(
                             onTap: () => _setBudget(cat),
@@ -225,7 +225,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                       child: LinearProgressIndicator(
                                         value: progress,
                                         backgroundColor: AppColors.softText
-                                            .withOpacity(0.08),
+                                            .withValues(alpha: 0.08),
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                               exceeded

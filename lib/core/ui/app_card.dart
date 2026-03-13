@@ -24,7 +24,7 @@ class AppCard extends StatelessWidget {
         boxShadow: isPro
             ? [
                 BoxShadow(
-                  color: AppColors.primaryPurple.withOpacity(0.1),
+                  color: AppColors.primaryPurple.withValues(alpha: 0.1),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),

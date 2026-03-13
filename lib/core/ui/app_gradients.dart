@@ -46,8 +46,8 @@ class AppGradients {
   // States Backgrounds
   static final incomeGradient = LinearGradient(
     colors: [
-      const Color(0xFF3DDC97).withOpacity(0.15),
-      const Color(0xFF3DDC97).withOpacity(0.05),
+      const Color(0xFF3DDC97).withValues(alpha: 0.15),
+      const Color(0xFF3DDC97).withValues(alpha: 0.05),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -55,8 +55,8 @@ class AppGradients {
 
   static final expenseGradient = LinearGradient(
     colors: [
-      const Color(0xFFFF5C5C).withOpacity(0.15),
-      const Color(0xFFFF5C5C).withOpacity(0.05),
+      const Color(0xFFFF5C5C).withValues(alpha: 0.15),
+      const Color(0xFFFF5C5C).withValues(alpha: 0.05),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -67,8 +67,8 @@ class AppGradients {
     center: const Alignment(0.4, -0.7), // Offset for more dynamic look
     radius: 1.5,
     colors: [
-      AppColors.primaryPurple.withOpacity(0.25), // Stronger glow
-      AppColors.primaryPurple.withOpacity(0.08), // Middle layer
+      AppColors.primaryPurple.withValues(alpha: 0.25), // Stronger glow
+      AppColors.primaryPurple.withValues(alpha: 0.08), // Middle layer
       AppColors.darkBackground,                  // Edge
     ],
     stops: const [0.0, 0.4, 1.0],

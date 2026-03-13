@@ -123,14 +123,14 @@ class _PredictionScreenState extends State<PredictionScreen>
   Widget _buildSummaryCard(AppLocaleController l10n) {
     return GlassCard(
       borderRadius: 30,
-      glowColor: AppColors.primaryPurple.withOpacity(0.05),
+      glowColor: AppColors.primaryPurple.withValues(alpha: 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.text('current_balance').toUpperCase(),
             style: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withOpacity(0.5),
+              color: AppColors.softText.withValues(alpha: 0.5),
               letterSpacing: 2.0,
             ),
           ),
@@ -158,7 +158,7 @@ class _PredictionScreenState extends State<PredictionScreen>
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryPurple.withOpacity(0.2),
+            color: AppColors.primaryPurple.withValues(alpha: 0.2),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -185,7 +185,7 @@ class _PredictionScreenState extends State<PredictionScreen>
                   Text(
                     l10n.text('prediction').toUpperCase(),
                     style: AppTextStyles.subLabel.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -217,13 +217,13 @@ class _PredictionScreenState extends State<PredictionScreen>
     return GlassCard(
       padding: const EdgeInsets.all(20),
       borderRadius: 24,
-      glowColor: AppColors.expenseRed.withOpacity(0.1),
+      glowColor: AppColors.expenseRed.withValues(alpha: 0.1),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.expenseRed.withOpacity(0.1),
+              color: AppColors.expenseRed.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -257,7 +257,7 @@ class _PredictionScreenState extends State<PredictionScreen>
             label,
             style: AppTextStyles.bodyMain.copyWith(
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary.withOpacity(0.8),
+              color: AppColors.textPrimary.withValues(alpha: 0.8),
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -296,7 +296,7 @@ class _PredictionScreenState extends State<PredictionScreen>
           child: Text(
             label,
             style: AppTextStyles.bodyMain.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontWeight: FontWeight.w700,
               fontSize: large ? 16 : 14,
             ),
@@ -334,7 +334,7 @@ class _WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.15)
+      ..color = Colors.white.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
 
@@ -356,7 +356,7 @@ class _WavePainter extends CustomPainter {
 
     // Draw secondary fainter line
     final secondaryPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 
@@ -374,11 +374,11 @@ class _WavePainter extends CustomPainter {
 
     // Draw glowing dots along the main path
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.25)
+      ..color = Colors.white.withValues(alpha: 0.25)
       ..style = PaintingStyle.fill;
 
     final glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
     for (int i = 1; i < 4; i++) {

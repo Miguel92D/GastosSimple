@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import 'package:path/path.dart';
 import '../features/transactions/models/transaction.dart' as model;
+import '../core/error/exceptions.dart';
 import '../features/goals/models/goal.dart';
 import '../features/debts/models/debt.dart';
 
@@ -204,17 +205,17 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
 
   Future<int> insertTransaction(model.Transaction mov) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.insert('transactions', mov.toMap());
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (insertTransaction): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en insertTransaction', e);
     }
   }
 
   Future<model.Transaction?> getTransactionById(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query(
         'transactions',
         where: 'id = ?',
@@ -223,8 +224,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       if (result.isNotEmpty) {
         return model.Transaction.fromMap(result.first);
       }
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTransactionById): $e');
+      throw DatabaseException('Operación fallida en getTransactionById', e);
     }
     return null;
   }
@@ -234,7 +236,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     String frequency,
   ) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       DateTime nextDate;
       if (frequency == 'daily') {
         nextDate = mov.date.add(const Duration(days: 1));
@@ -252,9 +254,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'frequency': frequency,
         'next_date': nextDate.toIso8601String(),
       });
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (insertRecurringTransaction): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en insertRecurringTransaction', e);
     }
   }
 
@@ -264,22 +266,22 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
 
   Future<List<model.Transaction>> getAllTransactions() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query(
         'transactions',
         where: 'is_secret = 0',
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getAllTransactions): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getAllTransactions', e);
     }
   }
 
   Future<int> insertGoal(Goal goal) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final map = goal.toMap();
       // Map naming convention if needed, though SavingsGoal.toMap() should be consistent
       return await db.insert('goals', {
@@ -291,15 +293,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'icon': map['icon'],
         'created_at': map['createdAt'],
       });
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (insertGoal): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en insertGoal', e);
     }
   }
 
   Future<List<Goal>> getGoals() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query('goals');
       return result.map((json) {
         return Goal(
@@ -316,15 +318,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
               : DateTime.now(),
         );
       }).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getGoals): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getGoals', e);
     }
   }
 
   Future<int> updateGoal(Goal goal) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final map = goal.toMap();
       return await db.update(
         'goals',
@@ -339,31 +341,32 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [goal.id],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (updateGoal): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en updateGoal', e);
     }
   }
 
   Future<int> deleteGoal(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.delete('goals', where: 'id = ?', whereArgs: [id]);
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (deleteGoal): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en deleteGoal', e);
     }
   }
 
   Future<void> addToGoal(int goalId, double amount) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       await db.execute(
         'UPDATE goals SET saved_amount = saved_amount + ? WHERE id = ?',
         [amount, goalId],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (addToGoal): $e');
+      throw DatabaseException('Operación fallida en addToGoal', e);
     }
   }
 
@@ -371,7 +374,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     bool isSecret = false,
   }) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final now = DateTime.now();
       final startOfDay = DateTime(
         now.year,
@@ -395,15 +398,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTransactionsToday): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getTransactionsToday', e);
     }
   }
 
   Future<List<model.Transaction>> getTransactionsThisWeek() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final now = DateTime.now();
       final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
       final startDate = DateTime(
@@ -419,83 +422,85 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTransactionsThisWeek): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getTransactionsThisWeek', e);
     }
   }
 
   Future<int> deleteTransaction(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (deleteTransaction): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en deleteTransaction', e);
     }
   }
 
   Future<int> updateTransaction(model.Transaction mov) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.update(
         'transactions',
         mov.toMap(),
         where: 'id = ?',
         whereArgs: [mov.id],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (updateTransaction): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en updateTransaction', e);
     }
   }
 
   Future<List<model.Transaction>> getSecretTransactions() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query(
         'transactions',
         where: 'is_secret = 1',
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getSecretTransactions): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getSecretTransactions', e);
     }
   }
 
   Future<void> moveToVault(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       await db.update(
         'transactions',
         {'is_secret': 1},
         where: 'id = ?',
         whereArgs: [id],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (moveToVault): $e');
+      throw DatabaseException('Operación fallida en moveToVault', e);
     }
   }
 
   Future<void> moveToNormal(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       await db.update(
         'transactions',
         {'is_secret': 0},
         where: 'id = ?',
         whereArgs: [id],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (moveToNormal): $e');
+      throw DatabaseException('Operación fallida en moveToNormal', e);
     }
   }
 
   Future<List<model.Transaction>> getTransactionsByType(String type) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query(
         'transactions',
         where: 'type = ? AND is_secret = 0',
@@ -503,9 +508,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTransactionsByType): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getTransactionsByType', e);
     }
   }
 
@@ -514,7 +519,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     bool isSecret = false,
   }) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final date = month ?? DateTime.now();
       final startOfMonth = DateTime(date.year, date.month, 1).toIso8601String();
       final endOfMonth = DateTime(
@@ -533,15 +538,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTransactionsInMonth): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getTransactionsInMonth', e);
     }
   }
 
   Future<void> processRecurringTransactions() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final nowStr = DateTime.now().toIso8601String();
 
       await db.transaction((txn) async {
@@ -583,14 +588,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
           );
         }
       });
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (processRecurringTransactions): $e');
+      throw DatabaseException('Operación fallida en processRecurringTransactions', e);
     }
   }
 
   Future<List<model.Transaction>> searchTransactions(String query) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final search = '%$query%';
       final result = await db.query(
         'transactions',
@@ -600,9 +606,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (searchTransactions): $e');
-      return [];
+      throw DatabaseException('Operación fallida en searchTransactions', e);
     }
   }
 
@@ -611,7 +617,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     String type,
   ) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final search = '%$query%';
       final result = await db.query(
         'transactions',
@@ -621,9 +627,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (searchTransactionsByType): $e');
-      return [];
+      throw DatabaseException('Operación fallida en searchTransactionsByType', e);
     }
   }
 
@@ -646,80 +652,81 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
 
   Future<List<String>> getCategoriasOrdenadas(String type) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         'SELECT category, COUNT(*) as count FROM transactions WHERE type = ? GROUP BY category ORDER BY count DESC',
         [type],
       );
       return result.map((row) => row['category'] as String).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getCategoriasOrdenadas): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getCategoriasOrdenadas', e);
     }
   }
 
   // Debt Methods
   Future<int> insertDebt(Debt debt) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.insert('debts', debt.toMap());
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (insertDebt): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en insertDebt', e);
     }
   }
 
   Future<List<Debt>> getDebts() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.query('debts');
       return result.map((json) => Debt.fromMap(json)).toList();
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getDebts): $e');
-      return [];
+      throw DatabaseException('Operación fallida en getDebts', e);
     }
   }
 
   Future<int> updateDebt(Debt debt) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.update(
         'debts',
         debt.toMap(),
         where: 'id = ?',
         whereArgs: [debt.id],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (updateDebt): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en updateDebt', e);
     }
   }
 
   Future<int> deleteDebt(int id) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       return await db.delete('debts', where: 'id = ?', whereArgs: [id]);
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (deleteDebt): $e');
-      return -1;
+      throw DatabaseException('Operación fallida en deleteDebt', e);
     }
   }
 
   Future<void> payDebt(int debtId, double amount) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       await db.execute(
         'UPDATE debts SET monto_pagado = monto_pagado + ? WHERE id = ?',
         [amount, debtId],
       );
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (payDebt): $e');
+      throw DatabaseException('Operación fallida en payDebt', e);
     }
   }
 
   Future<double> getTotalIncome({bool isVault = false}) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
         SELECT SUM(amount) as total
@@ -730,15 +737,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         [isVault ? 1 : 0],
       );
       return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTotalIncome): $e');
-      return 0;
+      throw DatabaseException('Operación fallida en getTotalIncome', e);
     }
   }
 
   Future<double> getTotalExpenses({bool isVault = false}) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
         SELECT SUM(amount) as total
@@ -749,9 +756,9 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         [isVault ? 1 : 0],
       );
       return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getTotalExpenses): $e');
-      return 0;
+      throw DatabaseException('Operación fallida en getTotalExpenses', e);
     }
   }
 
@@ -759,7 +766,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     bool isVault = false,
   }) async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
         SELECT category, SUM(amount) as total
@@ -778,15 +785,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         data[category] = total;
       }
       return data;
-    } catch (e) {
+    } catch (e, _)  {
       debugPrint('DB Error (getExpensesByCategory): $e');
-      return {};
+      throw DatabaseException('Operación fallida en getExpensesByCategory', e);
     }
   }
 
   Future close() async {
     try {
-      final db = await instance.database;
+      final db = await DatabaseHelper.instance.database;
       db.close();
     } catch (e) {
       debugPrint('DB Error (close): $e');

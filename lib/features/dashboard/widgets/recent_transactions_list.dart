@@ -31,7 +31,7 @@ class RecentTransactionsList extends StatelessWidget {
           child: Text(
             context.watch<AppLocaleController>().text('recent_movements'),
             style: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withOpacity(0.4),
+              color: AppColors.softText.withValues(alpha: 0.4),
               fontSize: 10,
             ),
           ),

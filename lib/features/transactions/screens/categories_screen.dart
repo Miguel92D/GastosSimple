@@ -87,7 +87,7 @@ class CategoriesScreen extends StatelessWidget {
           return GlassCard(
             padding: EdgeInsets.zero,
             borderRadius: 30,
-            glowColor: color.withOpacity(0.05),
+            glowColor: color.withValues(alpha: 0.05),
             child: InkWell(
               onTap: () => ActionController.execute(
                 context,
@@ -101,10 +101,10 @@ class CategoriesScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: color.withOpacity(0.3),
+                        color: color.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -119,7 +119,7 @@ class CategoriesScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Icon(
                     Icons.add_circle_outline_rounded,
-                    color: AppColors.softText.withOpacity(0.15),
+                    color: AppColors.softText.withValues(alpha: 0.15),
                     size: 20,
                   ),
                 ],

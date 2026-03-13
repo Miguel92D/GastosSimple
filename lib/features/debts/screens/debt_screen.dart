@@ -9,6 +9,7 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../core/flow/app_guard.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -108,7 +109,7 @@ class _DebtScreenState extends State<DebtScreen> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -165,7 +166,7 @@ class _DebtScreenState extends State<DebtScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       elevation: 5,
-                      shadowColor: AppColors.primaryPurple.withOpacity(0.5),
+                      shadowColor: AppColors.primaryPurple.withValues(alpha: 0.5),
                     ),
                     child: Text(innerL10n.text('save_debt'), style: AppTextStyles.buttonLabel),
                   ),
@@ -206,10 +207,15 @@ class _DebtScreenState extends State<DebtScreen> {
       montoPagado: debt?.montoPagado ?? 0,
     );
 
-    await _controller.saveDebt(newDebt);
-    if (!context.mounted) return;
-    Navigator.pop(context);
-    _loadDebts();
+    final success = await AppGuard.runWithFeedback(
+      context, 
+      () => _controller.saveDebt(newDebt),
+    );
+
+    if (success && mounted) {
+      Navigator.pop(context);
+      _loadDebts();
+    }
   }
 
   Widget _buildField(String label, TextEditingController controller, {
@@ -222,9 +228,9 @@ class _DebtScreenState extends State<DebtScreen> {
       padding: const EdgeInsets.only(bottom: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.04),
+          color: Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.07)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
         ),
         child: TextField(
           controller: controller,
@@ -236,8 +242,8 @@ class _DebtScreenState extends State<DebtScreen> {
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             labelText: label,
-            labelStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.softText.withOpacity(0.5)),
-            prefixIcon: icon != null ? Icon(icon, size: 20, color: AppColors.primaryPurple.withOpacity(0.6)) : null,
+            labelStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.softText.withValues(alpha: 0.5)),
+            prefixIcon: icon != null ? Icon(icon, size: 20, color: AppColors.primaryPurple.withValues(alpha: 0.6)) : null,
           ),
         ),
       ),
@@ -276,13 +282,13 @@ class _DebtScreenState extends State<DebtScreen> {
                             Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryPurple.withOpacity(0.05),
+                                color: AppColors.primaryPurple.withValues(alpha: 0.05),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.account_balance_rounded,
                                 size: 64,
-                                color: AppColors.primaryPurple.withOpacity(0.3),
+                                color: AppColors.primaryPurple.withValues(alpha: 0.3),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -290,7 +296,7 @@ class _DebtScreenState extends State<DebtScreen> {
                               l10n.text('no_debts_empty'),
                               style: AppTextStyles.titleLarge.copyWith(
                                 fontSize: 18,
-                                color: AppColors.textPrimary.withOpacity(0.7),
+                                color: AppColors.textPrimary.withValues(alpha: 0.7),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -298,7 +304,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             Text(
                               l10n.text('no_debts_subtitle'),
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.softText.withOpacity(0.5),
+                                color: AppColors.softText.withValues(alpha: 0.5),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -308,9 +314,9 @@ class _DebtScreenState extends State<DebtScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryPurple.withOpacity(0.1),
+                                  color: AppColors.primaryPurple.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.primaryPurple.withOpacity(0.3)),
+                                  border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.3)),
                                 ),
                                 child: Text(
                                   l10n.text('add_first_debt'),
@@ -364,9 +370,9 @@ class _DebtScreenState extends State<DebtScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                       ),
                       child: TextField(
                         controller: amountController,
@@ -397,10 +403,15 @@ class _DebtScreenState extends State<DebtScreen> {
                       onPressed: () async {
                         final amount = double.tryParse(amountController.text) ?? 0;
                         if (amount > 0) {
-                          await _controller.makePayment(debt.id!, amount);
+                          final success = await AppGuard.runWithFeedback(
+                            context,
+                            () => _controller.makePayment(debt.id!, amount),
+                          );
                           if (!context.mounted) return;
-                          Navigator.pop(context);
-                          _loadDebts();
+                          if (success) {
+                            Navigator.pop(context);
+                            _loadDebts();
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -424,14 +435,14 @@ class _DebtScreenState extends State<DebtScreen> {
 
   Widget _buildAddDebtFab(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8), // Pequeño ajuste sobre el botón inferior
+      padding: const EdgeInsets.only(bottom: 0), // Alineado con el menú
       child: GlassCard(
         width: 56,
         height: 56,
         borderRadius: 18,
         padding: EdgeInsets.zero,
-        glowColor: AppColors.primaryPurple.withOpacity(0.3),
-        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.4), width: 2.0),
+        glowColor: AppColors.primaryPurple.withValues(alpha: 0.3),
+        border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 2.0),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -461,7 +472,7 @@ class _DebtScreenState extends State<DebtScreen> {
               TextSpan(
                 text: "DEUDA TOTAL: ",
                 style: AppTextStyles.subLabel.copyWith(
-                  color: AppColors.softText.withOpacity(0.6),
+                  color: AppColors.softText.withValues(alpha: 0.6),
                   letterSpacing: 1.0,
                   fontSize: 12,
                 ),
@@ -493,7 +504,7 @@ class _DebtScreenState extends State<DebtScreen> {
         padding: const EdgeInsets.all(20),
         borderRadius: 24,
         glowColor: isPaid ? AppColors.incomeGreen : null,
-        border: isPaid ? Border.all(color: AppColors.incomeGreen.withOpacity(0.4), width: 1.5) : null,
+        border: isPaid ? Border.all(color: AppColors.incomeGreen.withValues(alpha: 0.4), width: 1.5) : null,
         child: Column(
           children: [
             Row(
@@ -502,10 +513,10 @@ class _DebtScreenState extends State<DebtScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isPaid ? AppColors.incomeGreen.withOpacity(0.15) : AppColors.glassSurface,
+                    color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.15) : AppColors.glassSurface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isPaid ? AppColors.incomeGreen.withOpacity(0.4) : AppColors.cardBorder,
+                      color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.4) : AppColors.cardBorder,
                     ),
                   ),
                   child: Center(
@@ -580,7 +591,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     Text(
                       "${(debt.progress * 100).toInt()}%",
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: isPaid ? AppColors.incomeGreen.withOpacity(0.7) : AppColors.softText,
+                        color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.7) : AppColors.softText,
                       ),
                     ),
                   ],
@@ -627,9 +638,9 @@ class _DebtScreenState extends State<DebtScreen> {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Center(
           child: Icon(icon, size: 18, color: color),
@@ -655,10 +666,15 @@ class _DebtScreenState extends State<DebtScreen> {
             ),
             TextButton(
               onPressed: () async {
-                await _controller.deleteDebt(debt.id!);
+                final success = await AppGuard.runWithFeedback(
+                  context,
+                  () => _controller.deleteDebt(debt.id!),
+                );
                 if (!context.mounted) return;
-                Navigator.pop(context);
-                _loadDebts();
+                if (success) {
+                  Navigator.pop(context);
+                  _loadDebts();
+                }
               },
               child: Text(l10n.text('delete').toUpperCase(), style: const TextStyle(color: AppColors.expenseRed)),
             ),
@@ -683,7 +699,7 @@ class _DebtScreenState extends State<DebtScreen> {
           height: 8,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Stack(
@@ -692,11 +708,11 @@ class _DebtScreenState extends State<DebtScreen> {
                 duration: const Duration(milliseconds: 500),
                 width: constraints.maxWidth * progress.clamp(0.0, 1.0),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [color, color.withOpacity(0.6)]),
+                  gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.6)]),
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.3),
+                      color: color.withValues(alpha: 0.3),
                       blurRadius: 4,
                       offset: const Offset(0, 0),
                     ),
@@ -722,7 +738,7 @@ class _DebtScreenState extends State<DebtScreen> {
             l10n.text('choose_strategy'),
             style: AppTextStyles.subLabel.copyWith(
               letterSpacing: 1.2,
-              color: AppColors.softText.withOpacity(0.6),
+              color: AppColors.softText.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 24),
@@ -761,16 +777,16 @@ class _DebtScreenState extends State<DebtScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected ? AppColors.primaryPurple : color.withOpacity(0.3),
+            color: isSelected ? AppColors.primaryPurple : color.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1.5,
           ),
           gradient: LinearGradient(
             colors: isSelected
                 ? [
-                    AppColors.primaryPurple.withOpacity(0.1),
-                    AppColors.primaryPurple.withOpacity(0.05)
+                    AppColors.primaryPurple.withValues(alpha: 0.1),
+                    AppColors.primaryPurple.withValues(alpha: 0.05)
                   ]
-                : [color.withOpacity(0.15), color.withOpacity(0.02)],
+                : [color.withValues(alpha: 0.15), color.withValues(alpha: 0.02)],
           ),
         ),
         child: Row(
@@ -778,7 +794,7 @@ class _DebtScreenState extends State<DebtScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 24),
@@ -795,7 +811,7 @@ class _DebtScreenState extends State<DebtScreen> {
               height: 32,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primaryPurple.withOpacity(0.12)
+                    ? AppColors.primaryPurple.withValues(alpha: 0.12)
                     : AppColors.glassSurface,
                 shape: BoxShape.circle,
                 border: Border.all(

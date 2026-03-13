@@ -43,7 +43,7 @@ class _ProBadgeState extends State<ProBadge>
               ],
               colors: [
                 const Color(0xFFD4AF37), // Metallic Gold
-                const Color(0xFFFFFACD).withOpacity(0.9), // Shine
+                const Color(0xFFFFFACD).withValues(alpha: 0.9), // Shine
                 const Color(0xFFD4AF37), // Metallic Gold
               ],
             ).createShader(bounds);
@@ -54,7 +54,7 @@ class _ProBadgeState extends State<ProBadge>
               // Using a thick border and semi-transparent fill so the shader colors everything
               border: Border.all(color: Colors.white, width: 2),
               borderRadius: BorderRadius.circular(8),
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
             child: const Text(
               "PRO",

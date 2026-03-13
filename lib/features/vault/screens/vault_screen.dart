@@ -24,6 +24,7 @@ class _VaultScreenState extends State<VaultScreen> {
 
     if (security.isPinActive && !security.isUnlocked) {
       return PinLockScreen(
+        titleKey: 'vault_locked',
         nextScreen: const VaultScreen(),
       );
     }

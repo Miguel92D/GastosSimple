@@ -73,7 +73,7 @@ class _BalanceCardState extends State<BalanceCard>
         width: double.infinity,
         borderRadius: AppRadius.xl,
         gradientColors: AppGradients.primaryGradient.colors,
-        glowColor: AppColors.primaryPurple.withOpacity(0.35),
+        glowColor: AppColors.primaryPurple.withValues(alpha: 0.35),
         padding: EdgeInsets.zero, // Padding handled by internal Padding widget
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -111,7 +111,7 @@ class _BalanceCardState extends State<BalanceCard>
                           Text(
                             widget.title.toUpperCase(),
                             style: AppTextStyles.cardTitle.copyWith(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 12,
                               letterSpacing: 1.2,
                             ),
@@ -124,7 +124,7 @@ class _BalanceCardState extends State<BalanceCard>
                                   ? Icons.visibility_off_rounded
                                   : Icons.visibility_rounded,
                               size: 16,
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha: 0.5),
                             ),
                           ),
                         ],
@@ -173,7 +173,7 @@ class _BalanceCardState extends State<BalanceCard>
                           vertical: AppSpacing.sm,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                         ),
                         child: Text(
@@ -204,7 +204,7 @@ class _WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.15)
+      ..color = Colors.white.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
 
@@ -226,7 +226,7 @@ class _WavePainter extends CustomPainter {
 
     // Draw secondary fainter line
     final secondaryPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 
@@ -244,11 +244,11 @@ class _WavePainter extends CustomPainter {
 
     // Draw glowing dots along the main path
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.25)
+      ..color = Colors.white.withValues(alpha: 0.25)
       ..style = PaintingStyle.fill;
 
     final glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
     for (int i = 1; i < 4; i++) {

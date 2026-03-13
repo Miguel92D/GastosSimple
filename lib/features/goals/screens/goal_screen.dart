@@ -9,6 +9,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/flow/app_guard.dart';
 
 class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
@@ -128,9 +129,12 @@ class _GoalScreenState extends State<GoalScreen> {
                   icon: '🚗',
                   createdAt: goal?.createdAt ?? DateTime.now(),
                 );
-                await _controller.saveGoal(newGoal);
+                final success = await AppGuard.runWithFeedback(
+                  context,
+                  () => _controller.saveGoal(newGoal),
+                );
                 if (!context.mounted) return;
-                Navigator.pop(context, true);
+                if (success) Navigator.pop(context, true);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -185,7 +189,7 @@ class _GoalScreenState extends State<GoalScreen> {
                         padding: const EdgeInsets.only(bottom: 16),
                         child: GlassCard(
                           borderRadius: 30,
-                          glowColor: AppColors.primaryPurple.withOpacity(0.05),
+                          glowColor: AppColors.primaryPurple.withValues(alpha: 0.05),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -213,10 +217,11 @@ class _GoalScreenState extends State<GoalScreen> {
                                       ),
                                       IconButton(
                                         onPressed: () async {
-                                          await _controller.deleteGoal(
-                                            goal.id!,
+                                          final success = await AppGuard.runWithFeedback(
+                                            context,
+                                            () => _controller.deleteGoal(goal.id!),
                                           );
-                                          _loadGoals();
+                                          if (success) _loadGoals();
                                         },
                                         icon: const Icon(
                                           Icons.delete_rounded,
@@ -246,7 +251,7 @@ class _GoalScreenState extends State<GoalScreen> {
                                   value: progress,
                                   minHeight: 10,
                                   backgroundColor: AppColors.softText
-                                      .withOpacity(0.08),
+                                      .withValues(alpha: 0.08),
                                   valueColor:
                                       const AlwaysStoppedAnimation<Color>(
                                         AppColors.primaryPurple,

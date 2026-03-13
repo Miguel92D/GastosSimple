@@ -1,0 +1,153 @@
+﻿Analyzing GastosSimple...                                       
+
+   info - Don't invoke 'print' in production code - final_fix_i18n.dart:73:3 - avoid_print
+   info - Don't invoke 'print' in production code - fix_debt.dart:16:3 - avoid_print
+   info - Use interpolation to compose strings and values - fix_l10n.dart:46:19 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - fix_l10n.dart:49:19 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - fix_l10n.dart:52:7 - avoid_print
+   info - Don't invoke 'print' in production code - fix_remnants.dart:30:3 - avoid_print
+   info - Don't invoke 'print' in production code - fix_remnants_2.dart:29:3 - avoid_print
+   info - Don't invoke 'print' in production code - fix_tex.dart:18:3 - avoid_print
+   info - Don't invoke 'print' in production code - generate_translations.dart:39:3 - avoid_print
+   info - Dangling library doc comment - lib\core\ui\app_card.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_card.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\app_colors.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_colors.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\app_gradients.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_gradients.dart:1:1 - slash_for_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_radius.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\app_shadows.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_shadows.dart:1:1 - slash_for_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_spacing.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\app_text_styles.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_text_styles.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\app_theme.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\app_theme.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\glass_card.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\glass_card.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\core\ui\widgets\balance_card.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\core\ui\widgets\balance_card.dart:1:1 - slash_for_doc_comments
+warning - The operand can't be 'null', so the condition is always 'false' - lib\core\utils\l10n_helper.dart:8:14 - unnecessary_null_comparison
+warning - Dead code - lib\core\utils\l10n_helper.dart:8:23 - dead_code
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:210:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:212:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:212:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:227:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:229:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:229:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:257:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:259:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:259:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:276:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:278:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:278:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:296:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:298:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:298:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:321:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:323:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:323:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:344:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:346:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:346:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:354:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:356:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:356:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:367:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:369:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:369:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:401:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:403:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:403:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:425:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:427:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:427:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:435:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:437:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:437:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:450:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:452:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:452:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:465:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:467:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:467:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:480:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:482:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:482:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:495:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:497:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:497:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:511:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:513:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:513:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:541:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:543:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:543:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:591:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:593:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:593:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:609:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:611:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:611:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:630:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:632:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:632:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:661:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:663:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:663:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:672:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:674:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:674:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:683:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:685:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:685:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:698:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:700:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:700:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:708:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:710:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:710:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:721:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:723:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:723:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:740:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:742:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:742:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:759:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:761:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:761:13 - ambiguous_import
+warning - The stack trace variable 'stackTrace' isn't used and can be removed - lib\database\database_helper.dart:788:17 - unused_catch_stack
+  error - 'DatabaseException' isn't a function - lib\database\database_helper.dart:790:13 - invocation_of_non_function
+  error - The name 'DatabaseException' is defined in the libraries 'package:gastos_simple/core/error/exceptions.dart' and 'package:sqflite_common/src/exception.dart (via package:sqflite/sqflite.dart)' - lib\database\database_helper.dart:790:13 - ambiguous_import
+   info - Unnecessary empty statement - lib\database\database_helper.dart:791:6 - empty_statements
+warning - Dead code - lib\database\database_helper.dart:791:6 - dead_code
+  error - Undefined name 'instance' - lib\database\database_helper.dart:797:24 - undefined_identifier
+  error - Expected a method, getter, setter or operator declaration - lib\database\database_helper.dart:803:1 - expected_executable
+   info - Unnecessary use of 'toList' in a spread - lib\features\analysis\screens\stats_screen.dart:185:34 - unnecessary_to_list_in_spreads
+   info - Dangling library doc comment - lib\features\dashboard\widgets\dashboard_card.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\features\dashboard\widgets\dashboard_card.dart:1:1 - slash_for_doc_comments
+   info - Dangling library doc comment - lib\features\dashboard\widgets\dashboard_widget.dart:1:1 - dangling_library_doc_comments
+   info - Use the end-of-line form ('///') for doc comments - lib\features\dashboard\widgets\dashboard_widget.dart:1:1 - slash_for_doc_comments
+   info - Use interpolation to compose strings and values - lib\features\debts\screens\debt_screen.dart:396:39 - prefer_interpolation_to_compose_strings
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\goals\screens\savings_goals_screen.dart:3:8 - unnecessary_import
+   info - Use interpolation to compose strings and values - lib\features\goals\screens\savings_goals_screen.dart:425:30 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\features\goals\screens\savings_goals_screen.dart:639:37 - prefer_interpolation_to_compose_strings
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\settings\screens\backup_screen.dart:21:13 - deprecated_member_use
+   info - 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\settings\screens\backup_screen.dart:21:19 - deprecated_member_use
+warning - Unused import: '../../../core/ui/app_colors.dart' - lib\features\settings\screens\pin_lock_screen.dart:6:8 - unused_import
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\settings\screens\settings_screen.dart:95:17 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\settings\screens\settings_screen.dart:120:21 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\settings\screens\settings_screen.dart:141:21 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\settings\screens\settings_screen.dart:220:15 - deprecated_member_use
+warning - The value of the local variable 'count' isn't used - migrate_opacity.dart:5:7 - unused_local_variable
+   info - Don't invoke 'print' in production code - migrate_opacity.dart:24:3 - avoid_print
+   info - Don't invoke 'print' in production code - read_errors.dart:8:7 - avoid_print
+   info - Don't invoke 'print' in production code - read_errors_2.dart:6:33 - avoid_print
+   info - Don't invoke 'print' in production code - refactor.dart:37:3 - avoid_print
+   info - Use interpolation to compose strings and values - replace_locales.dart:43:19 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - replace_locales.dart:46:19 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - replace_locales.dart:49:7 - avoid_print
+   info - Don't invoke 'print' in production code - robust_fix_i18n.dart:79:3 - avoid_print
+   info - Don't invoke 'print' in production code - robust_fix_i18n_v3.dart:80:3 - avoid_print
+warning - Unused import: 'package:flutter/material.dart' - test\smoke_test.dart:1:8 - unused_import
+

@@ -301,7 +301,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 hintText: context.watch<AppLocaleController>().text('amount'),
                 hintStyle: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 32,
-                  color: AppColors.softText.withOpacity(0.1),
+                  color: AppColors.softText.withValues(alpha: 0.1),
                 ),
                 prefix: Baseline(
                   baseline: 30,
@@ -315,7 +315,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           (_tipo == 'gasto'
                                   ? AppColors.expenseRed
                                   : AppColors.incomeGreen)
-                              .withOpacity(0.5),
+                              .withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -356,18 +356,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         width: 75,
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: isSelected ? color : color.withOpacity(0.05),
+                          color: isSelected ? color : color.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelected
-                                ? Colors.white.withOpacity(0.2)
-                                : color.withOpacity(0.1),
+                                ? Colors.white.withValues(alpha: 0.2)
+                                : color.withValues(alpha: 0.1),
                             width: 1.5,
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: color.withOpacity(0.3),
+                                    color: color.withValues(alpha: 0.3),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   )
@@ -381,7 +381,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                               icon,
                               color: isSelected
                                   ? Colors.white
-                                  : color.withOpacity(0.7),
+                                  : color.withValues(alpha: 0.7),
                               size: 24,
                             ),
                             const SizedBox(height: 4),
@@ -394,7 +394,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                   fontWeight: FontWeight.w900,
                                   color: isSelected
                                       ? Colors.white
-                                      : color.withOpacity(0.5),
+                                      : color.withValues(alpha: 0.5),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

@@ -80,7 +80,7 @@ class _StatsScreenState extends State<StatsScreen> {
                     children: [
                       GlassCard(
                         borderRadius: 30,
-                        glowColor: AppColors.primaryPurple.withOpacity(0.08),
+                        glowColor: AppColors.primaryPurple.withValues(alpha: 0.08),
                         child: Column(
                           children: [
                             Text(
@@ -96,7 +96,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                   Text(
                                     context.watch<AppLocaleController>().text('monthly_total').toUpperCase(),
                                     style: AppTextStyles.subLabel.copyWith(
-                                      color: AppColors.softText.withOpacity(0.5),
+                                      color: AppColors.softText.withValues(alpha: 0.5),
                                       letterSpacing: 2.0,
                                     ),
                                   ),
@@ -132,9 +132,9 @@ class _StatsScreenState extends State<StatsScreen> {
                                                   height: 32,
                                                   width: 32,
                                                   decoration: BoxDecoration(
-                                                    color: color.withOpacity(0.1),
+                                                    color: color.withValues(alpha: 0.1),
                                                     borderRadius: BorderRadius.circular(10),
-                                                    border: Border.all(color: color.withOpacity(0.3)),
+                                                    border: Border.all(color: color.withValues(alpha: 0.3)),
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),
@@ -174,7 +174,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                         borderRadius: BorderRadius.circular(10),
                                         child: LinearProgressIndicator(
                                           value: percentage,
-                                          backgroundColor: AppColors.softText.withOpacity(0.05),
+                                          backgroundColor: AppColors.softText.withValues(alpha: 0.05),
                                           valueColor: AlwaysStoppedAnimation<Color>(color),
                                           minHeight: 8,
                                         ),

@@ -35,7 +35,7 @@ class DashboardCard extends StatelessWidget {
         boxShadow: [
           if (isPro)
             BoxShadow(
-              color: AppColors.primaryPurple.withOpacity(0.3),
+              color: AppColors.primaryPurple.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )

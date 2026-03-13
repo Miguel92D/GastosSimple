@@ -22,7 +22,7 @@ class NeonShadow extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: glowColor.withOpacity(0.2),
+            color: glowColor.withValues(alpha: 0.2),
             blurRadius: blurRadius,
             spreadRadius: spreadRadius,
             offset: offset,

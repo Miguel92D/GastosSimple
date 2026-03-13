@@ -1046,6 +1046,12 @@ abstract class AppLocalizations {
   /// **'Configurar PIN'**
   String get set_pin;
 
+  /// No description provided for @enter_pin.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa tu PIN'**
+  String get enter_pin;
+
   /// No description provided for @security.
   ///
   /// In es, this message translates to:
@@ -1057,6 +1063,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuevo PIN'**
   String get new_pin_label;
+
+  /// No description provided for @vault_only_pin.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo para Bóveda Privada'**
+  String get vault_only_pin;
+
+  /// No description provided for @vault_only_pin_desc.
+  ///
+  /// In es, this message translates to:
+  /// **'La app abrirá normalmente, pero la bóveda pedirá PIN'**
+  String get vault_only_pin_desc;
 
   /// No description provided for @new_movement.
   ///
@@ -1207,6 +1225,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'PIN incorrecto'**
   String get wrong_pin;
+
+  /// No description provided for @vault_locked.
+  ///
+  /// In es, this message translates to:
+  /// **'Bóveda Bloqueada'**
+  String get vault_locked;
 
   /// No description provided for @app_locked.
   ///

@@ -50,7 +50,7 @@ class GlassInput extends StatelessWidget {
       padding:
           padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       borderRadius: 30,
-      glowColor: AppColors.primaryPurple.withOpacity(0.02),
+      glowColor: AppColors.primaryPurple.withValues(alpha: 0.02),
       child: Center(
         child: TextField(
           controller: controller,
@@ -66,18 +66,18 @@ class GlassInput extends StatelessWidget {
           decoration: InputDecoration(
             labelText: label.isEmpty ? null : label,
             labelStyle: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withOpacity(0.4),
+              color: AppColors.softText.withValues(alpha: 0.4),
             ),
             hintText: hintText,
             hintStyle:
                 hintStyle ??
                 AppTextStyles.bodyMain.copyWith(
-                  color: AppColors.softText.withOpacity(0.2),
+                  color: AppColors.softText.withValues(alpha: 0.2),
                 ),
             prefixIcon: icon != null
                 ? Icon(
                     icon,
-                    color: AppColors.softText.withOpacity(0.6),
+                    color: AppColors.softText.withValues(alpha: 0.6),
                     size: 18,
                   )
                 : null,

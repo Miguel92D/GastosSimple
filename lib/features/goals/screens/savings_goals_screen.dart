@@ -118,8 +118,8 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       height: 56,
       borderRadius: 18,
       padding: EdgeInsets.zero,
-      glowColor: AppColors.primaryPurple.withOpacity(0.3),
-      border: Border.all(color: AppColors.primaryPurple.withOpacity(0.4), width: 2.0),
+      glowColor: AppColors.primaryPurple.withValues(alpha: 0.3),
+      border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 2.0),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -244,7 +244,7 @@ class _GoalItemCard extends StatelessWidget {
                   height: 12,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                 ),
@@ -346,9 +346,9 @@ class _GoalItemCard extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Center(
           child: Icon(icon, size: 18, color: color),
@@ -469,8 +469,8 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                         padding: const EdgeInsets.all(AppSpacing.sm),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.primaryPurple.withOpacity(0.2)
-                              : Colors.white.withOpacity(0.05),
+                              ? AppColors.primaryPurple.withValues(alpha: 0.2)
+                              : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(AppRadius.md),
                           border: Border.all(
                             color: isSelected
@@ -565,9 +565,9 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: child,
     );
@@ -615,9 +615,9 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     child: TextField(
                       controller: _amountController,

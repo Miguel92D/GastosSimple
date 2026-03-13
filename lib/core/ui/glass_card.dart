@@ -36,40 +36,42 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      margin: margin,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [
-          if (glowColor != null)
-            BoxShadow(
-              color: glowColor!.withOpacity(0.12),
-              blurRadius: 30,
-              spreadRadius: 2,
+    return RepaintBoundary(
+      child: Container(
+        height: height,
+        width: width,
+        margin: margin,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            if (glowColor != null)
+              BoxShadow(
+                color: glowColor!.withValues(alpha: 0.12),
+                blurRadius: 30,
+                spreadRadius: 2,
+              ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+            child: Container(
+              padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: border ??
+                    Border.all(color: AppColors.cardBorder, width: 1.0),
+                gradient: gradientColors != null
+                    ? LinearGradient(
+                        colors: gradientColors!,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : AppGradients.glassGradient,
+              ),
+              child: child,
             ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
-              border:
-                  border ?? Border.all(color: AppColors.cardBorder, width: 1.0),
-              gradient: gradientColors != null
-                  ? LinearGradient(
-                      colors: gradientColors!,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : AppGradients.glassGradient,
-            ),
-            child: child,
           ),
         ),
       ),

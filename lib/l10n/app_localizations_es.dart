@@ -512,10 +512,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get set_pin => 'Configurar PIN';
 
   @override
+  String get enter_pin => 'Ingresa tu PIN';
+
+  @override
   String get security => 'Seguridad';
 
   @override
   String get new_pin_label => 'Nuevo PIN';
+
+  @override
+  String get vault_only_pin => 'Solo para Bóveda Privada';
+
+  @override
+  String get vault_only_pin_desc =>
+      'La app abrirá normalmente, pero la bóveda pedirá PIN';
 
   @override
   String get new_movement => 'Nuevo movimiento';
@@ -596,6 +606,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get wrong_pin => 'PIN incorrecto';
+
+  @override
+  String get vault_locked => 'Bóveda Bloqueada';
 
   @override
   String get app_locked => 'App Bloqueada';

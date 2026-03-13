@@ -88,12 +88,12 @@ class _StatCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         child: GlassCard(
           glowColor: isSelected
-              ? color.withOpacity(0.3)
-              : color.withOpacity(0.08),
+              ? color.withValues(alpha: 0.3)
+              : color.withValues(alpha: 0.08),
           padding: const EdgeInsets.all(AppSpacing.md),
           borderRadius: AppRadius.lg,
           border: isSelected
-              ? Border.all(color: color.withOpacity(0.5), width: 2)
+              ? Border.all(color: color.withValues(alpha: 0.5), width: 2)
               : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,8 +102,8 @@ class _StatCard extends StatelessWidget {
                 label.toUpperCase(),
                 style: AppTextStyles.subLabel.copyWith(
                   color: isSelected
-                      ? color.withOpacity(0.8)
-                      : AppColors.softText.withOpacity(0.4),
+                      ? color.withValues(alpha: 0.8)
+                      : AppColors.softText.withValues(alpha: 0.4),
                   fontSize: 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
@@ -117,7 +117,7 @@ class _StatCard extends StatelessWidget {
                     Text(
                       "\$",
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: color.withOpacity(0.4),
+                        color: color.withValues(alpha: 0.4),
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),

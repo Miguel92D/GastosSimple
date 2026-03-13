@@ -8,7 +8,13 @@ import '../../../core/ui/app_text_styles.dart';
 
 class PinLockScreen extends StatefulWidget {
   final Widget nextScreen;
-  const PinLockScreen({super.key, required this.nextScreen});
+  final String titleKey;
+  const PinLockScreen({
+    super.key,
+    required this.nextScreen,
+    this.titleKey = 'app_locked',
+  });
+
 
   @override
   State<PinLockScreen> createState() => _PinLockScreenState();
@@ -85,7 +91,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
             const Icon(Icons.lock_outline, size: 64, color: Colors.deepPurple),
             const SizedBox(height: 16),
             Text(
-              context.watch<AppLocaleController>().text('app_locked'),
+              context.watch<AppLocaleController>().text(widget.titleKey),
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: 32),

@@ -1,3 +1,5 @@
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
 
@@ -56,9 +58,10 @@ class _PinScreenState extends State<PinScreen> {
       _handleSuccess();
     } else {
       if (!mounted) return;
+      final l10n = context.read<AppLocaleController>();
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('PIN incorrecto')));
+      ).showSnackBar(SnackBar(content: Text(l10n.text('wrong_pin'))));
       setState(() {
         _pin = '';
       });
@@ -95,6 +98,8 @@ class _PinScreenState extends State<PinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<AppLocaleController>();
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -106,9 +111,9 @@ class _PinScreenState extends State<PinScreen> {
               color: Theme.of(context).primaryColor,
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Ingresa tu PIN',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              l10n.text('enter_pin'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
             Row(

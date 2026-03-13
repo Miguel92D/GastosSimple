@@ -80,9 +80,9 @@ class AppScaffold extends StatelessWidget {
                     height: 56,
                     borderRadius: 18,
                     padding: EdgeInsets.zero,
-                    glowColor: AppColors.primaryPurple.withOpacity(0.4),
+                    glowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
                     border: Border.all(
-                      color: AppColors.primaryPurple.withOpacity(0.4),
+                      color: AppColors.primaryPurple.withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                     child: const Center(
