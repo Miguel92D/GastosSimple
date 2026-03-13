@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 
 class ErrorService {
   static final ErrorService instance = ErrorService._init();
@@ -23,6 +25,7 @@ class ErrorService {
   }
 
   Widget getErrorWidget(BuildContext context, FlutterErrorDetails details) {
+    final l10n = context.read<AppLocaleController>();
     return Material(
       color: Colors.white,
       child: SafeArea(
@@ -37,16 +40,16 @@ class ErrorService {
                 color: Colors.redAccent,
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Algo salió mal',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                l10n.text('something_went_wrong'),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Lo sentimos, ha ocurrido un error inesperado. Intenta nuevamente o reinicia la aplicación.',
+              Text(
+                l10n.text('error_occurred_desc'),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
@@ -62,7 +65,7 @@ class ErrorService {
                     vertical: 16,
                   ),
                 ),
-                child: const Text('Volver al inicio'),
+                child: Text(l10n.text('back_to_start')),
               ),
             ],
           ),

@@ -1,5 +1,5 @@
+import '../../../core/i18n/app_locale_controller.dart';
 import '../../../services/theme_service.dart';
-import '../../../services/language_service.dart';
 import '../../../services/security_service.dart';
 import '../../../services/currency_service.dart';
 
@@ -9,7 +9,7 @@ class SettingsController {
   }
 
   static void changeLanguage(String code) {
-    LanguageService.instance.setLocale(code);
+    AppLocaleController.instance.changeLocale(code);
   }
 
   static void changeCurrency(String currency) {

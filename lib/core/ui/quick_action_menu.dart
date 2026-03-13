@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../flow/general_flow_service.dart';
 import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
+import '../i18n/app_locale_controller.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
 class QuickActionMenu {
   static void open(BuildContext context, {String mode = "normal"}) {
     final bool isVault = mode == "vault";
+    final l10n = context.read<AppLocaleController>();
 
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.darkBackground,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: Colors.black.withOpacity(0.75),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
@@ -36,8 +39,8 @@ class QuickActionMenu {
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Text(
                   isVault
-                      ? 'Registrar en Bóveda'
-                      : '¿Qué quieres registrar hoy?',
+                      ? l10n.text('vault_register_title')
+                      : l10n.text('quick_entry_question'),
                   style: AppTextStyles.titleLarge.copyWith(fontSize: 18),
                 ),
               ),
@@ -47,7 +50,7 @@ class QuickActionMenu {
                     Icons.flash_on_rounded,
                     color: AppColors.orange,
                   ),
-                  title: Text('Entrada rápida', style: AppTextStyles.bodyMain),
+                  title: Text(l10n.text('quick_entry_title'), style: AppTextStyles.bodyMain),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openEntry();
@@ -58,7 +61,7 @@ class QuickActionMenu {
                     Icons.arrow_upward_rounded,
                     color: AppColors.incomeGreen,
                   ),
-                  title: Text('Agregar ingreso', style: AppTextStyles.bodyMain),
+                  title: Text(l10n.text('add_income_label'), style: AppTextStyles.bodyMain),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addIncome);
@@ -69,7 +72,7 @@ class QuickActionMenu {
                     Icons.arrow_downward_rounded,
                     color: AppColors.expenseRed,
                   ),
-                  title: Text('Agregar gasto', style: AppTextStyles.bodyMain),
+                  title: Text(l10n.text('add_expense_label'), style: AppTextStyles.bodyMain),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addExpense);
@@ -83,8 +86,8 @@ class QuickActionMenu {
                 ),
                 title: Text(
                   isVault
-                      ? 'Agregar ingreso privado'
-                      : 'Agregar movimiento privado',
+                      ? l10n.text('add_private_income')
+                      : l10n.text('add_private_movement'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () {
@@ -99,7 +102,7 @@ class QuickActionMenu {
                     color: AppColors.expenseRed,
                   ),
                   title: Text(
-                    'Agregar gasto privado',
+                    l10n.text('add_private_expense'),
                     style: AppTextStyles.bodyMain,
                   ),
                   onTap: () {

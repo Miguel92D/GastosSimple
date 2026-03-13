@@ -3,11 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app_translations.dart';
 
 class AppLocaleController extends ChangeNotifier {
+  static final AppLocaleController instance = AppLocaleController._();
   String _locale = 'es';
 
   String get locale => _locale;
 
-  AppLocaleController() {
+  AppLocaleController._() {
     _loadLocale();
   }
 

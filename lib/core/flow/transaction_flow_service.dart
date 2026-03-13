@@ -3,6 +3,8 @@ import '../router/navigation_service.dart';
 import '../../features/transactions/controllers/transaction_controller.dart';
 import '../../features/transactions/models/transaction.dart';
 import '../state/app_mode_controller.dart';
+import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 
 class TransactionFlowService {
   static final TransactionFlowService instance = TransactionFlowService._();
@@ -73,8 +75,9 @@ class TransactionFlowService {
     } catch (e) {
       debugPrint('Error saving transaction flow: $e');
       if (context.mounted) {
+        final l10n = context.read<AppLocaleController>();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar la transacción')),
+          SnackBar(content: Text(l10n.text('error_saving_transaction'))),
         );
       }
     }

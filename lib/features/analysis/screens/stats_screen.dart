@@ -182,7 +182,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ],
                         ),

@@ -1,3 +1,4 @@
+import '../../services/pro_service.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
@@ -258,6 +259,30 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openSettings();
+                  },
+                ),
+                const Divider(color: AppColors.cardBorder, height: 32),
+                ListTile(
+                  leading: Icon(
+                    AppState.instance.isPro ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
+                  title: Text(
+                    AppState.instance.isPro ? 'Switch to FREE' : 'Switch to PREMIUM',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primaryPurple,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {
+                    final newState = !AppState.instance.isPro;
+                    AppState.instance.setPro(newState);
+                    if (newState) {
+                      ProService.instance.activatePro();
+                    } else {
+                      ProService.instance.deactivatePro();
+                    }
+                    setState(() {});
                   },
                 ),
               ],

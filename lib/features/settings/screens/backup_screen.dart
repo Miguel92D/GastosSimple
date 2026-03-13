@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import '../controllers/backup_controller.dart';
+import '../../../core/i18n/app_locale_controller.dart';
+import 'package:provider/provider.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -14,6 +16,7 @@ class _BackupScreenState extends State<BackupScreen> {
   bool _isLoading = false;
 
   Future<void> _exportBackup() async {
+    final l10n = context.read<AppLocaleController>();
     setState(() => _isLoading = true);
     try {
       final path = await BackupController.exportBackup();
@@ -23,7 +26,7 @@ class _BackupScreenState extends State<BackupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text('${l10n.text('error_prefix')}$e')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -31,6 +34,7 @@ class _BackupScreenState extends State<BackupScreen> {
   }
 
   Future<void> _restoreBackup() async {
+    final l10n = context.read<AppLocaleController>();
     setState(() => _isLoading = true);
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -43,14 +47,14 @@ class _BackupScreenState extends State<BackupScreen> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Datos restaurados')));
+          ).showSnackBar(SnackBar(content: Text(l10n.text('data_restored'))));
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text('${l10n.text('error_prefix')}$e')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -59,13 +63,14 @@ class _BackupScreenState extends State<BackupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<AppLocaleController>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Backup de datos'), elevation: 0),
+      appBar: AppBar(title: Text(l10n.text('backup_data_title')), elevation: 0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
+               padding: const EdgeInsets.all(24.0),
+               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -75,22 +80,22 @@ class _BackupScreenState extends State<BackupScreen> {
                     color: Colors.deepPurple,
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Mantén tus datos seguros',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.text('keep_data_safe'),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Puedes exportar todos tus movimientos para guardarlos y luego importarlos en otro dispositivo.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  Text(
+                    l10n.text('backup_screen_desc'),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
                   ElevatedButton.icon(
                     onPressed: _exportBackup,
                     icon: const Icon(Icons.upload),
-                    label: const Text('Crear Backup'),
+                    label: Text(l10n.text('create_backup')),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(
@@ -103,7 +108,7 @@ class _BackupScreenState extends State<BackupScreen> {
                   OutlinedButton.icon(
                     onPressed: _restoreBackup,
                     icon: const Icon(Icons.download),
-                    label: const Text('Restaurar Backup'),
+                    label: Text(l10n.text('restore_backup_action')),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui';
+import 'package:provider/provider.dart';
 import '../../../core/controllers/savings_goal_controller.dart';
+import '../../../core/i18n/app_locale_controller.dart';
 import '../models/goal.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_gradients.dart';
@@ -34,7 +35,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: Colors.black.withOpacity(0.75),
       builder: (context) => _CreateGoalModal(
         goal: goal,
         onSave: (newGoal) {
@@ -65,8 +66,9 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.read<AppLocaleController>();
     return AppScaffold(
-      title: 'Metas de ahorro',
+      title: l10n.text('savings_goals'),
       drawer: const AppDrawer(),
       body: ListenableBuilder(
         listenable: _controller,
@@ -95,11 +97,11 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                       ),
                     )),
                 if (_controller.goals.isEmpty)
-                  const Center(
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.all(AppSpacing.xxl),
+                      padding: const EdgeInsets.all(AppSpacing.xxl),
                       child: Text(
-                        'No tienes metas de ahorro aún.',
+                        l10n.text('no_goals_message'),
                         style: AppTextStyles.bodyMain,
                       ),
                     ),
@@ -157,8 +159,8 @@ class _SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
-            const Text(
-              'AHORROS TOTALES',
+            Text(
+              Provider.of<AppLocaleController>(context, listen: false).text('total_savings'),
               style: AppTextStyles.subLabel,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -181,7 +183,7 @@ class _SummaryCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              '$activeGoals metas activas',
+              Provider.of<AppLocaleController>(context, listen: false).text('active_goals', {'count': activeGoals.toString()}),
               style: AppTextStyles.bodySmall,
             ),
           ],
@@ -292,7 +294,7 @@ class _GoalItemCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Necesitas ahorrar:', style: AppTextStyles.subLabel),
+                      Text(Provider.of<AppLocaleController>(context, listen: false).text('need_to_save'), style: AppTextStyles.subLabel),
                       Text(
                         '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / mes',
                         style: AppTextStyles.bodyMain.copyWith(
@@ -419,29 +421,31 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      widget.goal == null ? 'Nueva Meta' : 'Editar Meta',
+                      widget.goal == null 
+                        ? Provider.of<AppLocaleController>(context, listen: false).text('new_goal')
+                        : Provider.of<AppLocaleController>(context, listen: false).text('edit_goal'),
                       style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    _buildFieldLabel('Nombre de la meta'),
+                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('goal_name_label')),
                     const SizedBox(height: AppSpacing.sm),
                     _buildGlassInput(
                       controller: _nameController,
                       hintText: 'Ej: Mi primer auto',
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel('Monto objetivo'),
+                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('target_label')),
                     const SizedBox(height: AppSpacing.sm),
                     _buildGlassInput(
                       controller: _amountController,
                       hintText: '0.00',
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      prefix: Text(CurrencyHelper.getSymbol(context) + ' ',
+                      prefix: Text('${CurrencyHelper.getSymbol(context)} ',
                           style: AppTextStyles.bodyMain),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel('Fecha estimada'),
+                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('estimated_date')),
                     const SizedBox(height: AppSpacing.sm),
                     InkWell(
                       onTap: () async {
@@ -468,7 +472,7 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel('Icono'),
+                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('icon_label')),
                     const SizedBox(height: AppSpacing.sm),
                     SizedBox(
                       height: 50,
@@ -510,20 +514,18 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                             .replaceAll(',', '.');
                         
                         double? amount = double.tryParse(amountText);
-                        if (amount == null) {
-                          amount = double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
-                        }
+                        amount ??= double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
                         
                         if (name.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Por favor, ingresa un nombre para la meta')),
+                            SnackBar(content: Text(Provider.of<AppLocaleController>(context, listen: false).text('goal_name_required'))),
                           );
                           return;
                         }
                         
                         if (amount == null || amount <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Por favor, ingresa un monto objetivo válido mayor a 0')),
+                            SnackBar(content: Text(Provider.of<AppLocaleController>(context, listen: false).text('goal_amount_required'))),
                           );
                           return;
                         }
@@ -547,7 +549,9 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                         ),
                       ),
                       child: Text(
-                        widget.goal == null ? 'Crear Meta' : 'Guardar Cambios',
+                        widget.goal == null 
+                          ? Provider.of<AppLocaleController>(context, listen: false).text('create_goal_button')
+                          : Provider.of<AppLocaleController>(context, listen: false).text('save_changes'),
                         style: AppTextStyles.buttonLabel,
                       ),
                     ),
@@ -651,12 +655,12 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Agregar dinero a ${widget.goal.name}',
+                      Provider.of<AppLocaleController>(context, listen: false).text('add_money_to', {'name': widget.goal.name}),
                       style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    Text('Monto a agregar', style: AppTextStyles.subLabel),
+                    Text(Provider.of<AppLocaleController>(context, listen: false).text('amount_to_add'), style: AppTextStyles.subLabel),
                     const SizedBox(height: AppSpacing.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -682,7 +686,7 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                           hintText: '0.00',
                           hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
                           border: InputBorder.none,
-                          prefixText: CurrencyHelper.getSymbol(context) + ' ',
+                          prefixText: '${CurrencyHelper.getSymbol(context)} ',
                           prefixStyle: AppTextStyles.bodyMain,
                         ),
                       ),
@@ -703,7 +707,7 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                           borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                       ),
-                      child: const Text('Agregar', style: AppTextStyles.buttonLabel),
+                      child: Text(Provider.of<AppLocaleController>(context, listen: false).text('add_label'), style: AppTextStyles.buttonLabel),
                     ),
                   ],
                 ),

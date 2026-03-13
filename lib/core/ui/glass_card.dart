@@ -1,8 +1,7 @@
-/**
- * This project uses a centralized design system.
- * Direct usage of Color(), LinearGradient(), or TextStyle() inside UI widgets is not allowed.
- * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
- */
+/// This project uses a centralized design system.
+/// Direct usage of Color(), LinearGradient(), or TextStyle() inside UI widgets is not allowed.
+/// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+library;
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'app_colors.dart';
@@ -19,6 +18,7 @@ class GlassCard extends StatelessWidget {
   final double? height;
   final double? width;
   final BoxBorder? border;
+  final double borderWidth;
   final EdgeInsetsGeometry? margin;
 
   const GlassCard({
@@ -31,6 +31,7 @@ class GlassCard extends StatelessWidget {
     this.height,
     this.width,
     this.border,
+    this.borderWidth = 1.0,
     this.margin,
   });
 
@@ -61,7 +62,7 @@ class GlassCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: border ??
-                    Border.all(color: AppColors.cardBorder, width: 1.0),
+                    Border.all(color: AppColors.cardBorder, width: borderWidth),
                 gradient: gradientColors != null
                     ? LinearGradient(
                         colors: gradientColors!,

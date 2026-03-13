@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../router/navigation_service.dart';
+import '../i18n/app_locale_controller.dart';
 
 class PremiumFlowService {
   static void showUpgradePrompt(BuildContext context) {
+    final l10n = context.read<AppLocaleController>();
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -26,16 +30,16 @@ class PremiumFlowService {
                   color: Colors.orange,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Desbloquea \$imple Premium',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.text('unlock_premium_title'),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                _buildBenefit('Estadísticas avanzadas'),
-                _buildBenefit('Presupuestos'),
-                _buildBenefit('Exportar datos'),
-                _buildBenefit('Movimientos ocultos'),
+                _buildBenefit(l10n.text('feature_stats')),
+                _buildBenefit(l10n.text('feature_budgets')),
+                _buildBenefit(l10n.text('feature_export')),
+                _buildBenefit(l10n.text('feature_vault')),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
@@ -49,9 +53,9 @@ class PremiumFlowService {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Probar Premium',
-                    style: TextStyle(
+                  child: Text(
+                    l10n.text('try_premium'),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -61,9 +65,9 @@ class PremiumFlowService {
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () => NavigationService.goBack(),
-                  child: const Text(
-                    'Continuar gratis',
-                    style: TextStyle(color: Colors.grey),
+                  child: Text(
+                    l10n.text('continue_free'),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ),
               ],

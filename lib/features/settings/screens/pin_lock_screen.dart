@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
 
-import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 
 class PinLockScreen extends StatefulWidget {

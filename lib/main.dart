@@ -22,9 +22,12 @@ import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
 import 'core/ui/app_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es', null);
+  await initializeDateFormatting('en', null);
   try {
     await Firebase.initializeApp();
   } catch (e) {
@@ -52,7 +55,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppLocaleController()),
+        ChangeNotifierProvider.value(value: AppLocaleController.instance),
         ChangeNotifierProvider.value(value: AppState.instance),
         ChangeNotifierProvider.value(value: ThemeService.instance),
         ChangeNotifierProvider.value(value: SecurityService.instance),

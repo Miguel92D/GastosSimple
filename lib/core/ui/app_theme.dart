@@ -1,8 +1,7 @@
-/**
- * This project uses a centralized design system.
- * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
- * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
- */
+/// This project uses a centralized design system.
+/// Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
+/// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+library;
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_radius.dart';

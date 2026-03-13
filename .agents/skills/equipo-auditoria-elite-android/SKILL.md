@@ -1,6 +1,6 @@
 ---
 name: equipo-auditoria-elite-android
-description: Actúa como un equipo de élite para revisión de apps móviles compuesto por expertos en Seguridad, Cumplimiento, QA, Rendimiento y Arquitectura. Realiza una AUDITORÍA COMPLETA PRE-LANZAMIENTO de la aplicación antes de ser enviada a Google Play Store. Genera un reporte exhaustivo de 6 secciones y un checklist final de seguridad.
+description: Actúa como un equipo de élite para revisión de apps móviles compuesto por expertos en Seguridad, Cumplimiento, QA, Rendimiento, Arquitectura, Finanzas, UX y Matemáticas. Realiza una AUDITORÍA COMPLETA PRE-LANZAMIENTO de la aplicación antes de ser enviada a Google Play Store. Genera un reporte exhaustivo de 9 secciones y un checklist final de seguridad.
 ---
 
 # Equipo de Auditoría de Élite - Revisión Pre-Lanzamiento
@@ -10,7 +10,7 @@ Esta habilidad activa un equipo multidisciplinario virtual para realizar una rev
 ## Cuándo usar esta habilidad
 
 - Justo antes de enviar la aplicación a producción.
-- Cuando se desea una validación integral que cubra seguridad, rendimiento, leyes y estabilidad al mismo tiempo.
+- Cuando se desea una validación integral que cubra seguridad, rendimiento, leyes, estabilidad y lógica financiera al mismo tiempo.
 - Al preparar el reporte final de calidad para el cliente o equipo directivo.
 - Para simular el proceso de revisión interna de Google Play.
 
@@ -21,6 +21,9 @@ Esta habilidad activa un equipo multidisciplinario virtual para realizar una rev
 3.  **QA Stress Tester**: Intenta romper la app con comportamientos no lineales.
 4.  **Ingeniero de Rendimiento**: Optimiza el consumo de recursos y la fluidez.
 5.  **Arquitecto de Software**: Evalúa la mantenibilidad y calidad del código.
+6.  **Auditor Económico y Financiero**: Valida la salud financiera y metodologías de presupuesto.
+7.  **Especialista en UX Fintech**: Asegura claridad financiera y baja carga cognitiva.
+8.  **Auditor Matemático**: Verifica la exactitud de los cálculos y la integridad numérica.
 
 ## Instrucciones de uso
 
@@ -44,15 +47,18 @@ Analizar tiempos de inicio, consumo de batería y fluidez de la UI.
 ### 6. Evaluación de Arquitectura
 Revisar la separación de capas y la escalabilidad del sistema.
 
+### 7. Auditoría Financiera y UX
+Evaluar si la app ayuda a ahorrar, si los cálculos son exactos y si la UI es clara.
+
 ## Reporte Final de Auditoría (Formato de Salida)
 
 El reporte debe estar dividido en las siguientes secciones obligatorias:
 
 **SECCIÓN 1 — Vulnerabilidades de Seguridad**
-- Lista detallada de riesgos de seguridad.
+- Hallazgos del Ingeniero de Seguridad.
 
 **SECCIÓN 2 — Riesgos de Crashes (Estabilidad)**
-- Escenarios donde la app podría cerrarse inesperadamente.
+- Hallazgos del Ingeniero de Estabilidad y QA.
 
 **SECCIÓN 3 — Problemas de Rendimiento**
 - Cuellos de botella y picos de consumo de recursos.
@@ -64,12 +70,21 @@ El reporte debe estar dividido en las siguientes secciones obligatorias:
 - Recomendaciones para reducir la deuda técnica.
 
 **SECCIÓN 6 — Vulnerabilidades en Dependencias**
-- Estado de las librerías de terceros (Pub.dev / Maven).
+- Estado de las librerías de terceros.
+
+**SECCIÓN 7 — Auditoría Económica y Financiera**
+- Análisis de budgets, salud financiera y lógica de negocio.
+
+**SECCIÓN 8 — Auditoría de UX Fintech**
+- Claridad financiera, carga cognitiva y flujo de gastos.
+
+**SECCIÓN 9 — Auditoría Matemática y Fiabilidad**
+- Verificación de fórmulas y exactitud de los totales.
 
 ## CHECKLIST FINAL PRE-LANZAMIENTO
-Al final del reporte, genera una lista de verificación binaria (Listo / Pendiente) que garantice que la app es 100% segura para publicar.
+Genera una lista de verificación binaria (Listo / Pendiente) integral.
 
 ## Reglas Críticas
 - **Idioma**: Todo el análisis y reporte debe estar en **Español**.
-- **Severidad**: Indica siempre la severidad (Baja / Media / Alta / Crítica).
-- **Acción Obligatoria**: Si hay hallazgos críticos, el agente debe recomendar NO publicar la aplicación hasta que se resuelvan.
+- **Severidad**: Indica siempre la severidad.
+- **Puntaje de Fiabilidad**: Al final, asigna una nota de 0 a 100 a la aplicación.

@@ -1,11 +1,11 @@
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import '../../../services/language_service.dart';
 import '../../../services/security_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
+import '../controllers/settings_controller.dart';
 
 import '../../../core/flow/general_flow_service.dart';
 import '../../../core/flow/premium_flow_service.dart';
@@ -14,6 +14,7 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../core/state/app_state.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -50,26 +51,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _buildSectionTitle(l10n.text('language')),
             _buildItem(
-              title: 'Español',
+              title: l10n.text('language_es'),
               leading: Icons.language_rounded,
-              trailing: LanguageService.instance.locale.languageCode == 'es'
+              trailing: l10n.locale == 'es'
                   ? const Icon(
                       Icons.check_circle_rounded,
                       color: AppColors.incomeGreen,
                     )
                   : null,
-              onTap: () => LanguageService.instance.setLocale('es'),
+              onTap: () => SettingsController.changeLanguage('es'),
             ),
             _buildItem(
-              title: 'English',
+              title: l10n.text('language_en'),
               leading: Icons.language_rounded,
-              trailing: LanguageService.instance.locale.languageCode == 'en'
+              trailing: l10n.locale == 'en'
                   ? const Icon(
                       Icons.check_circle_rounded,
                       color: AppColors.incomeGreen,
                     )
                   : null,
-              onTap: () => LanguageService.instance.setLocale('en'),
+              onTap: () => SettingsController.changeLanguage('en'),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -91,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       l10n.text('pin_subtitle'),
                       style: AppTextStyles.bodySmall,
                     ),
-                    activeColor: AppColors.primaryPurple,
+                    activeThumbColor: AppColors.primaryPurple,
                     value: SecurityService.instance.isPinActive,
                     onChanged: (val) async {
                       if (val && !SecurityService.instance.hasPin) {
@@ -113,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         l10n.text('vault_only_pin_desc'),
                         style: AppTextStyles.bodySmall,
                       ),
-                      activeColor: AppColors.primaryPurple,
+                      activeThumbColor: AppColors.primaryPurple,
                       value: SecurityService.instance.isVaultOnly,
                       onChanged: (val) =>
                           SecurityService.instance.setVaultOnly(val),
@@ -129,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       l10n.text('biometric_subtitle'),
                       style: AppTextStyles.bodySmall,
                     ),
-                    activeColor: AppColors.primaryPurple,
+                    activeThumbColor: AppColors.primaryPurple,
                     value: SecurityService.instance.isBiometricActive,
                     onChanged: (val) =>
                         SecurityService.instance.setBiometricActive(val),
@@ -208,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 l10n.text('auto_backup_desc'),
                 style: AppTextStyles.bodySmall,
               ),
-              activeColor: AppColors.primaryPurple,
+              activeThumbColor: AppColors.primaryPurple,
               value: _autoBackup,
               onChanged: (val) async {
                 if (!ProService.instance.isPro) {
@@ -250,6 +251,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               leading: Icons.shield_rounded,
               onTap: () {
                 GeneralFlowService.openPrivacy();
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Divider(color: AppColors.cardBorder),
+            ),
+            _buildSectionTitle('💻 DEMO / TESTING'),
+            SwitchListTile(
+              title: const Text(
+                'Activar Premium (Beta)',
+                style: TextStyle(
+                  color: AppColors.primaryPurple,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: const Text(
+                'Alternar entre cuenta Gratuita y Premium para probar funciones.',
+                style: AppTextStyles.bodySmall,
+              ),
+              activeColor: AppColors.primaryPurple,
+              value: ProService.instance.isPro,
+              onChanged: (val) {
+                if (val) {
+                  ProService.instance.activatePro();
+                  AppState.instance.setPro(true);
+                } else {
+                  ProService.instance.deactivatePro();
+                  AppState.instance.setPro(false);
+                }
+                setState(() {});
               },
             ),
           ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ThemeService extends ChangeNotifier {
   static final ThemeService instance = ThemeService._init();
-  ThemeMode _themeMode = ThemeMode.dark;
+  final ThemeMode _themeMode = ThemeMode.dark;
 
   ThemeService._init();
 

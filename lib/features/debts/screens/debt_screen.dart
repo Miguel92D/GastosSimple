@@ -423,7 +423,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           hintText: '0.00',
                           hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
                           border: InputBorder.none,
-                          prefixText: CurrencyHelper.getSymbol(context) + ' ',
+                          prefixText: '${CurrencyHelper.getSymbol(context)} ',
                           prefixStyle: AppTextStyles.bodyMain,
                         ),
                       ),

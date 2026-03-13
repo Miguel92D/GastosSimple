@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import '../i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
+import '../i18n/app_locale_controller.dart';
+import 'package:intl/intl.dart';
 
 class L10nHelper {
+  static String getLocalizedDateMonth(BuildContext context, DateTime date) {
+    final l10n = context.read<AppLocaleController>();
+    return DateFormat('MMMM yyyy', l10n.locale).format(date);
+  }
+
   static String getLocalizedCategory(BuildContext context, String category) {
     final l10n = context.read<AppLocaleController>();
-    if (l10n == null) return category;
 
     switch (category.toLowerCase()) {
       case 'comida':

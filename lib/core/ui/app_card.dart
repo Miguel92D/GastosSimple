@@ -1,8 +1,7 @@
-/**
- * This project uses centralized layout constants.
- * Direct usage of hardcoded spacing values, radius values, or shadow definitions is discouraged.
- * Use AppSpacing, AppRadius, and AppShadows instead.
- */
+/// This project uses centralized layout constants.
+/// Direct usage of hardcoded spacing values, radius values, or shadow definitions is discouraged.
+/// Use AppSpacing, AppRadius, and AppShadows instead.
+library;
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_radius.dart';

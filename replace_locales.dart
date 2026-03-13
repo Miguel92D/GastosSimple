@@ -40,10 +40,10 @@ void main() async {
     if (content != original) {
       // Add imports
       if (!content.contains("package:provider/provider.dart")) {
-        content = "import 'package:provider/provider.dart';\n" + content;
+        content = "import 'package:provider/provider.dart';\n$content";
       }
       if (!content.contains("package:gastos_simple/core/i18n/app_locale_controller.dart")) {
-        content = "import 'package:gastos_simple/core/i18n/app_locale_controller.dart';\n" + content;
+        content = "import 'package:gastos_simple/core/i18n/app_locale_controller.dart';\n$content";
       }
       await file.writeAsString(content);
       print('Updated ${file.path}');

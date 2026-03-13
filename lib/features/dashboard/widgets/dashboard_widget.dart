@@ -1,14 +1,16 @@
-/**
- * This project uses a centralized design system.
- * Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
- * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
- */
+/// This project uses a centralized design system.
+/// Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
+/// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+library;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../controllers/dashboard_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/widgets/balance_card.dart';
 import '../../../core/ui/app_spacing.dart';
+import '../../../core/i18n/app_locale_controller.dart';
+import '../../../core/utils/l10n_helper.dart';
 import 'income_expense_cards.dart';
 import 'recent_transactions_list.dart';
 
@@ -95,7 +97,11 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               horizontal: AppSpacing.lg,
               vertical: AppSpacing.md,
             ),
-            child: BalanceCard(balance: balance),
+            child: BalanceCard(
+              balance: balance,
+              title: context.read<AppLocaleController>().text('monthly_balance').toUpperCase(),
+              subtitle: L10nHelper.getLocalizedDateMonth(context, DateTime.now()),
+            ),
           ),
           IncomeExpenseCards(
             income: income,
