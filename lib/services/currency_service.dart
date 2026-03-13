@@ -24,6 +24,12 @@ class CurrencyService extends ChangeNotifier {
   String get currencySymbol => _currencySymbol;
   String get currencyCode => _currencyCode;
 
+  AppCurrency get selectedCurrency => availableCurrencies.firstWhere(
+        (c) => c.code == _currencyCode,
+        orElse: () => availableCurrencies[0],
+      );
+
+
   static const List<AppCurrency> availableCurrencies = [
     AppCurrency(code: 'USD', name: 'US Dollar', symbol: r'$'),
     AppCurrency(code: 'EUR', name: 'Euro', symbol: '€'),

@@ -54,6 +54,46 @@ class AppTheme {
     );
   }
 
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFF8F9FE),
+      primaryColor: AppColors.primaryPurple,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primaryPurple,
+        primary: AppColors.primaryPurple,
+        secondary: const Color(0xFF8B5CF6),
+        surface: Colors.white,
+        error: AppColors.expenseRed,
+        brightness: Brightness.light,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black87),
+        titleTextStyle: AppTextStyles.cardTitle.copyWith(fontSize: 20, color: Colors.black87),
+      ),
+      textTheme: const TextTheme(
+        headlineLarge: AppTextStyles.titleLarge,
+        headlineMedium: AppTextStyles.balanceAmount,
+        titleLarge: AppTextStyles.cardTitle,
+        bodyLarge: AppTextStyles.bodyMain,
+        bodyMedium: AppTextStyles.bodySmall,
+      ),
+      cardTheme: CardThemeData(
+        color: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          side: const BorderSide(color: Color(0xFFEEEEEE)),
+        ),
+      ),
+    );
+  }
+
   // Legacy support for getter name if needed
   static ThemeData get neonTheme => brandTheme;
 
@@ -64,3 +104,4 @@ class AppTheme {
     gradient: AppGradients.glassGradient,
   );
 }
+

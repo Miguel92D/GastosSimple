@@ -115,7 +115,9 @@
   "spending_warning": "¡Cuidado con tus gastos!",
   "good_income_insight": "¡Buen nivel de ingresos este mes!",
   "no_data_export": "No hay datos para exportar.",
-  "export_subject": "Mis Finanzas - Gastos Simple",
+  "export_subject": "Mis Finanzas - $imple",
+
+
   "search": "Buscar",
   "search_tooltip": "Buscar movimientos",
   "export_data": "Exportar datos",

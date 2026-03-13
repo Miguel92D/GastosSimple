@@ -93,6 +93,9 @@ class AppTranslations {
       'feature_vault': 'Bóveda personal',
       'feature_goals': 'Metas de ahorro',
       'feature_recurring': 'Movimientos recurrentes',
+      'feature_monthly_analysis': 'Análisis mensual detallado',
+      'monthly_analysis': 'Análisis mensual',
+
 
       'feature_history': 'Historial detallado',
       'subscribe_now': 'Suscríbete ahora',
@@ -127,7 +130,8 @@ class AppTranslations {
       'spending_warning': '¡Cuidado con tus gastos!',
       'good_income_insight': '¡Buen nivel de ingresos este mes!',
       'no_data_export': 'No hay datos para exportar.',
-      'export_subject': 'Mis Finanzas - Gastos Simple',
+      'export_subject': 'Mis Finanzas - \$imple',
+
       'search': 'Buscar',
       'search_tooltip': 'Buscar movimientos',
       'export_data': 'Exportar datos',
@@ -212,7 +216,13 @@ class AppTranslations {
       'statistics': 'Estadísticas',
       'ai_intelligence': 'Inteligencia Artificial',
       'vault_label': 'Bóveda',
+      'monthly_analysis_title': 'Análisis Mensual',
+      'income_vs_expense': 'Ingresos vs Gastos',
+      'top_spending_day': 'Día de mayor gasto',
+      'daily_average': 'Promedio diario',
+      'vs_previous_month': 'vs mes anterior',
       'estimated_spending': 'Gasto estimado',
+
       'estimated_balance': 'Balance estimado',
       'prediction_negative_warning': '¡Peligro: Se predice un balance negativo!',
       'recent_movements': 'Movimientos recientes',
@@ -274,6 +284,8 @@ class AppTranslations {
       'unlock_premium_title': 'Desbloquea \$imple Premium',
       'try_premium': 'Probar Premium',
       'continue_free': 'Continuar gratis',
+      'local_backup_label': 'Respaldo Local (Archivo)',
+      'biometric_not_available': 'Biometría no disponible en este dispositivo',
     },
     'en': {
       'app_name': '\$imple',
@@ -368,6 +380,9 @@ class AppTranslations {
       'feature_vault': 'Personal vault',
       'feature_goals': 'Savings goals',
       'feature_recurring': 'Recurring movements',
+      'feature_monthly_analysis': 'Detailed monthly analysis',
+      'monthly_analysis': 'Monthly analysis',
+
 
       'feature_history': 'Detailed history',
       'subscribe_now': 'Subscribe now',
@@ -402,7 +417,8 @@ class AppTranslations {
       'spending_warning': 'Watch your spending!',
       'good_income_insight': 'Good level of income this month!',
       'no_data_export': 'No data to export.',
-      'export_subject': 'My Finances - Gastos Simple',
+      'export_subject': 'My Finances - \$imple',
+
       'search': 'Search',
       'search_tooltip': 'Search movements',
       'export_data': 'Export data',
@@ -487,7 +503,13 @@ class AppTranslations {
       'statistics': 'Statistics',
       'ai_intelligence': 'AI Intelligence',
       'vault_label': 'Vault',
+      'monthly_analysis_title': 'Monthly Analysis',
+      'income_vs_expense': 'Income vs Expense',
+      'top_spending_day': 'Highest spending day',
+      'daily_average': 'Daily average',
+      'vs_previous_month': 'vs previous month',
       'estimated_spending': 'Estimated spending',
+
       'estimated_balance': 'Estimated balance',
       'prediction_negative_warning': 'Warning: Negative balance predicted!',
       'recent_movements': 'Recent movements',

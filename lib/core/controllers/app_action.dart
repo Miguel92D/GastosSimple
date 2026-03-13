@@ -11,4 +11,6 @@ enum AppAction {
   openGoals,
   openBudgets,
   openCategories,
+  openMonthlyAnalysis,
 }
+

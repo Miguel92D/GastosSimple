@@ -14,6 +14,14 @@ class AppTextStyles {
     letterSpacing: -1.0,
   );
 
+  static const titleMain = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.5,
+  );
+
+
   static const balanceAmount = TextStyle(
     fontSize: 40,
     fontWeight: FontWeight.w900,

@@ -371,7 +371,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get no_data_export => 'No hay datos para exportar.';
 
   @override
-  String get export_subject => 'Mis Finanzas - Gastos Simple';
+  String get export_subject => 'Mis Finanzas - \$imple';
 
   @override
   String get search => 'Buscar';

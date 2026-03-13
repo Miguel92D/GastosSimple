@@ -65,6 +65,11 @@ class GeneralFlowService {
     NavigationService.navigate("/categories");
   }
 
+  static void openMonthlyAnalysis() {
+    NavigationService.navigate("/monthly_analysis");
+  }
+
+
   static void goBack() {
     NavigationService.goBack();
   }

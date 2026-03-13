@@ -791,7 +791,7 @@ abstract class AppLocalizations {
   /// No description provided for @export_subject.
   ///
   /// In es, this message translates to:
-  /// **'Mis Finanzas - Gastos Simple'**
+  /// **'Mis Finanzas - \$imple'**
   String get export_subject;
 
   /// No description provided for @search.

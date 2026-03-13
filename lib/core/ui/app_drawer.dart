@@ -77,14 +77,47 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     color: AppColors.glassSurface,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.cardBorder),
+                    border: Border.all(
+                      color: isPro ? const Color(0xFFD4AF37).withValues(alpha: 0.5) : AppColors.cardBorder,
+                      width: isPro ? 1.5 : 1.0,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.account_balance_wallet_rounded,
-                    color: AppColors.textPrimary,
-                    size: 32,
-                  ),
+                  child: isPro
+                      ? AnimatedBuilder(
+                          animation: _shimmerController,
+                          builder: (context, child) {
+                            return ShaderMask(
+                              shaderCallback: (bounds) {
+                                return LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  stops: [
+                                    _shimmerController.value - 0.2,
+                                    _shimmerController.value,
+                                    _shimmerController.value + 0.2,
+                                  ],
+                                  colors: [
+                                    const Color(0xFFD4AF37),
+                                    const Color(0xFFFFFACD).withValues(alpha: 0.9),
+                                    const Color(0xFFD4AF37),
+                                  ],
+                                ).createShader(bounds);
+                              },
+                              child: const Icon(
+                                Icons.account_balance_wallet_rounded,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            );
+                          },
+                        )
+                      : const Icon(
+                          Icons.account_balance_wallet_rounded,
+                          color: AppColors.textPrimary,
+                          size: 32,
+                        ),
                 ),
+
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 30,
@@ -240,6 +273,15 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     ActionController.execute(context, AppAction.openStats);
                   },
                 ),
+                _DrawerItem(
+                  icon: Icons.insights_rounded,
+                  title: context.watch<AppLocaleController>().text('monthly_analysis'),
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    ActionController.execute(context, AppAction.openMonthlyAnalysis);
+                  },
+                ),
+
                 _DrawerItem(
                   icon: Icons.flag_rounded,
                   title: context.watch<AppLocaleController>().text('savings_goals'),

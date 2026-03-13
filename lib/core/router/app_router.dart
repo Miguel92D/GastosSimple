@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/analysis/screens/monthly_analysis_screen.dart';
 
 import '../../features/dashboard/screens/home_screen.dart';
 import '../../features/transactions/screens/quick_entry_screen.dart';
@@ -143,6 +144,13 @@ class AppRouter {
           settings: settings,
           builder: (_) => const CategoriesScreen(),
         );
+
+      case "/monthly_analysis":
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const MonthlyAnalysisScreen(),
+        );
+
 
       default:
         return MaterialPageRoute(

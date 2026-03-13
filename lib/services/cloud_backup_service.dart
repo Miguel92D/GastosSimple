@@ -45,47 +45,54 @@ class CloudBackupService {
     await _auth.signOut();
   }
 
-  Future<void> backupData() async {
-    if (!ProService.instance.isPro) return;
+  Future<bool> backupData() async {
+    if (!ProService.instance.isPro) return false;
 
     final user = _auth.currentUser;
     if (user == null) {
-      debugPrint('User is not logged in.');
-      return;
-    }
-
-    // Get all transactions (normal + vault)
-    final normal = await TransactionRepository.getNormalTransactions();
-    final vault = await TransactionRepository.getVaultTransactions();
-    final transactions = [...normal, ...vault];
-
-    final batch = _firestore.batch();
-
-    for (var transaction in transactions) {
-      final ref = _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('transactions')
-          .doc(transaction.id.toString());
-
-      batch.set(ref, transaction.toMap());
+      debugPrint('CloudBackup: User is not logged in.');
+      return false;
     }
 
     try {
+      // Get all transactions (normal + vault)
+      final normal = await TransactionRepository.getNormalTransactions();
+      final vault = await TransactionRepository.getVaultTransactions();
+      final transactions = [...normal, ...vault];
+
+      if (transactions.isEmpty) {
+        debugPrint('CloudBackup: No transactions to backup.');
+        return true; 
+      }
+
+      final batch = _firestore.batch();
+
+      for (var transaction in transactions) {
+        final ref = _firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('transactions')
+            .doc(transaction.id.toString());
+
+        batch.set(ref, transaction.toMap());
+      }
+
       await batch.commit();
-      debugPrint('Backup successful.');
+      debugPrint('CloudBackup: Backup successful.');
+      return true;
     } catch (e) {
-      debugPrint('Backup failed: $e');
+      debugPrint('CloudBackup: Backup failed: $e');
+      return false;
     }
   }
 
-  Future<void> restoreData() async {
-    if (!ProService.instance.isPro) return;
+  Future<bool> restoreData() async {
+    if (!ProService.instance.isPro) return false;
 
     final user = _auth.currentUser;
     if (user == null) {
-      debugPrint('User is not logged in.');
-      return;
+      debugPrint('CloudBackup: User is not logged in.');
+      return false;
     }
 
     try {
@@ -95,21 +102,26 @@ class CloudBackupService {
           .collection('transactions')
           .get();
 
+      if (snapshot.docs.isEmpty) {
+        debugPrint('CloudBackup: No remote data found.');
+        return true;
+      }
+
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final transaction = Transaction.fromMap(data);
-
-        // Simple restore: upsert
         await TransactionRepository.updateTransaction(transaction);
-        // Note: In a real app we'd check if update actually did something
-        // or just use an upsert method in repository.
       }
+      
       TransactionNotifier.instance.refresh();
-      debugPrint('Restore successful.');
+      debugPrint('CloudBackup: Restore successful.');
+      return true;
     } catch (e) {
-      debugPrint('Restore failed: $e');
+      debugPrint('CloudBackup: Restore failed: $e');
+      return false;
     }
   }
+
 
   Future<bool> isAutoBackupEnabled() async {
     final prefs = await SharedPreferences.getInstance();

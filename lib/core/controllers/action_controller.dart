@@ -89,7 +89,15 @@ class ActionController {
       case AppAction.openCategories:
         GeneralFlowService.openCategories();
         break;
+      case AppAction.openMonthlyAnalysis:
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openMonthlyAnalysis();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
+        break;
     }
+
   }
 
   static void openQuickEntryNormal(BuildContext context) {

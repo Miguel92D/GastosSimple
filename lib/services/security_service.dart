@@ -29,6 +29,13 @@ class SecurityService extends ChangeNotifier {
   bool get hasPin => _pin != null && _pin!.isNotEmpty;
   bool get hasVaultPin => _vaultPin != null && _vaultPin!.isNotEmpty;
 
+  Future<bool> get canUseBiometrics async {
+    final bool canCheck = await _auth.canCheckBiometrics;
+    final bool isSupported = await _auth.isDeviceSupported();
+    return canCheck && isSupported;
+  }
+
+
   void lock() {
     _isUnlocked = false;
     _isVaultUnlocked = false;
