@@ -24,9 +24,15 @@ class CurrencyService extends ChangeNotifier {
   }
 
   static String format(double value) {
+    if (value.abs() >= 1000000000000) {
+      // For extremely large numbers (>= 1 trillion), use compact format to avoid UI breakage
+      final formatter = NumberFormat.compact(locale: 'es_AR');
+      String formatted = formatter.format(value);
+      return '${instance._currencySymbol} $formatted';
+    }
+
     final hasDecimals = value.abs() % 1 != 0;
 
-    // We use es_AR for grouping and decimal separators: . and ,
     final formatter = NumberFormat.currency(
       locale: 'es_AR',
       symbol: instance._currencySymbol,
@@ -37,7 +43,6 @@ class CurrencyService extends ChangeNotifier {
 
     // If the formatter puts the symbol at the end, move it to the front
     if (formatted.contains(instance._currencySymbol)) {
-      // Remove the symbol from wherever it is and put it at the start
       String numericPart = formatted
           .replaceAll(instance._currencySymbol, '')
           .trim();

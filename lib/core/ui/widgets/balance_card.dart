@@ -4,7 +4,7 @@
  * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
  */
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../utils/currency_helper.dart';
 import '../../state/app_state.dart';
 import 'dart:math' as math;
 import '../glass_card.dart';
@@ -141,10 +141,7 @@ class _BalanceCardState extends State<BalanceCard>
                           final String formattedValue =
                               AppState.instance.hideBalance
                               ? "••••••"
-                              : NumberFormat(
-                                  '#,###',
-                                  'es_ES',
-                                ).format(animatedValue.abs().round());
+                              : CurrencyHelper.format(animatedValue, context);
 
                           return AnimatedDefaultTextStyle(
                             duration: const Duration(milliseconds: 300),
@@ -154,9 +151,7 @@ class _BalanceCardState extends State<BalanceCard>
                               fontSize: 42,
                             ),
                             child: Text(
-                              AppState.instance.hideBalance
-                                  ? formattedValue
-                                  : "\$$formattedValue",
+                              formattedValue,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

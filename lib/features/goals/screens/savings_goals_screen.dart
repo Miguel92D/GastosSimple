@@ -165,10 +165,14 @@ class _SummaryCard extends StatelessWidget {
               duration: const Duration(milliseconds: 1500),
               curve: Curves.fastOutSlowIn,
               builder: (context, value, _) {
-                return Text(
-                  CurrencyHelper.format(value, context),
-                  style: AppTextStyles.incomeValue.copyWith(
-                    fontSize: 36,
+                return FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    CurrencyHelper.format(value, context),
+                    style: AppTextStyles.incomeValue.copyWith(
+                      fontSize: 36,
+                    ),
+                    maxLines: 1,
                   ),
                 );
               },
@@ -488,20 +492,44 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
               const SizedBox(height: AppSpacing.xl),
               ElevatedButton(
                 onPressed: () {
-                  final name = _nameController.text;
-                  final amount = double.tryParse(_amountController.text) ?? 0;
-                  if (name.isNotEmpty && amount > 0) {
-                    widget.onSave(Goal(
-                      id: widget.goal?.id,
-                      name: name,
-                      targetAmount: amount,
-                      currentAmount: widget.goal?.currentAmount ?? 0,
-                      targetDate: _targetDate,
-                      icon: _selectedIcon,
-                      createdAt: widget.goal?.createdAt ?? DateTime.now(),
-                    ));
-                    Navigator.pop(context);
+                  final name = _nameController.text.trim();
+                  // Clean the amount string to handle different decimal/thousands separators
+                  String amountText = _amountController.text
+                      .replaceAll(' ', '')
+                      .replaceAll('.', '') // Assuming . is thousand separator
+                      .replaceAll(',', '.'); // Assuming , is decimal separator
+                  
+                  // If after cleaning there is more than one dot, it might have been formatted differently
+                  // Let's try a fallback: if it doesn't parse, try parsing the original without symbols
+                  double? amount = double.tryParse(amountText);
+                  if (amount == null) {
+                    amount = double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
                   }
+                  
+                  if (name.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Por favor, ingresa un nombre para la meta')),
+                    );
+                    return;
+                  }
+                  
+                  if (amount == null || amount <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Por favor, ingresa un monto objetivo válido mayor a 0')),
+                    );
+                    return;
+                  }
+
+                  widget.onSave(Goal(
+                    id: widget.goal?.id,
+                    name: name,
+                    targetAmount: amount,
+                    currentAmount: widget.goal?.currentAmount ?? 0,
+                    targetDate: _targetDate,
+                    icon: _selectedIcon,
+                    createdAt: widget.goal?.createdAt ?? DateTime.now(),
+                  ));
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryPurple,
