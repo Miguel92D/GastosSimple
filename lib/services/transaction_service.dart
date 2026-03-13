@@ -1,4 +1,5 @@
 import '../features/transactions/models/transaction.dart';
+import 'currency_service.dart';
 
 class TransactionService {
   static double calculateIncome(List<Transaction> transactions) {
@@ -36,9 +37,18 @@ class TransactionService {
     } else if (amountPart.startsWith('-')) {
       type = 'gasto';
       amountString = amountPart.substring(1);
-    } else {
-      type = 'gasto';
     }
+
+    // Support for currency symbols (e.g. $100, USD100, S/100)
+    // We remove all non-numeric characters except for the decimal separator
+    // But first we handle common symbols that might be used as prefixes
+    final currentSymbol = CurrencyService.instance.currencySymbol;
+    if (amountString.startsWith(currentSymbol)) {
+      amountString = amountString.substring(currentSymbol.length);
+    }
+
+    // Clean any remaining non-numeric characters (except , and .)
+    amountString = amountString.replaceAll(RegExp(r'[^0-9,.]'), '');
 
     final amount = double.tryParse(amountString.replaceAll(',', '.'));
     if (amount == null || amount <= 0) return null;

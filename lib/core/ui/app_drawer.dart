@@ -13,6 +13,7 @@ import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
 
 
+
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
 
@@ -163,24 +164,17 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.analytics_rounded,
-                  title: context.watch<AppLocaleController>().text('statistics'),
+                  icon: Icons.account_balance_rounded,
+                  title: context.watch<AppLocaleController>().text('debts'),
                   onTap: () {
                     GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openStats);
+                    GeneralFlowService.openDebts();
                   },
                 ),
-                _DrawerItem(
-                  icon: Icons.flag_rounded,
-                  title: context.watch<AppLocaleController>().text('savings_goals'),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    GeneralFlowService.openGoals();
-                  },
-                ),
-                const SizedBox(height: 24),
+
+                const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: AnimatedBuilder(
                     animation: _shimmerController,
                     builder: (context, child) {
@@ -228,23 +222,34 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     },
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
+
                 _DrawerItem(
                   icon: Icons.auto_awesome_rounded,
                   title: context.watch<AppLocaleController>().text('ai_intelligence'),
                   onTap: () {
                     GeneralFlowService.goBack();
-                    GeneralFlowService.openPrediction();
+                    ActionController.execute(context, AppAction.openPrediction);
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.account_balance_rounded,
-                  title: context.watch<AppLocaleController>().text('debts'),
+                  icon: Icons.analytics_rounded,
+                  title: context.watch<AppLocaleController>().text('statistics'),
                   onTap: () {
                     GeneralFlowService.goBack();
-                    GeneralFlowService.openDebts();
+                    ActionController.execute(context, AppAction.openStats);
                   },
                 ),
+                _DrawerItem(
+                  icon: Icons.flag_rounded,
+                  title: context.watch<AppLocaleController>().text('savings_goals'),
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    ActionController.execute(context, AppAction.openGoals);
+                  },
+                ),
+
+
                 _DrawerItem(
                   icon: Icons.lock_rounded,
                   title: context.watch<AppLocaleController>().text('vault_label'),
@@ -268,7 +273,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     color: AppColors.primaryPurple,
                   ),
                   title: Text(
-                    AppState.instance.isPro ? 'Switch to FREE' : 'Switch to PREMIUM',
+                    AppState.instance.isPro ? context.watch<AppLocaleController>().text('switch_to_free') : context.watch<AppLocaleController>().text('switch_to_pro'),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.primaryPurple,
                       fontWeight: FontWeight.bold,
@@ -376,6 +381,8 @@ class _DrawerItem extends StatelessWidget {
     required this.title,
     required this.onTap,
   });
+
+
 
   @override
   Widget build(BuildContext context) {

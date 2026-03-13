@@ -38,8 +38,11 @@ class PremiumFlowService {
                 const SizedBox(height: 24),
                 _buildBenefit(l10n.text('feature_stats')),
                 _buildBenefit(l10n.text('feature_budgets')),
+                _buildBenefit(l10n.text('feature_goals')),
                 _buildBenefit(l10n.text('feature_export')),
                 _buildBenefit(l10n.text('feature_vault')),
+
+
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {

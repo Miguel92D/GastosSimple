@@ -6,12 +6,13 @@ import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
 import '../controllers/settings_controller.dart';
+import 'package:gastos_simple/features/settings/screens/pin_screen.dart';
+import '../../../core/ui/widgets/pro_badge.dart';
 
 import '../../../core/flow/general_flow_service.dart';
 import '../../../core/flow/premium_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
-import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/state/app_state.dart';
@@ -96,28 +97,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: SecurityService.instance.isPinActive,
                     onChanged: (val) async {
                       if (val && !SecurityService.instance.hasPin) {
-                        _showSetPinDialog(context);
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PinScreen(
+                              isVault: false,
+                              isSetup: true,
+                            ),
+                          ),
+                        );
+                        if (result == true) {
+                          await SecurityService.instance.setPinActive(true);
+                        }
                       } else {
-                        SecurityService.instance.setPinActive(val);
+                        await SecurityService.instance.setPinActive(val);
                       }
                     },
                   ),
                   if (SecurityService.instance.isPinActive)
-                    SwitchListTile(
-                      title: Text(
-                        l10n.text('vault_only_pin'),
-                        style: AppTextStyles.bodyMain.copyWith(
-                          fontWeight: FontWeight.w600,
+                    _buildItem(
+                      title: l10n.text('change_pin'),
+                      leading: Icons.vpn_key_rounded,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PinScreen(
+                            isVault: false,
+                            isSetup: true,
+                          ),
                         ),
                       ),
-                      subtitle: Text(
-                        l10n.text('vault_only_pin_desc'),
-                        style: AppTextStyles.bodySmall,
+                    ),
+                  const Divider(color: AppColors.cardBorder, height: 1),
+                  SwitchListTile(
+                    title: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.text('enable_vault_pin'),
+                          style: AppTextStyles.bodyMain.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const ProBadge(fontSize: 8, padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1)),
+                      ],
+                    ),
+                    subtitle: Text(
+                      l10n.text('vault_pin_subtitle'),
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    activeThumbColor: AppColors.primaryPurple,
+                    value: SecurityService.instance.isVaultPinActive,
+                    onChanged: (val) async {
+                      if (val && !SecurityService.instance.hasVaultPin) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PinScreen(
+                              isVault: true,
+                              isSetup: true,
+                            ),
+                          ),
+                        );
+                        if (result == true) {
+                          await SecurityService.instance.setVaultPinActive(true);
+                        }
+                      } else {
+                        await SecurityService.instance.setVaultPinActive(val);
+                      }
+                    },
+                  ),
+                  if (SecurityService.instance.isVaultPinActive)
+                    _buildItem(
+                      title: l10n.text('change_pin') + " (${l10n.text('vault_label')})",
+                      leading: Icons.enhanced_encryption_rounded,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PinScreen(
+                            isVault: true,
+                            isSetup: true,
+                          ),
+                        ),
                       ),
-                      activeThumbColor: AppColors.primaryPurple,
-                      value: SecurityService.instance.isVaultOnly,
-                      onChanged: (val) =>
-                          SecurityService.instance.setVaultOnly(val),
                     ),
                   SwitchListTile(
                     title: Text(
@@ -135,12 +198,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: (val) =>
                         SecurityService.instance.setBiometricActive(val),
                   ),
-                  if (SecurityService.instance.hasPin)
-                    _buildItem(
-                      title: l10n.text('change_pin'),
-                      leading: Icons.vpn_key_rounded,
-                      onTap: () => _showSetPinDialog(context),
-                    ),
                 ],
               ),
             ),
@@ -152,6 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildItem(
               title: l10n.text('backup_now_label'),
               leading: Icons.cloud_upload_rounded,
+              trailing: const ProBadge(),
               onTap: () async {
                 if (!ProService.instance.isPro) {
                   PremiumFlowService.showUpgradePrompt(context);
@@ -176,6 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildItem(
               title: l10n.text('restore_backup_label'),
               leading: Icons.cloud_download_rounded,
+              trailing: const ProBadge(),
               onTap: () async {
                 if (!ProService.instance.isPro) {
                   PremiumFlowService.showUpgradePrompt(context);
@@ -198,12 +257,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             SwitchListTile(
-              title: Text(
-                l10n.text('auto_backup_label'),
-                style: AppTextStyles.bodyMain.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.text('auto_backup_label'),
+                    style: AppTextStyles.bodyMain.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const ProBadge(fontSize: 8, padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1)),
+                ],
               ),
               subtitle: Text(
                 l10n.text('auto_backup_desc'),
@@ -330,21 +396,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showCurrencySelector(BuildContext context) {
+    final l10n = context.read<AppLocaleController>();
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) {
-        return GlassCard(
-          borderRadius: 30,
-          padding: const EdgeInsets.symmetric(vertical: 24),
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.65,
+          decoration: BoxDecoration(
+            color: AppColors.darkBackground,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(30),
+            ),
+            border: Border.all(color: AppColors.cardBorder, width: 1),
+          ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildCurrencyItem(context, '\$ Peso', '\$'),
-              _buildCurrencyItem(context, 'USD Dollar', 'USD '),
-              _buildCurrencyItem(context, '€ Euro', '€'),
-              _buildCurrencyItem(context, 'R\$ Real', 'R\$'),
-              _buildCurrencyItem(context, '¥ Yen', '¥'),
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.cardBorder,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  l10n.text('select_currency'),
+                  style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  children: [
+                    ...CurrencyService.availableCurrencies.map((c) => _buildCurrencyTile(
+                          context,
+                          c.name,
+                          c.symbol,
+                          c.code,
+                        )),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -352,79 +451,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildCurrencyItem(BuildContext context, String title, String code) {
+
+
+  Widget _buildCurrencyTile(
+      BuildContext context, String title, String symbol, String code) {
+    final isSelected = CurrencyService.instance.currencySymbol == symbol &&
+        CurrencyService.instance.currencyCode == code;
+
     return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primaryPurple.withValues(alpha: 0.15)
+              : AppColors.glassSurface,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          symbol,
+          style: AppTextStyles.bodyMain.copyWith(
+            color: isSelected ? AppColors.primaryPurple : AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       title: Text(
         title,
-        style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w700),
+        style: AppTextStyles.bodyMain.copyWith(
+          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+        ),
       ),
+      trailing: isSelected
+          ? const Icon(Icons.check_circle_rounded,
+              color: AppColors.primaryPurple)
+          : null,
       onTap: () async {
-        await CurrencyService.instance.setCurrency(code);
+        await CurrencyService.instance.setCurrency(symbol, code);
         if (!context.mounted) return;
-        GeneralFlowService.goBack();
+        Navigator.pop(context);
       },
-    );
-  }
-
-  void _showSetPinDialog(BuildContext context) {
-    final l10n = context.watch<AppLocaleController>();
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.darkBackground,
-        surfaceTintColor: AppColors.primaryPurple.withValues(alpha: 0.1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: AppColors.cardBorder),
-        ),
-        title: Text(
-          context.watch<AppLocaleController>().text('set_pin'),
-          style: AppTextStyles.cardTitle,
-        ),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          maxLength: 4,
-          obscureText: true,
-          style: const TextStyle(color: AppColors.textPrimary),
-          decoration: InputDecoration(
-            labelText: context.watch<AppLocaleController>().text('new_pin_label'),
-            labelStyle: TextStyle(color: AppColors.softText.withValues(alpha: 0.5)),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.cardBorder),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primaryPurple),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => GeneralFlowService.goBack(),
-            child: Text(
-              context.watch<AppLocaleController>().text('delete'),
-              style: const TextStyle(color: AppColors.softText),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (controller.text.length == 4) {
-                await SecurityService.instance.setPin(controller.text);
-                await SecurityService.instance.setPinActive(true);
-                if (context.mounted) GeneralFlowService.goBack();
-              }
-            },
-            child: Text(
-              l10n.text('save').toUpperCase(),
-              style: const TextStyle(
-                color: AppColors.primaryPurple,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

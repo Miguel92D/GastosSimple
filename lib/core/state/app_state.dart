@@ -5,11 +5,12 @@ class AppState extends ChangeNotifier {
 
   AppState._();
 
-  bool isPro = true;
+  bool _isPro = false;
   bool vaultOpen = false;
   bool hideBalance = false;
   bool _refreshDashboard = false;
 
+  bool get isPro => _isPro;
   bool get refreshDashboard => _refreshDashboard;
 
   void toggleHideBalance() {
@@ -18,7 +19,7 @@ class AppState extends ChangeNotifier {
   }
 
   void setPro(bool value) {
-    isPro = value;
+    _isPro = value;
     notifyListeners();
   }
 

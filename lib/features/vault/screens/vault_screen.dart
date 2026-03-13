@@ -5,9 +5,6 @@ import '../widgets/vault_dashboard.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_fab.dart';
 import '../../../core/ui/app_drawer.dart';
-import '../../../services/security_service.dart';
-import '../../settings/screens/pin_lock_screen.dart';
-
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -19,15 +16,7 @@ class VaultScreen extends StatefulWidget {
 class _VaultScreenState extends State<VaultScreen> {
   @override
   Widget build(BuildContext context) {
-    final security = SecurityService.instance;
     final l10n = context.watch<AppLocaleController>();
-
-    if (security.isPinActive && !security.isUnlocked) {
-      return PinLockScreen(
-        titleKey: 'vault_locked',
-        nextScreen: const VaultScreen(),
-      );
-    }
 
     return AppScaffold(
       title: l10n.text('secret_expenses'),

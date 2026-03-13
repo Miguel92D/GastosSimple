@@ -8,7 +8,7 @@ void main() {
     WidgetTester tester,
   ) async {
     // Force Pro status for the test
-    AppState.instance.isPro = true;
+    AppState.instance.setPro(true);
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(const GastosSimpleApp());

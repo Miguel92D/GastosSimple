@@ -6,6 +6,7 @@ enum AppAction {
   openEntry,
   openSettings,
   openStats,
+  openPrediction,
   openDebts,
   openGoals,
   openBudgets,

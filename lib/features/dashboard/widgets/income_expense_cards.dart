@@ -1,8 +1,8 @@
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/utils/currency_helper.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -109,33 +109,16 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              FittedBox(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      "\$",
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: color.withValues(alpha: 0.4),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      AppState.instance.hideBalance
-                          ? "••••••"
-                          : NumberFormat('#,###', 'es_ES').format(amount.abs()),
-                      style: AppTextStyles.incomeValue.copyWith(
-                        color: color,
-                        fontSize: 20,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+              Text(
+                AppState.instance.hideBalance
+                    ? "••••••"
+                    : CurrencyHelper.format(amount, context),
+                style: AppTextStyles.incomeValue.copyWith(
+                  color: color,
+                  fontSize: 20,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

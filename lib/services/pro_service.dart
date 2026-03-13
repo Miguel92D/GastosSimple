@@ -5,7 +5,7 @@ class ProService extends ChangeNotifier {
 
   ProService._internal();
 
-  bool _isPro = true; // temporary true for testing
+  bool _isPro = false;
   final bool _isVaultActive = false;
 
   bool get isPro => _isPro;

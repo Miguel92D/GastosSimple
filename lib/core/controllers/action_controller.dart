@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../flow/general_flow_service.dart';
 import '../flow/transaction_flow_service.dart';
+import '../flow/premium_flow_service.dart';
+import '../state/app_state.dart';
 import 'app_action.dart';
 
 class ActionController {
@@ -15,7 +17,11 @@ class ActionController {
         break;
 
       case AppAction.openVault:
-        GeneralFlowService.openVault();
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openVault();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
         break;
 
       case AppAction.addIncome:
@@ -45,7 +51,11 @@ class ActionController {
         break;
 
       case AppAction.openStats:
-        GeneralFlowService.openStats();
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openStats();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
         break;
 
       case AppAction.openDebts:
@@ -53,11 +63,28 @@ class ActionController {
         break;
 
       case AppAction.openGoals:
-        GeneralFlowService.openGoals();
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openGoals();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
+        break;
+
+
+      case AppAction.openPrediction:
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openPrediction();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
         break;
 
       case AppAction.openBudgets:
-        GeneralFlowService.openBudgets();
+        if (AppState.instance.isPro) {
+          GeneralFlowService.openBudgets();
+        } else {
+          PremiumFlowService.showUpgradePrompt(context);
+        }
         break;
       case AppAction.openCategories:
         GeneralFlowService.openCategories();
@@ -70,7 +97,11 @@ class ActionController {
   }
 
   static void openQuickEntryVault(BuildContext context) {
-    TransactionFlowService.instance.startQuickEntry(context, isVault: true);
+    if (AppState.instance.isPro) {
+      TransactionFlowService.instance.startQuickEntry(context, isVault: true);
+    } else {
+      PremiumFlowService.showUpgradePrompt(context);
+    }
   }
 
   static void openDashboard(BuildContext context) {

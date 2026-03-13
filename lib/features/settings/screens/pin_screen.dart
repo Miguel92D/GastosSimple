@@ -4,7 +4,16 @@ import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({super.key});
+  final bool isVault;
+  final bool isSetup;
+  final VoidCallback? onSuccess;
+
+  const PinScreen({
+    super.key,
+    this.isVault = false,
+    this.isSetup = false,
+    this.onSuccess,
+  });
 
   @override
   State<PinScreen> createState() => _PinScreenState();
@@ -12,12 +21,16 @@ class PinScreen extends StatefulWidget {
 
 class _PinScreenState extends State<PinScreen> {
   String _pin = '';
+  String _firstPin = '';
+  bool _isConfirming = false;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _tryBiometric();
+    if (!widget.isSetup) {
+      _tryBiometric();
+    }
   }
 
   Future<void> _tryBiometric() async {
@@ -35,7 +48,11 @@ class _PinScreenState extends State<PinScreen> {
         _pin += digit;
       });
       if (_pin.length == 4) {
-        _submitPin();
+        if (widget.isSetup) {
+          _handleSetup();
+        } else {
+          _submitPin();
+        }
       }
     }
   }
@@ -48,9 +65,41 @@ class _PinScreenState extends State<PinScreen> {
     }
   }
 
+  Future<void> _handleSetup() async {
+    if (!_isConfirming) {
+      setState(() {
+        _firstPin = _pin;
+        _pin = '';
+        _isConfirming = true;
+      });
+    } else {
+      if (_pin == _firstPin) {
+        if (widget.isVault) {
+          await SecurityService.instance.setVaultPin(_pin);
+        } else {
+          await SecurityService.instance.setPin(_pin);
+        }
+        _handleSuccess();
+      } else {
+        final l10n = context.read<AppLocaleController>();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.text('pins_not_match'))),
+        );
+        setState(() {
+          _pin = '';
+        });
+      }
+    }
+  }
+
   Future<void> _submitPin() async {
     setState(() => _isLoading = true);
-    final success = await SecurityService.instance.authenticatePin(_pin);
+    final bool success;
+    if (widget.isVault) {
+      success = await SecurityService.instance.authenticateVaultPin(_pin);
+    } else {
+      success = await SecurityService.instance.authenticatePin(_pin);
+    }
     setState(() => _isLoading = false);
 
     if (success) {
@@ -69,8 +118,17 @@ class _PinScreenState extends State<PinScreen> {
   }
 
   void _handleSuccess() {
-    SecurityService.instance.unlock();
-    Navigator.pop(context, true);
+    if (widget.isVault) {
+      SecurityService.instance.unlockVault();
+    } else {
+      SecurityService.instance.unlock();
+    }
+
+    if (widget.onSuccess != null) {
+      widget.onSuccess!();
+    } else {
+      Navigator.pop(context, true);
+    }
   }
 
   Widget _buildNumpadButton(String digit) {
@@ -96,23 +154,44 @@ class _PinScreenState extends State<PinScreen> {
     );
   }
 
+  String _getTitle(AppLocaleController l10n) {
+    if (widget.isSetup) {
+      if (_isConfirming) {
+        return l10n.text('confirm_pin');
+      }
+      return widget.isVault ? l10n.text('set_vault_pin') : l10n.text('set_pin');
+    }
+    return widget.isVault ? l10n.text('enter_vault_pin') : l10n.text('enter_pin');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: widget.isSetup || widget.isVault
+            ? IconButton(
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 60), // Space from top
+            const SizedBox(height: 20),
             Icon(
-              Icons.lock_outline,
+              widget.isVault ? Icons.enhanced_encryption_rounded : Icons.lock_outline,
               size: 72,
               color: Theme.of(context).primaryColor,
             ),
             const SizedBox(height: 24),
             Text(
-              l10n.text('enter_pin'),
+              _getTitle(l10n),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),

@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import '../router/navigation_service.dart';
+import '../../services/security_service.dart';
+import '../../features/settings/screens/pin_screen.dart';
 
 class GeneralFlowService {
   static void openDashboard() {
@@ -6,7 +9,20 @@ class GeneralFlowService {
   }
 
   static void openVault() {
-    NavigationService.navigate("/vault");
+    final security = SecurityService.instance;
+    if (security.isVaultPinActive && !security.isVaultUnlocked) {
+      NavigationService.navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => const PinScreen(isVault: true),
+        ),
+      ).then((value) {
+        if (value == true) {
+          NavigationService.navigate("/vault");
+        }
+      });
+    } else {
+      NavigationService.navigate("/vault");
+    }
   }
 
   static void openSettings() {

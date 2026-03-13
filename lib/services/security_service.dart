@@ -10,8 +10,11 @@ class SecurityService extends ChangeNotifier {
   bool _isPinActive = false;
   bool _isBiometricActive = false;
   bool _isVaultOnly = false;
+  bool _isVaultPinActive = false;
   bool _isUnlocked = false;
+  bool _isVaultUnlocked = false;
   String? _pin;
+  String? _vaultPin;
 
   SecurityService._init() {
     _loadSecuritySettings();
@@ -20,11 +23,15 @@ class SecurityService extends ChangeNotifier {
   bool get isPinActive => _isPinActive;
   bool get isBiometricActive => _isBiometricActive;
   bool get isVaultOnly => _isVaultOnly;
+  bool get isVaultPinActive => _isVaultPinActive;
   bool get isUnlocked => _isUnlocked;
+  bool get isVaultUnlocked => _isVaultUnlocked;
   bool get hasPin => _pin != null && _pin!.isNotEmpty;
+  bool get hasVaultPin => _vaultPin != null && _vaultPin!.isNotEmpty;
 
   void lock() {
     _isUnlocked = false;
+    _isVaultUnlocked = false;
     notifyListeners();
   }
 
@@ -33,18 +40,36 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void unlockVault() {
+    _isVaultUnlocked = true;
+    notifyListeners();
+  }
+
+  void lockVault() {
+    _isVaultUnlocked = false;
+    notifyListeners();
+  }
+
   Future<void> _loadSecuritySettings() async {
     _isPinActive = (await _storage.read(key: 'is_pin_active')) == 'true';
     _isBiometricActive =
         (await _storage.read(key: 'is_biometric_active')) == 'true';
     _isVaultOnly = (await _storage.read(key: 'is_vault_only')) == 'true';
+    _isVaultPinActive = (await _storage.read(key: 'is_vault_pin_active')) == 'true';
     _pin = await _storage.read(key: 'pin');
+    _vaultPin = await _storage.read(key: 'vault_pin');
     notifyListeners();
   }
 
   Future<void> setPinActive(bool value) async {
     await _storage.write(key: 'is_pin_active', value: value.toString());
     _isPinActive = value;
+    notifyListeners();
+  }
+
+  Future<void> setVaultPinActive(bool value) async {
+    await _storage.write(key: 'is_vault_pin_active', value: value.toString());
+    _isVaultPinActive = value;
     notifyListeners();
   }
 
@@ -66,8 +91,18 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setVaultPin(String value) async {
+    await _storage.write(key: 'vault_pin', value: value);
+    _vaultPin = value;
+    notifyListeners();
+  }
+
   Future<bool> authenticatePin(String input) async {
     return _pin == input;
+  }
+
+  Future<bool> authenticateVaultPin(String input) async {
+    return _vaultPin == input;
   }
 
   Future<bool> authenticateBiometric() async {
