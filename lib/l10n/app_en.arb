@@ -213,6 +213,8 @@
   "choose_strategy": "Choose strategy",
   "avalanche_strategy": "Avalanche (Highest interest first)",
   "snowball_strategy": "Snowball (Lowest balance first)",
+  "installments_label": "Installments",
+  "installments_hint": "e.g. 12",
   "category_section_label": "Category",
   "note_hint": "Add a note...",
   "@days_count": {

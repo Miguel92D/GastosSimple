@@ -82,11 +82,15 @@ class _DebtScreenState extends State<DebtScreen> {
     final diaCierreController = TextEditingController(
       text: debt?.diaCierre?.toString() ?? '',
     );
+    final cuotasTotalesController = TextEditingController(
+      text: debt?.cuotasTotales?.toString() ?? '',
+    );
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       builder: (context) {
         final innerL10n = context.read<AppLocaleController>();
         return Padding(
@@ -96,7 +100,7 @@ class _DebtScreenState extends State<DebtScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: const BoxDecoration(
-              color: Color(0xFF1A172B),
+              color: AppColors.darkBackground,
               borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
             ),
             child: SingleChildScrollView(
@@ -136,6 +140,27 @@ class _DebtScreenState extends State<DebtScreen> {
                           fechaVencimientoController,
                           keyboard: TextInputType.number,
                           icon: Icons.calendar_today_rounded,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildField(
+                          innerL10n.text('installments_label'),
+                          cuotasTotalesController,
+                          keyboard: TextInputType.number,
+                          icon: Icons.reorder_rounded,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildField(
+                          innerL10n.text('card_closing_label'),
+                          diaCierreController,
+                          keyboard: TextInputType.number,
+                          icon: Icons.calendar_today_rounded,
                           textInputAction: TextInputAction.done,
                           onSubmitted: () => _saveDebt(
                             debt,
@@ -145,6 +170,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             tasaInteresController,
                             fechaVencimientoController,
                             diaCierreController,
+                            cuotasTotalesController,
                           ),
                         ),
                       ),
@@ -160,6 +186,7 @@ class _DebtScreenState extends State<DebtScreen> {
                       tasaInteresController,
                       fechaVencimientoController,
                       diaCierreController,
+                      cuotasTotalesController,
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPurple,
@@ -188,6 +215,7 @@ class _DebtScreenState extends State<DebtScreen> {
     TextEditingController tasaInteresController,
     TextEditingController fechaVencimientoController,
     TextEditingController diaCierreController,
+    TextEditingController cuotasTotalesController,
   ) async {
     if (nombreController.text.isEmpty || montoTotalController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -204,6 +232,8 @@ class _DebtScreenState extends State<DebtScreen> {
       tasaInteres: double.tryParse(tasaInteresController.text),
       fechaVencimiento: fechaVencimientoController.text,
       diaCierre: int.tryParse(diaCierreController.text),
+      cuotasTotales: int.tryParse(cuotasTotalesController.text),
+      cuotasPagadas: debt?.cuotasPagadas,
       montoPagado: debt?.montoPagado ?? 0,
     );
 
@@ -572,6 +602,38 @@ class _DebtScreenState extends State<DebtScreen> {
                       ),
                       const SizedBox(height: 4),
                       _buildCustomProgressBar(debt.progress, debt.nombre),
+                      if (debt.diaCierre != null || debt.cuotasTotales != null) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            if (debt.diaCierre != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.softText),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      context.read<AppLocaleController>().text('cierre_dia') + debt.diaCierre.toString(),
+                                      style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (debt.cuotasTotales != null)
+                              Row(
+                                children: [
+                                  const Icon(Icons.reorder_rounded, size: 12, color: AppColors.softText),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "${context.read<AppLocaleController>().text('installments_label')}: ${debt.cuotasTotales}",
+                                    style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

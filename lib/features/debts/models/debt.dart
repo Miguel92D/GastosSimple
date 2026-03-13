@@ -7,6 +7,8 @@ class Debt {
   final double? tasaInteres;
   final String fechaVencimiento;
   final int? diaCierre;
+  final int? cuotasTotales;
+  final int? cuotasPagadas;
 
   Debt({
     this.id,
@@ -17,6 +19,8 @@ class Debt {
     this.tasaInteres,
     required this.fechaVencimiento,
     this.diaCierre,
+    this.cuotasTotales,
+    this.cuotasPagadas,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +33,8 @@ class Debt {
       'tasa_interes': tasaInteres,
       'fecha_vencimiento': fechaVencimiento,
       'dia_cierre': diaCierre,
+      'cuotas_totales': cuotasTotales,
+      'cuotas_pagadas': cuotasPagadas,
     };
   }
 
@@ -41,7 +47,9 @@ class Debt {
       pagoMinimo: (map['pago_minimo'] as num).toDouble(),
       tasaInteres: (map['tasa_interes'] as num?)?.toDouble(),
       fechaVencimiento: map['fecha_vencimiento'],
-      diaCierre: map['dia_cierre'],
+      diaCierre: map['dia_cierre'] as int?,
+      cuotasTotales: map['cuotas_totales'] as int?,
+      cuotasPagadas: map['cuotas_pagadas'] as int?,
     );
   }
 

@@ -12,6 +12,7 @@ class QuickActionMenu {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.darkBackground,
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),

@@ -213,6 +213,8 @@
   "choose_strategy": "Elige estrategia",
   "avalanche_strategy": "Avalancha (Mayor interés primero)",
   "snowball_strategy": "Bola de nieve (Menor balance primero)",
+  "installments_label": "Número de cuotas",
+  "installments_hint": "Ej: 12",
   "category_section_label": "Categoría",
   "note_hint": "Añadir nota...",
   "@days_count": {

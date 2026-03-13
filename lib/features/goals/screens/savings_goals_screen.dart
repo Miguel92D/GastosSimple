@@ -34,6 +34,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       builder: (context) => _CreateGoalModal(
         goal: goal,
         onSave: (newGoal) {
@@ -52,6 +53,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       builder: (context) => _AddMoneyModal(
         goal: goal,
         onAdd: (amount) async {
@@ -399,158 +401,165 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SingleChildScrollView(
-          child: GlassCard(
-            borderRadius: 30,
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-              Text(
-                widget.goal == null ? 'Nueva Meta' : 'Editar Meta',
-                style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _buildFieldLabel('Nombre de la meta'),
-              const SizedBox(height: AppSpacing.sm),
-              _buildGlassInput(
-                controller: _nameController,
-                hintText: 'Ej: Mi primer auto',
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _buildFieldLabel('Monto objetivo'),
-              const SizedBox(height: AppSpacing.sm),
-              _buildGlassInput(
-                controller: _amountController,
-                hintText: '0.00',
-                keyboardType: TextInputType.number,
-                prefix: Text(CurrencyHelper.getSymbol(context) + ' ',
-                    style: AppTextStyles.bodyMain),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _buildFieldLabel('Fecha estimada'),
-              const SizedBox(height: AppSpacing.sm),
-              InkWell(
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: _targetDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 3650)),
-                  );
-                  if (picked != null) {
-                    setState(() => _targetDate = picked);
-                  }
-                },
-                child: _buildGlassInputContainer(
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today_rounded,
-                          color: AppColors.softText, size: 20),
-                      const SizedBox(width: AppSpacing.md),
-                      Text(DateFormat('dd/MM/yyyy').format(_targetDate),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.darkBackground,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: GlassCard(
+              borderRadius: 30,
+              gradientColors: [
+                Colors.white.withValues(alpha: 0.1),
+                Colors.white.withValues(alpha: 0.05),
+              ],
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      widget.goal == null ? 'Nueva Meta' : 'Editar Meta',
+                      style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    _buildFieldLabel('Nombre de la meta'),
+                    const SizedBox(height: AppSpacing.sm),
+                    _buildGlassInput(
+                      controller: _nameController,
+                      hintText: 'Ej: Mi primer auto',
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _buildFieldLabel('Monto objetivo'),
+                    const SizedBox(height: AppSpacing.sm),
+                    _buildGlassInput(
+                      controller: _amountController,
+                      hintText: '0.00',
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      prefix: Text(CurrencyHelper.getSymbol(context) + ' ',
                           style: AppTextStyles.bodyMain),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _buildFieldLabel('Icono'),
-              const SizedBox(height: AppSpacing.sm),
-              SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _icons.length,
-                  itemBuilder: (context, index) {
-                    final isSelected = _selectedIcon == _icons[index];
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedIcon = _icons[index]),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: AppSpacing.sm),
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primaryPurple.withValues(alpha: 0.2)
-                              : Colors.white.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primaryPurple
-                                : Colors.transparent,
-                          ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _buildFieldLabel('Fecha estimada'),
+                    const SizedBox(height: AppSpacing.sm),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _targetDate,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(const Duration(days: 3650)),
+                        );
+                        if (picked != null) {
+                          setState(() => _targetDate = picked);
+                        }
+                      },
+                      child: _buildGlassInputContainer(
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today_rounded,
+                                color: AppColors.softText, size: 20),
+                            const SizedBox(width: AppSpacing.md),
+                            Text(DateFormat('dd/MM/yyyy').format(_targetDate),
+                                style: AppTextStyles.bodyMain),
+                          ],
                         ),
-                        child: Text(_icons[index],
-                            style: const TextStyle(fontSize: 24)),
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              ElevatedButton(
-                onPressed: () {
-                  final name = _nameController.text.trim();
-                  // Clean the amount string to handle different decimal/thousands separators
-                  String amountText = _amountController.text
-                      .replaceAll(' ', '')
-                      .replaceAll('.', '') // Assuming . is thousand separator
-                      .replaceAll(',', '.'); // Assuming , is decimal separator
-                  
-                  // If after cleaning there is more than one dot, it might have been formatted differently
-                  // Let's try a fallback: if it doesn't parse, try parsing the original without symbols
-                  double? amount = double.tryParse(amountText);
-                  if (amount == null) {
-                    amount = double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
-                  }
-                  
-                  if (name.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Por favor, ingresa un nombre para la meta')),
-                    );
-                    return;
-                  }
-                  
-                  if (amount == null || amount <= 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Por favor, ingresa un monto objetivo válido mayor a 0')),
-                    );
-                    return;
-                  }
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _buildFieldLabel('Icono'),
+                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _icons.length,
+                        itemBuilder: (context, index) {
+                          final isSelected = _selectedIcon == _icons[index];
+                          return GestureDetector(
+                            onTap: () => setState(() => _selectedIcon = _icons[index]),
+                            child: Container(
+                              margin: const EdgeInsets.only(right: AppSpacing.sm),
+                              padding: const EdgeInsets.all(AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primaryPurple.withValues(alpha: 0.2)
+                                    : Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(AppRadius.md),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primaryPurple
+                                      : Colors.transparent,
+                                ),
+                              ),
+                              child: Text(_icons[index],
+                                  style: const TextStyle(fontSize: 24)),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    ElevatedButton(
+                      onPressed: () {
+                        final name = _nameController.text.trim();
+                        String amountText = _amountController.text
+                            .replaceAll(' ', '')
+                            .replaceAll('.', '')
+                            .replaceAll(',', '.');
+                        
+                        double? amount = double.tryParse(amountText);
+                        if (amount == null) {
+                          amount = double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
+                        }
+                        
+                        if (name.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Por favor, ingresa un nombre para la meta')),
+                          );
+                          return;
+                        }
+                        
+                        if (amount == null || amount <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Por favor, ingresa un monto objetivo válido mayor a 0')),
+                          );
+                          return;
+                        }
 
-                  widget.onSave(Goal(
-                    id: widget.goal?.id,
-                    name: name,
-                    targetAmount: amount,
-                    currentAmount: widget.goal?.currentAmount ?? 0,
-                    targetDate: _targetDate,
-                    icon: _selectedIcon,
-                    createdAt: widget.goal?.createdAt ?? DateTime.now(),
-                  ));
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                ),
-                child: Text(
-                  widget.goal == null ? 'Crear Meta' : 'Guardar Cambios',
-                  style: AppTextStyles.buttonLabel,
+                        widget.onSave(Goal(
+                          id: widget.goal?.id,
+                          name: name,
+                          targetAmount: amount,
+                          currentAmount: widget.goal?.currentAmount ?? 0,
+                          targetDate: _targetDate,
+                          icon: _selectedIcon,
+                          createdAt: widget.goal?.createdAt ?? DateTime.now(),
+                        ));
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryPurple,
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                      ),
+                      child: Text(
+                        widget.goal == null ? 'Crear Meta' : 'Guardar Cambios',
+                        style: AppTextStyles.buttonLabel,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
-    ),
-  ),
-);
-}
+    );
+  }
 
   Widget _buildFieldLabel(String label) {
     return Text(label, style: AppTextStyles.subLabel);
@@ -624,70 +633,80 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SingleChildScrollView(
-          child: GlassCard(
-            borderRadius: 30,
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Agregar dinero a ${widget.goal.name}',
-                    style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text('Monto a agregar', style: AppTextStyles.subLabel),
-                  const SizedBox(height: AppSpacing.sm),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.darkBackground,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: GlassCard(
+              borderRadius: 30,
+              gradientColors: [
+                Colors.white.withValues(alpha: 0.1),
+                Colors.white.withValues(alpha: 0.05),
+              ],
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Agregar dinero a ${widget.goal.name}',
+                      style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                      textAlign: TextAlign.center,
                     ),
-                    child: TextField(
-                      controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (value) {
-                        final amount = double.tryParse(value) ?? 0;
+                    const SizedBox(height: AppSpacing.lg),
+                    Text('Monto a agregar', style: AppTextStyles.subLabel),
+                    const SizedBox(height: AppSpacing.sm),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      ),
+                      child: TextField(
+                        controller: _amountController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (value) {
+                          final amount = double.tryParse(value) ?? 0;
+                          if (amount > 0) {
+                            widget.onAdd(amount);
+                            Navigator.pop(context);
+                          }
+                        },
+                        autofocus: true,
+                        style: AppTextStyles.bodyMain,
+                        decoration: InputDecoration(
+                          hintText: '0.00',
+                          hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+                          border: InputBorder.none,
+                          prefixText: CurrencyHelper.getSymbol(context) + ' ',
+                          prefixStyle: AppTextStyles.bodyMain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    ElevatedButton(
+                      onPressed: () {
+                        final amount = double.tryParse(_amountController.text) ?? 0;
                         if (amount > 0) {
                           widget.onAdd(amount);
                           Navigator.pop(context);
                         }
                       },
-                      autofocus: true,
-                      style: AppTextStyles.bodyMain,
-                      decoration: InputDecoration(
-                        hintText: '0.00',
-                        hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
-                        border: InputBorder.none,
-                        prefixText: CurrencyHelper.getSymbol(context) + ' ',
-                        prefixStyle: AppTextStyles.bodyMain,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryPurple,
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
                       ),
+                      child: const Text('Agregar', style: AppTextStyles.buttonLabel),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  ElevatedButton(
-                    onPressed: () {
-                      final amount = double.tryParse(_amountController.text) ?? 0;
-                      if (amount > 0) {
-                        widget.onAdd(amount);
-                        Navigator.pop(context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple,
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                    ),
-                    child: const Text('Agregar', style: AppTextStyles.buttonLabel),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

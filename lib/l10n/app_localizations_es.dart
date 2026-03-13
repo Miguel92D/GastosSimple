@@ -686,6 +686,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get snowball_strategy => 'Bola de nieve (Menor balance primero)';
 
   @override
+  String get installments_label => 'Número de cuotas';
+
+  @override
+  String get installments_hint => 'Ej: 12';
+
+  @override
   String get category_section_label => 'Categoría';
 
   @override

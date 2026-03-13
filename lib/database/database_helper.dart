@@ -24,7 +24,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 11, // Added created_at to goals
+      version: 12, // Added cuotas to debts
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -83,7 +83,9 @@ CREATE TABLE debts (
   pago_minimo $numType,
   tasa_interes REAL,
   fecha_vencimiento $textType,
-  dia_cierre INTEGER
+  dia_cierre INTEGER,
+  cuotas_totales INTEGER,
+  cuotas_pagadas INTEGER
 )
 ''');
   }
@@ -199,6 +201,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     if (oldVersion < 11) {
       try {
         await db.execute('ALTER TABLE goals ADD COLUMN created_at TEXT');
+      } catch (_) {}
+    }
+    if (oldVersion < 12) {
+      try {
+        await db.execute('ALTER TABLE debts ADD COLUMN cuotas_totales INTEGER');
+        await db.execute('ALTER TABLE debts ADD COLUMN cuotas_pagadas INTEGER');
       } catch (_) {}
     }
   }

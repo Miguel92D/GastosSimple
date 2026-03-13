@@ -1376,6 +1376,18 @@ abstract class AppLocalizations {
   /// **'Bola de nieve (Menor balance primero)'**
   String get snowball_strategy;
 
+  /// No description provided for @installments_label.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de cuotas'**
+  String get installments_label;
+
+  /// No description provided for @installments_hint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 12'**
+  String get installments_hint;
+
   /// No description provided for @category_section_label.
   ///
   /// In es, this message translates to:
