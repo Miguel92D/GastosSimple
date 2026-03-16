@@ -112,7 +112,10 @@ class AppRouter {
       case "/pin":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const PinScreen(),
+          builder: (_) => PinScreen(
+            isSetup: args['setup'] ?? false,
+            isVault: args['isVault'] ?? false,
+          ),
         );
 
       case "/premium":

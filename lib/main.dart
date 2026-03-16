@@ -15,9 +15,10 @@ import 'core/state/app_mode_controller.dart';
 import 'core/router/navigation_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'dart:ui';
-import 'package:firebase_core/firebase_core.dart';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
@@ -27,13 +28,11 @@ import 'features/settings/screens/pin_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await initializeDateFormatting('es', null);
   await initializeDateFormatting('en', null);
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint("Firebase init failed: $e");
-  }
   await CurrencyService.instance.loadCurrency();
 
   FlutterError.onError = (FlutterErrorDetails details) {

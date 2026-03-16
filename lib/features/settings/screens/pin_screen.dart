@@ -1,4 +1,5 @@
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
+import 'package:gastos_simple/core/ui/app_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
@@ -140,7 +141,6 @@ class _PinScreenState extends State<PinScreen> {
       customBorder: const CircleBorder(),
       child: Container(
         alignment: Alignment.center,
-        margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
@@ -148,12 +148,32 @@ class _PinScreenState extends State<PinScreen> {
         child: Text(
           digit,
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColor,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBiometricButton() {
+    return IconButton(
+      icon: Icon(
+        Icons.fingerprint,
+        size: 32,
+        color: SecurityService.instance.isBiometricActive
+            ? Theme.of(context).primaryColor
+            : Colors.transparent,
+      ),
+      onPressed: SecurityService.instance.isBiometricActive ? _tryBiometric : null,
+    );
+  }
+
+  Widget _buildBackspaceButton() {
+    return IconButton(
+      icon: const Icon(Icons.backspace_outlined, size: 24),
+      onPressed: _onBackspace,
     );
   }
 
@@ -184,78 +204,92 @@ class _PinScreenState extends State<PinScreen> {
             : null,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Icon(
-              widget.isVault ? Icons.enhanced_encryption_rounded : Icons.lock_outline,
-              size: 72,
-              color: Theme.of(context).primaryColor,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              _getTitle(l10n),
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: index < _pin.length
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey.shade300,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmallHeight = constraints.maxHeight < 500;
+            final isLandscape = constraints.maxWidth > constraints.maxHeight;
+
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: isLandscape ? AppSpacing.sm : AppSpacing.xl,
                   ),
-                );
-              }),
-            ),
-            const Spacer(flex: 2), // Pushes content up
-            if (_isLoading)
-              const Padding(
-                padding: EdgeInsets.all(32.0),
-                child: CircularProgressIndicator(),
-              )
-            else
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 24, // Increased spacing between rows
-                  crossAxisSpacing: 24,
-                  childAspectRatio: 1.1,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    for (var i = 1; i <= 9; i++)
-                      _buildNumpadButton(i.toString()),
-                    IconButton(
-                      icon: Icon(
-                        Icons.fingerprint,
-                        size: 44,
-                        color: SecurityService.instance.isBiometricActive
-                            ? Theme.of(context).primaryColor
-                            : Colors.transparent,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (!isSmallHeight) ...[
+                        Icon(
+                          widget.isVault
+                              ? Icons.enhanced_encryption_rounded
+                              : Icons.lock_outline,
+                          size: 64,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                      ],
+                      Text(
+                        _getTitle(l10n),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      onPressed: SecurityService.instance.isBiometricActive
-                          ? _tryBiometric
-                          : null,
-                    ),
-                    _buildNumpadButton('0'),
-                    IconButton(
-                      icon: const Icon(Icons.backspace_outlined, size: 28),
-                      onPressed: _onBackspace,
-                    ),
-                  ],
+                      const SizedBox(height: AppSpacing.xl),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            width: 14,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: index < _pin.length
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey.withValues(alpha: 0.3),
+                            ),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.all(AppSpacing.xxl),
+                          child: CircularProgressIndicator(),
+                        )
+                      else
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 320),
+                          child: GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            mainAxisSpacing: isSmallHeight ? 8 : 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: isSmallHeight ? 1.6 : 1.2,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              for (var i = 1; i <= 9; i++)
+                                _buildNumpadButton(i.toString()),
+                              _buildBiometricButton(),
+                              _buildNumpadButton('0'),
+                              _buildBackspaceButton(),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+                  ),
                 ),
               ),
-            const Spacer(flex: 1), // Space at bottom to avoid nav bar overlap
-            const SizedBox(height: 20),
-          ],
+            );
+          },
         ),
       ),
     );

@@ -1,4 +1,6 @@
-package com.gastossimple.gastos_simple
+package com.example.gastos_simple
+
+import com.example.gastos_simple.R
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

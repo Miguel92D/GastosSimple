@@ -69,6 +69,7 @@ class SecurityService extends ChangeNotifier {
         (await _storage.read(key: 'is_biometric_active')) == 'true';
     _isVaultOnly = (await _storage.read(key: 'is_vault_only')) == 'true';
     _isVaultPinActive = (await _storage.read(key: 'is_vault_pin_active')) == 'true';
+    _pin = await _storage.read(key: 'pin');
     _vaultPin = await _storage.read(key: 'vault_pin');
     _isInitialized = true;
     if (!_initCompleter.isCompleted) _initCompleter.complete();

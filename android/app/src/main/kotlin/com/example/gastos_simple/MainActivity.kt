@@ -1,4 +1,4 @@
-package com.gastossimple.gastos_simple
+package com.example.gastos_simple
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

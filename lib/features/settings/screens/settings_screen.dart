@@ -7,11 +7,9 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/widgets/pro_badge.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/flow/general_flow_service.dart';
-import '../../../core/flow/premium_flow_service.dart';
 
 import '../../../services/security_service.dart';
 import '../../../services/pro_service.dart';
-import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,20 +20,11 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _autoBackup = false;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadBackupState();
-  }
-
-  Future<void> _loadBackupState() async {
-    final enabled = await CloudBackupService.instance.isAutoBackupEnabled();
-    if (mounted) {
-      setState(() => _autoBackup = enabled);
-    }
   }
 
   @override
@@ -152,97 +141,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
 
               const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('cloud_backup_title'), showBadge: true),
-              _buildItem(
-                title: l10n.text('backup_now_label'),
-                leading: Icons.cloud_upload_rounded,
-                onTap: () async {
-                  if (!isPro) {
-                    PremiumFlowService.showUpgradePrompt(context);
-                    return;
-                  }
-                  setState(() => _isLoading = true);
-                  final user = await CloudBackupService.instance.signInWithGoogle();
-                  if (!context.mounted) return;
-                    if (user != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.text('starting_backup_msg'))),
-                      );
-                      final success = await CloudBackupService.instance.backupData();
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(success 
-                            ? l10n.text('backup_success_msg') 
-                            : l10n.text('something_went_wrong')),
-                          backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.text('google_auth_error')),
-                          backgroundColor: AppColors.expenseRed,
-                        ),
-                      );
-                    }
-                  setState(() => _isLoading = false);
-                },
-              ),
-              _buildItem(
-                title: l10n.text('restore_backup_label'),
-                leading: Icons.cloud_download_rounded,
-                onTap: () async {
-                  if (!isPro) {
-                    PremiumFlowService.showUpgradePrompt(context);
-                    return;
-                  }
-                  setState(() => _isLoading = true);
-                  final user = await CloudBackupService.instance.signInWithGoogle();
-                  if (!context.mounted) return;
-                    if (user != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.text('restoring_backup_msg'))),
-                      );
-                      final success = await CloudBackupService.instance.restoreData();
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(success 
-                            ? l10n.text('restore_success_msg') 
-                            : l10n.text('something_went_wrong')),
-                          backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.text('google_auth_error')),
-                          backgroundColor: AppColors.expenseRed,
-                        ),
-                      );
-                    }
-                  setState(() => _isLoading = false);
-                },
-              ),
-
-              SwitchListTile(
-                title: Text(l10n.text('auto_backup_label'), style: AppTextStyles.bodyMain),
-                subtitle: Text(l10n.text('auto_backup_desc'), style: AppTextStyles.bodySmall),
-                secondary: Icon(Icons.sync_rounded, color: isPro ? AppColors.primaryPurple : Colors.grey),
-                value: _autoBackup,
-                activeColor: AppColors.primaryPurple,
-                onChanged: (val) async {
-                  if (!isPro) {
-                    PremiumFlowService.showUpgradePrompt(context);
-                    return;
-                  }
-                  await CloudBackupService.instance.setAutoBackupEnabled(val);
-                  setState(() => _autoBackup = val);
-                },
-              ),
-
-              const SizedBox(height: 16),
               _buildSectionTitle(l10n.text('backup_data_title')),
               _buildItem(
                 title: l10n.text('local_backup_label'),
@@ -250,8 +148,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 leading: Icons.file_present_rounded,
                 onTap: () => Navigator.pushNamed(context, '/backup'),
               ),
-
-              const SizedBox(height: 16),
               _buildSectionTitle(l10n.text('currency')),
               _buildItem(
                 title: l10n.text('select_currency'),

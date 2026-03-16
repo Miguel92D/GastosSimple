@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gastossimple.gastos_simple"
+    namespace = "com.example.gastos_simple"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
