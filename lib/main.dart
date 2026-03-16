@@ -23,6 +23,7 @@ import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
 import 'core/ui/app_theme.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'features/settings/screens/pin_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,6 +96,19 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       SecurityService.instance.lock();
+    } else if (state == AppLifecycleState.resumed) {
+      _checkSecurityOnResume();
+    }
+  }
+
+  void _checkSecurityOnResume() async {
+    final securityEnabled = SecurityService.instance.isPinActive || 
+                           SecurityService.instance.isBiometricActive;
+    
+    if (securityEnabled && !SecurityService.instance.isUnlocked) {
+      // Si está habilitado y no está desbloqueado, enviamos al PIN
+      // Usamos pushReplacementNamed para no acumular pantallas si ya estamos en una
+      NavigationService.navigate("/pin");
     }
   }
 
@@ -152,42 +166,33 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
   }
 }
 
-class InitialGuard extends StatefulWidget {
+class InitialGuard extends StatelessWidget {
   const InitialGuard({super.key});
 
   @override
-  State<InitialGuard> createState() => _InitialGuardState();
-}
-
-class _InitialGuardState extends State<InitialGuard> {
-  bool _isChecking = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSecurity());
-  }
-
-  void _checkSecurity() async {
-    if (_isChecking) return;
-    _isChecking = true;
-
-    final securityEnabled = await SecurityService.checkSecurity(context);
-
-    if (!mounted) {
-      _isChecking = false;
-      return;
-    }
-
-    if (securityEnabled && !SecurityService.instance.isUnlocked) {
-      await NavigationService.navigate("/pin");
-    }
-
-    _isChecking = false;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Escuchamos los cambios en el servicio de seguridad
+    final security = context.watch<SecurityService>();
+
+    // Mientras se cargan los ajustes (PIN, biométricos) del almacenamiento seguro
+    if (!security.isInitialized) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.deepPurpleAccent),
+        ),
+      );
+    }
+
+    final bool securityEnabled = security.isPinActive || security.isBiometricActive;
+
+    // Si la seguridad está activa y el app está bloqueada, mostramos la pantalla de PIN
+    // como contenido principal (esto evita saltos de navegación y race conditions)
+    if (securityEnabled && !security.isUnlocked) {
+      return const PinScreen();
+    }
+
+    // Si no hay seguridad o ya está desbloqueado, entramos a la app
     return const QuickEntryScreen();
   }
 }
