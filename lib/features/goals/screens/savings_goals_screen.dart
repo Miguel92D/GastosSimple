@@ -432,7 +432,7 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                     const SizedBox(height: AppSpacing.sm),
                     _buildGlassInput(
                       controller: _nameController,
-                      hintText: 'Ej: Mi primer auto',
+                      hintText: Provider.of<AppLocaleController>(context, listen: false).text('goal_name_hint'),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('target_label')),

@@ -35,7 +35,10 @@ class _PinScreenState extends State<PinScreen> {
 
   Future<void> _tryBiometric() async {
     if (SecurityService.instance.isBiometricActive) {
-      final success = await SecurityService.instance.authenticateBiometric();
+      final l10n = context.read<AppLocaleController>();
+      final success = await SecurityService.instance.authenticateBiometric(
+        localizedReason: l10n.text('biometric_subtitle'),
+      );
       if (success) {
         _handleSuccess();
       }

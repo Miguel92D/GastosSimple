@@ -112,7 +112,7 @@ class SecurityService extends ChangeNotifier {
     return _vaultPin == input;
   }
 
-  Future<bool> authenticateBiometric() async {
+  Future<bool> authenticateBiometric({String? localizedReason}) async {
     try {
       final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
       final bool isDeviceSupported = await _auth.isDeviceSupported();
@@ -126,10 +126,10 @@ class SecurityService extends ChangeNotifier {
       if (!canAuthenticate) return false;
 
       return await _auth.authenticate(
-        localizedReason: 'Autentícate para acceder a tus finanzas',
+        localizedReason: localizedReason ?? 'Please authenticate to access your finances',
         options: const AuthenticationOptions(
           stickyAuth: true,
-          biometricOnly: true,
+          biometricOnly: false,
         ),
       );
     } catch (e) {

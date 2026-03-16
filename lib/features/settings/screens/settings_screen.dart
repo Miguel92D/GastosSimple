@@ -13,7 +13,6 @@ import '../../../services/security_service.dart';
 import '../../../services/pro_service.dart';
 import '../../../services/cloud_backup_service.dart';
 import '../../../services/currency_service.dart';
-import '../../../services/theme_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -44,7 +43,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final l10n = context.watch<AppLocaleController>();
     final currencyService = context.watch<CurrencyService>();
     final securityService = context.watch<SecurityService>();
-    final themeService = context.watch<ThemeService>();
     final isPro = context.watch<AppState>().isPro;
 
     return Scaffold(
@@ -64,20 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             children: [
-              // SECTION: APPEARANCE
-              _buildSectionTitle(l10n.text('theme')),
-              _buildItem(
-                title: l10n.text('theme'),
-                subtitle: themeService.themeMode == ThemeMode.dark 
-                    ? l10n.text('dark_mode') 
-                    : l10n.text('light_mode'),
-                leading: themeService.themeMode == ThemeMode.dark 
-                    ? Icons.dark_mode_rounded 
-                    : Icons.light_mode_rounded,
-                onTap: () => themeService.toggleTheme(),
-              ),
-
-              const SizedBox(height: 16),
+              // SECTION: LANGUAGE
               _buildSectionTitle(l10n.text('language')),
               _buildItem(
                 title: l10n.text('language'),
@@ -167,11 +152,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
 
               const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('cloud_backup_title')),
+              _buildSectionTitle(l10n.text('cloud_backup_title'), showBadge: true),
               _buildItem(
                 title: l10n.text('backup_now_label'),
                 leading: Icons.cloud_upload_rounded,
-                trailing: const ProBadge(),
                 onTap: () async {
                   if (!isPro) {
                     PremiumFlowService.showUpgradePrompt(context);
@@ -180,28 +164,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   setState(() => _isLoading = true);
                   final user = await CloudBackupService.instance.signInWithGoogle();
                   if (!context.mounted) return;
-                  if (user != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.text('starting_backup_msg'))),
-                    );
-                    final success = await CloudBackupService.instance.backupData();
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(success 
-                          ? l10n.text('backup_success_msg') 
-                          : l10n.text('something_went_wrong')),
-                        backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
-                      ),
-                    );
-                  }
+                    if (user != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.text('starting_backup_msg'))),
+                      );
+                      final success = await CloudBackupService.instance.backupData();
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success 
+                            ? l10n.text('backup_success_msg') 
+                            : l10n.text('something_went_wrong')),
+                          backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.text('google_auth_error')),
+                          backgroundColor: AppColors.expenseRed,
+                        ),
+                      );
+                    }
                   setState(() => _isLoading = false);
                 },
               ),
               _buildItem(
                 title: l10n.text('restore_backup_label'),
                 leading: Icons.cloud_download_rounded,
-                trailing: const ProBadge(),
                 onTap: () async {
                   if (!isPro) {
                     PremiumFlowService.showUpgradePrompt(context);
@@ -210,33 +200,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   setState(() => _isLoading = true);
                   final user = await CloudBackupService.instance.signInWithGoogle();
                   if (!context.mounted) return;
-                  if (user != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.text('restoring_backup_msg'))),
-                    );
-                    final success = await CloudBackupService.instance.restoreData();
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(success 
-                          ? l10n.text('restore_success_msg') 
-                          : l10n.text('something_went_wrong')),
-                        backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
-                      ),
-                    );
-                  }
+                    if (user != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.text('restoring_backup_msg'))),
+                      );
+                      final success = await CloudBackupService.instance.restoreData();
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success 
+                            ? l10n.text('restore_success_msg') 
+                            : l10n.text('something_went_wrong')),
+                          backgroundColor: success ? AppColors.incomeGreen : AppColors.expenseRed,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.text('google_auth_error')),
+                          backgroundColor: AppColors.expenseRed,
+                        ),
+                      );
+                    }
                   setState(() => _isLoading = false);
                 },
               ),
 
               SwitchListTile(
-                title: Row(
-                  children: [
-                    Text(l10n.text('auto_backup_label'), style: AppTextStyles.bodyMain),
-                    const SizedBox(width: 8),
-                    const ProBadge(),
-                  ],
-                ),
+                title: Text(l10n.text('auto_backup_label'), style: AppTextStyles.bodyMain),
                 subtitle: Text(l10n.text('auto_backup_desc'), style: AppTextStyles.bodySmall),
                 secondary: Icon(Icons.sync_rounded, color: isPro ? AppColors.primaryPurple : Colors.grey),
                 value: _autoBackup,
@@ -308,16 +299,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, {bool showBadge = false}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.primaryPurple,
-          letterSpacing: 1.5,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.primaryPurple,
+              letterSpacing: 1.5,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (showBadge) ...[
+            const SizedBox(width: 8),
+            const ProBadge(),
+          ],
+        ],
       ),
     );
   }

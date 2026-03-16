@@ -34,8 +34,9 @@ class CloudBackupService {
         credential,
       );
       return userCredential.user;
-    } catch (e) {
-      debugPrint('Error during Google Sign In: $e');
+    } catch (e, stack) {
+      debugPrint('CloudBackup: Error during Google Sign In: $e');
+      debugPrint('CloudBackup: StackTrace: $stack');
       return null;
     }
   }

@@ -131,7 +131,6 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
   @override
   Widget build(BuildContext context) {
     final localeString = context.watch<AppLocaleController>().locale;
-    final themeMode = context.watch<ThemeService>().themeMode;
 
     return MaterialApp(
       title: r'$imple',
@@ -144,7 +143,7 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      themeMode: themeMode,
+      themeMode: ThemeMode.dark,
       theme: AppTheme.neonTheme,
       darkTheme: AppTheme.neonTheme,
       home: const InitialGuard(),

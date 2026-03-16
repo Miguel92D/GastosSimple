@@ -184,8 +184,8 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
                 Text(l10n.text('vs_previous_month'), style: AppTextStyles.subLabel),
                 Text(
                   improved 
-                    ? "Gastaste menos que el mes pasado" 
-                    : "Gastaste más que el mes pasado",
+                    ? l10n.text('spent_less_than_last_month') 
+                    : l10n.text('spent_more_than_last_month'),
                   style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -250,33 +250,32 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
   Widget _buildTipsSection(AppLocaleController l10n) {
     return GlassCard(
       glowColor: AppColors.incomeGreen.withValues(alpha: 0.05),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.lightbulb_outline_rounded, color: Colors.amber),
-              const SizedBox(width: 8),
-              Text("Insight PRO", style: AppTextStyles.cardTitle),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            _generateInsight(),
-            style: AppTextStyles.bodyMain.copyWith(color: AppColors.textPrimary.withValues(alpha: 0.8)),
+          const Icon(Icons.lightbulb_outline_rounded, color: Colors.amber),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              _generateInsight(l10n),
+              style: AppTextStyles.bodyMain.copyWith(
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
+                height: 1.4,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  String _generateInsight() {
+  String _generateInsight(AppLocaleController l10n) {
     if (_currentMonthExpense > _currentMonthIncome) {
-      return "Tus gastos superan tus ingresos este mes. Te recomendamos revisar tus deudas y reducir gastos no esenciales.";
+      return l10n.text('insight_negative_balance');
     } else if (_dailyAverage > 50) {
-      return "Tu promedio diario es algo elevado. Intenta consolidar compras para ahorrar en transporte o envíos.";
+      return l10n.text('insight_high_daily_avg');
     } else {
-      return "¡Excelente control! Estás manteniendo un balance positivo. Es un buen momento para asignar un extra a tus metas de ahorro.";
+      return l10n.text('insight_positive_balance');
     }
   }
 }

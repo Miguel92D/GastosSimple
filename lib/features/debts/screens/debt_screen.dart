@@ -300,7 +300,7 @@ class _DebtScreenState extends State<DebtScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTotalSummary(context, totalRemaining),
+                  _buildTotalSummary(context, l10n, totalRemaining),
                   const SizedBox(height: 32),
                   if (_debts.isEmpty)
                     Center(
@@ -491,7 +491,7 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  Widget _buildTotalSummary(BuildContext context, double total) {
+  Widget _buildTotalSummary(BuildContext context, AppLocaleController l10n, double total) {
     return Center(
       child: GlassCard(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -500,7 +500,7 @@ class _DebtScreenState extends State<DebtScreen> {
           TextSpan(
             children: [
               TextSpan(
-                text: "DEUDA TOTAL: ",
+                text: "${l10n.text('total_debt_label')}: ",
                 style: AppTextStyles.subLabel.copyWith(
                   color: AppColors.softText.withValues(alpha: 0.6),
                   letterSpacing: 1.0,
