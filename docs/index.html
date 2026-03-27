@@ -46,7 +46,6 @@
             pointer-events: none;
         }
 
-        /* PREMIUM VISUAL FX */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
@@ -73,7 +72,6 @@
             box-shadow: 0 12px 35px rgba(123, 92, 255, 0.6);
         }
 
-        /* THE FACE UI (APP SCREEN) */
         .app-screen {
             background: radial-gradient(circle at center, #1b122c 0%, #0c0b1a 100%);
             width: 100%;
@@ -149,35 +147,89 @@
             50% { transform: translateY(-15px); }
         }
         .floating { animation: float 6s ease-in-out infinite; }
+
+        /* Language toggle */
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(123, 92, 255, 0.25);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(123, 92, 255, 0.06);
+        }
+        .lang-toggle button {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #BFBFD2;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .lang-toggle button:hover {
+            color: white;
+        }
+        .lang-toggle button.active {
+            background: linear-gradient(135deg, #7B5CFF 0%, #9A7BFF 100%);
+            color: white;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-primaryPurple selection:text-white">
 
     <div class="hero-glow"></div>
 
+    <!-- NAVBAR -->
     <nav class="fixed top-0 w-full z-50 py-8 px-10 flex justify-between items-center bg-darkBg/60 backdrop-blur-xl border-b border-white/5">
         <div class="flex items-center gap-3">
              <span class="text-3xl font-bold tracking-tighter uppercase text-white">$imple</span>
         </div>
         <div class="hidden lg:flex gap-12 text-sm font-semibold text-softText tracking-wider">
-            <a href="#features" class="hover:text-white transition-all duration-300">CARACTERÍSTICAS</a>
-            <a href="#security" class="hover:text-white transition-all duration-300">SEGURIDAD</a>
-            <a href="privacy.html" class="hover:text-white transition-all duration-300">PRIVACIDAD</a>
+            <a href="#features" class="hover:text-white transition-all duration-300">
+                <span data-lang="es">CARACTER&#205;STICAS</span>
+                <span data-lang="en" class="hidden">FEATURES</span>
+            </a>
+            <a href="#security" class="hover:text-white transition-all duration-300">
+                <span data-lang="es">SEGURIDAD</span>
+                <span data-lang="en" class="hidden">SECURITY</span>
+            </a>
+            <a href="privacy.html" class="hover:text-white transition-all duration-300">
+                <span data-lang="es">PRIVACIDAD</span>
+                <span data-lang="en" class="hidden">PRIVACY</span>
+            </a>
         </div>
-        <a href="#" class="btn-premium px-8 py-3 rounded-2xl font-bold text-sm tracking-widest text-white">CONSEGUIR APP</a>
+        <div class="flex items-center gap-4">
+            <!-- Language Toggle -->
+            <div class="lang-toggle">
+                <button id="btn-es" class="active" onclick="setLang('es')">ES</button>
+                <button id="btn-en" onclick="setLang('en')">EN</button>
+            </div>
+            <a href="#" class="btn-premium px-8 py-3 rounded-2xl font-bold text-sm tracking-widest text-white">
+                <span data-lang="es">CONSEGUIR APP</span>
+                <span data-lang="en" class="hidden">GET APP</span>
+            </a>
+        </div>
     </nav>
 
+    <!-- HERO -->
     <header class="pt-52 pb-32 px-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between min-h-screen relative gap-20">
         
         <div class="lg:w-[50%] text-center lg:text-left z-10">
             <h1 class="text-6xl md:text-8xl lg:text-[110px] font-bold leading-[0.85] mb-10 text-white tracking-tighter">
-                Tu dinero, <br><span class="text-primaryPurple">simplificado.</span>
+                <span data-lang="es">Tu dinero, <br><span class="text-primaryPurple">simplificado.</span></span>
+                <span data-lang="en" class="hidden">Your money, <br><span class="text-primaryPurple">simplified.</span></span>
             </h1>
             <p class="text-xl md:text-2xl text-softText max-w-lg mb-12 mx-auto lg:mx-0 leading-relaxed font-light">
-                La experiencia más fluida y privada para gestionar tus finanzas sin esfuerzo.
+                <span data-lang="es">La experiencia m&#225;s fluida y privada para gestionar tus finanzas sin esfuerzo.</span>
+                <span data-lang="en" class="hidden">The most seamless and private experience to manage your finances effortlessly.</span>
             </p>
             <div class="flex flex-col sm:flex-row items-center gap-8 justify-center lg:justify-start">
-                <button class="btn-premium px-12 py-5 rounded-3xl text-2xl font-bold text-white">Comenzar Gratis</button>
+                <button class="btn-premium px-12 py-5 rounded-3xl text-2xl font-bold text-white">
+                    <span data-lang="es">Comenzar Gratis</span>
+                    <span data-lang="en" class="hidden">Start Free</span>
+                </button>
             </div>
         </div>
 
@@ -188,11 +240,14 @@
                 <div class="app-screen">
                     <div class="w-full h-12 flex justify-between px-10 items-center text-[12px] opacity-40 font-bold text-white mt-4">
                         <span>13:06</span>
-                        <div class="flex gap-2">📶 🔋 86</div>
+                        <div class="flex gap-2">&#x1F4F6; &#x1F50B; 86</div>
                     </div>
 
                     <div class="text-center mt-16 mb-16 px-6">
-                        <h2 class="text-white text-[32px] font-bold tracking-tight leading-tight">¿Qué quieres<br>registrar hoy?</h2>
+                        <h2 class="text-white text-[32px] font-bold tracking-tight leading-tight">
+                            <span data-lang="es">&#191;Qu&#233; quieres<br>registrar hoy?</span>
+                            <span data-lang="en" class="hidden">What do you want<br>to log today?</span>
+                        </h2>
                     </div>
 
                     <div class="flex gap-6 mb-10">
@@ -200,7 +255,7 @@
                             <span class="text-6xl font-light hover:scale-110 transition-transform">+</span>
                         </div>
                         <div class="squircle-btn expense">
-                            <span class="text-6xl font-light hover:scale-110 transition-transform">−</span>
+                            <span class="text-6xl font-light hover:scale-110 transition-transform">&#8722;</span>
                         </div>
                     </div>
 
@@ -229,55 +284,136 @@
         </div>
     </header>
 
+    <!-- FEATURES -->
     <section id="features" class="py-40 px-10 max-w-7xl mx-auto">
         <div class="text-center mb-24">
-            <span class="text-primaryPurple font-bold tracking-[0.3em] uppercase text-sm mb-4 block">FUNCIONALIDADES</span>
-            <h2 class="text-5xl md:text-7xl font-bold text-white leading-none tracking-tighter">Control total, a tu manera.</h2>
+            <span class="text-primaryPurple font-bold tracking-[0.3em] uppercase text-sm mb-4 block">
+                <span data-lang="es">FUNCIONALIDADES</span>
+                <span data-lang="en" class="hidden">FEATURES</span>
+            </span>
+            <h2 class="text-5xl md:text-7xl font-bold text-white leading-none tracking-tighter">
+                <span data-lang="es">Control total, a tu manera.</span>
+                <span data-lang="en" class="hidden">Total control, your way.</span>
+            </h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="glass-card p-10">
-                <div class="text-3xl mb-8">💸</div>
-                <h3 class="text-2xl font-bold mb-4 text-white">Registro Rápido</h3>
-                <p class="text-softText text-lg leading-relaxed">Añade ingresos o gastos en segundos con una interfaz minimalista y eficaz.</p>
+                <div class="text-3xl mb-8">&#x1F4B8;</div>
+                <h3 class="text-2xl font-bold mb-4 text-white">
+                    <span data-lang="es">Registro R&#225;pido</span>
+                    <span data-lang="en" class="hidden">Quick Entry</span>
+                </h3>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">A&#241;ade ingresos o gastos en segundos con una interfaz minimalista y eficaz.</span>
+                    <span data-lang="en" class="hidden">Add income or expenses in seconds with a minimalist and efficient interface.</span>
+                </p>
             </div>
             <div id="security" class="glass-card p-10">
-                <div class="text-3xl mb-8">🛡️</div>
-                <h3 class="text-2xl font-bold mb-4 text-white">Bóveda Privada</h3>
-                <p class="text-softText text-lg leading-relaxed">Protege tus movimientos más sensibles con PIN y desbloqueo biométrico.</p>
+                <div class="text-3xl mb-8">&#x1F6E1;&#xFE0F;</div>
+                <h3 class="text-2xl font-bold mb-4 text-white">
+                    <span data-lang="es">B&#243;veda Privada</span>
+                    <span data-lang="en" class="hidden">Private Vault</span>
+                </h3>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">Protege tus movimientos m&#225;s sensibles con PIN y desbloqueo biom&#233;trico.</span>
+                    <span data-lang="en" class="hidden">Protect your most sensitive transactions with PIN and biometric unlock.</span>
+                </p>
             </div>
             <div class="glass-card p-10">
-                <div class="text-3xl mb-8">📊</div>
-                <h3 class="text-2xl font-bold mb-4 text-white">Analíticas Avanzadas</h3>
-                <p class="text-softText text-lg leading-relaxed">Visualiza tu progreso con gráficos de neón y predicciones inteligentes.</p>
+                <div class="text-3xl mb-8">&#x1F4CA;</div>
+                <h3 class="text-2xl font-bold mb-4 text-white">
+                    <span data-lang="es">Anal&#237;ticas Avanzadas</span>
+                    <span data-lang="en" class="hidden">Advanced Analytics</span>
+                </h3>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">Visualiza tu progreso con gr&#225;ficos de ne&#243;n y predicciones inteligentes.</span>
+                    <span data-lang="en" class="hidden">Visualize your progress with neon charts and smart predictions.</span>
+                </p>
             </div>
             <div class="glass-card p-10">
-                <div class="text-3xl mb-8">🎯</div>
-                <h3 class="text-2xl font-bold mb-4 text-white">Metas de Ahorro</h3>
-                <p class="text-softText text-lg leading-relaxed">Define objetivos financieros y observa cómo los alcanzas día tras día.</p>
+                <div class="text-3xl mb-8">&#x1F3AF;</div>
+                <h3 class="text-2xl font-bold mb-4 text-white">
+                    <span data-lang="es">Metas de Ahorro</span>
+                    <span data-lang="en" class="hidden">Savings Goals</span>
+                </h3>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">Define objetivos financieros y observa c&#243;mo los alcanzas d&#237;a tras d&#237;a.</span>
+                    <span data-lang="en" class="hidden">Set financial goals and watch yourself reach them day after day.</span>
+                </p>
             </div>
             <div class="glass-card p-10">
-                <div class="text-3xl mb-8">💳</div>
-                <h3 class="text-2xl font-bold mb-4 text-white">Control de Deudas</h3>
-                <p class="text-softText text-lg leading-relaxed">Gestiona tus préstamos y pagos pendientes de forma sencilla y clara.</p>
+                <div class="text-3xl mb-8">&#x1F4B3;</div>
+                <h3 class="text-2xl font-bold mb-4 text-white">
+                    <span data-lang="es">Control de Deudas</span>
+                    <span data-lang="en" class="hidden">Debt Tracking</span>
+                </h3>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">Gestiona tus pr&#233;stamos y pagos pendientes de forma sencilla y clara.</span>
+                    <span data-lang="en" class="hidden">Manage your loans and pending payments in a simple and clear way.</span>
+                </p>
             </div>
             <div class="glass-card p-10">
-                <div class="text-3xl mb-8">🏠</div>
+                <div class="text-3xl mb-8">&#x1F3E0;</div>
                 <h3 class="text-2xl font-bold mb-4 text-white">Local First</h3>
-                <p class="text-softText text-lg leading-relaxed">Tus datos nunca salen de tu dispositivo. Tú eres el único dueño de tu información.</p>
+                <p class="text-softText text-lg leading-relaxed">
+                    <span data-lang="es">Tus datos nunca salen de tu dispositivo. T&#250; eres el &#250;nico due&#241;o de tu informaci&#243;n.</span>
+                    <span data-lang="en" class="hidden">Your data never leaves your device. You are the sole owner of your information.</span>
+                </p>
             </div>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="py-32 bg-[#09090b] border-t border-white/5 px-10 text-center">
         <div class="text-4xl font-bold text-white tracking-tighter mb-10 uppercase">$imple</div>
         <div class="flex justify-center gap-10 text-sm font-bold tracking-widest text-softText uppercase mb-10">
-            <a href="#features" class="hover:text-white transition">Características</a>
-            <a href="privacy.html" class="hover:text-white transition">Privacidad</a>
-            <a href="#" class="hover:text-white transition">Términos</a>
+            <a href="#features" class="hover:text-white transition">
+                <span data-lang="es">Caracter&#237;sticas</span>
+                <span data-lang="en" class="hidden">Features</span>
+            </a>
+            <a href="privacy.html" class="hover:text-white transition">
+                <span data-lang="es">Privacidad</span>
+                <span data-lang="en" class="hidden">Privacy</span>
+            </a>
+            <a href="#" class="hover:text-white transition">
+                <span data-lang="es">T&#233;rminos</span>
+                <span data-lang="en" class="hidden">Terms</span>
+            </a>
         </div>
-        <p class="text-softText/20 text-xs font-medium tracking-[0.2em]">© 2026 $IMPLE APP.</p>
+        <p class="text-softText/20 text-xs font-medium tracking-[0.2em]">&#169; 2026 $IMPLE APP.</p>
     </footer>
+
+    <script>
+        function setLang(lang) {
+            document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+            document.querySelectorAll('[data-lang="es"]').forEach(el => {
+                el.classList.toggle('hidden', lang !== 'es');
+            });
+            document.querySelectorAll('[data-lang="en"]').forEach(el => {
+                el.classList.toggle('hidden', lang !== 'en');
+            });
+
+            document.documentElement.lang = lang;
+            document.title = lang === 'es'
+                ? '$imple | Tu dinero, simplificado'
+                : '$imple | Your money, simplified';
+
+            localStorage.setItem('simple_lang', lang);
+        }
+
+        (function() {
+            const saved = localStorage.getItem('simple_lang');
+            if (saved) {
+                setLang(saved);
+            } else {
+                const browserLang = navigator.language || navigator.userLanguage || 'es';
+                setLang(browserLang.startsWith('en') ? 'en' : 'es');
+            }
+        })();
+    </script>
 
 </body>
 </html>
