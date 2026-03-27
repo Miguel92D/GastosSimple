@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad | $imple</title>
+    <title>Pol&#237;tica de Privacidad | $imple</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,152 +30,186 @@
         body {
             background-color: #0E0E11;
             color: white;
+            overflow-x: hidden;
             font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
         }
-        .neon-text {
-            text-shadow: 0 0 10px rgba(123, 92, 255, 0.8);
-        }
-        .lang-btn {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid rgba(123, 92, 255, 0.2);
-            border-radius: 12px;
-            padding: 6px 14px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            background: transparent;
-            color: #BFBFD2;
-        }
-        .lang-btn:hover {
-            border-color: #7B5CFF;
-            color: white;
-        }
-        .lang-btn.active {
+
+        .btn-premium {
             background: linear-gradient(135deg, #7B5CFF 0%, #9A7BFF 100%);
-            border-color: #7B5CFF;
-            color: white;
-            box-shadow: 0 4px 15px rgba(123, 92, 255, 0.35);
+            box-shadow: 0 8px 25px rgba(123, 92, 255, 0.4);
+            transition: all 0.3s ease;
         }
-        [data-lang] {
-            transition: opacity 0.3s ease;
+
+        .btn-premium:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(123, 92, 255, 0.6);
+        }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(123, 92, 255, 0.25);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(123, 92, 255, 0.06);
+        }
+        .lang-toggle button {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #BFBFD2;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .lang-toggle button:hover {
+            color: white;
+        }
+        .lang-toggle button.active {
+            background: linear-gradient(135deg, #7B5CFF 0%, #9A7BFF 100%);
+            color: white;
         }
     </style>
 </head>
-<body class="antialiased bg-darkBg">
+<body class="antialiased selection:bg-primaryPurple selection:text-white">
 
-    <nav class="py-10 px-10 max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4">
-        <a href="index.html" class="text-3xl font-bold neon-text">$imple</a>
+    <!-- NAVBAR (identical to index.html) -->
+    <nav class="fixed top-0 w-full z-50 py-8 px-10 flex justify-between items-center bg-darkBg/60 backdrop-blur-xl border-b border-white/5">
+        <div class="flex items-center gap-3">
+             <a href="index.html" class="text-3xl font-bold tracking-tighter uppercase text-white hover:opacity-80 transition">$imple</a>
+        </div>
+        <div class="hidden lg:flex gap-12 text-sm font-semibold text-softText tracking-wider">
+            <a href="index.html#features" class="hover:text-white transition-all duration-300">
+                <span data-lang="es">CARACTER&#205;STICAS</span>
+                <span data-lang="en" class="hidden">FEATURES</span>
+            </a>
+            <a href="index.html#security" class="hover:text-white transition-all duration-300">
+                <span data-lang="es">SEGURIDAD</span>
+                <span data-lang="en" class="hidden">SECURITY</span>
+            </a>
+            <a href="privacy.html" class="text-white transition-all duration-300">
+                <span data-lang="es">PRIVACIDAD</span>
+                <span data-lang="en" class="hidden">PRIVACY</span>
+            </a>
+        </div>
         <div class="flex items-center gap-4">
-            <!-- Language Switcher -->
-            <div class="flex gap-2 mr-4">
-                <button class="lang-btn active" id="btn-es" onclick="setLang('es')">🇪🇸 ES</button>
-                <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇺🇸 EN</button>
+            <div class="lang-toggle">
+                <button id="btn-es" class="active" onclick="setLang('es')">ES</button>
+                <button id="btn-en" onclick="setLang('en')">EN</button>
             </div>
-            <a href="index.html" class="text-softText hover:text-white transition" id="nav-back">
-                <span data-lang="es">← Volver al inicio</span>
-                <span data-lang="en" class="hidden">← Back to home</span>
+            <a href="index.html" class="btn-premium px-8 py-3 rounded-2xl font-bold text-sm tracking-widest text-white">
+                <span data-lang="es">CONSEGUIR APP</span>
+                <span data-lang="en" class="hidden">GET APP</span>
             </a>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-10 py-20">
-        <!-- Title -->
-        <h1 class="text-5xl font-bold mb-4">
-            <span data-lang="es">Política de <span class="text-primaryPurple">Privacidad</span></span>
+    <!-- CONTENT -->
+    <main class="max-w-4xl mx-auto px-10 pt-44 pb-20">
+        <h1 class="text-5xl md:text-7xl font-bold mb-4 tracking-tighter">
+            <span data-lang="es">Pol&#237;tica de <span class="text-primaryPurple">Privacidad</span></span>
             <span data-lang="en" class="hidden"><span class="text-primaryPurple">Privacy</span> Policy</span>
         </h1>
-        <p class="text-softText mb-12 italic">
-            <span data-lang="es">Última actualización: 23 de marzo de 2026</span>
+        <p class="text-softText mb-16 italic text-lg">
+            <span data-lang="es">&#218;ltima actualizaci&#243;n: 23 de marzo de 2026</span>
             <span data-lang="en" class="hidden">Last updated: March 23, 2026</span>
         </p>
 
-        <div class="space-y-12 text-lg leading-relaxed text-softText">
-            <!-- Section 1 -->
+        <div class="space-y-14 text-lg leading-relaxed text-softText">
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">
                     <span data-lang="es">1. Almacenamiento Local</span>
                     <span data-lang="en" class="hidden">1. Local Storage</span>
                 </h2>
                 <p>
-                    <span data-lang="es">$imple es una aplicación diseñada para funcionar de forma privada. Todos tus datos financieros (ingresos, gastos, metas y deudas) se almacenan <strong>exclusivamente de forma local</strong> en tu dispositivo. No utilizamos bases de datos en la nube para guardar tus registros financieros.</span>
-                    <span data-lang="en" class="hidden">$imple is an application designed to work privately. All your financial data (income, expenses, goals, and debts) is stored <strong>exclusively locally</strong> on your device. We do not use cloud databases to store your financial records.</span>
+                    <span data-lang="es">$imple es una aplicaci&#243;n dise&#241;ada para funcionar de forma privada. Todos tus datos financieros (ingresos, gastos, metas y deudas) se almacenan <strong class="text-white">exclusivamente de forma local</strong> en tu dispositivo. No utilizamos bases de datos en la nube para guardar tus registros financieros.</span>
+                    <span data-lang="en" class="hidden">$imple is an application designed to work privately. All your financial data (income, expenses, goals, and debts) is stored <strong class="text-white">exclusively locally</strong> on your device. We do not use cloud databases to store your financial records.</span>
                 </p>
             </section>
 
-            <!-- Section 2 -->
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">
                     <span data-lang="es">2. Seguridad de los Datos</span>
                     <span data-lang="en" class="hidden">2. Data Security</span>
                 </h2>
                 <p>
-                    <span data-lang="es">No subimos tu información a servidores externos. Tu privacidad está garantizada ya que tú eres el único dueño de tus datos. Al no existir una base de datos centralizada, no hay riesgo de brechas de datos masivas en nuestros sistemas.</span>
+                    <span data-lang="es">No subimos tu informaci&#243;n a servidores externos. Tu privacidad est&#225; garantizada ya que t&#250; eres el &#250;nico due&#241;o de tus datos. Al no existir una base de datos centralizada, no hay riesgo de brechas de datos masivas en nuestros sistemas.</span>
                     <span data-lang="en" class="hidden">We do not upload your information to external servers. Your privacy is guaranteed because you are the sole owner of your data. Since there is no centralized database, there is no risk of massive data breaches in our systems.</span>
                 </p>
                 <p class="mt-4">
-                    <span data-lang="es">Recomendamos realizar copias de seguridad manuales periódicamente utilizando la función de "Backup Local" integrada en los ajustes de la app.</span>
+                    <span data-lang="es">Recomendamos realizar copias de seguridad manuales peri&#243;dicamente utilizando la funci&#243;n de "Backup Local" integrada en los ajustes de la app.</span>
                     <span data-lang="en" class="hidden">We recommend creating manual backups periodically using the "Local Backup" feature built into the app's settings.</span>
                 </p>
             </section>
 
-            <!-- Section 3 -->
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">
                     <span data-lang="es">3. Terceros</span>
                     <span data-lang="en" class="hidden">3. Third Parties</span>
                 </h2>
                 <p>
-                    <span data-lang="es">La aplicación no comparte ningún dato personal ni financiero con terceros. No rastreamos tu comportamiento fuera de la aplicación para fines publicitarios.</span>
+                    <span data-lang="es">La aplicaci&#243;n no comparte ning&#250;n dato personal ni financiero con terceros. No rastreamos tu comportamiento fuera de la aplicaci&#243;n para fines publicitarios.</span>
                     <span data-lang="en" class="hidden">The application does not share any personal or financial data with third parties. We do not track your behavior outside the application for advertising purposes.</span>
                 </p>
                 <p class="mt-4">
-                    <span data-lang="es">Utilizamos Firebase únicamente para funciones básicas de autenticación (si decides usar el inicio de sesión opcional) y analíticas anónimas de errores para mejorar la estabilidad de la app, sin vincularlas a tus movimientos financieros personales.</span>
+                    <span data-lang="es">Utilizamos Firebase &#250;nicamente para funciones b&#225;sicas de autenticaci&#243;n (si decides usar el inicio de sesi&#243;n opcional) y anal&#237;ticas an&#243;nimas de errores para mejorar la estabilidad de la app, sin vincularlas a tus movimientos financieros personales.</span>
                     <span data-lang="en" class="hidden">We use Firebase solely for basic authentication features (if you choose to use the optional sign-in) and anonymous error analytics to improve the app's stability, without linking them to your personal financial transactions.</span>
                 </p>
             </section>
 
-            <!-- Section 4 -->
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">
                     <span data-lang="es">4. Control del Usuario</span>
                     <span data-lang="en" class="hidden">4. User Control</span>
                 </h2>
                 <p>
-                    <span data-lang="es">Tienes el control total para eliminar todos tus datos en cualquier momento simplemente borrando la aplicación o utilizando la opción de limpieza de datos en los ajustes de tu sistema operativo.</span>
+                    <span data-lang="es">Tienes el control total para eliminar todos tus datos en cualquier momento simplemente borrando la aplicaci&#243;n o utilizando la opci&#243;n de limpieza de datos en los ajustes de tu sistema operativo.</span>
                     <span data-lang="en" class="hidden">You have full control to delete all your data at any time simply by uninstalling the application or using the data cleanup option in your operating system's settings.</span>
                 </p>
             </section>
 
-            <!-- Contact -->
-            <section class="p-8 border border-primaryPurple/20 bg-primaryPurple/5 rounded-2xl">
+            <section class="p-10 border border-white/8 bg-white/[0.02] backdrop-blur-sm rounded-[32px]">
                 <h2 class="text-2xl font-bold text-white mb-4">
                     <span data-lang="es">Contacto</span>
                     <span data-lang="en" class="hidden">Contact</span>
                 </h2>
                 <p>
-                    <span data-lang="es">Si tienes preguntas sobre nuestra política de privacidad o sobre el funcionamiento de la app, puedes contactarnos en:</span>
+                    <span data-lang="es">Si tienes preguntas sobre nuestra pol&#237;tica de privacidad o sobre el funcionamiento de la app, puedes contactarnos en:</span>
                     <span data-lang="en" class="hidden">If you have any questions about our privacy policy or how the app works, you can contact us at:</span>
-                    <a href="mailto:soporte@simpleapp.com" class="text-primaryPurple font-bold ml-1">soporte@simpleapp.com</a>
+                    <a href="mailto:soporte@simpleapp.com" class="text-primaryPurple font-bold ml-1 hover:underline">soporte@simpleapp.com</a>
                 </p>
             </section>
         </div>
     </main>
 
-    <footer class="py-20 px-10 border-t border-white/5 bg-darkBg text-center mt-20">
-        <p class="text-softText/50 text-sm">
-            <span data-lang="es">© 2026 $imple. Tu privacidad es nuestro compromiso.</span>
-            <span data-lang="en" class="hidden">© 2026 $imple. Your privacy is our commitment.</span>
-        </p>
+    <!-- FOOTER (identical to index.html) -->
+    <footer class="py-32 bg-[#09090b] border-t border-white/5 px-10 text-center mt-20">
+        <div class="text-4xl font-bold text-white tracking-tighter mb-10 uppercase">$imple</div>
+        <div class="flex justify-center gap-10 text-sm font-bold tracking-widest text-softText uppercase mb-10">
+            <a href="index.html#features" class="hover:text-white transition">
+                <span data-lang="es">Caracter&#237;sticas</span>
+                <span data-lang="en" class="hidden">Features</span>
+            </a>
+            <a href="privacy.html" class="hover:text-white transition">
+                <span data-lang="es">Privacidad</span>
+                <span data-lang="en" class="hidden">Privacy</span>
+            </a>
+            <a href="#" class="hover:text-white transition">
+                <span data-lang="es">T&#233;rminos</span>
+                <span data-lang="en" class="hidden">Terms</span>
+            </a>
+        </div>
+        <p class="text-softText/20 text-xs font-medium tracking-[0.2em]">&#169; 2026 $IMPLE APP.</p>
     </footer>
 
     <script>
         function setLang(lang) {
-            // Update buttons
             document.getElementById('btn-es').classList.toggle('active', lang === 'es');
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 
-            // Toggle visibility of all translatable elements
             document.querySelectorAll('[data-lang="es"]').forEach(el => {
                 el.classList.toggle('hidden', lang !== 'es');
             });
@@ -183,17 +217,14 @@
                 el.classList.toggle('hidden', lang !== 'en');
             });
 
-            // Update page title and lang attribute
             document.documentElement.lang = lang;
             document.title = lang === 'es'
-                ? 'Política de Privacidad | $imple'
+                ? 'Pol\u00edtica de Privacidad | $imple'
                 : 'Privacy Policy | $imple';
 
-            // Save preference
             localStorage.setItem('simple_lang', lang);
         }
 
-        // Auto-detect language on load
         (function() {
             const saved = localStorage.getItem('simple_lang');
             if (saved) {
