@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
-import '../../../core/ui/widgets/gradient_button.dart';
+
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -58,18 +59,30 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Center(
-              child: GradientButton(
+              child: ElevatedButton(
                 onPressed: () async {
-                  final url = Uri.parse('https://example.com/privacy-policy');
+                  final Uri url = Uri.parse('https://miguel92d.github.io/GastosSimple/privacy.html');
                   if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
                   }
                 },
-                text: isSpanish
-                    ? 'Ver política completa online'
-                    : 'View full policy online',
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  elevation: 5,
+                  shadowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
+                ),
+                child: Text(
+                  isSpanish ? 'Ver política completa online' : 'View full policy online',
+                  style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
+            const SizedBox(height: 48),
           ],
         ),
       ),

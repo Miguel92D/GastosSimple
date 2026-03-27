@@ -131,7 +131,11 @@ class _PinScreenState extends State<PinScreen> {
     if (widget.onSuccess != null) {
       widget.onSuccess!();
     } else {
-      Navigator.pop(context, true);
+      // Solo hacemos pop si hay una ruta previa en el Navigator.
+      // Esto evita el "pantallazo negro" cuando el PinScreen es el widget raíz (InitialGuard).
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.pop(context, true);
+      }
     }
   }
 

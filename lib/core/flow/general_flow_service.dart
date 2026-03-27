@@ -5,12 +5,14 @@ import '../../features/settings/screens/pin_screen.dart';
 
 class GeneralFlowService {
   static void openDashboard() {
+    SecurityService.instance.lockVault();
     NavigationService.navigateAndRemoveUntil("/dashboard");
   }
 
   static void openVault() {
     final security = SecurityService.instance;
-    if (security.isVaultPinActive && !security.isVaultUnlocked) {
+    security.lockVault(); // Always lock when attempting to open to ensure PIN is requested
+    if (security.isVaultPinActive) {
       NavigationService.navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (context) => const PinScreen(isVault: true),
@@ -26,34 +28,42 @@ class GeneralFlowService {
   }
 
   static void openSettings() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/settings");
   }
 
   static void openStats() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/stats");
   }
 
   static void openDebts() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/debts");
   }
 
   static void openGoals() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/goals");
   }
 
   static void openBudgets() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/budgets");
   }
 
   static void openEntry() {
+    SecurityService.instance.lockVault();
     NavigationService.navigateAndRemoveUntil("/quick_entry");
   }
 
   static void openMovements() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/movements");
   }
 
   static void openPrediction() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/prediction");
   }
 
@@ -62,10 +72,12 @@ class GeneralFlowService {
   }
 
   static void openCategories() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/categories");
   }
 
   static void openMonthlyAnalysis() {
+    SecurityService.instance.lockVault();
     NavigationService.navigate("/monthly_analysis");
   }
 

@@ -7,8 +7,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gastos_simple"
-    compileSdk = 36
+    namespace = "com.gastossimple.gastos_simple"
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -38,8 +38,8 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
             
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
