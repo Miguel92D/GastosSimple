@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidad | $imple</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0E0E11',
+                        primaryPurple: '#7B5CFF',
+                        incomeGreen: '#3DDC97',
+                        expenseRed: '#FF5C5C',
+                        softText: '#BFBFD2',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0E0E11;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(123, 92, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="antialiased bg-darkBg">
+
+    <nav class="py-10 px-10 max-w-7xl mx-auto flex justify-between items-center">
+        <a href="index.html" class="text-3xl font-bold neon-text">$imple</a>
+        <a href="index.html" class="text-softText hover:text-white transition">← Volver al inicio</a>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-10 py-20">
+        <h1 class="text-5xl font-bold mb-4">Política de <span class="text-primaryPurple">Privacidad</span></h1>
+        <p class="text-softText mb-12 italic">Última actualización: 23 de marzo de 2026</p>
+
+        <div class="space-y-12 text-lg leading-relaxed text-softText">
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4">1. Almacenamiento Local</h2>
+                <p>
+                    $imple es una aplicación diseñada para funcionar de forma privada. Todos tus datos financieros (ingresos, gastos, metas y deudas) se almacenan <strong>exclusivamente de forma local</strong> en tu dispositivo. No utilizamos bases de datos en la nube para guardar tus registros financieros.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4">2. Seguridad de los Datos</h2>
+                <p>
+                    No subimos tu información a servidores externos. Tu privacidad está garantizada ya que tú eres el único dueño de tus datos. Al no existir una base de datos centralizada, no hay riesgo de brechas de datos masivas en nuestros sistemas.
+                </p>
+                <p class="mt-4">
+                    Recomendamos realizar copias de seguridad manuales periódicamente utilizando la función de "Backup Local" integrada en los ajustes de la app.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4">3. Terceros</h2>
+                <p>
+                    La aplicación no comparte ningún dato personal ni financiero con terceros. No rastreamos tu comportamiento fuera de la aplicación para fines publicitarios.
+                </p>
+                <p class="mt-4">
+                    Utilizamos Firebase únicamente para funciones básicas de autenticación (si decides usar el inicio de sesión opcional) y analíticas anónimas de errores para mejorar la estabilidad de la app, sin vincularlas a tus movimientos financieros personales.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4">4. Control del Usuario</h2>
+                <p>
+                    Tienes el control total para eliminar todos tus datos en cualquier momento simplemente borrando la aplicación o utilizando la opción de limpieza de datos en los ajustes de tu sistema operativo.
+                </p>
+            </section>
+
+            <section class="p-8 border border-primaryPurple/20 bg-primaryPurple/5 rounded-2xl">
+                <h2 class="text-2xl font-bold text-white mb-4">Contacto</h2>
+                <p>
+                    Si tienes preguntas sobre nuestra política de privacidad o sobre el funcionamiento de la app, puedes contactarnos en: 
+                    <a href="mailto:soporte@simpleapp.com" class="text-primaryPurple font-bold ml-1">soporte@simpleapp.com</a>
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="py-20 px-10 border-t border-white/5 bg-darkBg text-center mt-20">
+        <p class="text-softText/50 text-sm">© 2026 $imple. Tu privacidad es nuestro compromiso.</p>
+    </footer>
+
+</body>
+</html>
