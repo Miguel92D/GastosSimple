@@ -17,7 +17,8 @@ class SavingsGoal {
     required this.createdAt,
   });
 
-  double get progress => (currentAmount / targetAmount).clamp(0.0, 1.0);
+  double get progress =>
+      targetAmount > 0 ? (currentAmount / targetAmount).clamp(0.0, 1.0) : 0.0;
 
   Map<String, dynamic> toMap() {
     return {
@@ -35,10 +36,10 @@ class SavingsGoal {
     return SavingsGoal(
       id: map['id'],
       name: map['name'],
-      currentAmount: map['currentAmount'] ?? 0.0,
-      targetAmount: map['targetAmount'],
+      currentAmount: (map['currentAmount'] as num?)?.toDouble() ?? 0.0,
+      targetAmount: (map['targetAmount'] as num).toDouble(),
       targetDate: DateTime.parse(map['targetDate']),
-      icon: map['icon'],
+      icon: map['icon'] ?? '💰',
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : DateTime.now(),

@@ -1,4 +1,3 @@
-import '../../services/pro_service.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
@@ -12,8 +11,6 @@ import 'app_gradients.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
 
-
-
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
 
@@ -24,6 +21,7 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   late AnimationController _waveController;
   late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
 
   @override
   void initState() {
@@ -35,7 +33,36 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat();
+    );
+    _shimmerAnimation = CurvedAnimation(
+      parent: _shimmerController,
+      curve: Curves.easeInOutCubic,
+    );
+    _shimmerController.repeat(reverse: true);
+  }
+
+  LinearGradient _goldShineGradient() {
+    final shineCenter = 0.24 + (_shimmerAnimation.value * 0.52);
+    const shineWidth = 0.22;
+
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      stops: [
+        0.0,
+        shineCenter - shineWidth,
+        shineCenter,
+        shineCenter + shineWidth,
+        1.0,
+      ],
+      colors: [
+        const Color(0xFFD4AF37),
+        const Color(0xFFD4AF37),
+        const Color(0xFFFFFACD).withValues(alpha: 0.86),
+        const Color(0xFFD4AF37),
+        const Color(0xFFD4AF37),
+      ],
+    );
   }
 
   @override
@@ -47,7 +74,8 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPro = AppState.instance.isPro;
+    final bool isPro = context.watch<AppState>().isPro;
+    final double bottomSafePadding = MediaQuery.of(context).viewPadding.bottom;
 
     return Drawer(
       backgroundColor: AppColors.darkBackground,
@@ -78,30 +106,21 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     color: AppColors.glassSurface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isPro ? const Color(0xFFD4AF37).withValues(alpha: 0.5) : AppColors.cardBorder,
+                      color: isPro
+                          ? const Color(0xFFD4AF37).withValues(alpha: 0.5)
+                          : AppColors.cardBorder,
                       width: isPro ? 1.5 : 1.0,
                     ),
                   ),
                   child: isPro
                       ? AnimatedBuilder(
-                          animation: _shimmerController,
+                          animation: _shimmerAnimation,
                           builder: (context, child) {
                             return ShaderMask(
                               shaderCallback: (bounds) {
-                                return LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  stops: [
-                                    _shimmerController.value - 0.2,
-                                    _shimmerController.value,
-                                    _shimmerController.value + 0.2,
-                                  ],
-                                  colors: [
-                                    const Color(0xFFD4AF37),
-                                    const Color(0xFFFFFACD).withValues(alpha: 0.9),
-                                    const Color(0xFFD4AF37),
-                                  ],
-                                ).createShader(bounds);
+                                return _goldShineGradient().createShader(
+                                  bounds,
+                                );
                               },
                               child: const Icon(
                                 Icons.account_balance_wallet_rounded,
@@ -134,7 +153,9 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 10),
                 GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
                 Text(
-                  context.watch<AppLocaleController>().text('financial_control_drawer'),
+                  context.watch<AppLocaleController>().text(
+                    'financial_control_drawer',
+                  ),
                   style: AppTextStyles.subLabel.copyWith(
                     fontSize: 10,
                     letterSpacing: 2,
@@ -155,7 +176,9 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                         boxShadow: [
                           if (isPro)
                             BoxShadow(
-                              color: AppColors.incomeGreen.withValues(alpha: 0.5),
+                              color: AppColors.incomeGreen.withValues(
+                                alpha: 0.5,
+                              ),
                               blurRadius: 10,
                             ),
                         ],
@@ -164,8 +187,12 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     const SizedBox(width: 8),
                     Text(
                       isPro
-                          ? context.watch<AppLocaleController>().text('account_premium')
-                          : context.watch<AppLocaleController>().text('account_free'),
+                          ? context.watch<AppLocaleController>().text(
+                              'account_premium',
+                            )
+                          : context.watch<AppLocaleController>().text(
+                              'account_free',
+                            ),
                       style: AppTextStyles.subLabel.copyWith(
                         fontSize: 11,
                         color: AppColors.textPrimary.withValues(alpha: 0.7),
@@ -178,7 +205,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
           ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              padding: EdgeInsets.fromLTRB(12, 16, 12, 16 + bottomSafePadding),
               children: [
                 _DrawerItem(
                   icon: Icons.dashboard_rounded,
@@ -207,26 +234,16 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
 
                 const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   child: AnimatedBuilder(
-                    animation: _shimmerController,
+                    animation: _shimmerAnimation,
                     builder: (context, child) {
                       return ShaderMask(
                         shaderCallback: (bounds) {
-                          return LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            stops: [
-                              _shimmerController.value - 0.2,
-                              _shimmerController.value,
-                              _shimmerController.value + 0.2,
-                            ],
-                            colors: [
-                              const Color(0xFFD4AF37),
-                              const Color(0xFFFFFACD).withValues(alpha: 0.9),
-                              const Color(0xFFD4AF37),
-                            ],
-                          ).createShader(bounds);
+                          return _goldShineGradient().createShader(bounds);
                         },
                         child: Container(
                           width: double.infinity,
@@ -259,7 +276,9 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
 
                 _DrawerItem(
                   icon: Icons.auto_awesome_rounded,
-                  title: context.watch<AppLocaleController>().text('ai_intelligence'),
+                  title: context.watch<AppLocaleController>().text(
+                    'ai_intelligence',
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openPrediction);
@@ -267,7 +286,9 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.analytics_rounded,
-                  title: context.watch<AppLocaleController>().text('statistics'),
+                  title: context.watch<AppLocaleController>().text(
+                    'statistics',
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openStats);
@@ -275,26 +296,34 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 ),
                 _DrawerItem(
                   icon: Icons.insights_rounded,
-                  title: context.watch<AppLocaleController>().text('monthly_analysis'),
+                  title: context.watch<AppLocaleController>().text(
+                    'monthly_analysis',
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openMonthlyAnalysis);
+                    ActionController.execute(
+                      context,
+                      AppAction.openMonthlyAnalysis,
+                    );
                   },
                 ),
 
                 _DrawerItem(
                   icon: Icons.flag_rounded,
-                  title: context.watch<AppLocaleController>().text('savings_goals'),
+                  title: context.watch<AppLocaleController>().text(
+                    'savings_goals',
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openGoals);
                   },
                 ),
 
-
                 _DrawerItem(
                   icon: Icons.lock_rounded,
-                  title: context.watch<AppLocaleController>().text('vault_label'),
+                  title: context.watch<AppLocaleController>().text(
+                    'vault_label',
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openVault);
@@ -306,30 +335,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openSettings();
-                  },
-                ),
-                const Divider(color: AppColors.cardBorder, height: 32),
-                ListTile(
-                  leading: Icon(
-                    AppState.instance.isPro ? Icons.star_rounded : Icons.star_outline_rounded,
-                    color: AppColors.primaryPurple,
-                  ),
-                  title: Text(
-                    AppState.instance.isPro ? context.watch<AppLocaleController>().text('switch_to_free') : context.watch<AppLocaleController>().text('switch_to_pro'),
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.primaryPurple,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  onTap: () {
-                    final newState = !AppState.instance.isPro;
-                    AppState.instance.setPro(newState);
-                    if (newState) {
-                      ProService.instance.activatePro();
-                    } else {
-                      ProService.instance.deactivatePro();
-                    }
-                    setState(() {});
                   },
                 ),
               ],
@@ -424,8 +429,6 @@ class _DrawerItem extends StatelessWidget {
     required this.onTap,
   });
 
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -450,4 +453,3 @@ class _DrawerItem extends StatelessWidget {
     );
   }
 }
-

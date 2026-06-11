@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,8 @@ class ErrorService {
 
   Future<void> logError(Object error, StackTrace? stack) async {
     try {
+      await FirebaseCrashlytics.instance.recordError(error, stack);
+
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/error_logs.txt');
       final now = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
@@ -42,7 +45,10 @@ class ErrorService {
               const SizedBox(height: 24),
               Text(
                 l10n.text('something_went_wrong'),
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

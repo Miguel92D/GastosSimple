@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppCurrency {
@@ -25,10 +24,9 @@ class CurrencyService extends ChangeNotifier {
   String get currencyCode => _currencyCode;
 
   AppCurrency get selectedCurrency => availableCurrencies.firstWhere(
-        (c) => c.code == _currencyCode,
-        orElse: () => availableCurrencies[0],
-      );
-
+    (c) => c.code == _currencyCode,
+    orElse: () => availableCurrencies[0],
+  );
 
   static const List<AppCurrency> availableCurrencies = [
     AppCurrency(code: 'USD', name: 'US Dollar', symbol: r'$'),
@@ -64,28 +62,37 @@ class CurrencyService extends ChangeNotifier {
   }
 
   static String format(double value, {String? symbolOverride}) {
+    return formatArgentineCurrency(value, symbolOverride: symbolOverride);
+  }
+
+  static String formatArgentineCurrency(
+    double value, {
+    String? symbolOverride,
+  }) {
     final symbol = symbolOverride ?? instance._currencySymbol;
-    
-    if (value.abs() >= 1000000000000) {
-      final formatter = NumberFormat.compact();
-      return '$symbol ${formatter.format(value)}';
+    final cents = (value.abs() * 100).round();
+    final wholePart = cents ~/ 100;
+    final decimalPart = cents % 100;
+    final sign = value.isNegative && cents != 0 ? '-' : '';
+    final decimals = decimalPart == 0
+        ? ''
+        : ',${decimalPart.toString().padLeft(2, '0')}';
+
+    return '$symbol $sign${_formatWholePart(wholePart)}$decimals';
+  }
+
+  static String _formatWholePart(int value) {
+    final digits = value.toString();
+    final buffer = StringBuffer();
+
+    for (var i = 0; i < digits.length; i++) {
+      final remaining = digits.length - i;
+      buffer.write(digits[i]);
+      if (remaining > 1 && remaining % 3 == 1) {
+        buffer.write('.');
+      }
     }
 
-    final hasDecimals = value.abs() % 1 != 0;
-
-    final formatter = NumberFormat.decimalPattern();
-    if (hasDecimals) {
-      formatter.minimumFractionDigits = 2;
-      formatter.maximumFractionDigits = 2;
-    } else {
-      formatter.minimumFractionDigits = 0;
-      formatter.maximumFractionDigits = 0;
-    }
-
-    String formatted = formatter.format(value);
-    
-    // Default style: Symbol + Space + Value
-    final space = symbol.length > 1 ? ' ' : '';
-    return '$symbol$space$formatted';
+    return buffer.toString();
   }
 }

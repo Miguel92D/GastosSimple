@@ -3,6 +3,7 @@ import '../flow/general_flow_service.dart';
 import '../flow/transaction_flow_service.dart';
 import '../flow/premium_flow_service.dart';
 import '../state/app_state.dart';
+import '../../services/security_service.dart';
 import 'app_action.dart';
 
 class ActionController {
@@ -101,12 +102,13 @@ class ActionController {
   }
 
   static void openQuickEntryNormal(BuildContext context) {
+    SecurityService.instance.lockVault();
     execute(context, AppAction.openEntry);
   }
 
-  static void openQuickEntryVault(BuildContext context) {
+  static void openQuickEntryVault(BuildContext context, {String? type}) {
     if (AppState.instance.isPro) {
-      TransactionFlowService.instance.startQuickEntry(context, isVault: true);
+      GeneralFlowService.openQuickEntryVault(type: type);
     } else {
       PremiumFlowService.showUpgradePrompt(context);
     }

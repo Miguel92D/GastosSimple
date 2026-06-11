@@ -1,23 +1,23 @@
 import 'package:flutter/foundation.dart';
+import '../core/state/app_state.dart';
 
 class ProService extends ChangeNotifier {
   static final ProService instance = ProService._internal();
 
   ProService._internal();
 
-  bool _isPro = false;
   final bool _isVaultActive = false;
 
-  bool get isPro => _isPro;
+  bool get isPro => AppState.instance.isPro;
   bool get isVaultActive => _isVaultActive;
 
   void activatePro() {
-    _isPro = true;
+    AppState.instance.setPro(true);
     notifyListeners();
   }
 
   void deactivatePro() {
-    _isPro = false;
+    AppState.instance.setPro(false);
     notifyListeners();
   }
 }

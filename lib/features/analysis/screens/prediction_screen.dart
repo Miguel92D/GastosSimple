@@ -62,10 +62,10 @@ class _PredictionScreenState extends State<PredictionScreen>
     );
 
     final income = transactions
-        .where((t) => t.type == 'ingreso')
+        .where((t) => t.isIncome)
         .fold(0.0, (sum, t) => sum + t.amount);
     final expense = transactions
-        .where((t) => t.type == 'gasto')
+        .where((t) => t.isExpense)
         .fold(0.0, (sum, t) => sum + t.amount);
 
     if (mounted) {

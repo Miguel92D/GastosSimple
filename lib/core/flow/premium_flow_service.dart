@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../ui/app_button.dart';
 import '../router/navigation_service.dart';
 import '../i18n/app_locale_controller.dart';
 
@@ -16,10 +17,7 @@ class PremiumFlowService {
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 32.0,
-            ),
+            padding: const EdgeInsets.fromLTRB(24, 32, 24, 48), // Padding inferior generoso para ergonomía
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,26 +44,13 @@ class PremiumFlowService {
 
 
                 const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
+                AppButton(
+                  onTap: () {
                     NavigationService.goBack();
                     NavigationService.navigate("/premium");
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.text('try_premium'),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  color: Colors.orange,
+                  label: l10n.text('try_premium'),
                 ),
                 const SizedBox(height: 12),
                 TextButton(

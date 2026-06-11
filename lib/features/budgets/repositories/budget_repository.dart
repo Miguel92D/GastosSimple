@@ -27,7 +27,7 @@ class BudgetRepositoryImpl implements BudgetRepository {
         .getTransactionsInMonth();
 
     return transactions
-        .where((t) => t.type == 'gasto' && t.category == category)
+        .where((t) => t.isExpense && t.category == category)
         .fold<double>(0.0, (sum, item) => sum + item.amount);
   }
 }

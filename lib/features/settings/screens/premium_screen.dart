@@ -2,9 +2,8 @@ import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import '../../../core/state/app_state.dart';
 import '../../../services/purchase_service.dart';
-import '../../../services/premium_service.dart';
-import '../../../services/pro_service.dart';
 
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -22,15 +21,30 @@ class PremiumScreen extends StatefulWidget {
 
 class _PremiumScreenState extends State<PremiumScreen> {
   bool _isLoading = true;
-  String _selectedProductId = 'simple_pro_annual';
+  bool _isBuying = false;
+  bool _isRestoring = false;
+  String _selectedProductId = 'simple_pro_lifetime';
 
   @override
   void initState() {
     super.initState();
+    PurchaseService.instance.addListener(_onPurchaseServiceChanged);
     _initStoreInfo();
   }
 
+  @override
+  void dispose() {
+    PurchaseService.instance.removeListener(_onPurchaseServiceChanged);
+    super.dispose();
+  }
+
+  void _onPurchaseServiceChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
   Future<void> _initStoreInfo() async {
+    await PurchaseService.instance.init();
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -38,208 +52,309 @@ class _PremiumScreenState extends State<PremiumScreen> {
     }
   }
 
-  void _restorePurchase() {
-    PurchaseService.instance.restorePurchases();
+  Future<void> _restorePurchase() async {
+    final service = PurchaseService.instance;
+    if (_isRestoring || service.purchaseInProgress || service.purchasePending) {
+      _showBillingMessage();
+      return;
+    }
+    setState(() => _isRestoring = true);
+    await service.restorePurchases();
+    if (mounted) {
+      setState(() => _isRestoring = false);
+      _showBillingMessage();
+    }
   }
 
   Future<void> _buyPremium() async {
-    final products = PurchaseService.instance.products;
-    final product = products.cast<ProductDetails?>().firstWhere(
-      (p) => p?.id == _selectedProductId,
-      orElse: () => null,
-    );
-
-    if (product != null) {
-      PurchaseService.instance.buyProduct(product);
-    } else {
-      await PremiumService.instance.setPremium(true);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.watch<AppLocaleController>().text('premium_test_unlocked')),
-        ),
-      );
-      Navigator.pop(context);
+    final service = PurchaseService.instance;
+    if (_isBuying || service.purchaseInProgress || service.purchasePending) {
+      _showBillingMessage();
+      return;
     }
+    if (!service.initialized ||
+        !service.available ||
+        service.isLoadingProducts) {
+      _showBillingMessage();
+      return;
+    }
+
+    final product = service.proProduct;
+    if (product == null) {
+      await service.loadProducts();
+      if (mounted) _showBillingMessage();
+      return;
+    }
+
+    setState(() => _isBuying = true);
+    await service.buyProduct(product);
+    if (mounted) {
+      setState(() => _isBuying = false);
+      _showBillingMessage();
+    }
+  }
+
+  void _showBillingMessage() {
+    final service = PurchaseService.instance;
+    final message = service.errorMessage ?? service.statusMessage;
+    if (message == null || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: service.errorMessage == null
+            ? AppColors.primaryPurple
+            : Colors.redAccent,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
+    final isPro = context.watch<AppState>().isPro;
+    final double bottomSafePadding = MediaQuery.of(context).viewPadding.bottom;
+    final service = PurchaseService.instance;
+    final product = service.proProduct;
+    final isPurchaseActionEnabled =
+        !service.isLoadingProducts &&
+        service.initialized &&
+        service.available &&
+        !service.purchaseInProgress &&
+        !service.purchasePending &&
+        product != null;
+    final isRestoreActionEnabled =
+        !_isRestoring &&
+        !service.purchaseInProgress &&
+        !service.purchasePending &&
+        service.initialized &&
+        service.available;
 
     return AppScaffold(
       title: l10n.text('simple_pro'),
       drawer: const AppDrawer(),
       body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryPurple.withValues(alpha: 0.2),
-                              blurRadius: 40,
-                              spreadRadius: 10,
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  24,
+                  24,
+                  24 + bottomSafePadding + 96,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryPurple.withValues(
+                              alpha: 0.2,
+                            ),
+                            blurRadius: 40,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.stars_rounded,
+                        size: 80,
+                        color: AppColors.primaryPurple,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.text('simple_pro'),
+                      style: AppTextStyles.titleLarge.copyWith(fontSize: 32),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.text('unlock_advanced_tools'),
+                      style: AppTextStyles.bodyMain.copyWith(
+                        color: AppColors.softText.withValues(alpha: 0.7),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 48),
+                    _buildFeature(
+                      Icons.psychology_rounded,
+                      l10n.text('benefit_strategies'),
+                    ),
+                    _buildFeature(
+                      Icons.auto_graph_rounded,
+                      l10n.text('benefit_predictions'),
+                    ),
+                    _buildFeature(
+                      Icons.analytics_rounded,
+                      l10n.text('benefit_analytics'),
+                    ),
+                    _buildFeature(
+                      Icons.lightbulb_outline_rounded,
+                      l10n.text('smart_insights'),
+                    ),
+                    const SizedBox(height: 48),
+                    if (!isPro) ...[
+                      _buildPlanCard(
+                        l10n.text('lifetime_plan'),
+                        product?.price,
+                        'simple_pro_lifetime',
+                        product: product,
+                      ),
+                      _buildBillingStatus(product),
+                      const SizedBox(height: 40),
+                      GradientButton(
+                        text:
+                            _isBuying ||
+                                service.purchasePending ||
+                                service.purchaseInProgress
+                            ? l10n.text('processing')
+                            : l10n.text('activate_pro').toUpperCase(),
+                        onPressed: isPurchaseActionEnabled ? _buyPremium : null,
+                        borderRadius: 24,
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: isRestoreActionEnabled
+                            ? _restorePurchase
+                            : null,
+                        child: Text(
+                          l10n.text('restore_purchase'),
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.softText.withValues(alpha: 0.4),
+                          ),
+                        ),
+                      ),
+                    ] else
+                      GlassCard(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 32,
+                          horizontal: 24,
+                        ),
+                        borderRadius: 30,
+                        glowColor: AppColors.incomeGreen.withValues(alpha: 0.1),
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.check_circle_rounded,
+                              color: AppColors.incomeGreen,
+                              size: 56,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.text('pro_active'),
+                              style: AppTextStyles.cardTitle.copyWith(
+                                fontSize: 22,
+                                color: AppColors.incomeGreen,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.stars_rounded,
-                          size: 80,
-                          color: AppColors.primaryPurple,
-                        ),
                       ),
-                      const SizedBox(height: 24),
-                      Text(
-                        l10n.text('simple_pro'),
-                        style: AppTextStyles.titleLarge.copyWith(fontSize: 32),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.text('unlock_advanced_tools'),
-                        style: AppTextStyles.bodyMain.copyWith(
-                          color: AppColors.softText.withValues(alpha: 0.7),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 48),
-                      _buildFeature(
-                        Icons.psychology_rounded,
-                        l10n.text('benefit_strategies'),
-                      ),
-                      _buildFeature(
-                        Icons.auto_graph_rounded,
-                        l10n.text('benefit_predictions'),
-                      ),
-                      _buildFeature(
-                        Icons.analytics_rounded,
-                        l10n.text('benefit_analytics'),
-                      ),
-                      _buildFeature(
-                        Icons.lightbulb_outline_rounded,
-                        l10n.text('smart_insights'),
-                      ),
-                      const SizedBox(height: 48),
-                      if (!ProService.instance.isPro) ...[
-                        _buildPlanCard(
-                          l10n.text('monthly_plan'),
-                          l10n.text('monthly_price'),
-                          'simple_pro_monthly',
-                        ),
-                        const SizedBox(height: 16),
-                        _buildPlanCard(
-                          l10n.text('annual_plan'),
-                          l10n.text('annual_price'),
-                          'simple_pro_annual',
-                          isRecommended: true,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildPlanCard(
-                          l10n.text('lifetime_plan'),
-                          l10n.text('lifetime_price'),
-                          'simple_pro_lifetime',
-                        ),
-                        const SizedBox(height: 40),
-                        GradientButton(
-                          text: l10n.text('activate_pro').toUpperCase(),
-                          onPressed: _buyPremium,
-                          borderRadius: 24,
-                        ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          onPressed: _restorePurchase,
-                          child: Text(
-                            l10n.text('restore_purchase'),
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.softText.withValues(alpha: 0.4),
-                            ),
-                          ),
-                        ),
-                      ] else
-                        GlassCard(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 32,
-                            horizontal: 24,
-                          ),
-                          borderRadius: 30,
-                          glowColor: AppColors.incomeGreen.withValues(alpha: 0.1),
-                          child: Column(
-                            children: [
-                              const Icon(
-                                Icons.check_circle_rounded,
-                                color: AppColors.incomeGreen,
-                                size: 56,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                l10n.text('pro_active'),
-                                style: AppTextStyles.cardTitle.copyWith(
-                                  fontSize: 22,
-                                  color: AppColors.incomeGreen,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
+            ),
     );
   }
 
-  Widget _buildPlanCard(String title, String price, String productId, {bool isRecommended = false}) {
+  Widget _buildPlanCard(
+    String title,
+    String? price,
+    String productId, {
+    bool isRecommended = false,
+    ProductDetails? product,
+  }) {
     final selected = _selectedProductId == productId;
     final l10n = context.watch<AppLocaleController>();
-    
+    final hasProduct = product != null;
+    final displayTitle = hasProduct
+        ? title
+        : l10n.text('product_not_available');
+    final supportingText = hasProduct
+        ? l10n.text('one_time_payment')
+        : l10n.text('product_price_pending');
+
     return GestureDetector(
       onTap: () => setState(() => _selectedProductId = productId),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           GlassCard(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
             borderRadius: 24,
             glowColor: selected ? AppColors.primaryPurple : Colors.transparent,
             borderWidth: selected ? 2 : 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTextStyles.cardTitle.copyWith(
-                        fontSize: 16,
-                        color: selected ? AppColors.textPrimary : AppColors.softText,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      price,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: selected ? AppColors.textPrimary.withValues(alpha: 0.7) : AppColors.softText.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ],
+                Icon(
+                  hasProduct
+                      ? Icons.workspace_premium_rounded
+                      : Icons.info_outline_rounded,
+                  color: selected
+                      ? AppColors.primaryPurple
+                      : AppColors.softText.withValues(alpha: 0.45),
+                  size: 34,
                 ),
-                Radio<String>(
-                  value: productId,
-                  groupValue: _selectedProductId,
-                  onChanged: (val) {
-                    if (val != null) setState(() => _selectedProductId = val);
-                  },
-                  activeColor: AppColors.primaryPurple,
+                const SizedBox(height: 14),
+                Text(
+                  displayTitle,
+                  style: AppTextStyles.cardTitle.copyWith(
+                    fontSize: 18,
+                    color: selected
+                        ? AppColors.textPrimary
+                        : AppColors.softText,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+                if (hasProduct && price != null) ...[
+                  Text(
+                    price,
+                    style: AppTextStyles.titleLarge.copyWith(
+                      fontSize: 30,
+                      color: AppColors.primaryPurple,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                ],
+                Text(
+                  supportingText,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: selected
+                        ? AppColors.textPrimary.withValues(alpha: 0.65)
+                        : AppColors.softText.withValues(alpha: 0.5),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                if (hasProduct && product.description.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    product.description,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.softText.withValues(alpha: 0.5),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                const SizedBox(height: 14),
+                Icon(
+                  selected ? Icons.check_circle : Icons.circle_outlined,
+                  color: selected
+                      ? AppColors.primaryPurple
+                      : AppColors.softText.withValues(alpha: 0.45),
                 ),
               ],
             ),
@@ -249,7 +364,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
               top: -10,
               right: 20,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primaryPurple,
                   borderRadius: BorderRadius.circular(12),
@@ -272,6 +390,31 @@ class _PremiumScreenState extends State<PremiumScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBillingStatus(ProductDetails? product) {
+    final service = PurchaseService.instance;
+    final l10n = context.read<AppLocaleController>();
+    final message =
+        service.errorMessage ??
+        service.statusMessage ??
+        (service.isLoadingProducts ? l10n.text('loading_pro_product') : null) ??
+        (product == null
+            ? l10n.text('product_not_ready')
+            : l10n.text('product_loaded'));
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Text(
+        message,
+        style: AppTextStyles.bodySmall.copyWith(
+          color: service.errorMessage == null
+              ? AppColors.softText.withValues(alpha: 0.65)
+              : Colors.redAccent,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }

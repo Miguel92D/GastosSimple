@@ -7,6 +7,7 @@ import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
+import '../../../core/state/month_controller.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -24,26 +25,47 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   Map<String, double> _catGastos = {};
   bool _isLoading = true;
+  int _loadVersion = 0;
+  DateTime _loadedMonth = MonthController.instance.selectedMonth;
 
   @override
   void initState() {
     super.initState();
     TransactionNotifier.instance.addListener(_loadData);
+    MonthController.instance.addListener(_loadData);
     _loadData();
   }
 
   @override
   void dispose() {
     TransactionNotifier.instance.removeListener(_loadData);
+    MonthController.instance.removeListener(_loadData);
     super.dispose();
   }
 
   Future<void> _loadData() async {
-    final catGastos = await TransactionController.getExpensesByCategory();
+    // El desglose corresponde al mes seleccionado, igual que el dashboard
+    // (la tarjeta dice "Total del mes").
+    final loadVersion = ++_loadVersion;
+    final selectedMonth = MonthController.instance.selectedMonth;
+    final transactions = await TransactionController.getTransactionsInMonth(
+      month: selectedMonth,
+    );
 
-    if (mounted) {
+    final Map<String, double> catGastos = {};
+    for (final transaction in transactions) {
+      if (!transaction.isExpense) continue;
+      catGastos[transaction.category] =
+          (catGastos[transaction.category] ?? 0) + transaction.amount;
+    }
+
+    final sortedEntries = catGastos.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    if (mounted && loadVersion == _loadVersion) {
       setState(() {
-        _catGastos = catGastos;
+        _catGastos = Map.fromEntries(sortedEntries);
+        _loadedMonth = selectedMonth;
         _isLoading = false;
       });
     }
@@ -98,6 +120,13 @@ class _StatsScreenState extends State<StatsScreen> {
                                     style: AppTextStyles.subLabel.copyWith(
                                       color: AppColors.softText.withValues(alpha: 0.5),
                                       letterSpacing: 2.0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    L10nHelper.getLocalizedDateMonth(context, _loadedMonth),
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      color: AppColors.softText.withValues(alpha: 0.7),
                                     ),
                                   ),
                                   const SizedBox(height: 8),

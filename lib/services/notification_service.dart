@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -20,6 +21,14 @@ class NotificationService {
         InitializationSettings(android: initializationSettingsAndroid);
 
     await _notifications.initialize(initializationSettings);
+
+    // Android 13+ exige el permiso POST_NOTIFICATIONS en runtime;
+    // sin esto el recordatorio diario nunca se muestra.
+    await _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
   }
 
   Future<void> scheduleDailyReminder() async {
@@ -36,10 +45,33 @@ class NotificationService {
 
     if (timeStr != null) {
       final parts = timeStr.split(':');
-      hour = int.parse(parts[0]);
-      minute = int.parse(parts[1]);
+      hour = int.tryParse(parts[0]) ?? 20;
+      minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
     }
 
+    try {
+      await _scheduleDailyReminderAt(
+        hour,
+        minute,
+        AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } on PlatformException {
+      // Android 12+ puede denegar alarmas exactas (SCHEDULE_EXACT_ALARM).
+      // Un recordatorio diario no necesita precisión de segundos: caemos
+      // a modo inexacto antes que perder la notificación.
+      await _scheduleDailyReminderAt(
+        hour,
+        minute,
+        AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+    }
+  }
+
+  Future<void> _scheduleDailyReminderAt(
+    int hour,
+    int minute,
+    AndroidScheduleMode scheduleMode,
+  ) async {
     await _notifications.zonedSchedule(
       100,
       '¿Registraste tus gastos de hoy?',
@@ -55,7 +87,7 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: scheduleMode,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,

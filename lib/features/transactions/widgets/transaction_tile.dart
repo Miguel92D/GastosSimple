@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../core/i18n/app_locale_controller.dart';
 import '../models/transaction.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
@@ -110,7 +112,7 @@ class _TransactionTileState extends State<TransactionTile>
 
   @override
   Widget build(BuildContext context) {
-    final isIncome = widget.transaction.type == 'ingreso';
+    final isIncome = widget.transaction.isIncome;
     final amountColor = isIncome ? AppColors.incomeGreen : AppColors.expenseRed;
     final amountPrefix = isIncome ? '+' : '-';
 
@@ -156,7 +158,10 @@ class _TransactionTileState extends State<TransactionTile>
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  DateFormat('d MMM, yyyy').format(widget.transaction.date),
+                  DateFormat(
+                    'd MMM, yyyy',
+                    context.read<AppLocaleController>().locale,
+                  ).format(widget.transaction.date),
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.softText.withValues(alpha: 0.3),
                     fontSize: 10,

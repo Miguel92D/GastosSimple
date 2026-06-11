@@ -1,7 +1,11 @@
+import 'dart:ui';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'firebase_options.dart';
 import 'services/theme_service.dart';
 import 'services/security_service.dart';
 import 'services/purchase_service.dart';
@@ -12,13 +16,10 @@ import 'services/pro_service.dart';
 
 import 'core/router/app_router.dart';
 import 'core/state/app_mode_controller.dart';
+import 'core/state/month_controller.dart';
 import 'core/router/navigation_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:home_widget/home_widget.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-import 'dart:ui';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
@@ -28,22 +29,18 @@ import 'features/settings/screens/pin_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await initializeDateFormatting('es', null);
-  await initializeDateFormatting('en', null);
-  await CurrencyService.instance.loadCurrency();
-
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    ErrorService.instance.logError(details.exception, details.stack);
-  };
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
-    ErrorService.instance.logError(error, stack);
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  await initializeDateFormatting('es', null);
+  await initializeDateFormatting('en', null);
+
+  await CurrencyService.instance.loadCurrency();
+  await AppState.instance.loadProEntitlement();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Builder(
@@ -62,6 +59,7 @@ void main() async {
         ChangeNotifierProvider.value(value: CurrencyService.instance),
         ChangeNotifierProvider.value(value: ProService.instance),
         ChangeNotifierProvider.value(value: AppModeController.instance),
+        ChangeNotifierProvider.value(value: MonthController.instance),
       ],
       child: const ErrorGuard(child: GastosSimpleApp()),
     ),
@@ -82,7 +80,6 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initializeServices();
-    _setupHomeWidget();
   }
 
   @override
@@ -101,43 +98,30 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
   }
 
   void _checkSecurityOnResume() async {
-    final securityEnabled = SecurityService.instance.isPinActive || 
-                           SecurityService.instance.isBiometricActive;
-    
-    if (securityEnabled && !SecurityService.instance.isUnlocked) {
-      // Si está habilitado y no está desbloqueado, enviamos al PIN
-      // Usamos pushReplacementNamed para no acumular pantallas si ya estamos en una
+    final security = SecurityService.instance;
+    final securityEnabled = security.isPinActive || security.isBiometricActive;
+
+    // Si la pantalla de PIN ya está visible no se apila otra encima
+    // (cada ciclo background/foreground hacía un push adicional).
+    if (securityEnabled &&
+        !security.isUnlocked &&
+        !security.isPinPromptVisible) {
       NavigationService.navigate("/pin");
     }
   }
 
   Future<void> _initializeServices() async {
     try {
+      // El recordatorio diario solo puede programarse cuando el plugin de
+      // notificaciones ya terminó su init, por eso va en secuencia.
       await Future.wait([
-        NotificationService.instance.init(),
-        NotificationService.instance.scheduleDailyReminder(),
-        CurrencyService.instance.loadCurrency(),
+        NotificationService.instance.init().then(
+          (_) => NotificationService.instance.scheduleDailyReminder(),
+        ),
         PurchaseService.instance.init(),
       ]);
     } catch (e) {
       debugPrint('Error initializing services: $e');
-    }
-  }
-
-  Future<void> _setupHomeWidget() async {
-    HomeWidget.setAppGroupId('group.gastossimple.gastos_simple');
-    HomeWidget.widgetClicked.listen(_handleUri);
-  }
-
-  void _handleUri(Uri? uri) {
-    if (uri == null) return;
-
-    if (uri.scheme == 'gastossimple' && uri.host == 'quick_entry') {
-      final type = uri.queryParameters['type'];
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.setString('pending_action', 'quick_entry');
-        prefs.setString('pending_type', type ?? 'gasto');
-      });
     }
   }
 
@@ -183,7 +167,8 @@ class InitialGuard extends StatelessWidget {
       );
     }
 
-    final bool securityEnabled = security.isPinActive || security.isBiometricActive;
+    final bool securityEnabled =
+        security.isPinActive || security.isBiometricActive;
 
     // Si la seguridad está activa y el app está bloqueada, mostramos la pantalla de PIN
     // como contenido principal (esto evita saltos de navegación y race conditions)

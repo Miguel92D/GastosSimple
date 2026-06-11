@@ -47,6 +47,20 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 android/.gradle/
+android/app/build/
+android/build/
+
+# Android release signing secrets
+android/key.properties
+**/key.properties
+android/*.jks
+android/*.keystore
+android/*.p12
+android/*.pfx
+*.jks
+*.keystore
+*.p12
+*.pfx
 
 # iOS
 ios/Pods/

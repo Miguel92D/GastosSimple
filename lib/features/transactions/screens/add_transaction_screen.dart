@@ -13,6 +13,7 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
+import '../../../core/utils/currency_input_formatter.dart';
 
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
@@ -28,6 +29,7 @@ class AddTransactionScreen extends StatefulWidget {
   final bool isFromQuickEntry;
   final String? type; // "income" or "expense"
   final bool isVault;
+  final String? initialCategory;
 
   const AddTransactionScreen({
     super.key,
@@ -35,6 +37,7 @@ class AddTransactionScreen extends StatefulWidget {
     this.isFromQuickEntry = false,
     this.type,
     this.isVault = false,
+    this.initialCategory,
   });
 
   @override
@@ -104,7 +107,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (widget.movimientoToEdit != null) {
       final mov = widget.movimientoToEdit!;
 
-      _amountController.text = mov.amount.toString();
+      _amountController.text = CurrencyHelper.formatAmountForInput(mov.amount);
       _tipo = mov.type;
       _selectedCategory = mov.category;
       _noteController.text = mov.note ?? '';
@@ -120,6 +123,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         _selectedCategory = _tipo == 'gasto'
             ? _categoriasGasto.first
             : _categoriasIngreso.first;
+      }
+
+      if (widget.initialCategory != null &&
+          widget.initialCategory!.isNotEmpty) {
+        _selectedCategory = widget.initialCategory!;
+        final categorias = _tipo == 'gasto'
+            ? _categoriasGasto
+            : _categoriasIngreso;
+        if (!categorias.contains(_selectedCategory)) {
+          categorias.insert(0, _selectedCategory);
+        }
       }
 
       Future.delayed(Duration.zero, () {
@@ -159,6 +173,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
           _categoriasIngreso = uniqueCategorias;
         }
+
+        // La categoría seleccionada (p. ej. al venir desde Categorías o al
+        // editar un movimiento antiguo) debe seguir visible en el carrusel.
+        final categorias = _tipo == 'gasto'
+            ? _categoriasGasto
+            : _categoriasIngreso;
+        if (!categorias.contains(_selectedCategory)) {
+          categorias.insert(0, _selectedCategory);
+        }
       });
     }
   }
@@ -178,13 +201,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (_isSaving) return;
     FocusScope.of(context).unfocus();
 
-    final amountText = _amountController.text.replaceAll(',', '.');
-    final amount = double.tryParse(amountText);
+    final amount = CurrencyHelper.parseAmount(_amountController.text);
 
     if (amount == null || amount <= 0) {
       if (mounted) {
+        final l10n = context.read<AppLocaleController>();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.watch<AppLocaleController>().text('amount_error'))),
+          SnackBar(content: Text(l10n.text('amount_error'))),
         );
       }
       return;
@@ -199,13 +222,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         category: _selectedCategory,
         type: _tipo,
         date: widget.movimientoToEdit?.date ?? DateTime.now(),
-        isSecret: widget.isVault ? 1 : 0,
+        // Al editar se preserva el flag original: un movimiento de la Bóveda
+        // nunca debe filtrarse al historial normal (Regla de Oro #6).
+        isSecret: widget.movimientoToEdit?.isSecret ?? (widget.isVault ? 1 : 0),
         isRecurring: _isRecurring,
         note: _noteController.text.trim().isEmpty
             ? null
             : _noteController.text.trim(),
         goalId: _selectedGoal?.id,
-        goalAmount: double.tryParse(_goalAmountController.text),
+        goalAmount: CurrencyHelper.parseAmount(_goalAmountController.text),
       );
 
       await TransactionFlowService.instance.saveTransaction(
@@ -214,7 +239,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         isRecurring: _isRecurring,
         frequency: _frequency,
         goal: _selectedGoal,
-        goalAmount: double.tryParse(_goalAmountController.text) ?? 0,
+        goalAmount: CurrencyHelper.parseAmount(_goalAmountController.text) ?? 0,
         isFromQuickEntry: widget.isFromQuickEntry,
       );
     } catch (e) {
@@ -234,11 +259,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           : context.watch<AppLocaleController>().text('new_movement'),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             left: AppSpacing.lg,
             right: AppSpacing.lg,
             top: AppSpacing.lg,
-            bottom: AppSpacing.lg,
+            bottom: AppSpacing.xxl,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -288,9 +313,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 height: 85,
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [CurrencyInputFormatter()],
                 textInputAction: TextInputAction.done,
                 onSubmitted: _saveMovement,
-                onEditingComplete: _saveMovement,
                 label: '',
                 style: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 42,

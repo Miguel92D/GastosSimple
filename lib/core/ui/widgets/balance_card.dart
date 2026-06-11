@@ -2,6 +2,7 @@
 /// Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
 /// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
 library;
+
 import 'package:flutter/material.dart';
 import '../../utils/currency_helper.dart';
 import '../../state/app_state.dart';
@@ -17,14 +18,12 @@ class BalanceCard extends StatefulWidget {
   final double balance;
   final String title;
   final String subtitle;
-  final VoidCallback? onTap;
 
   const BalanceCard({
     super.key,
     required this.balance,
     this.title = "BALANCE MENSUAL",
     this.subtitle = "Marzo 2026",
-    this.onTap,
   });
 
   @override
@@ -33,17 +32,24 @@ class BalanceCard extends StatefulWidget {
 
 class _BalanceCardState extends State<BalanceCard>
     with SingleTickerProviderStateMixin {
+  static const Duration _waveDuration = Duration(seconds: 8);
+
   late AnimationController _waveController;
 
   @override
   void initState() {
     super.initState();
-    _waveController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    )..repeat();
+    _waveController = AnimationController(vsync: this, duration: _waveDuration);
+    _waveController.value = _currentWavePhase();
+    _waveController.repeat();
     // Listen to AppState to rebuild when hideBalance changes
     AppState.instance.addListener(_onStateChange);
+  }
+
+  double _currentWavePhase() {
+    final elapsedMilliseconds =
+        DateTime.now().millisecondsSinceEpoch % _waveDuration.inMilliseconds;
+    return elapsedMilliseconds / _waveDuration.inMilliseconds;
   }
 
   void _onStateChange() {
@@ -66,124 +72,122 @@ class _BalanceCardState extends State<BalanceCard>
         ? AppColors.expenseRed
         : AppColors.softText;
 
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: GlassCard(
-        width: double.infinity,
-        borderRadius: AppRadius.xl,
-        gradientColors: AppGradients.primaryGradient.colors,
-        glowColor: AppColors.primaryPurple.withValues(alpha: 0.35),
-        padding: EdgeInsets.zero, // Padding handled by internal Padding widget
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          child: Stack(
-            children: [
-              // 1 — Animated Wave Background
-              Positioned.fill(
-                child: RepaintBoundary(
-                  child: AnimatedBuilder(
-                    animation: _waveController,
-                    builder: (context, child) {
-                      return CustomPaint(
-                        painter: _WavePainter(_waveController.value),
-                      );
-                    },
-                  ),
+    return GlassCard(
+      width: double.infinity,
+      borderRadius: AppRadius.xl,
+      gradientColors: AppGradients.primaryGradient.colors,
+      glowColor: AppColors.primaryPurple.withValues(alpha: 0.35),
+      padding: EdgeInsets.zero, // Padding handled by internal Padding widget
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        child: Stack(
+          children: [
+            // 1 — Animated Wave Background
+            Positioned.fill(
+              child: RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: _waveController,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: _WavePainter(_waveController.value),
+                    );
+                  },
                 ),
               ),
+            ),
 
-              // 2 — Balance Content
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppSpacing.xl,
-                    horizontal: AppSpacing.lg,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            widget.title.toUpperCase(),
-                            style: AppTextStyles.cardTitle.copyWith(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 12,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: AppState.instance.toggleHideBalance,
-                            child: Icon(
-                              AppState.instance.hideBalance
-                                  ? Icons.visibility_off_rounded
-                                  : Icons.visibility_rounded,
-                              size: 16,
-                              color: Colors.white.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: AppSpacing.md),
-
-                      // 2 — Main Amount (Animated)
-                      TweenAnimationBuilder<double>(
-                        tween: Tween<double>(end: widget.balance),
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, animatedValue, child) {
-                          final String formattedValue =
-                              AppState.instance.hideBalance
-                              ? "••••••"
-                              : CurrencyHelper.format(animatedValue, context);
-
-                          return AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            style: AppTextStyles.balanceAmount.copyWith(
-                              color: targetColor,
-                              fontSize: 42,
-                            ),
-                            child: Text(
-                              formattedValue,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // 3 — Month Label (Pill style)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                          vertical: AppSpacing.sm,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(AppRadius.lg),
-                        ),
-                        child: Text(
-                          widget.subtitle,
-                          style: AppTextStyles.subtitle.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
+            // 2 — Balance Content
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSpacing.xl,
+                  horizontal: AppSpacing.lg,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.title.toUpperCase(),
+                          style: AppTextStyles.cardTitle.copyWith(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 12,
+                            letterSpacing: 1.2,
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: AppState.instance.toggleHideBalance,
+                          child: Icon(
+                            AppState.instance.hideBalance
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                            size: 16,
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // 2 — Main Amount (Animated)
+                    TweenAnimationBuilder<double>(
+                      tween: Tween<double>(end: widget.balance),
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, animatedValue, child) {
+                        final String formattedValue =
+                            AppState.instance.hideBalance
+                            ? "••••••"
+                            : CurrencyHelper.format(animatedValue, context);
+
+                        return AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          style: AppTextStyles.balanceAmount.copyWith(
+                            color: targetColor,
+                            fontSize: 42,
+                          ),
+                          child: Text(
+                            formattedValue,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // 3 — Month Label (Pill style)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                        vertical: AppSpacing.sm,
                       ),
-                    ],
-                  ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: Text(
+                        widget.subtitle,
+                        style: AppTextStyles.subtitle.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

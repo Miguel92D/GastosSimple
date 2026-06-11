@@ -1,5 +1,8 @@
 // lib/models/transaction.dart
 class Transaction {
+  static const String typeIncome = 'ingreso';
+  static const String typeExpense = 'gasto';
+
   final int? id;
   final double amount;
   final String category;
@@ -24,12 +27,26 @@ class Transaction {
     this.goalAmount,
   });
 
+  static String normalizeType(String? value) {
+    final normalized = (value ?? '').trim().toLowerCase();
+    if (normalized == typeIncome || normalized == 'income') {
+      return typeIncome;
+    }
+    if (normalized == typeExpense || normalized == 'expense') {
+      return typeExpense;
+    }
+    return typeExpense;
+  }
+
+  bool get isIncome => normalizeType(type) == typeIncome;
+  bool get isExpense => normalizeType(type) == typeExpense;
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'amount': amount,
       'category': category,
-      'type': type,
+      'type': normalizeType(type),
       'date': date.toIso8601String(),
       'is_secret': isSecret,
       'note': note,
@@ -55,7 +72,7 @@ class Transaction {
       id: id ?? this.id,
       amount: amount ?? this.amount,
       category: category ?? this.category,
-      type: type ?? this.type,
+      type: normalizeType(type ?? this.type),
       date: date ?? this.date,
       isSecret: isSecret ?? this.isSecret,
       note: note ?? this.note,
@@ -70,7 +87,7 @@ class Transaction {
       id: map['id'],
       amount: (map['amount'] ?? map['monto'] ?? 0.0).toDouble(),
       category: map['category'] ?? map['categoria'] ?? 'Otros',
-      type: map['type'] ?? map['tipo'] ?? 'expense',
+      type: normalizeType(map['type'] ?? map['tipo']),
       date: DateTime.parse(map['date'] ?? map['fecha']),
       isSecret: map['is_secret'] ?? map['archived'] ?? 0,
       note: map['note'] ?? map['nota'],

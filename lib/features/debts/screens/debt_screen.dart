@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import '../models/debt.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../../../core/utils/currency_helper.dart';
+import '../../../core/utils/currency_input_formatter.dart';
 import '../controllers/debt_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../core/ui/app_button.dart';
 import '../../../core/flow/app_guard.dart';
 
 class DebtScreen extends StatefulWidget {
@@ -65,22 +68,31 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
 
+  String _formatDateShort(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '';
+    final parts = dateStr.split('/');
+    if (parts.length == 3 && parts[2].length == 4) {
+      return '${parts[0].padLeft(2, '0')}/${parts[1].padLeft(2, '0')}/${parts[2].substring(2)}';
+    }
+    return dateStr;
+  }
+
   void _showDebtForm({Debt? debt}) {
     final nombreController = TextEditingController(text: debt?.nombre);
     final montoTotalController = TextEditingController(
-      text: debt != null ? debt.montoTotal.toInt().toString() : '',
+      text: debt != null ? CurrencyHelper.formatAmountForInput(debt.montoTotal) : '',
     );
     final pagoMinimoController = TextEditingController(
-      text: debt != null ? debt.pagoMinimo.toInt().toString() : '',
+      text: debt != null ? CurrencyHelper.formatAmountForInput(debt.pagoMinimo) : '',
     );
     final tasaInteresController = TextEditingController(
       text: debt?.tasaInteres != null ? debt!.tasaInteres!.toString() : '',
     );
     final fechaVencimientoController = TextEditingController(
-      text: debt?.fechaVencimiento ?? '',
+      text: _formatDateShort(debt?.fechaVencimiento),
     );
     final diaCierreController = TextEditingController(
-      text: debt?.diaCierre?.toString() ?? '',
+      text: _formatDateShort(debt?.diaCierre),
     );
     final cuotasTotalesController = TextEditingController(
       text: debt?.cuotasTotales?.toString() ?? '',
@@ -103,102 +115,104 @@ class _DebtScreenState extends State<DebtScreen> {
               color: AppColors.darkBackground,
               borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    debt == null ? innerL10n.text('new_debt') : innerL10n.text('edit_debt'),
-                    style: AppTextStyles.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w900),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  _buildField(innerL10n.text('debt_name_label'), nombreController, icon: Icons.badge_rounded),
-                  _buildField(innerL10n.text('total_amount'), montoTotalController, keyboard: TextInputType.number, icon: Icons.account_balance_wallet_rounded),
-                  _buildField(innerL10n.text('min_payment'), pagoMinimoController, keyboard: TextInputType.number, icon: Icons.payment_rounded),
-                  Row(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  24,
+                  24,
+                  24,
+                  32, // Margen generoso
+                ),
+                child: SingleChildScrollView(
+                  clipBehavior: Clip.none,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: _buildField(innerL10n.text('interest_rate_optional'), tasaInteresController, keyboard: TextInputType.number, icon: Icons.percent_rounded),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildField(
-                          innerL10n.text('due_day_label'),
-                          fechaVencimientoController,
-                          keyboard: TextInputType.number,
-                          icon: Icons.calendar_today_rounded,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildField(
-                          innerL10n.text('installments_label'),
-                          cuotasTotalesController,
-                          keyboard: TextInputType.number,
-                          icon: Icons.reorder_rounded,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildField(
-                          innerL10n.text('card_closing_label'),
-                          diaCierreController,
-                          keyboard: TextInputType.number,
-                          icon: Icons.calendar_today_rounded,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: () => _saveDebt(
-                            debt,
-                            nombreController,
-                            montoTotalController,
-                            pagoMinimoController,
-                            tasaInteresController,
-                            fechaVencimientoController,
-                            diaCierreController,
-                            cuotasTotalesController,
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      Text(
+                        debt == null ? innerL10n.text('new_debt') : innerL10n.text('edit_debt'),
+                        style: AppTextStyles.titleLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w900),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      _buildField(innerL10n.text('debt_name_label'), nombreController, icon: Icons.badge_rounded),
+                      _buildField(innerL10n.text('total_amount'), montoTotalController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.account_balance_wallet_rounded, inputFormatters: [CurrencyInputFormatter()]),
+                      _buildField(innerL10n.text('min_payment'), pagoMinimoController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.payment_rounded, inputFormatters: [CurrencyInputFormatter()]),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildField(innerL10n.text('interest_rate_optional'), tasaInteresController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.percent_rounded, fontSize: 14),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildField(
+                              innerL10n.text('due_day_label'),
+                              fechaVencimientoController,
+                              keyboard: TextInputType.none,
+                              icon: Icons.calendar_today_rounded,
+                              readOnly: true,
+                              onTap: () => _selectDate(context, fechaVencimientoController),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildField(
+                              innerL10n.text('installments_label'),
+                              cuotasTotalesController,
+                              keyboard: TextInputType.number,
+                              icon: Icons.reorder_rounded,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildField(
+                              innerL10n.text('card_closing_label'),
+                              diaCierreController,
+                              keyboard: TextInputType.none,
+                              icon: Icons.calendar_today_rounded,
+                              textInputAction: TextInputAction.done,
+                              readOnly: true,
+                              onTap: () => _selectDate(context, diaCierreController),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      AppButton(
+                        onTap: () => _saveDebt(
+                          debt,
+                          nombreController,
+                          montoTotalController,
+                          pagoMinimoController,
+                          tasaInteresController,
+                          fechaVencimientoController,
+                          diaCierreController,
+                          cuotasTotalesController,
+                        ),
+                        color: AppColors.primaryPurple,
+                        label: innerL10n.text('save_debt'),
+                      ),
+                      const SizedBox(height: 32), // Mayor espacio para que el glow no se corte
                     ],
                   ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () => _saveDebt(
-                      debt,
-                      nombreController,
-                      montoTotalController,
-                      pagoMinimoController,
-                      tasaInteresController,
-                      fechaVencimientoController,
-                      diaCierreController,
-                      cuotasTotalesController,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      elevation: 5,
-                      shadowColor: AppColors.primaryPurple.withValues(alpha: 0.5),
-                    ),
-                    child: Text(innerL10n.text('save_debt'), style: AppTextStyles.buttonLabel),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ),
           ),
@@ -227,11 +241,13 @@ class _DebtScreenState extends State<DebtScreen> {
     final newDebt = Debt(
       id: debt?.id,
       nombre: nombreController.text,
-      montoTotal: double.tryParse(montoTotalController.text) ?? 0,
-      pagoMinimo: double.tryParse(pagoMinimoController.text) ?? 0,
-      tasaInteres: double.tryParse(tasaInteresController.text),
+      montoTotal: CurrencyHelper.parseAmount(montoTotalController.text) ?? 0,
+      pagoMinimo: CurrencyHelper.parseAmount(pagoMinimoController.text) ?? 0,
+      tasaInteres: tasaInteresController.text.isNotEmpty
+          ? double.tryParse(tasaInteresController.text.replaceAll(',', '.'))
+          : null,
       fechaVencimiento: fechaVencimientoController.text,
-      diaCierre: int.tryParse(diaCierreController.text),
+      diaCierre: diaCierreController.text.isEmpty ? null : diaCierreController.text,
       cuotasTotales: int.tryParse(cuotasTotalesController.text),
       cuotasPagadas: debt?.cuotasPagadas,
       montoPagado: debt?.montoPagado ?? 0,
@@ -248,11 +264,45 @@ class _DebtScreenState extends State<DebtScreen> {
     }
   }
 
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    DateTime initialDate = DateTime.now();
+    try {
+      if (controller.text.isNotEmpty) {
+        final parts = controller.text.split('/');
+        if (parts.length == 3) {
+          final day = int.parse(parts[0]);
+          final month = int.parse(parts[1]);
+          int year = int.parse(parts[2]);
+          if (year < 100) year += 2000;
+          initialDate = DateTime(year, month, day);
+        }
+      }
+    } catch (_) {
+      // Ignore errors and use current date
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      if (!context.mounted) return;
+      final yearShort = picked.year.toString().substring(2);
+      controller.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/$yearShort";
+    }
+  }
+
   Widget _buildField(String label, TextEditingController controller, {
     TextInputType keyboard = TextInputType.text,
     IconData? icon,
     TextInputAction textInputAction = TextInputAction.next,
     VoidCallback? onSubmitted,
+    VoidCallback? onTap,
+    bool readOnly = false,
+    List<TextInputFormatter>? inputFormatters,
+    double fontSize = 16,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -265,15 +315,19 @@ class _DebtScreenState extends State<DebtScreen> {
         child: TextField(
           controller: controller,
           keyboardType: keyboard,
+          inputFormatters: inputFormatters,
           textInputAction: textInputAction,
           onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
-          style: AppTextStyles.bodyMain.copyWith(fontSize: 16),
+          onTap: onTap,
+          readOnly: readOnly,
+          style: AppTextStyles.bodyMain.copyWith(fontSize: fontSize),
           decoration: InputDecoration(
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             labelText: label,
             labelStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.softText.withValues(alpha: 0.5)),
             prefixIcon: icon != null ? Icon(icon, size: 20, color: AppColors.primaryPurple.withValues(alpha: 0.6)) : null,
+            prefixIconConstraints: icon != null ? const BoxConstraints(minWidth: 40, minHeight: 40) : null,
           ),
         ),
       ),
@@ -359,7 +413,11 @@ class _DebtScreenState extends State<DebtScreen> {
                       ),
                     )
                   else
-                    ..._debts.map((debt) => _buildDebtItem(context, debt)),
+                    ..._debts.map((debt) {
+                      final unpaidDebts = _debts.where((d) => d.progress < 0.999);
+                      final isPriority = _selectedStrategy != 'none' && unpaidDebts.isNotEmpty && debt == unpaidDebts.first;
+                      return _buildDebtItem(context, debt, isPriority: isPriority);
+                    }),
                   const SizedBox(height: 24),
                   _buildStrategySection(context),
                 ],
@@ -369,7 +427,9 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   void _showPaymentModal(Debt debt) {
-    final amountController = TextEditingController();
+    final amountController = TextEditingController(
+      text: debt.remaining > 0 ? CurrencyHelper.formatAmountForInput(debt.remaining) : '',
+    );
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -380,81 +440,89 @@ class _DebtScreenState extends State<DebtScreen> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: SingleChildScrollView(
-            child: GlassCard(
-              borderRadius: 30,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      context.read<AppLocaleController>().text('payment_amount_for', {'name': debt.nombre}),
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(context.read<AppLocaleController>().text('payment_amount_hint'), style: AppTextStyles.subLabel),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                24,
+                0,
+                24,
+                32, // Margen generoso inferior para ergonomía
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 24),
+                      width: 40,
+                      height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                      ),
-                      child: TextField(
-                        controller: amountController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) async {
-                          final amount = double.tryParse(amountController.text) ?? 0;
-                          if (amount > 0) {
-                            await _controller.makePayment(debt.id!, amount);
-                            if (!context.mounted) return;
-                            Navigator.pop(context);
-                            _loadDebts();
-                          }
-                        },
-                        autofocus: true,
-                        style: AppTextStyles.bodyMain,
-                        decoration: InputDecoration(
-                          hintText: '0.00',
-                          hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
-                          border: InputBorder.none,
-                          prefixText: '${CurrencyHelper.getSymbol(context)} ',
-                          prefixStyle: AppTextStyles.bodyMain,
-                        ),
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final amount = double.tryParse(amountController.text) ?? 0;
+                  ),
+                  Text(
+                    context.read<AppLocaleController>().text('payment_amount_for', {'name': debt.nombre}),
+                    style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(context.read<AppLocaleController>().text('payment_amount_hint'), style: AppTextStyles.subLabel),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    child: TextField(
+                      controller: amountController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [CurrencyInputFormatter()],
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) async {
+                        final amount = CurrencyHelper.parseAmount(amountController.text) ?? 0;
                         if (amount > 0) {
-                          final success = await AppGuard.runWithFeedback(
-                            context,
-                            () => _controller.makePayment(debt.id!, amount),
-                          );
+                          await _controller.makePayment(debt.id!, amount);
                           if (!context.mounted) return;
-                          if (success) {
-                            Navigator.pop(context);
-                            _loadDebts();
-                          }
+                          Navigator.pop(context);
+                          _loadDebts();
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryPurple,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                      autofocus: true,
+                      style: AppTextStyles.bodyMain,
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+                        border: InputBorder.none,
+                        prefixText: '${CurrencyHelper.getSymbol(context)} ',
+                        prefixStyle: AppTextStyles.bodyMain,
                       ),
-                      child: Text(context.read<AppLocaleController>().text('confirm_payment'), style: AppTextStyles.buttonLabel),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 32),
+                  AppButton(
+                    onTap: () async {
+                      final amount = CurrencyHelper.parseAmount(amountController.text) ?? 0;
+                      if (amount > 0) {
+                        final success = await AppGuard.runWithFeedback(
+                          context,
+                          () => _controller.makePayment(debt.id!, amount),
+                        );
+                        if (!context.mounted) return;
+                        if (success) {
+                          Navigator.pop(context);
+                          _loadDebts();
+                        }
+                      }
+                    },
+                    color: AppColors.primaryPurple,
+                    label: context.read<AppLocaleController>().text('confirm_payment'),
+                  ),
+                ],
               ),
             ),
           ),
@@ -525,7 +593,7 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  Widget _buildDebtItem(BuildContext context, Debt debt) {
+  Widget _buildDebtItem(BuildContext context, Debt debt, {bool isPriority = false}) {
     final bool isPaid = debt.progress >= 0.999;
 
     return Padding(
@@ -533,8 +601,9 @@ class _DebtScreenState extends State<DebtScreen> {
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         borderRadius: 24,
-        glowColor: isPaid ? AppColors.incomeGreen : null,
-        border: isPaid ? Border.all(color: AppColors.incomeGreen.withValues(alpha: 0.4), width: 1.5) : null,
+        border: isPaid
+            ? Border.all(color: AppColors.incomeGreen.withValues(alpha: 0.3), width: 1.0)
+            : (isPriority ? Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 1.5) : null),
         child: Column(
           children: [
             Row(
@@ -543,20 +612,28 @@ class _DebtScreenState extends State<DebtScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.15) : AppColors.glassSurface,
+                    color: isPaid
+                        ? AppColors.incomeGreen.withValues(alpha: 0.15)
+                        : (isPriority ? AppColors.primaryPurple.withValues(alpha: 0.15) : AppColors.glassSurface),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.4) : AppColors.cardBorder,
+                      color: isPaid
+                          ? AppColors.incomeGreen.withValues(alpha: 0.4)
+                          : (isPriority ? AppColors.primaryPurple.withValues(alpha: 0.5) : AppColors.cardBorder),
                     ),
                   ),
                   child: Center(
                     child: Icon(
                       isPaid
                           ? Icons.check_circle_rounded
-                          : (debt.nombre.toLowerCase().contains('bbva')
-                              ? Icons.account_balance_rounded
-                              : Icons.credit_card_rounded),
-                      color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
+                          : (isPriority && _selectedStrategy == 'avalanche'
+                              ? Icons.flash_on_rounded
+                              : (isPriority && _selectedStrategy == 'snowball'
+                                  ? Icons.ac_unit_rounded
+                                  : (debt.nombre.toLowerCase().contains('bbva')
+                                      ? Icons.account_balance_rounded
+                                      : Icons.credit_card_rounded))),
+                      color: isPaid ? AppColors.incomeGreen : (isPriority ? AppColors.primaryPurple : AppColors.textPrimary),
                       size: isPaid ? 24 : 20,
                     ),
                   ),
@@ -597,6 +674,35 @@ class _DebtScreenState extends State<DebtScreen> {
                                 ),
                               ),
                             ),
+                          ] else if (isPriority) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryPurple.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.5)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _selectedStrategy == 'avalanche' ? Icons.flash_on_rounded : Icons.ac_unit_rounded,
+                                    color: AppColors.primaryPurple,
+                                    size: 10
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    context.read<AppLocaleController>().text('priority_label'), // Defaults to "Priority" in unknown locales
+                                    style: const TextStyle(
+                                      color: AppColors.primaryPurple,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ],
                       ),
@@ -604,32 +710,39 @@ class _DebtScreenState extends State<DebtScreen> {
                       _buildCustomProgressBar(debt.progress, debt.nombre),
                       if (debt.diaCierre != null || debt.cuotasTotales != null) ...[
                         const SizedBox(height: 8),
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (debt.diaCierre != null)
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.softText),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      context.read<AppLocaleController>().text('cierre_dia') + _formatDateShort(debt.diaCierre),
+                                      style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            if (debt.cuotasTotales != null)
                               Padding(
-                                padding: const EdgeInsets.only(right: 12),
+                                padding: EdgeInsets.only(top: debt.diaCierre != null ? 4.0 : 0.0),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.softText),
+                                    const Icon(Icons.reorder_rounded, size: 12, color: AppColors.softText),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      context.read<AppLocaleController>().text('cierre_dia') + debt.diaCierre.toString(),
-                                      style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
+                                    Expanded(
+                                      child: Text(
+                                        "${context.read<AppLocaleController>().text('installments_label')}: ${debt.cuotasTotales}",
+                                        style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            if (debt.cuotasTotales != null)
-                              Row(
-                                children: [
-                                  const Icon(Icons.reorder_rounded, size: 12, color: AppColors.softText),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "${context.read<AppLocaleController>().text('installments_label')}: ${debt.cuotasTotales}",
-                                    style: AppTextStyles.bodySmall.copyWith(fontSize: 11, color: AppColors.softText),
-                                  ),
-                                ],
                               ),
                           ],
                         ),

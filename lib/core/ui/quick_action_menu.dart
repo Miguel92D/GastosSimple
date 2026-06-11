@@ -15,7 +15,7 @@ class QuickActionMenu {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.darkBackground,
-      barrierColor: Colors.black.withOpacity(0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
@@ -50,7 +50,10 @@ class QuickActionMenu {
                     Icons.flash_on_rounded,
                     color: AppColors.orange,
                   ),
-                  title: Text(l10n.text('quick_entry_title'), style: AppTextStyles.bodyMain),
+                  title: Text(
+                    l10n.text('quick_entry_title'),
+                    style: AppTextStyles.bodyMain,
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     GeneralFlowService.openEntry();
@@ -61,7 +64,10 @@ class QuickActionMenu {
                     Icons.arrow_upward_rounded,
                     color: AppColors.incomeGreen,
                   ),
-                  title: Text(l10n.text('add_income_label'), style: AppTextStyles.bodyMain),
+                  title: Text(
+                    l10n.text('add_income_label'),
+                    style: AppTextStyles.bodyMain,
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addIncome);
@@ -72,7 +78,10 @@ class QuickActionMenu {
                     Icons.arrow_downward_rounded,
                     color: AppColors.expenseRed,
                   ),
-                  title: Text(l10n.text('add_expense_label'), style: AppTextStyles.bodyMain),
+                  title: Text(
+                    l10n.text('add_expense_label'),
+                    style: AppTextStyles.bodyMain,
+                  ),
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.addExpense);
@@ -92,7 +101,10 @@ class QuickActionMenu {
                 ),
                 onTap: () {
                   GeneralFlowService.goBack();
-                  ActionController.openQuickEntryVault(context);
+                  ActionController.openQuickEntryVault(
+                    context,
+                    type: isVault ? 'income' : null,
+                  );
                 },
               ),
               if (isVault)
@@ -107,10 +119,13 @@ class QuickActionMenu {
                   ),
                   onTap: () {
                     GeneralFlowService.goBack();
-                    ActionController.openQuickEntryVault(context);
+                    ActionController.openQuickEntryVault(
+                      context,
+                      type: 'expense',
+                    );
                   },
                 ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 36), // Aumentado para ergonomía
             ],
           ),
         );

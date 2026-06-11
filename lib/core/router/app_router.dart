@@ -58,6 +58,7 @@ class AppRouter {
             isFromQuickEntry: args['isFromQuickEntry'] ?? false,
             type: args['initialTipo'] ?? args['type'],
             isVault: isVault,
+            initialCategory: args['category'],
           ),
         );
 

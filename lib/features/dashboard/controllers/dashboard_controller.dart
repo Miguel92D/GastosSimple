@@ -1,27 +1,34 @@
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../transactions/models/transaction.dart';
+import '../../../services/monthly_finance_service.dart';
 
 class DashboardController {
-  Future<List<Transaction>> loadMovements(bool isVault) async {
+  Future<List<Transaction>> loadMovements(
+    bool isVault, {
+    DateTime? month,
+  }) async {
+    if (month != null) {
+      return await TransactionController.getTransactionsInMonth(
+        month: month,
+        isVault: isVault,
+      );
+    }
+
     return isVault
         ? await TransactionController.getVaultHistory()
         : await TransactionController.getNormalHistory();
   }
 
   double calculateIncome(List<Transaction> movimientos) {
-    return movimientos
-        .where((m) => m.type == "ingreso")
-        .fold(0.0, (sum, m) => sum + m.amount);
+    return MonthlyFinanceService.calculateIncome(movimientos);
   }
 
   double calculateExpenses(List<Transaction> movimientos) {
-    return movimientos
-        .where((m) => m.type == "gasto")
-        .fold(0.0, (sum, m) => sum + m.amount);
+    return MonthlyFinanceService.calculateExpenses(movimientos);
   }
 
   double calculateBalance(List<Transaction> movimientos) {
-    return calculateIncome(movimientos) - calculateExpenses(movimientos);
+    return MonthlyFinanceService.calculateBalance(movimientos);
   }
 
   Future<double> getIncome(bool isVault) async {

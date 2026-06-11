@@ -98,7 +98,7 @@ class TransactionHistoryList extends StatelessWidget {
                 ),
                 onTap: () => GeneralFlowService.goBack(),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32), // Aumentado para ergonomía
             ],
           ),
         );

@@ -26,12 +26,25 @@ class _PinScreenState extends State<PinScreen> {
   bool _isConfirming = false;
   bool _isLoading = false;
 
+  bool get _isAppLockPrompt => !widget.isSetup && !widget.isVault;
+
   @override
   void initState() {
     super.initState();
+    if (_isAppLockPrompt) {
+      SecurityService.instance.setPinPromptVisible(true);
+    }
     if (!widget.isSetup) {
       _tryBiometric();
     }
+  }
+
+  @override
+  void dispose() {
+    if (_isAppLockPrompt) {
+      SecurityService.instance.setPinPromptVisible(false);
+    }
+    super.dispose();
   }
 
   Future<void> _tryBiometric() async {

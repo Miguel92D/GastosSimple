@@ -17,10 +17,20 @@ class SecurityService extends ChangeNotifier {
   String? _pin;
   String? _vaultPin;
   bool _isInitialized = false;
+  bool _isPinPromptVisible = false;
   final Completer<void> _initCompleter = Completer<void>();
 
   Future<void> get initialized => _initCompleter.future;
   bool get isInitialized => _isInitialized;
+
+  /// Indica si una pantalla de PIN de la app está visible ahora mismo.
+  /// Estado transitorio (no se persiste); evita apilar pantallas de PIN
+  /// cuando la app vuelve del background varias veces seguidas.
+  bool get isPinPromptVisible => _isPinPromptVisible;
+
+  void setPinPromptVisible(bool value) {
+    _isPinPromptVisible = value;
+  }
 
   SecurityService._init() {
     _loadSecuritySettings();

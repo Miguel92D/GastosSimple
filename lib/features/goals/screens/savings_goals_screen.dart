@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/controllers/savings_goal_controller.dart';
 import '../../../core/i18n/app_locale_controller.dart';
+import '../../../core/ui/app_button.dart';
 import '../models/goal.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_gradients.dart';
@@ -11,6 +13,7 @@ import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
+import '../../../core/utils/currency_input_formatter.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 
@@ -35,7 +38,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       builder: (context) => _CreateGoalModal(
         goal: goal,
         onSave: (newGoal) {
@@ -87,15 +90,17 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                   activeGoals: _controller.activeGoalsCount,
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                ..._controller.goals.map((goal) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: _GoalItemCard(
-                        goal: goal,
-                        onEdit: () => _showCreateGoalModal(goal),
-                        onDelete: () => _controller.deleteGoal(goal.id!),
-                        onAddMoney: () => _showAddMoneyModal(goal),
-                      ),
-                    )),
+                ..._controller.goals.map(
+                  (goal) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: _GoalItemCard(
+                      goal: goal,
+                      onEdit: () => _showCreateGoalModal(goal),
+                      onDelete: () => _controller.deleteGoal(goal.id!),
+                      onAddMoney: () => _showAddMoneyModal(goal),
+                    ),
+                  ),
+                ),
                 if (_controller.goals.isEmpty)
                   Center(
                     child: Padding(
@@ -123,7 +128,10 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
       borderRadius: 18,
       padding: EdgeInsets.zero,
       glowColor: AppColors.primaryPurple.withValues(alpha: 0.3),
-      border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 2.0),
+      border: Border.all(
+        color: AppColors.primaryPurple.withValues(alpha: 0.4),
+        width: 2.0,
+      ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -146,10 +154,7 @@ class _SummaryCard extends StatelessWidget {
   final double totalSaved;
   final int activeGoals;
 
-  const _SummaryCard({
-    required this.totalSaved,
-    required this.activeGoals,
-  });
+  const _SummaryCard({required this.totalSaved, required this.activeGoals});
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +165,10 @@ class _SummaryCard extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              Provider.of<AppLocaleController>(context, listen: false).text('total_savings'),
+              Provider.of<AppLocaleController>(
+                context,
+                listen: false,
+              ).text('total_savings'),
               style: AppTextStyles.subLabel,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -173,9 +181,7 @@ class _SummaryCard extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     CurrencyHelper.format(value, context),
-                    style: AppTextStyles.incomeValue.copyWith(
-                      fontSize: 36,
-                    ),
+                    style: AppTextStyles.incomeValue.copyWith(fontSize: 36),
                     maxLines: 1,
                   ),
                 );
@@ -183,7 +189,10 @@ class _SummaryCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              Provider.of<AppLocaleController>(context, listen: false).text('active_goals', {'count': activeGoals.toString()}),
+              Provider.of<AppLocaleController>(
+                context,
+                listen: false,
+              ).text('active_goals', {'count': activeGoals.toString()}),
               style: AppTextStyles.bodySmall,
             ),
           ],
@@ -208,9 +217,10 @@ class _GoalItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (goal.currentAmount / goal.targetAmount).clamp(0.0, 1.0);
+    final l10n = Provider.of<AppLocaleController>(context, listen: false);
+    final progress = goal.progress;
     final percentage = (progress * 100).toInt();
-    final dateFormat = DateFormat('MMM yyyy');
+    final dateFormat = DateFormat('MMM yyyy', l10n.locale);
 
     return GlassCard(
       borderRadius: AppRadius.lg,
@@ -224,10 +234,7 @@ class _GoalItemCard extends StatelessWidget {
                 Text(goal.icon, style: const TextStyle(fontSize: 24)),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: Text(
-                    goal.name,
-                    style: AppTextStyles.cardTitle,
-                  ),
+                  child: Text(goal.name, style: AppTextStyles.cardTitle),
                 ),
               ],
             ),
@@ -239,7 +246,9 @@ class _GoalItemCard extends StatelessWidget {
               builder: (context, value, _) {
                 return Text(
                   '${CurrencyHelper.format(value, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
-                  style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w700),
+                  style: AppTextStyles.bodyMain.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 );
@@ -294,9 +303,15 @@ class _GoalItemCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(Provider.of<AppLocaleController>(context, listen: false).text('need_to_save'), style: AppTextStyles.subLabel),
                       Text(
-                        '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / mes',
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('need_to_save'),
+                        style: AppTextStyles.subLabel,
+                      ),
+                      Text(
+                        '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / ${l10n.text('per_month')}',
                         style: AppTextStyles.bodyMain.copyWith(
                           color: AppColors.incomeGreen,
                           fontWeight: FontWeight.bold,
@@ -311,7 +326,7 @@ class _GoalItemCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Meta estimada: ${dateFormat.format(goal.targetDate)}',
+              '${l10n.text('estimated_date')}: ${dateFormat.format(goal.targetDate)}',
               style: AppTextStyles.bodySmall,
             ),
             const Divider(color: Colors.white10, height: AppSpacing.lg),
@@ -358,9 +373,7 @@ class _GoalItemCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
-        child: Center(
-          child: Icon(icon, size: 18, color: color),
-        ),
+        child: Center(child: Icon(icon, size: 18, color: color)),
       ),
     );
   }
@@ -382,15 +395,31 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
   late DateTime _targetDate;
   late String _selectedIcon;
 
-  final List<String> _icons = ['🚗', '🏠', '✈️', '🎮', '💻', '💍', '🎓', '🏖️', '💰'];
+  final List<String> _icons = [
+    '🚗',
+    '🏠',
+    '✈️',
+    '🎮',
+    '💻',
+    '💍',
+    '🎓',
+    '🏖️',
+    '💰',
+  ];
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.goal?.name ?? '');
-    _amountController = TextEditingController(
-        text: widget.goal?.targetAmount.toString() ?? '');
-    _targetDate = widget.goal?.targetDate ?? DateTime.now().add(const Duration(days: 365));
+
+    final initialAmount = widget.goal?.targetAmount ?? 0;
+    final initialAmountText = initialAmount == 0
+        ? ''
+        : CurrencyHelper.formatAmountForInput(initialAmount);
+    _amountController = TextEditingController(text: initialAmountText);
+    _targetDate =
+        widget.goal?.targetDate ??
+        DateTime.now().add(const Duration(days: 365));
     _selectedIcon = widget.goal?.icon ?? '🚗';
   }
 
@@ -414,148 +443,217 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                 Colors.white.withValues(alpha: 0.1),
                 Colors.white.withValues(alpha: 0.05),
               ],
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      widget.goal == null 
-                        ? Provider.of<AppLocaleController>(context, listen: false).text('new_goal')
-                        : Provider.of<AppLocaleController>(context, listen: false).text('edit_goal'),
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('goal_name_label')),
-                    const SizedBox(height: AppSpacing.sm),
-                    _buildGlassInput(
-                      controller: _nameController,
-                      hintText: Provider.of<AppLocaleController>(context, listen: false).text('goal_name_hint'),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('target_label')),
-                    const SizedBox(height: AppSpacing.sm),
-                    _buildGlassInput(
-                      controller: _amountController,
-                      hintText: '0.00',
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      prefix: Text('${CurrencyHelper.getSymbol(context)} ',
-                          style: AppTextStyles.bodyMain),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('estimated_date')),
-                    const SizedBox(height: AppSpacing.sm),
-                    InkWell(
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _targetDate,
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 3650)),
-                        );
-                        if (picked != null) {
-                          setState(() => _targetDate = picked);
-                        }
-                      },
-                      child: _buildGlassInputContainer(
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today_rounded,
-                                color: AppColors.softText, size: 20),
-                            const SizedBox(width: AppSpacing.md),
-                            Text(DateFormat('dd/MM/yyyy').format(_targetDate),
-                                style: AppTextStyles.bodyMain),
-                          ],
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    MediaQuery.of(context).padding.bottom + AppSpacing.lg,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        widget.goal == null
+                            ? Provider.of<AppLocaleController>(
+                                context,
+                                listen: false,
+                              ).text('new_goal')
+                            : Provider.of<AppLocaleController>(
+                                context,
+                                listen: false,
+                              ).text('edit_goal'),
+                        style: AppTextStyles.cardTitle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      _buildFieldLabel(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('goal_name_label'),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      _buildGlassInput(
+                        controller: _nameController,
+                        hintText: Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('goal_name_hint'),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _buildFieldLabel(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('target_label'),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      _buildGlassInput(
+                        controller: _amountController,
+                        hintText: '0.00',
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [CurrencyInputFormatter()],
+                        prefix: Text(
+                          '${CurrencyHelper.getSymbol(context)} ',
+                          style: AppTextStyles.bodyMain,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _buildFieldLabel(Provider.of<AppLocaleController>(context, listen: false).text('icon_label')),
-                    const SizedBox(height: AppSpacing.sm),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _icons.length,
-                        itemBuilder: (context, index) {
-                          final isSelected = _selectedIcon == _icons[index];
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedIcon = _icons[index]),
-                            child: Container(
-                              margin: const EdgeInsets.only(right: AppSpacing.sm),
-                              padding: const EdgeInsets.all(AppSpacing.sm),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.primaryPurple.withValues(alpha: 0.2)
-                                    : Colors.white.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(AppRadius.md),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? AppColors.primaryPurple
-                                      : Colors.transparent,
-                                ),
-                              ),
-                              child: Text(_icons[index],
-                                  style: const TextStyle(fontSize: 24)),
+                      const SizedBox(height: AppSpacing.md),
+                      _buildFieldLabel(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('estimated_date'),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      InkWell(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _targetDate,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 3650),
                             ),
                           );
+                          if (picked != null) {
+                            setState(() => _targetDate = picked);
+                          }
                         },
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    ElevatedButton(
-                      onPressed: () {
-                        final name = _nameController.text.trim();
-                        String amountText = _amountController.text
-                            .replaceAll(' ', '')
-                            .replaceAll('.', '')
-                            .replaceAll(',', '.');
-                        
-                        double? amount = double.tryParse(amountText);
-                        amount ??= double.tryParse(_amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
-                        
-                        if (name.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(Provider.of<AppLocaleController>(context, listen: false).text('goal_name_required'))),
-                          );
-                          return;
-                        }
-                        
-                        if (amount == null || amount <= 0) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(Provider.of<AppLocaleController>(context, listen: false).text('goal_amount_required'))),
-                          );
-                          return;
-                        }
-
-                        widget.onSave(Goal(
-                          id: widget.goal?.id,
-                          name: name,
-                          targetAmount: amount,
-                          currentAmount: widget.goal?.currentAmount ?? 0,
-                          targetDate: _targetDate,
-                          icon: _selectedIcon,
-                          createdAt: widget.goal?.createdAt ?? DateTime.now(),
-                        ));
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryPurple,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        child: _buildGlassInputContainer(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_today_rounded,
+                                color: AppColors.softText,
+                                size: 20,
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              Text(
+                                DateFormat('dd/MM/yyyy').format(_targetDate),
+                                style: AppTextStyles.bodyMain,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Text(
-                        widget.goal == null 
-                          ? Provider.of<AppLocaleController>(context, listen: false).text('create_goal_button')
-                          : Provider.of<AppLocaleController>(context, listen: false).text('save_changes'),
-                        style: AppTextStyles.buttonLabel,
+                      const SizedBox(height: AppSpacing.md),
+                      _buildFieldLabel(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('icon_label'),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: AppSpacing.sm),
+                      SizedBox(
+                        height: 50,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _icons.length,
+                          itemBuilder: (context, index) {
+                            final isSelected = _selectedIcon == _icons[index];
+                            return GestureDetector(
+                              onTap: () =>
+                                  setState(() => _selectedIcon = _icons[index]),
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  right: AppSpacing.sm,
+                                ),
+                                padding: const EdgeInsets.all(AppSpacing.sm),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primaryPurple.withValues(
+                                          alpha: 0.2,
+                                        )
+                                      : Colors.white.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.md,
+                                  ),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.primaryPurple
+                                        : Colors.transparent,
+                                  ),
+                                ),
+                                child: Text(
+                                  _icons[index],
+                                  style: const TextStyle(fontSize: 24),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      AppButton(
+                        onTap: () {
+                          final name = _nameController.text.trim();
+                          double amount =
+                              CurrencyHelper.parseAmount(
+                                _amountController.text,
+                              ) ??
+                              0.0;
+
+                          if (name.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  Provider.of<AppLocaleController>(
+                                    context,
+                                    listen: false,
+                                  ).text('goal_name_required'),
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
+                          if (amount <= 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  Provider.of<AppLocaleController>(
+                                    context,
+                                    listen: false,
+                                  ).text('goal_amount_required'),
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
+                          widget.onSave(
+                            Goal(
+                              id: widget.goal?.id,
+                              name: name,
+                              targetAmount: amount,
+                              currentAmount: widget.goal?.currentAmount ?? 0,
+                              targetDate: _targetDate,
+                              icon: _selectedIcon,
+                              createdAt:
+                                  widget.goal?.createdAt ?? DateTime.now(),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        },
+                        color: AppColors.primaryPurple,
+                        label: widget.goal == null
+                            ? Provider.of<AppLocaleController>(
+                                context,
+                                listen: false,
+                              ).text('create_goal_button')
+                            : Provider.of<AppLocaleController>(
+                                context,
+                                listen: false,
+                              ).text('save_changes'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -576,6 +674,7 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
     Widget? prefix,
     VoidCallback? onSubmitted,
     TextInputAction? textInputAction,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return _buildGlassInputContainer(
       child: TextField(
@@ -583,11 +682,13 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
         keyboardType: keyboardType,
         textInputAction: textInputAction ?? TextInputAction.done,
         onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
+        inputFormatters: inputFormatters,
         style: AppTextStyles.bodyMain,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle:
-              AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+          hintStyle: AppTextStyles.bodySmall.copyWith(
+            color: AppColors.textMuted,
+          ),
           border: InputBorder.none,
           prefixIcon: prefix != null
               ? Padding(
@@ -595,7 +696,10 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                   child: prefix,
                 )
               : null,
-          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 0,
+            minHeight: 0,
+          ),
         ),
       ),
     );
@@ -604,7 +708,9 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
   Widget _buildGlassInputContainer({required Widget child}) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -629,6 +735,12 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
   final _amountController = TextEditingController();
 
   @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -648,68 +760,95 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                 Colors.white.withValues(alpha: 0.1),
                 Colors.white.withValues(alpha: 0.05),
               ],
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      Provider.of<AppLocaleController>(context, listen: false).text('add_money_to', {'name': widget.goal.name}),
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(Provider.of<AppLocaleController>(context, listen: false).text('amount_to_add'), style: AppTextStyles.subLabel),
-                    const SizedBox(height: AppSpacing.sm),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    MediaQuery.of(context).padding.bottom + AppSpacing.lg,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('add_money_to', {'name': widget.goal.name}),
+                        style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+                        textAlign: TextAlign.center,
                       ),
-                      child: TextField(
-                        controller: _amountController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (value) {
-                          final amount = double.tryParse(value) ?? 0;
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('amount_to_add'),
+                        style: AppTextStyles.subLabel,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _amountController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [CurrencyInputFormatter()],
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (value) {
+                            final amount =
+                                CurrencyHelper.parseAmount(value) ?? 0.0;
+                            if (amount > 0) {
+                              widget.onAdd(amount);
+                              Navigator.pop(context);
+                            }
+                          },
+                          autofocus: true,
+                          style: AppTextStyles.bodyMain,
+                          decoration: InputDecoration(
+                            hintText: '0.00',
+                            hintStyle: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textMuted,
+                            ),
+                            border: InputBorder.none,
+                            prefixText: '${CurrencyHelper.getSymbol(context)} ',
+                            prefixStyle: AppTextStyles.bodyMain,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      AppButton(
+                        onTap: () {
+                          final amount =
+                              CurrencyHelper.parseAmount(
+                                _amountController.text,
+                              ) ??
+                              0.0;
                           if (amount > 0) {
                             widget.onAdd(amount);
                             Navigator.pop(context);
                           }
                         },
-                        autofocus: true,
-                        style: AppTextStyles.bodyMain,
-                        decoration: InputDecoration(
-                          hintText: '0.00',
-                          hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
-                          border: InputBorder.none,
-                          prefixText: '${CurrencyHelper.getSymbol(context)} ',
-                          prefixStyle: AppTextStyles.bodyMain,
-                        ),
+                        color: AppColors.primaryPurple,
+                        label: Provider.of<AppLocaleController>(
+                          context,
+                          listen: false,
+                        ).text('add_label'),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    ElevatedButton(
-                      onPressed: () {
-                        final amount = double.tryParse(_amountController.text) ?? 0;
-                        if (amount > 0) {
-                          widget.onAdd(amount);
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryPurple,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                      ),
-                      child: Text(Provider.of<AppLocaleController>(context, listen: false).text('add_label'), style: AppTextStyles.buttonLabel),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -19,6 +19,7 @@ class ProBadge extends StatefulWidget {
 class _ProBadgeState extends State<ProBadge>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _shineAnimation;
 
   @override
   void initState() {
@@ -26,7 +27,12 @@ class _ProBadgeState extends State<ProBadge>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat();
+    );
+    _shineAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+    );
+    _controller.repeat(reverse: true);
   }
 
   @override
@@ -38,21 +44,28 @@ class _ProBadgeState extends State<ProBadge>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _shineAnimation,
       builder: (context, child) {
         return ShaderMask(
           shaderCallback: (bounds) {
+            final shineCenter = 0.24 + (_shineAnimation.value * 0.52);
+            const shineWidth = 0.22;
+
             return LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [
-                _controller.value - 0.2,
-                _controller.value,
-                _controller.value + 0.2,
+                0.0,
+                shineCenter - shineWidth,
+                shineCenter,
+                shineCenter + shineWidth,
+                1.0,
               ],
               colors: [
                 const Color(0xFFD4AF37), // Metallic Gold
+                const Color(0xFFD4AF37), // Metallic Gold
                 const Color(0xFFFFFACD).withValues(alpha: 0.9), // Shine
+                const Color(0xFFD4AF37), // Metallic Gold
                 const Color(0xFFD4AF37), // Metallic Gold
               ],
             ).createShader(bounds);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/currency_helper.dart';
+import '../../../core/utils/currency_input_formatter.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../controllers/budget_controller.dart';
 import '../../../core/ui/app_colors.dart';
@@ -54,9 +55,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   Future<void> _setBudget(String category) async {
-    final controllerText = TextEditingController(
-      text: _budgets[category] == 0 ? '' : _budgets[category].toString(),
-    );
+    final initialValue = _budgets[category] ?? 0;
+    final formatter = CurrencyInputFormatter();
+    final initialText = initialValue == 0 
+        ? '' 
+        : CurrencyHelper.formatAmountForInput(initialValue);
+          
+    final controllerText = TextEditingController(text: initialText);
+
     final result = await showDialog<String>(
       context: context,
       builder: (context) {
@@ -74,6 +80,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
             style: AppTextStyles.bodyMain,
             autofocus: true,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [formatter],
             textInputAction: TextInputAction.done,
             onSubmitted: (value) => Navigator.pop(context, value),
             decoration: InputDecoration(
@@ -120,8 +127,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
     );
 
     if (result != null) {
-      final amount = double.tryParse(result.replaceAll(',', '.'));
-      if (amount != null) {
+      final amount = CurrencyHelper.parseAmount(result) ?? 0.0;
+      if (amount >= 0 || result.isEmpty) {
         await _controller.updateLimit(category, amount);
         _loadData();
       }

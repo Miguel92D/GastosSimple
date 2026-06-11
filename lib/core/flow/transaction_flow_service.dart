@@ -18,13 +18,33 @@ class TransactionFlowService {
   }) async {
     AppModeController.instance.setVaultMode(isVault);
 
-    // Merge provided arguments with defaults
-    final Map<String, dynamic> navArgs = {'isVault': isVault, 'type': type};
+    final Map<String, dynamic> navArgs = {
+      'isVault': isVault,
+      if (type != null) 'type': _normalizeQuickEntryType(type),
+    };
     if (arguments != null) {
       navArgs.addAll(arguments);
     }
 
+    final initialTipo = navArgs['initialTipo'];
+    if (initialTipo is String) {
+      navArgs['initialTipo'] = _normalizeQuickEntryType(initialTipo);
+    }
+
+    final routeType = navArgs['type'];
+    if (routeType is String) {
+      navArgs['type'] = _normalizeQuickEntryType(routeType);
+    }
+
     await NavigationService.navigate('/add', arguments: navArgs);
+  }
+
+  String _normalizeQuickEntryType(String type) {
+    final normalized = type.toLowerCase().trim();
+    if (normalized == Transaction.typeIncome || normalized == 'income') {
+      return Transaction.typeIncome;
+    }
+    return Transaction.typeExpense;
   }
 
   Future<dynamic> openEditTransaction(

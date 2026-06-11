@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../glass_card.dart';
 import '../app_colors.dart';
 import '../app_text_styles.dart';
@@ -21,6 +22,7 @@ class GlassInput extends StatelessWidget {
   final double? height;
   final EdgeInsetsGeometry? padding;
   final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
 
   const GlassInput({
     super.key,
@@ -41,6 +43,7 @@ class GlassInput extends StatelessWidget {
     this.height,
     this.padding,
     this.textInputAction,
+    this.inputFormatters,
   });
 
   @override
@@ -56,6 +59,7 @@ class GlassInput extends StatelessWidget {
           controller: controller,
           focusNode: focusNode,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           textInputAction: textInputAction ?? TextInputAction.done,
           maxLines: maxLines,
           onChanged: onChanged,

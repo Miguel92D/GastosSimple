@@ -38,30 +38,58 @@ class PrivacyPolicyScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildSection(
               context,
-              isSpanish ? 'Almacenamiento Local' : 'Local Storage',
+              isSpanish ? 'Datos en el dispositivo' : 'On-device data',
               isSpanish
-                  ? '\$imple es una aplicación diseñada para funcionar de forma privada. Todos tus datos financieros (ingresos, gastos, metas y deudas) se almacenan exclusivamente de forma local en tu dispositivo.'
-                  : '\$imple is designed to work privately. All your financial data (income, expenses, goals and debts) are stored locally on your device.',
+                  ? '\$imple guarda tus datos financieros en tu dispositivo. Esto incluye ingresos, gastos, deudas, metas, presupuestos, categorias, notas y movimientos privados de la boveda.'
+                  : '\$imple stores your financial data on your device. This includes income, expenses, debts, goals, budgets, categories, notes, and private vault movements.',
             ),
             _buildSection(
               context,
-              isSpanish ? 'Seguridad de los Datos' : 'Data Security',
+              isSpanish ? 'Backups locales' : 'Local backups',
               isSpanish
-                  ? 'No subimos tu información a servidores externos. Tu privacidad está garantizada ya que tú eres el único dueño de tus datos. Recomendamos realizar copias de seguridad manuales periódicamente.'
-                  : 'We do not upload your information to external servers. Your privacy is guaranteed because you are the sole owner of your data. We recommend creating manual backups periodically.',
+                  ? 'La app permite exportar e importar un archivo JSON de respaldo. Ese archivo puede incluir tus datos financieros y de boveda. Cuando lo compartes o guardas, el destino que eliges queda bajo tu control.'
+                  : 'The app lets you export and import a JSON backup file. That file can include your financial and vault data. When you share or save it, the destination you choose is under your control.',
             ),
             _buildSection(
               context,
-              isSpanish ? 'Terceros' : 'Third Parties',
+              isSpanish ? 'Compras PRO' : 'PRO purchases',
               isSpanish
-                  ? 'La aplicación no comparte ningún dato personal ni financiero con terceros. No rastreamos tu comportamiento fuera de la aplicación.'
-                  : 'The application does not share any personal or financial data with third parties. We do not track your behavior outside the app.',
+                  ? 'La compra unica de PRO se procesa con Google Play Billing. La app usa el estado de compra y restauracion solo para activar o restaurar las funciones PRO.'
+                  : 'The one-time PRO purchase is processed with Google Play Billing. The app uses purchase and restore status only to activate or restore PRO features.',
+            ),
+            _buildSection(
+              context,
+              isSpanish ? 'Diagnosticos de fallos' : 'Crash diagnostics',
+              isSpanish
+                  ? 'Usamos Firebase Crashlytics para detectar fallos y mejorar la estabilidad. Crashlytics puede enviar a Firebase/Google reportes de errores, trazas, estado de la app, metadatos del dispositivo e identificadores de instalacion. No usamos Firebase Analytics.'
+                  : 'We use Firebase Crashlytics to detect crashes and improve stability. Crashlytics may send error reports, stack traces, app state, device metadata, and installation identifiers to Firebase/Google. We do not use Firebase Analytics.',
+            ),
+            _buildSection(
+              context,
+              isSpanish ? 'Seguridad local' : 'Local security',
+              isSpanish
+                  ? 'Puedes proteger la app y la boveda con PIN y biometria. Los PIN se guardan localmente mediante almacenamiento seguro. La biometria la procesa el sistema operativo; la app no recibe ni guarda plantillas biometricas.'
+                  : 'You can protect the app and vault with PIN and biometrics. PINs are stored locally using secure storage. Biometrics are handled by the operating system; the app does not receive or store biometric templates.',
+            ),
+            _buildSection(
+              context,
+              isSpanish ? 'Notificaciones' : 'Notifications',
+              isSpanish
+                  ? 'La app puede programar recordatorios locales para registrar tus movimientos. Puedes controlar los permisos de notificacion desde el sistema operativo.'
+                  : 'The app may schedule local reminders to record your movements. You can control notification permissions from the operating system.',
+            ),
+            _buildSection(
+              context,
+              isSpanish ? 'Sin cuentas ni nube' : 'No accounts or cloud sync',
+              isSpanish
+                  ? 'Esta version no ofrece cuenta, inicio de sesion, Google Sign-In, Firebase Auth, Firestore ni backup en la nube. Tus registros financieros no se suben a un servidor de \$imple.'
+                  : 'This release does not offer accounts, sign-in, Google Sign-In, Firebase Auth, Firestore, or cloud backup. Your financial records are not uploaded to a \$imple server.',
             ),
             const SizedBox(height: 32),
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  final Uri url = Uri.parse('https://miguel92d.github.io/GastosSimple/privacy.html');
+                  final Uri url = Uri.parse('https://simple-app-ar.github.io/privacy.html');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   }

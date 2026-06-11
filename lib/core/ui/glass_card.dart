@@ -20,6 +20,9 @@ class GlassCard extends StatelessWidget {
   final BoxBorder? border;
   final double borderWidth;
   final EdgeInsetsGeometry? margin;
+  final double shadowBlurRadius;
+  final Offset shadowOffset;
+  final double shadowSpreadRadius;
 
   const GlassCard({
     super.key,
@@ -33,6 +36,9 @@ class GlassCard extends StatelessWidget {
     this.border,
     this.borderWidth = 1.0,
     this.margin,
+    this.shadowBlurRadius = 30,
+    this.shadowOffset = Offset.zero,
+    this.shadowSpreadRadius = 2,
   });
 
   @override
@@ -47,9 +53,10 @@ class GlassCard extends StatelessWidget {
           boxShadow: [
             if (glowColor != null)
               BoxShadow(
-                color: glowColor!.withValues(alpha: 0.12),
-                blurRadius: 30,
-                spreadRadius: 2,
+                color: glowColor!,
+                blurRadius: shadowBlurRadius,
+                spreadRadius: shadowSpreadRadius,
+                offset: shadowOffset,
               ),
           ],
         ),

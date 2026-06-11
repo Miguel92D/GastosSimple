@@ -1,5 +1,4 @@
 import '../../../core/flow/app_guard.dart';
-import '../../../services/cloud_backup_service.dart';
 
 import '../models/transaction.dart';
 import '../repositories/transaction_repository.dart';
@@ -9,7 +8,6 @@ class TransactionController {
   static Future<void> addTransaction(Transaction mov) async {
     await TransactionRepository.insertTransaction(mov);
     TransactionNotifier.instance.refresh();
-    CloudBackupService.instance.tryAutoBackup();
   }
 
   static Future<void> addRecurringTransaction(
@@ -18,19 +16,16 @@ class TransactionController {
   ) async {
     await TransactionRepository.insertRecurringTransaction(mov, frequency);
     TransactionNotifier.instance.refresh();
-    CloudBackupService.instance.tryAutoBackup();
   }
 
   static Future<void> updateTransaction(Transaction mov) async {
     await TransactionRepository.updateTransaction(mov);
     TransactionNotifier.instance.refresh();
-    CloudBackupService.instance.tryAutoBackup();
   }
 
   static Future<void> deleteTransaction(int id) async {
     await TransactionRepository.deleteTransaction(id);
     TransactionNotifier.instance.refresh();
-    CloudBackupService.instance.tryAutoBackup();
   }
 
 

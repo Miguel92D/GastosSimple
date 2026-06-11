@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/flow/premium_flow_service.dart';
+import '../core/state/app_state.dart';
 
 class PremiumService extends ChangeNotifier {
   static final PremiumService instance = PremiumService._init();
-  final _storage = const FlutterSecureStorage();
-  bool _isPremium = true;
 
-  PremiumService._init() {
-    _loadPremiumState();
-  }
+  PremiumService._init();
 
-  bool get isPremium => _isPremium;
+  bool get isPremium => AppState.instance.isPro;
   static bool get isPro => instance.isPremium;
 
-  Future<void> _loadPremiumState() async {
-    final value = await _storage.read(key: 'is_premium');
-    _isPremium = value == 'true';
-    notifyListeners();
-  }
-
   Future<void> setPremium(bool value) async {
-    await _storage.write(key: 'is_premium', value: value.toString());
-    _isPremium = value;
+    await AppState.instance.setProEntitlement(value);
     notifyListeners();
   }
 
   static Future<bool> checkPremium(BuildContext context) async {
-    if (instance.isPremium) return true;
+    if (AppState.instance.isPro) return true;
     PremiumFlowService.showUpgradePrompt(context);
     return false;
   }

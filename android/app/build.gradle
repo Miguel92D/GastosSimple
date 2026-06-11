@@ -1,0 +1,106 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def validateReleaseSigning = {
+    if (!keystorePropertiesFile.exists()) {
+        throw new GradleException("Release signing requires android/key.properties. Copy android/key.properties.example, fill it locally, and do not commit it.")
+    }
+
+    def requiredSigningKeys = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']
+    def missingSigningKeys = requiredSigningKeys.findAll { key ->
+        !keystoreProperties[key]?.toString()?.trim()
+    }
+    if (!missingSigningKeys.isEmpty()) {
+        throw new GradleException("Release signing is missing required key.properties values: ${missingSigningKeys.join(', ')}")
+    }
+
+    def releaseStoreFile = file(keystoreProperties['storeFile'])
+    if (!releaseStoreFile.exists()) {
+        throw new GradleException("Release signing keystore not found: ${releaseStoreFile}. Check storeFile in android/key.properties.")
+    }
+}
+
+android {
+    namespace "com.migueld.gastossimple"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.migueld.gastossimple"
+        minSdkVersion flutter.minSdkVersion
+        targetSdk 36
+        versionCode 10
+        versionName "1.1.4"
+    }
+
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+flutter {
+    source "../.."
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:1.17.0"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    def releaseSigningTaskRequested = taskGraph.allTasks.any { task ->
+        def taskName = task.name.toLowerCase()
+        task.path.startsWith(':app:') && (
+            taskName == 'bundlerelease' ||
+            taskName == 'assemblerelease' ||
+            taskName == 'packagerelease' ||
+            taskName == 'signreleasebundle' ||
+            taskName == 'validatesigningrelease'
+        )
+    }
+
+    if (releaseSigningTaskRequested) {
+        validateReleaseSigning()
+    }
+}

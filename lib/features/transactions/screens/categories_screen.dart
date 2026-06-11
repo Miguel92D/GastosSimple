@@ -17,52 +17,62 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
     
+    // 'category' usa el nombre con el que se guarda en la base de datos
+    // (ver L10nHelper.getLocalizedCategory para la localización al mostrar).
     final List<Map<String, dynamic>> categories = [
       {
         'name': l10n.text('cat_food'),
-        'id': 'cat_food',
+        'category': 'Comida',
+        'action': AppAction.addExpense,
         'icon': Icons.restaurant_rounded,
         'color': AppColors.orange,
       },
       {
         'name': l10n.text('cat_transport'),
-        'id': 'cat_transport',
+        'category': 'Transporte',
+        'action': AppAction.addExpense,
         'icon': Icons.directions_bus_rounded,
         'color': AppColors.blue,
       },
       {
         'name': l10n.text('cat_leisure'),
-        'id': 'cat_leisure',
+        'category': 'Ocio',
+        'action': AppAction.addExpense,
         'icon': Icons.sports_esports_rounded,
         'color': AppColors.purple,
       },
       {
         'name': l10n.text('cat_health'),
-        'id': 'cat_health',
+        'category': 'Salud',
+        'action': AppAction.addExpense,
         'icon': Icons.local_hospital_rounded,
         'color': AppColors.expenseRed,
       },
       {
         'name': l10n.text('cat_education'),
-        'id': 'cat_education',
+        'category': 'Educación',
+        'action': AppAction.addExpense,
         'icon': Icons.school_rounded,
         'color': AppColors.indigo,
       },
       {
         'name': l10n.text('cat_salary'),
-        'id': 'cat_salary',
+        'category': 'Salario',
+        'action': AppAction.addIncome,
         'icon': Icons.payments_rounded,
         'color': AppColors.incomeGreen,
       },
       {
         'name': l10n.text('cat_investment'),
-        'id': 'cat_investment',
+        'category': 'Inversiones',
+        'action': AppAction.addIncome,
         'icon': Icons.trending_up_rounded,
         'color': AppColors.teal,
       },
       {
         'name': l10n.text('cat_gift'),
-        'id': 'cat_gift',
+        'category': 'Regalos',
+        'action': AppAction.addExpense,
         'icon': Icons.card_giftcard_rounded,
         'color': AppColors.pink,
       },
@@ -91,8 +101,8 @@ class CategoriesScreen extends StatelessWidget {
             child: InkWell(
               onTap: () => ActionController.execute(
                 context,
-                AppAction.addExpense,
-                arguments: {'category': cat['id']}, // Enviamos la llave ID para guardar en DB de forma neutra
+                cat['action'] as AppAction,
+                arguments: {'category': cat['category']},
               ),
               borderRadius: BorderRadius.circular(30),
               child: Column(

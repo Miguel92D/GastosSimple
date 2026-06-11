@@ -221,6 +221,24 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     }
   }
 
+  /// Inserta una transacción de un backup conservando su id original.
+  /// Si ya existe una fila con ese id se reemplaza, lo que hace que
+  /// restaurar el mismo backup varias veces sea idempotente (sin duplicados
+  /// ni errores de clave primaria).
+  Future<int> restoreTransaction(model.Transaction mov) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.insert(
+        'transactions',
+        mov.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e, _)  {
+      debugPrint('DB Error (restoreTransaction): $e');
+      throw DatabaseException('Operación fallida en restoreTransaction', e);
+    }
+  }
+
   Future<model.Transaction?> getTransactionById(int id) async {
     try {
       final db = await DatabaseHelper.instance.database;
@@ -304,6 +322,26 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     } catch (e, _)  {
       debugPrint('DB Error (insertGoal): $e');
       throw DatabaseException('Operación fallida en insertGoal', e);
+    }
+  }
+
+  /// Restaura una meta de un backup conservando su id (reemplaza si existe).
+  Future<int> restoreGoal(Goal goal) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final map = goal.toMap();
+      return await db.insert('goals', {
+        'id': map['id'],
+        'name': map['name'],
+        'target_amount': map['targetAmount'],
+        'saved_amount': map['currentAmount'],
+        'target_date': map['targetDate'],
+        'icon': map['icon'],
+        'created_at': map['createdAt'],
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (e, _)  {
+      debugPrint('DB Error (restoreGoal): $e');
+      throw DatabaseException('Operación fallida en restoreGoal', e);
     }
   }
 
@@ -509,10 +547,14 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<List<model.Transaction>> getTransactionsByType(String type) async {
     try {
       final db = await DatabaseHelper.instance.database;
+      final normalizedType = model.Transaction.normalizeType(type);
+      final legacyType = normalizedType == model.Transaction.typeIncome
+          ? 'income'
+          : 'expense';
       final result = await db.query(
         'transactions',
-        where: 'type = ? AND is_secret = 0',
-        whereArgs: [type],
+        where: 'type IN (?, ?) AND is_secret = 0',
+        whereArgs: [normalizedType, legacyType],
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
@@ -529,20 +571,16 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       final date = month ?? DateTime.now();
-      final startOfMonth = DateTime(date.year, date.month, 1).toIso8601String();
-      final endOfMonth = DateTime(
+      final startOfMonth = DateTime(date.year, date.month).toIso8601String();
+      final startOfNextMonth = DateTime(
         date.year,
         date.month + 1,
-        0,
-        23,
-        59,
-        59,
       ).toIso8601String();
 
       final result = await db.query(
         'transactions',
-        where: 'date >= ? AND date <= ? AND is_secret = ?',
-        whereArgs: [startOfMonth, endOfMonth, isSecret ? 1 : 0],
+        where: 'date >= ? AND date < ? AND is_secret = ?',
+        whereArgs: [startOfMonth, startOfNextMonth, isSecret ? 1 : 0],
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
@@ -627,11 +665,15 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       final search = '%$query%';
+      final normalizedType = model.Transaction.normalizeType(type);
+      final legacyType = normalizedType == model.Transaction.typeIncome
+          ? 'income'
+          : 'expense';
       final result = await db.query(
         'transactions',
         where:
-            'type = ? AND is_secret = 0 AND (category LIKE ? OR note LIKE ? OR amount LIKE ? OR date LIKE ?)',
-        whereArgs: [type, search, search, search, search],
+            'type IN (?, ?) AND is_secret = 0 AND (category LIKE ? OR note LIKE ? OR amount LIKE ? OR date LIKE ?)',
+        whereArgs: [normalizedType, legacyType, search, search, search, search],
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
@@ -661,9 +703,13 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<List<String>> getCategoriasOrdenadas(String type) async {
     try {
       final db = await DatabaseHelper.instance.database;
+      final normalizedType = model.Transaction.normalizeType(type);
+      final legacyType = normalizedType == model.Transaction.typeIncome
+          ? 'income'
+          : 'expense';
       final result = await db.rawQuery(
-        'SELECT category, COUNT(*) as count FROM transactions WHERE type = ? GROUP BY category ORDER BY count DESC',
-        [type],
+        'SELECT category, COUNT(*) as count FROM transactions WHERE type IN (?, ?) GROUP BY category ORDER BY count DESC',
+        [normalizedType, legacyType],
       );
       return result.map((row) => row['category'] as String).toList();
     } catch (e, _)  {
@@ -680,6 +726,21 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     } catch (e, _)  {
       debugPrint('DB Error (insertDebt): $e');
       throw DatabaseException('Operación fallida en insertDebt', e);
+    }
+  }
+
+  /// Restaura una deuda de un backup conservando su id (reemplaza si existe).
+  Future<int> restoreDebt(Debt debt) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.insert(
+        'debts',
+        debt.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e, _)  {
+      debugPrint('DB Error (restoreDebt): $e');
+      throw DatabaseException('Operación fallida en restoreDebt', e);
     }
   }
 
@@ -739,7 +800,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         '''
         SELECT SUM(amount) as total
         FROM transactions
-        WHERE type = 'ingreso'
+        WHERE type IN ('ingreso', 'income')
         AND is_secret = ?
       ''',
         [isVault ? 1 : 0],
@@ -758,7 +819,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         '''
         SELECT SUM(amount) as total
         FROM transactions
-        WHERE type = 'gasto'
+        WHERE type IN ('gasto', 'expense')
         AND is_secret = ?
       ''',
         [isVault ? 1 : 0],
@@ -779,7 +840,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         '''
         SELECT category, SUM(amount) as total
         FROM transactions
-        WHERE type = 'gasto'
+        WHERE type IN ('gasto', 'expense')
         AND is_secret = ?
         GROUP BY category
       ''',
@@ -802,7 +863,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future close() async {
     try {
       final db = await DatabaseHelper.instance.database;
-      db.close();
+      _database = null;
+      await db.close();
     } catch (e) {
       debugPrint('DB Error (close): $e');
     }
