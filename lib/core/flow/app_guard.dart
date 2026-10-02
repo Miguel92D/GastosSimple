@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../error/exceptions.dart';
 import '../../services/error_service.dart';
 import '../i18n/app_locale_controller.dart';
+import '../ui/app_colors.dart';
 
 class AppGuard {
   static Future<T?> runSafe<T>(Future<T> Function() action) async {
@@ -22,21 +23,21 @@ class AppGuard {
     try {
       await action();
       if (successMessage != null && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage)));
       }
       return true;
     } on DatabaseException catch (e, stack) {
       debugPrint("DB Exception trapped: $e");
       ErrorService.instance.logError(e, stack);
       if (context.mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.text('error_saving_data')), backgroundColor: Colors.redAccent));
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.text('error_saving_data')), backgroundColor: AppColors.expenseRed));
       }
       return false;
     } catch (e, stack) {
       debugPrint("AppGuard feedback error: $e");
       ErrorService.instance.logError(e, stack);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(actualErrorMessage), backgroundColor: Colors.redAccent));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(actualErrorMessage), backgroundColor: AppColors.expenseRed));
       }
       return false;
     }

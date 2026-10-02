@@ -903,9 +903,7 @@ class _DebtScreenState extends State<DebtScreen> {
     
     final color = isPaid 
         ? AppColors.incomeGreen 
-        : (name.toLowerCase().contains('bbva')
-            ? AppColors.orange
-            : AppColors.primaryPurple);
+        : AppColors.primaryPurple;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -959,7 +957,7 @@ class _DebtScreenState extends State<DebtScreen> {
           _buildStrategyCard(
             title: l10n.text('avalanche_strategy'),
             icon: Icons.bolt_rounded,
-            color: Colors.blueAccent,
+            color: AppColors.blue,
             isSelected: _selectedStrategy == 'avalanche',
             onTap: () => _selectStrategy('avalanche'),
           ),

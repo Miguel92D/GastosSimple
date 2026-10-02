@@ -3,6 +3,11 @@ import 'package:provider/provider.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/router/navigation_service.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_gradients.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 /// Se muestra una sola vez (desde InitialGuard). Crashlytics arranca apagado
 /// (ver AndroidManifest) y solo se activa si el usuario acepta.
@@ -13,56 +18,65 @@ class ConsentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: AppColors.darkBackground,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppGradients.mainBackgroundRadial),
+        child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl,
+            vertical: AppSpacing.xxl,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.security, size: 80, color: Colors.deepPurple),
-              const SizedBox(height: 32),
+              const Icon(
+                Icons.security,
+                size: 72,
+                color: AppColors.primaryPurple,
+              ),
+              const SizedBox(height: AppSpacing.xl),
               Text(
                 l10n.text('consent_title'),
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: AppTextStyles.titleMain.copyWith(fontSize: 24),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               Text(
                 l10n.text('consent_body'),
-                style: const TextStyle(fontSize: 16, height: 1.5),
+                style: AppTextStyles.bodyText.copyWith(height: 1.5),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
-              ElevatedButton(
-                onPressed: () => AppState.instance.setConsent(crashReports: true),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Text(
-                  l10n.text('consent_accept'),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: double.infinity,
+                child: GradientButton(
+                  text: l10n.text('consent_accept'),
+                  onPressed: () =>
+                      AppState.instance.setConsent(crashReports: true),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               TextButton(
                 onPressed: () =>
                     AppState.instance.setConsent(crashReports: false),
-                child: Text(l10n.text('consent_decline')),
+                child: Text(
+                  l10n.text('consent_decline'),
+                  style: AppTextStyles.bodyText.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => NavigationService.navigate("/privacy"),
                 child: Text(
                   l10n.text('consent_privacy'),
-                  style: const TextStyle(color: Colors.grey),
+                  style: AppTextStyles.subtitle,
                 ),
               ),
             ],
           ),
+        ),
         ),
       ),
     );

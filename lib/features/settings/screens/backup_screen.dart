@@ -4,6 +4,12 @@ import 'package:share_plus/share_plus.dart';
 import '../controllers/backup_controller.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -92,57 +98,58 @@ class _BackupScreenState extends State<BackupScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.text('backup_data_title')), elevation: 0),
+    return AppScaffold(
+      title: l10n.text('backup_data_title'),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryPurple),
+            )
           : Padding(
-               padding: const EdgeInsets.all(24.0),
+               padding: const EdgeInsets.all(AppSpacing.lg),
                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.cloud_sync,
-                    size: 80,
-                    color: Colors.deepPurple,
+                    size: 72,
+                    color: AppColors.primaryPurple,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.lg),
                   Text(
                     l10n.text('keep_data_safe'),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: AppTextStyles.titleMain.copyWith(fontSize: 24),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     l10n.text('backup_screen_desc'),
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    style: AppTextStyles.bodyText,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 48),
-                  ElevatedButton.icon(
+                  const SizedBox(height: AppSpacing.xxl),
+                  GradientButton(
+                    text: l10n.text('create_backup'),
+                    icon: Icons.upload,
                     onPressed: _exportBackup,
-                    icon: const Icon(Icons.upload),
-                    label: Text(l10n.text('create_backup')),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.sm),
                   OutlinedButton.icon(
                     onPressed: _restoreBackup,
                     icon: const Icon(Icons.download),
                     label: Text(l10n.text('restore_backup_action')),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      foregroundColor: AppColors.primaryPurple,
+                      side: BorderSide(
+                        color: AppColors.primaryPurple.withValues(alpha: 0.6),
                       ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.md,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
+                      textStyle: AppTextStyles.buttonLabel,
                     ),
                   ),
                 ],

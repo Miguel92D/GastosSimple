@@ -461,7 +461,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(
           content: Text(message),
           backgroundColor: hasError
-              ? Colors.redAccent
+              ? AppColors.expenseRed
               : AppColors.primaryPurple,
         ),
       );
@@ -470,7 +470,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.text('premium_restore_failed')),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: AppColors.expenseRed,
         ),
       );
     } finally {

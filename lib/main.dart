@@ -15,6 +15,7 @@ import 'services/currency_service.dart';
 import 'services/pro_service.dart';
 
 import 'core/router/app_router.dart';
+import 'core/ui/app_colors.dart';
 import 'core/state/app_mode_controller.dart';
 import 'core/state/month_controller.dart';
 import 'core/router/navigation_service.dart';
@@ -169,9 +170,9 @@ class InitialGuard extends StatelessWidget {
     // Mientras se cargan los ajustes (PIN, biométricos) del almacenamiento seguro
     if (!security.isInitialized) {
       return const Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.darkBackground,
         body: Center(
-          child: CircularProgressIndicator(color: Colors.deepPurpleAccent),
+          child: CircularProgressIndicator(color: AppColors.primaryPurple),
         ),
       );
     }

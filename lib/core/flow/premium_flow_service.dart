@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../ui/app_button.dart';
+import '../ui/app_colors.dart';
+import '../ui/app_text_styles.dart';
 import '../router/navigation_service.dart';
 import '../i18n/app_locale_controller.dart';
 
@@ -11,6 +13,7 @@ class PremiumFlowService {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -25,12 +28,12 @@ class PremiumFlowService {
                 const Icon(
                   Icons.workspace_premium,
                   size: 64,
-                  color: Colors.orange,
+                  color: AppColors.gold,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   l10n.text('unlock_premium_title'),
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: AppTextStyles.titleMain.copyWith(fontSize: 24),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -49,7 +52,7 @@ class PremiumFlowService {
                     NavigationService.goBack();
                     NavigationService.navigate("/premium");
                   },
-                  color: Colors.orange,
+                  color: AppColors.gold,
                   label: l10n.text('try_premium'),
                 ),
                 const SizedBox(height: 12),
@@ -57,7 +60,7 @@ class PremiumFlowService {
                   onPressed: () => NavigationService.goBack(),
                   child: Text(
                     l10n.text('continue_free'),
-                    style: const TextStyle(color: Colors.grey),
+                    style: AppTextStyles.bodyText,
                   ),
                 ),
               ],
@@ -73,9 +76,16 @@ class PremiumFlowService {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.green),
+          const Icon(Icons.check_circle, color: AppColors.gold, size: 20),
           const SizedBox(width: 12),
-          Text(text, style: const TextStyle(fontSize: 16)),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodyText.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
         ],
       ),
     );

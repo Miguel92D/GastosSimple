@@ -103,7 +103,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
         content: Text(message),
         backgroundColor: service.errorMessage == null
             ? AppColors.primaryPurple
-            : Colors.redAccent,
+            : AppColors.expenseRed,
       ),
     );
   }
@@ -412,7 +412,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
         style: AppTextStyles.bodySmall.copyWith(
           color: service.errorMessage == null
               ? AppColors.softText.withValues(alpha: 0.65)
-              : Colors.redAccent,
+              : AppColors.expenseRed,
         ),
         textAlign: TextAlign.center,
       ),
