@@ -65,10 +65,20 @@ class TransactionFlowService {
     Object? goal,
     double goalAmount = 0,
     bool isFromQuickEntry = false,
+    int? installments,
+    DateTime? installmentsFirstDate,
+    int? installmentsAnchorDay,
   }) async {
     try {
       if (transaction.id != null) {
         await TransactionController.updateTransaction(transaction);
+      } else if (installments != null && installments > 1) {
+        await TransactionController.addInstallmentPurchase(
+          transaction,
+          installments: installments,
+          firstDate: installmentsFirstDate ?? transaction.date,
+          anchorDay: installmentsAnchorDay,
+        );
       } else {
         await TransactionController.addTransaction(transaction);
 

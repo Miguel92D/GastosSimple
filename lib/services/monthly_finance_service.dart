@@ -1,4 +1,5 @@
 import '../features/transactions/models/transaction.dart';
+import '../core/utils/money.dart';
 
 class MonthlyAnalysisData {
   final double income;
@@ -58,15 +59,16 @@ class MonthlyFinanceService {
   }
 
   static double calculateIncome(List<Transaction> transactions) {
+    // Acumula redondeando a centavos (ver Money).
     return transactions
         .where((transaction) => transaction.isIncome)
-        .fold<double>(0, (sum, transaction) => sum + transaction.amount);
+        .fold<double>(0, (sum, transaction) => Money.round(sum + transaction.amount));
   }
 
   static double calculateExpenses(List<Transaction> transactions) {
     return transactions
         .where((transaction) => transaction.isExpense)
-        .fold<double>(0, (sum, transaction) => sum + transaction.amount);
+        .fold<double>(0, (sum, transaction) => Money.round(sum + transaction.amount));
   }
 
   static double calculateBalance(List<Transaction> transactions) {

@@ -1,3 +1,5 @@
+import '../../../core/utils/money.dart';
+
 class Debt {
   final int? id;
   final String nombre;
@@ -27,9 +29,9 @@ class Debt {
     return {
       'id': id,
       'nombre': nombre,
-      'monto_total': montoTotal,
-      'monto_pagado': montoPagado,
-      'pago_minimo': pagoMinimo,
+      'monto_total': Money.round(montoTotal),
+      'monto_pagado': Money.round(montoPagado),
+      'pago_minimo': Money.round(pagoMinimo),
       'tasa_interes': tasaInteres,
       'fecha_vencimiento': fechaVencimiento,
       'dia_cierre': diaCierre,
@@ -54,5 +56,9 @@ class Debt {
   }
 
   double get progress => montoTotal > 0 ? montoPagado / montoTotal : 0;
-  double get remaining => montoTotal - montoPagado;
+  double get remaining => Money.round(montoTotal - montoPagado);
+
+  /// Saldada a nivel de centavos. Antes se usaba progress >= 0.999, que en
+  /// una deuda de 10.000.000 marcaba "Pagado" con 10.000 pendientes.
+  bool get isPaid => Money.toCents(remaining) <= 0;
 }

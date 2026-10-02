@@ -13,6 +13,9 @@ import '../../../core/ui/glass_card.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../core/utils/money.dart';
+import '../../../database/database_helper.dart';
+import '../../../services/monthly_projection_service.dart';
 
 class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key});
@@ -29,8 +32,7 @@ class _PredictionScreenState extends State<PredictionScreen>
   double _currentExpense = 0;
   double _predictedExpense = 0;
   double _predictedBalance = 0;
-  int _daysPassed = 0;
-  int _daysInMonth = 0;
+  bool _insufficientData = false;
 
   @override
   void initState() {
@@ -52,10 +54,6 @@ class _PredictionScreenState extends State<PredictionScreen>
 
   Future<void> _calculatePrediction() async {
     final now = DateTime.now();
-    final monthStart = DateTime(now.year, now.month, 1);
-    final nextMonth = DateTime(now.year, now.month + 1, 1);
-    _daysInMonth = nextMonth.difference(monthStart).inDays;
-    _daysPassed = now.day;
 
     final transactions = await TransactionController.getTransactionsInMonth(
       month: now,
@@ -63,24 +61,25 @@ class _PredictionScreenState extends State<PredictionScreen>
 
     final income = transactions
         .where((t) => t.isIncome)
-        .fold(0.0, (sum, t) => sum + t.amount);
+        .fold(0.0, (sum, t) => Money.round(sum + t.amount));
     final expense = transactions
         .where((t) => t.isExpense)
-        .fold(0.0, (sum, t) => sum + t.amount);
+        .fold(0.0, (sum, t) => Money.round(sum + t.amount));
+
+    final projection = MonthlyProjectionService.compute(
+      history: await TransactionController.getNormalHistory(),
+      recurring: await DatabaseHelper.instance.getRecurringTransactions(),
+      now: now,
+    );
 
     if (mounted) {
       setState(() {
         _currentIncome = income;
         _currentExpense = expense;
 
-        if (_daysPassed > 0) {
-          final dailyAverage = expense / _daysPassed;
-          _predictedExpense = dailyAverage * _daysInMonth;
-          _predictedBalance = income - _predictedExpense;
-        } else {
-          _predictedExpense = expense;
-          _predictedBalance = income - expense;
-        }
+        _predictedExpense = projection.projectedExpense;
+        _predictedBalance = income - _predictedExpense;
+        _insufficientData = projection.insufficientData;
 
         _isLoading = false;
       });
@@ -108,6 +107,17 @@ class _PredictionScreenState extends State<PredictionScreen>
                       _buildSummaryCard(l10n),
                       const SizedBox(height: 24),
                       _buildProjectionCard(l10n, isNegative),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.text(
+                          _insufficientData
+                              ? 'projection_insufficient_data'
+                              : 'projection_method_note',
+                        ),
+                        style: AppTextStyles.subLabel.copyWith(
+                          color: AppColors.softText.withValues(alpha: 0.6),
+                        ),
+                      ),
                       if (isNegative) ...[
                         const SizedBox(height: 24),
                         _buildWarningCard(l10n),

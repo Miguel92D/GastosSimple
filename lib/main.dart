@@ -26,6 +26,7 @@ import 'features/transactions/screens/quick_entry_screen.dart';
 import 'core/ui/app_theme.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'features/settings/screens/pin_screen.dart';
+import 'features/settings/screens/consent_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,7 @@ void main() async {
 
   await CurrencyService.instance.loadCurrency();
   await AppState.instance.loadProEntitlement();
+  await AppState.instance.loadConsent();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Builder(
@@ -156,6 +158,13 @@ class InitialGuard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Escuchamos los cambios en el servicio de seguridad
     final security = context.watch<SecurityService>();
+    final appState = context.watch<AppState>();
+
+    // Primera apertura: consentimiento de reportes de fallos (Crashlytics
+    // arranca apagado hasta que el usuario responda).
+    if (!appState.hasConsented) {
+      return const ConsentScreen();
+    }
 
     // Mientras se cargan los ajustes (PIN, biométricos) del almacenamiento seguro
     if (!security.isInitialized) {

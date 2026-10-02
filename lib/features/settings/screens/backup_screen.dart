@@ -17,9 +17,37 @@ class _BackupScreenState extends State<BackupScreen> {
 
   Future<void> _exportBackup() async {
     final l10n = context.read<AppLocaleController>();
+    // La Bóveda solo sale del teléfono si el usuario lo confirma: el
+    // archivo es un JSON sin cifrar.
+    var includeVault = false;
+    if (await BackupController.hasVaultData()) {
+      if (!mounted) return;
+      final answer = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.text('backup_vault_title')),
+          content: Text(l10n.text('backup_vault_body')),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.text('backup_vault_exclude')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.text('backup_vault_include')),
+            ),
+          ],
+        ),
+      );
+      if (answer == null) return; // cerró el diálogo: no exportar
+      includeVault = answer;
+    }
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
-      final path = await BackupController.exportBackup();
+      final path = await BackupController.exportBackup(
+        includeVault: includeVault,
+      );
       if (!mounted) return;
       await Share.shareXFiles([XFile(path)], text: 'Backup \$imple');
     } catch (e) {

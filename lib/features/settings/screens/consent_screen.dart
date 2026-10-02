@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/router/navigation_service.dart';
+import '../../../core/state/app_state.dart';
 
+/// Se muestra una sola vez (desde InitialGuard). Crashlytics arranca apagado
+/// (ver AndroidManifest) y solo se activa si el usuario acepta.
 class ConsentScreen extends StatelessWidget {
   const ConsentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<AppLocaleController>();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -16,26 +21,20 @@ class ConsentScreen extends StatelessWidget {
             children: [
               const Icon(Icons.security, size: 80, color: Colors.deepPurple),
               const SizedBox(height: 32),
-              const Text(
-                'Tu Privacidad',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Text(
+                l10n.text('consent_title'),
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              const Text(
-                '\$imple guarda tus datos financieros localmente en tu dispositivo para ayudarte a gestionar tu dinero.',
-                style: TextStyle(fontSize: 16, height: 1.5),
+              Text(
+                l10n.text('consent_body'),
+                style: const TextStyle(fontSize: 16, height: 1.5),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setBool('has_consented', true);
-                  if (context.mounted) {
-                    NavigationService.navigateAndRemoveUntil("/dashboard");
-                  }
-                },
+                onPressed: () => AppState.instance.setConsent(crashReports: true),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
                   backgroundColor: Colors.deepPurple,
@@ -44,19 +43,22 @@ class ConsentScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
-                  'Aceptar',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                child: Text(
+                  l10n.text('consent_accept'),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               TextButton(
-                onPressed: () {
-                  NavigationService.navigate("/privacy");
-                },
-                child: const Text(
-                  'Ver política de privacidad',
-                  style: TextStyle(color: Colors.grey),
+                onPressed: () =>
+                    AppState.instance.setConsent(crashReports: false),
+                child: Text(l10n.text('consent_decline')),
+              ),
+              TextButton(
+                onPressed: () => NavigationService.navigate("/privacy"),
+                child: Text(
+                  l10n.text('consent_privacy'),
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ),
             ],

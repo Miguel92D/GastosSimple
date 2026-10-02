@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 o menor. Se respalda la base y las preferencias, pero NO el
+     almacenamiento seguro: sus claves viven en el Keystore del dispositivo y
+     no se pueden descifrar en otro teléfono (rompía el PIN al restaurar). -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+    <exclude domain="sharedpref" path="FlutterSecureKeyStorage.xml" />
+</full-backup-content>

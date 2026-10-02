@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -19,6 +20,16 @@ class SecurityService extends ChangeNotifier {
   bool _isInitialized = false;
   bool _isPinPromptVisible = false;
   final Completer<void> _initCompleter = Completer<void>();
+
+  static const _screenChannel = MethodChannel('simple/screen_security');
+
+  /// Bloqueo progresivo contra fuerza bruta (compartido por PIN y PIN de
+  /// Bóveda). Tras [freeAttempts] fallos: 30 s, 60 s, 120 s... hasta 15 min.
+  /// Se persiste para que cerrar y abrir la app no lo resetee.
+  static const int freeAttempts = 5;
+  static const Duration maxLockout = Duration(minutes: 15);
+  int _failedAttempts = 0;
+  DateTime? _lockedUntil;
 
   Future<void> get initialized => _initCompleter.future;
   bool get isInitialized => _isInitialized;
@@ -74,28 +85,101 @@ class SecurityService extends ChangeNotifier {
   }
 
   Future<void> _loadSecuritySettings() async {
-    _isPinActive = (await _storage.read(key: 'is_pin_active')) == 'true';
-    _isBiometricActive =
-        (await _storage.read(key: 'is_biometric_active')) == 'true';
-    _isVaultOnly = (await _storage.read(key: 'is_vault_only')) == 'true';
-    _isVaultPinActive = (await _storage.read(key: 'is_vault_pin_active')) == 'true';
-    _pin = await _storage.read(key: 'pin');
-    _vaultPin = await _storage.read(key: 'vault_pin');
-    _isInitialized = true;
-    if (!_initCompleter.isCompleted) _initCompleter.complete();
+    try {
+      _isPinActive = (await _storage.read(key: 'is_pin_active')) == 'true';
+      _isBiometricActive =
+          (await _storage.read(key: 'is_biometric_active')) == 'true';
+      _isVaultOnly = (await _storage.read(key: 'is_vault_only')) == 'true';
+      _isVaultPinActive =
+          (await _storage.read(key: 'is_vault_pin_active')) == 'true';
+      _pin = await _storage.read(key: 'pin');
+      _vaultPin = await _storage.read(key: 'vault_pin');
+      _failedAttempts =
+          int.tryParse(await _storage.read(key: 'pin_failed_attempts') ?? '') ??
+          0;
+      final lockedMs = int.tryParse(
+        await _storage.read(key: 'pin_locked_until') ?? '',
+      );
+      _lockedUntil = lockedMs == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(lockedMs);
+    } catch (e) {
+      // Si el almacenamiento seguro no se puede leer (p. ej. datos
+      // restaurados en otro teléfono), la app NO debe quedar colgada en el
+      // spinner de InitialGuard: arranca sin seguridad configurada.
+      debugPrint('Security: no se pudo leer el almacenamiento seguro: $e');
+    } finally {
+      _isInitialized = true;
+      if (!_initCompleter.isCompleted) _initCompleter.complete();
+      notifyListeners();
+      _applyScreenSecurity();
+    }
+  }
+
+  /// FLAG_SECURE en Android mientras haya algún bloqueo configurado.
+  Future<void> _applyScreenSecurity() async {
+    final secure = _isPinActive || _isBiometricActive || _isVaultPinActive;
+    try {
+      await _screenChannel.invokeMethod('setSecure', {'secure': secure});
+    } catch (_) {
+      // iOS / otras plataformas: no implementado, se ignora.
+    }
+  }
+
+  /// Tiempo que falta para poder volver a intentar un PIN (cero si no hay
+  /// bloqueo).
+  Duration get lockRemaining {
+    final until = _lockedUntil;
+    if (until == null) return Duration.zero;
+    final remaining = until.difference(DateTime.now());
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
+
+  bool get isLockedOut => lockRemaining > Duration.zero;
+
+  Future<bool> _checkPin(String? expected, String input) async {
+    if (isLockedOut) return false;
+    final ok = expected != null && expected.isNotEmpty && expected == input;
+    if (ok) {
+      _failedAttempts = 0;
+      _lockedUntil = null;
+      await _storage.delete(key: 'pin_failed_attempts');
+      await _storage.delete(key: 'pin_locked_until');
+    } else {
+      _failedAttempts++;
+      if (_failedAttempts >= freeAttempts) {
+        final exp = _failedAttempts - freeAttempts; // 0, 1, 2...
+        final seconds = 30 * (1 << (exp > 10 ? 10 : exp));
+        final lock = Duration(seconds: seconds) > maxLockout
+            ? maxLockout
+            : Duration(seconds: seconds);
+        _lockedUntil = DateTime.now().add(lock);
+        await _storage.write(
+          key: 'pin_locked_until',
+          value: _lockedUntil!.millisecondsSinceEpoch.toString(),
+        );
+      }
+      await _storage.write(
+        key: 'pin_failed_attempts',
+        value: _failedAttempts.toString(),
+      );
+    }
     notifyListeners();
+    return ok;
   }
 
   Future<void> setPinActive(bool value) async {
     await _storage.write(key: 'is_pin_active', value: value.toString());
     _isPinActive = value;
     notifyListeners();
+    _applyScreenSecurity();
   }
 
   Future<void> setVaultPinActive(bool value) async {
     await _storage.write(key: 'is_vault_pin_active', value: value.toString());
     _isVaultPinActive = value;
     notifyListeners();
+    _applyScreenSecurity();
   }
 
   Future<void> setVaultOnly(bool value) async {
@@ -108,6 +192,7 @@ class SecurityService extends ChangeNotifier {
     await _storage.write(key: 'is_biometric_active', value: value.toString());
     _isBiometricActive = value;
     notifyListeners();
+    _applyScreenSecurity();
   }
 
   Future<void> setPin(String value) async {
@@ -122,13 +207,10 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> authenticatePin(String input) async {
-    return _pin == input;
-  }
+  Future<bool> authenticatePin(String input) => _checkPin(_pin, input);
 
-  Future<bool> authenticateVaultPin(String input) async {
-    return _vaultPin == input;
-  }
+  Future<bool> authenticateVaultPin(String input) =>
+      _checkPin(_vaultPin, input);
 
   Future<bool> authenticateBiometric({String? localizedReason}) async {
     try {

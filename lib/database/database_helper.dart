@@ -5,6 +5,10 @@ import '../features/transactions/models/transaction.dart' as model;
 import '../core/error/exceptions.dart';
 import '../features/goals/models/goal.dart';
 import '../features/debts/models/debt.dart';
+import '../core/utils/recurrence_schedule.dart';
+import '../core/utils/backup_merge.dart';
+import '../core/utils/installment_plan.dart';
+import '../core/utils/money.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -24,7 +28,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 12, // Added cuotas to debts
+      version: 16, // 14: cuotas · 15: total del plan · 16: montos a centavos
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -70,7 +74,12 @@ CREATE TABLE recurring_transactions (
   type $textType,
   note TEXT,
   frequency $textType,
-  next_date $textType
+  next_date $textType,
+  is_secret INTEGER DEFAULT 0,
+  anchor_day INTEGER,
+  installments_total INTEGER,
+  installments_paid INTEGER,
+  installments_total_amount REAL
 )
 ''');
 
@@ -204,10 +213,59 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       } catch (_) {}
     }
     if (oldVersion < 12) {
-      try {
-        await db.execute('ALTER TABLE debts ADD COLUMN cuotas_totales INTEGER');
-        await db.execute('ALTER TABLE debts ADD COLUMN cuotas_pagadas INTEGER');
-      } catch (_) {}
+      // Cada ALTER va por separado: si uno falla (columna ya existente)
+      // el otro igual se aplica.
+      await _tryExecute(db, 'ALTER TABLE debts ADD COLUMN cuotas_totales INTEGER');
+      await _tryExecute(db, 'ALTER TABLE debts ADD COLUMN cuotas_pagadas INTEGER');
+    }
+    if (oldVersion < 13) {
+      // Las recurrencias creadas en la Bóveda deben seguir siendo secretas.
+      await _tryExecute(
+        db,
+        'ALTER TABLE recurring_transactions ADD COLUMN is_secret INTEGER DEFAULT 0',
+      );
+      await _tryExecute(
+        db,
+        'ALTER TABLE recurring_transactions ADD COLUMN anchor_day INTEGER',
+      );
+    }
+    if (oldVersion < 14) {
+      // Compras en cuotas: total de cuotas y cuántas ya se registraron.
+      await _tryExecute(
+        db,
+        'ALTER TABLE recurring_transactions ADD COLUMN installments_total INTEGER',
+      );
+      await _tryExecute(
+        db,
+        'ALTER TABLE recurring_transactions ADD COLUMN installments_paid INTEGER',
+      );
+    }
+    if (oldVersion < 15) {
+      // Total del plan: la última cuota absorbe la diferencia de redondeo.
+      await _tryExecute(
+        db,
+        'ALTER TABLE recurring_transactions ADD COLUMN installments_total_amount REAL',
+      );
+    }
+    if (oldVersion < 16) {
+      // Limpieza única: redondea a centavos los montos ya guardados (restos
+      // de punto flotante como 1530.0000000002).
+      for (final sql in const [
+        'UPDATE transactions SET amount = ROUND(amount, 2), goal_amount = ROUND(goal_amount, 2)',
+        'UPDATE goals SET target_amount = ROUND(target_amount, 2), saved_amount = ROUND(saved_amount, 2)',
+        'UPDATE debts SET monto_total = ROUND(monto_total, 2), monto_pagado = ROUND(monto_pagado, 2), pago_minimo = ROUND(pago_minimo, 2)',
+        'UPDATE recurring_transactions SET amount = ROUND(amount, 2), installments_total_amount = ROUND(installments_total_amount, 2)',
+      ]) {
+        await _tryExecute(db, sql);
+      }
+    }
+  }
+
+  Future<void> _tryExecute(Database db, String sql) async {
+    try {
+      await db.execute(sql);
+    } catch (e) {
+      debugPrint('Migration step skipped ($sql): $e');
     }
   }
 
@@ -263,26 +321,65 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   ) async {
     try {
       final db = await DatabaseHelper.instance.database;
-      DateTime nextDate;
-      if (frequency == 'daily') {
-        nextDate = mov.date.add(const Duration(days: 1));
-      } else if (frequency == 'weekly') {
-        nextDate = mov.date.add(const Duration(days: 7));
-      } else {
-        nextDate = DateTime(mov.date.year, mov.date.month + 1, mov.date.day);
-      }
+      final anchorDay = mov.date.day;
+      final nextDate = RecurrenceSchedule.next(
+        mov.date,
+        frequency,
+        anchorDay: anchorDay,
+      );
 
       return await db.insert('recurring_transactions', {
-        'amount': mov.amount,
+        'amount': Money.round(mov.amount),
         'category': mov.category,
         'type': mov.type,
         'note': mov.note,
         'frequency': frequency,
         'next_date': nextDate.toIso8601String(),
+        // Regla de Oro #6: una recurrencia de la Bóveda genera movimientos
+        // secretos, nunca normales.
+        'is_secret': mov.isSecret,
+        'anchor_day': anchorDay,
       });
     } catch (e, _)  {
       debugPrint('DB Error (insertRecurringTransaction): $e');
       throw DatabaseException('Operación fallida en insertRecurringTransaction', e);
+    }
+  }
+
+  /// Plan de cuotas: ninguna cuota se registra acá. La primera vence en
+  /// [firstDate] y todas las genera [processRecurringTransactions] cuando
+  /// llega su fecha (nunca se crean movimientos con fecha futura).
+  Future<int> insertInstallmentPlan({
+    required double perInstallment,
+    required double totalAmount,
+    required int count,
+    required DateTime firstDate,
+    required String category,
+    required String type,
+    required int isSecret,
+    String? baseNote,
+    int? anchorDay,
+  }) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.insert('recurring_transactions', {
+        'amount': Money.round(perInstallment),
+        'category': category,
+        'type': type,
+        'note': baseNote,
+        'frequency': RecurrenceSchedule.monthly,
+        'next_date': firstDate.toIso8601String(),
+        'is_secret': isSecret,
+        // Con tarjeta, el ancla es su día de vencimiento (un vencimiento
+        // el 31 cae el 30/11 pero vuelve al 31/12).
+        'anchor_day': anchorDay ?? firstDate.day,
+        'installments_total': count,
+        'installments_paid': 0,
+        'installments_total_amount': Money.round(totalAmount),
+      });
+    } catch (e, _) {
+      debugPrint('DB Error (insertInstallmentPlan): $e');
+      throw DatabaseException('Operación fallida en insertInstallmentPlan', e);
     }
   }
 
@@ -313,8 +410,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       return await db.insert('goals', {
         'id': map['id'],
         'name': map['name'],
-        'target_amount': map['targetAmount'],
-        'saved_amount': map['currentAmount'],
+        'target_amount': Money.round((map['targetAmount'] as num).toDouble()),
+        'saved_amount': Money.round((map['currentAmount'] as num).toDouble()),
         'target_date': map['targetDate'],
         'icon': map['icon'],
         'created_at': map['createdAt'],
@@ -333,8 +430,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       return await db.insert('goals', {
         'id': map['id'],
         'name': map['name'],
-        'target_amount': map['targetAmount'],
-        'saved_amount': map['currentAmount'],
+        'target_amount': Money.round((map['targetAmount'] as num).toDouble()),
+        'saved_amount': Money.round((map['currentAmount'] as num).toDouble()),
         'target_date': map['targetDate'],
         'icon': map['icon'],
         'created_at': map['createdAt'],
@@ -378,8 +475,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'goals',
         {
           'name': map['name'],
-          'target_amount': map['targetAmount'],
-          'saved_amount': map['currentAmount'],
+          'target_amount': Money.round((map['targetAmount'] as num).toDouble()),
+          'saved_amount': Money.round((map['currentAmount'] as num).toDouble()),
           'target_date': map['targetDate'],
           'icon': map['icon'],
           'created_at': map['createdAt'],
@@ -407,8 +504,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       await db.execute(
-        'UPDATE goals SET saved_amount = saved_amount + ? WHERE id = ?',
-        [amount, goalId],
+        'UPDATE goals SET saved_amount = ROUND(saved_amount + ?, 2) WHERE id = ?',
+        [Money.round(amount), goalId],
       );
     } catch (e, _)  {
       debugPrint('DB Error (addToGoal): $e');
@@ -599,42 +696,74 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<void> processRecurringTransactions() async {
     try {
       final db = await DatabaseHelper.instance.database;
-      final nowStr = DateTime.now().toIso8601String();
+      final now = DateTime.now();
 
       await db.transaction((txn) async {
         final pending = await txn.query(
           'recurring_transactions',
           where: 'next_date <= ?',
-          whereArgs: [nowStr],
+          whereArgs: [now.toIso8601String()],
         );
 
         for (var row in pending) {
-          final fechaStr = row['next_date'] as String;
-          final fecha = DateTime.parse(fechaStr);
-          final frequency = row['frequency'] as String;
+          final schedule = RecurrenceSchedule.dueOccurrences(
+            nextDate: DateTime.parse(row['next_date'] as String),
+            frequency: row['frequency'] as String,
+            now: now,
+            anchorDay: row['anchor_day'] as int?,
+          );
 
-          await txn.insert('transactions', {
-            'amount': row['amount'],
-            'category': row['category'],
-            'type': row['type'],
-            'note': row['note'],
-            'date': fechaStr,
-            'is_secret': 0,
-            'is_recurring': 1,
-          });
+          // Se generan TODAS las ocurrencias atrasadas, no solo una por
+          // apertura de la app. En un plan de cuotas, solo las que faltan.
+          final due = InstallmentPlan.cap(schedule.due, row);
+          final total = row['installments_total'] as int?;
+          final paid = (row['installments_paid'] as int?) ?? 0;
 
-          DateTime nextDate;
-          if (frequency == 'daily') {
-            nextDate = fecha.add(const Duration(days: 1));
-          } else if (frequency == 'weekly') {
-            nextDate = fecha.add(const Duration(days: 7));
-          } else {
-            nextDate = DateTime(fecha.year, fecha.month + 1, fecha.day);
+          for (var i = 0; i < due.length; i++) {
+            await txn.insert('transactions', {
+              'amount': total == null
+                  ? row['amount']
+                  : InstallmentPlan.amountFor(
+                      k: paid + i + 1,
+                      count: total,
+                      perInstallment: (row['amount'] as num).toDouble(),
+                      totalAmount:
+                          (row['installments_total_amount'] as num?)?.toDouble(),
+                    ),
+              'category': row['category'],
+              'type': row['type'],
+              'note': total == null
+                  ? row['note']
+                  : InstallmentPlan.noteFor(
+                      row['note'] as String?,
+                      paid + i + 1,
+                      total,
+                    ),
+              'date': due[i].toIso8601String(),
+              'is_secret': (row['is_secret'] as int?) ?? 0,
+              'is_recurring': 1,
+            });
           }
 
+          if (total != null && paid + due.length >= total) {
+            // Plan terminado: la última cuota ya se registró.
+            await txn.delete(
+              'recurring_transactions',
+              where: 'id = ?',
+              whereArgs: [row['id']],
+            );
+            continue;
+          }
+
+          final nextDate = due.length == schedule.due.length
+              ? schedule.upcoming
+              : schedule.due[due.length];
           await txn.update(
             'recurring_transactions',
-            {'next_date': nextDate.toIso8601String()},
+            {
+              'next_date': nextDate.toIso8601String(),
+              if (total != null) 'installments_paid': paid + due.length,
+            },
             where: 'id = ?',
             whereArgs: [row['id']],
           );
@@ -643,6 +772,107 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     } catch (e, _)  {
       debugPrint('DB Error (processRecurringTransactions): $e');
       throw DatabaseException('Operación fallida en processRecurringTransactions', e);
+    }
+  }
+
+  /// Restaura un backup completo en UNA transacción: si algo falla no queda
+  /// una restauración a medias. Recibe filas con nombres de columna de la DB.
+  /// Devuelve cuántas filas se restauraron por tabla.
+  Future<Map<String, int>> restoreBackupData(
+    Map<String, List<Map<String, Object?>>> rowsByTable,
+  ) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final counts = <String, int>{};
+      await db.transaction((txn) async {
+        for (final entry in rowsByTable.entries) {
+          final table = entry.key;
+          final keys = BackupMerge.keyFields[table];
+          if (keys == null) continue;
+          var count = 0;
+          for (final incoming in entry.value) {
+            Map<String, Object?>? existing;
+            if (incoming['id'] != null) {
+              final found = await txn.query(
+                table,
+                where: 'id = ?',
+                whereArgs: [incoming['id']],
+              );
+              existing = found.isEmpty ? null : found.first;
+            }
+            switch (BackupMerge.decide(existing, incoming, keys, table: table)) {
+              case MergeAction.skip:
+                continue;
+              case MergeAction.insertWithId:
+                await txn.insert(table, incoming);
+              case MergeAction.replace:
+                await txn.insert(
+                  table,
+                  incoming,
+                  conflictAlgorithm: ConflictAlgorithm.replace,
+                );
+              case MergeAction.insertAsNew:
+                await txn.insert(table, Map.of(incoming)..remove('id'));
+            }
+            count++;
+          }
+          counts[table] = count;
+        }
+      });
+      return counts;
+    } catch (e, _) {
+      debugPrint('DB Error (restoreBackupData): $e');
+      throw DatabaseException('Operación fallida en restoreBackupData', e);
+    }
+  }
+
+  /// Recurrencias activas (para la futura pantalla de suscripciones).
+  Future<List<Map<String, Object?>>> getRecurringTransactions({
+    bool isSecret = false,
+  }) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.query(
+        'recurring_transactions',
+        where: 'is_secret = ?',
+        whereArgs: [isSecret ? 1 : 0],
+        orderBy: 'next_date ASC',
+      );
+    } catch (e, _) {
+      debugPrint('DB Error (getRecurringTransactions): $e');
+      throw DatabaseException('Operación fallida en getRecurringTransactions', e);
+    }
+  }
+
+  /// Actualiza el monto de una recurrencia (aumentos de precio). Solo afecta
+  /// a las próximas ocurrencias.
+  Future<int> updateRecurringAmount(int id, double amount) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.update(
+        'recurring_transactions',
+        {'amount': Money.round(amount)},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e, _) {
+      debugPrint('DB Error (updateRecurringAmount): $e');
+      throw DatabaseException('Operación fallida en updateRecurringAmount', e);
+    }
+  }
+
+  /// Cancela una recurrencia. Los movimientos ya generados se conservan.
+  Future<int> deleteRecurringTransaction(int id) async {
+    try {
+      final db = await DatabaseHelper.instance.database;
+      return await db.delete(
+        'recurring_transactions',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e, _) {
+      debugPrint('DB Error (deleteRecurringTransaction): $e');
+      throw DatabaseException('Operación fallida en deleteRecurringTransaction', e);
     }
   }
 
@@ -714,7 +944,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
           ? 'income'
           : 'expense';
       final result = await db.rawQuery(
-        'SELECT category, COUNT(*) as count FROM transactions WHERE type IN (?, ?) GROUP BY category ORDER BY count DESC',
+        // Sin is_secret = 0 la Bóveda influía en el orden de categorías.
+        'SELECT category, COUNT(*) as count FROM transactions WHERE type IN (?, ?) AND is_secret = 0 GROUP BY category ORDER BY count DESC',
         [normalizedType, legacyType],
       );
       return result.map((row) => row['category'] as String).toList();
@@ -790,8 +1021,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       await db.execute(
-        'UPDATE debts SET monto_pagado = monto_pagado + ? WHERE id = ?',
-        [amount, debtId],
+        'UPDATE debts SET monto_pagado = ROUND(monto_pagado + ?, 2) WHERE id = ?',
+        [Money.round(amount), debtId],
       );
     } catch (e, _)  {
       debugPrint('DB Error (payDebt): $e');
@@ -804,7 +1035,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
-        SELECT SUM(amount) as total
+        SELECT ROUND(SUM(amount), 2) as total
         FROM transactions
         WHERE type IN ('ingreso', 'income')
         AND is_secret = ?
@@ -823,7 +1054,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
-        SELECT SUM(amount) as total
+        SELECT ROUND(SUM(amount), 2) as total
         FROM transactions
         WHERE type IN ('gasto', 'expense')
         AND is_secret = ?
@@ -844,7 +1075,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       final db = await DatabaseHelper.instance.database;
       final result = await db.rawQuery(
         '''
-        SELECT category, SUM(amount) as total
+        SELECT category, ROUND(SUM(amount), 2) as total
         FROM transactions
         WHERE type IN ('gasto', 'expense')
         AND is_secret = ?

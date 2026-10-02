@@ -1,4 +1,6 @@
 // lib/models/transaction.dart
+import '../../../core/utils/money.dart';
+
 class Transaction {
   static const String typeIncome = 'ingreso';
   static const String typeExpense = 'gasto';
@@ -44,7 +46,8 @@ class Transaction {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'amount': amount,
+      // Siempre a centavos: evita arrastrar errores de punto flotante.
+      'amount': Money.round(amount),
       'category': category,
       'type': normalizeType(type),
       'date': date.toIso8601String(),
@@ -52,7 +55,7 @@ class Transaction {
       'note': note,
       'is_recurring': isRecurring ? 1 : 0,
       'goal_id': goalId,
-      'goal_amount': goalAmount,
+      'goal_amount': goalAmount == null ? null : Money.round(goalAmount!),
     };
   }
 

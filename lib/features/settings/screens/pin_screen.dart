@@ -125,9 +125,15 @@ class _PinScreenState extends State<PinScreen> {
     } else {
       if (!mounted) return;
       final l10n = context.read<AppLocaleController>();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.text('wrong_pin'))));
+      final security = SecurityService.instance;
+      final message = security.isLockedOut
+          ? l10n.text('pin_locked_wait', {
+              's': (security.lockRemaining.inSeconds + 1).toString(),
+            })
+          : l10n.text('wrong_pin');
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(message)));
       setState(() {
         _pin = '';
       });
