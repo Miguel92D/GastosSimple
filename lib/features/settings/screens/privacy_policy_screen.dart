@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
 
 
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -17,13 +18,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final isSpanish = locale.languageCode == 'es';
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.text('privacy_policy')),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+    return AppScaffold(
+      title: l10n.text('privacy_policy'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(

@@ -6,6 +6,7 @@ import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/pro_badge.dart';
 import '../../../core/flow/general_flow_service.dart';
 
@@ -105,18 +106,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final currencyService = context.watch<CurrencyService>();
     final securityService = context.watch<SecurityService>();
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.text('settings'), style: AppTextStyles.titleMain),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+    // Mismo marco que el resto de la app (resplandor, título, flecha atrás).
+    return AppScaffold(
+      title: l10n.text('settings'),
       body: Stack(
         children: [
           ListView(

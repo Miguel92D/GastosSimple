@@ -3,6 +3,7 @@ import 'package:gastos_simple/core/ui/app_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
+import '../../../core/ui/app_colors.dart';
 
 class PinScreen extends StatefulWidget {
   final bool isVault;
@@ -276,7 +277,7 @@ class _PinScreenState extends State<PinScreen> {
                               shape: BoxShape.circle,
                               color: index < _pin.length
                                   ? Theme.of(context).primaryColor
-                                  : Colors.grey.withValues(alpha: 0.3),
+                                  : AppColors.softText.withValues(alpha: 0.3),
                             ),
                           );
                         }),
