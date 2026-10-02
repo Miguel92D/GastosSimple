@@ -2,6 +2,11 @@ import '../../transactions/controllers/transaction_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../../services/monthly_finance_service.dart';
 
+enum DashboardPeriod {
+  day,
+  month,
+}
+
 class DashboardController {
   Future<List<Transaction>> loadMovements(
     bool isVault, {
@@ -17,6 +22,29 @@ class DashboardController {
     return isVault
         ? await TransactionController.getVaultHistory()
         : await TransactionController.getNormalHistory();
+  }
+
+  Future<List<Transaction>> loadMovementsForDay(
+    bool isVault, {
+    DateTime? day,
+  }) async {
+    final targetDay = day ?? DateTime.now();
+    return await TransactionController.getTransactionsForDay(
+      targetDay,
+      isVault: isVault,
+    );
+  }
+
+  Future<List<Transaction>> loadMovementsByPeriod(
+    bool isVault, {
+    required DashboardPeriod period,
+    DateTime? date,
+  }) async {
+    if (period == DashboardPeriod.day) {
+      return await loadMovementsForDay(isVault, day: date);
+    } else {
+      return await loadMovements(isVault, month: date);
+    }
   }
 
   double calculateIncome(List<Transaction> movimientos) {

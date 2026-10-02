@@ -103,6 +103,16 @@ class TransactionController {
     );
   }
 
+  static Future<List<Transaction>> getTransactionsForDay(
+    DateTime day, {
+    bool isVault = false,
+  }) async {
+    return await TransactionRepository.getTransactionsForDay(
+      day,
+      isVault: isVault,
+    );
+  }
+
   static Future<void> processRecurringTransactions() async {
     await TransactionRepository.processRecurringTransactions();
     TransactionNotifier.instance.refresh();

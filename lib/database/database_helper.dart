@@ -419,18 +419,24 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
   Future<List<model.Transaction>> getTransactionsToday({
     bool isSecret = false,
   }) async {
+    return getTransactionsForDay(DateTime.now(), isSecret: isSecret);
+  }
+
+  Future<List<model.Transaction>> getTransactionsForDay(
+    DateTime day, {
+    bool isSecret = false,
+  }) async {
     try {
       final db = await DatabaseHelper.instance.database;
-      final now = DateTime.now();
       final startOfDay = DateTime(
-        now.year,
-        now.month,
-        now.day,
+        day.year,
+        day.month,
+        day.day,
       ).toIso8601String();
       final endOfDay = DateTime(
-        now.year,
-        now.month,
-        now.day,
+        day.year,
+        day.month,
+        day.day,
         23,
         59,
         59,
@@ -445,8 +451,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
     } catch (e, _)  {
-      debugPrint('DB Error (getTransactionsToday): $e');
-      throw DatabaseException('Operación fallida en getTransactionsToday', e);
+      debugPrint('DB Error (getTransactionsForDay): $e');
+      throw DatabaseException('Operación fallida en getTransactionsForDay', e);
     }
   }
 

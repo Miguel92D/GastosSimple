@@ -82,6 +82,16 @@ class TransactionRepository {
     await DatabaseHelper.instance.processRecurringTransactions();
   }
 
+  static Future<List<Transaction>> getTransactionsForDay(
+    DateTime day, {
+    bool isVault = false,
+  }) async {
+    return await DatabaseHelper.instance.getTransactionsForDay(
+      day,
+      isSecret: isVault,
+    );
+  }
+
   static Future<List<Transaction>> getTransactionsToday({
     bool isVault = false,
   }) async {

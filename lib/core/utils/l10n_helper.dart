@@ -11,6 +11,13 @@ class L10nHelper {
     return formatted[0].toUpperCase() + formatted.substring(1);
   }
 
+  static String getLocalizedDateDay(BuildContext context, DateTime date) {
+    final l10n = context.read<AppLocaleController>();
+    final formatted = DateFormat('EEEE d', l10n.locale).format(date);
+    if (formatted.isEmpty) return formatted;
+    return formatted[0].toUpperCase() + formatted.substring(1);
+  }
+
   static String getLocalizedCategory(BuildContext context, String category) {
     final l10n = context.read<AppLocaleController>();
 

@@ -13,6 +13,7 @@ import '../../../core/ui/widgets/balance_card.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/utils/l10n_helper.dart';
+import 'dashboard_period_selector.dart';
 import 'income_expense_cards.dart';
 import 'recent_transactions_list.dart';
 
@@ -32,6 +33,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   final DashboardController controller = DashboardController();
   List<Transaction> movimientos = [];
 
+  DashboardPeriod _period = DashboardPeriod.month;
   double income = 0;
   double expenses = 0;
   double balance = 0;
@@ -63,17 +65,21 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final selectedMonth = MonthController.instance.selectedMonth;
 
     try {
-      final data = await controller.loadMovements(
+      final data = await controller.loadMovementsByPeriod(
         widget.isVault,
-        month: selectedMonth,
+        period: _period,
+        date: _period == DashboardPeriod.month ? selectedMonth : DateTime.now(),
       );
 
-      if (mounted &&
-          loadVersion == _loadVersion &&
-          MonthController.isSameMonth(
-            selectedMonth,
-            MonthController.instance.selectedMonth,
-          )) {
+      if (mounted && loadVersion == _loadVersion) {
+        if (_period == DashboardPeriod.month &&
+            !MonthController.isSameMonth(
+              selectedMonth,
+              MonthController.instance.selectedMonth,
+            )) {
+          return;
+        }
+
         setState(() {
           movimientos = data;
           income = controller.calculateIncome(data);
@@ -110,6 +116,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   void _handleBalanceSwipe(DragEndDetails details) {
+    if (_period != DashboardPeriod.month) return;
+
     final velocity = details.primaryVelocity ?? 0;
     final distance = _horizontalDragDistance;
     _horizontalDragDistance = 0;
@@ -139,6 +147,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   void _goToCurrentMonthFromBalanceCard() {
+    if (_period != DashboardPeriod.month) return;
+
     final lastSwipeAt = _lastBalanceSwipeAt;
     if (lastSwipeAt != null &&
         DateTime.now().difference(lastSwipeAt) <
@@ -154,6 +164,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   Widget _buildBalanceCard(BuildContext context) {
+    final l10n = context.read<AppLocaleController>();
+
+    if (_period == DashboardPeriod.day) {
+      return BalanceCard(
+        key: const ValueKey('day_balance_card'),
+        balance: balance,
+        title: l10n.text('today_balance').toUpperCase(),
+        subtitle: L10nHelper.getLocalizedDateDay(context, DateTime.now()),
+      );
+    }
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _goToCurrentMonthFromBalanceCard,
@@ -185,10 +206,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         child: BalanceCard(
           key: ValueKey(_monthKey(_loadedMonth)),
           balance: balance,
-          title: context
-              .read<AppLocaleController>()
-              .text('monthly_balance')
-              .toUpperCase(),
+          title: l10n.text('monthly_balance').toUpperCase(),
           subtitle: L10nHelper.getLocalizedDateMonth(context, _loadedMonth),
         ),
       ),
@@ -201,6 +219,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<AppLocaleController>();
+
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -219,10 +239,23 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
+              vertical: AppSpacing.sm,
             ),
             child: _buildBalanceCard(context),
           ),
+          DashboardPeriodSelector(
+            selectedPeriod: _period,
+            onPeriodChanged: (newPeriod) {
+              if (_period != newPeriod) {
+                setState(() {
+                  _period = newPeriod;
+                  isLoading = true;
+                });
+                loadData();
+              }
+            },
+          ),
+          const SizedBox(height: AppSpacing.xs),
           IncomeExpenseCards(
             income: income,
             expenses: expenses,
@@ -234,6 +267,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           RecentTransactionsList(
             transactions: filteredMovimientos,
             onRefresh: loadData,
+            title: _period == DashboardPeriod.day
+                ? l10n.text('today_movements')
+                : l10n.text('month_movements'),
           ),
         ],
       ),

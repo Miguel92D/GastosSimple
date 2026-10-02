@@ -12,10 +12,15 @@ class RecentTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
   final VoidCallback onRefresh;
 
+  /// Título de la sección (ej. "Movimientos de hoy"). Si es null se usa
+  /// "Movimientos recientes".
+  final String? title;
+
   const RecentTransactionsList({
     super.key,
     required this.transactions,
     required this.onRefresh,
+    this.title,
   });
 
   @override
@@ -29,7 +34,8 @@ class RecentTransactionsList extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           child: Text(
-            context.watch<AppLocaleController>().text('recent_movements'),
+            title ??
+                context.watch<AppLocaleController>().text('recent_movements'),
             style: AppTextStyles.subLabel.copyWith(
               color: AppColors.softText.withValues(alpha: 0.4),
               fontSize: 10,
