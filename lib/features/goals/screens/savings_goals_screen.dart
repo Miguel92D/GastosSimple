@@ -160,6 +160,7 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       borderRadius: AppRadius.xl,
+      padding: EdgeInsets.zero, // el relleno lo da el Padding interno (antes 24+24)
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -224,8 +225,9 @@ class _GoalItemCard extends StatelessWidget {
 
     return GlassCard(
       borderRadius: AppRadius.lg,
+      padding: EdgeInsets.zero, // el relleno lo da el Padding interno (antes 24+16)
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
