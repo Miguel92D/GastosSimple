@@ -6,11 +6,11 @@ import '../models/transaction.dart';
 import 'transaction_tile.dart';
 
 import '../controllers/transaction_controller.dart';
-import '../../../../core/flow/general_flow_service.dart';
-import '../../../../core/flow/transaction_flow_service.dart';
-import '../../../../core/ui/app_colors.dart';
-import '../../../../core/ui/app_text_styles.dart';
-import '../../../../core/state/app_state.dart';
+import '../../../core/flow/general_flow_service.dart';
+import '../../../core/flow/transaction_flow_service.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/state/app_state.dart';
 import '../../vault/controllers/vault_controller.dart';
 
 class TransactionHistoryList extends StatelessWidget {
