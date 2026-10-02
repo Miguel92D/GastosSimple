@@ -180,7 +180,7 @@ class _SummaryCard extends StatelessWidget {
                 return FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    CurrencyHelper.format(value, context),
+                    CurrencyHelper.formatPrivate(value, context),
                     style: AppTextStyles.incomeValue.copyWith(fontSize: 36),
                     maxLines: 1,
                   ),
@@ -245,7 +245,7 @@ class _GoalItemCard extends StatelessWidget {
               curve: Curves.easeOutCubic,
               builder: (context, value, _) {
                 return Text(
-                  '${CurrencyHelper.format(value, context)} / ${CurrencyHelper.format(goal.targetAmount, context)}',
+                  '${CurrencyHelper.formatPrivate(value, context)} / ${CurrencyHelper.formatPrivate(goal.targetAmount, context)}',
                   style: AppTextStyles.bodyMain.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -311,7 +311,7 @@ class _GoalItemCard extends StatelessWidget {
                         style: AppTextStyles.subLabel,
                       ),
                       Text(
-                        '${CurrencyHelper.format(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / ${l10n.text('per_month')}',
+                        '${CurrencyHelper.formatPrivate(SavingsGoalController.instance.calculateMonthlySaving(goal), context)} / ${l10n.text('per_month')}',
                         style: AppTextStyles.bodyMain.copyWith(
                           color: AppColors.incomeGreen,
                           fontWeight: FontWeight.bold,

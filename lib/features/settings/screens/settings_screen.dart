@@ -10,6 +10,8 @@ import '../../../core/ui/widgets/pro_badge.dart';
 import '../../../core/flow/general_flow_service.dart';
 
 import '../../../services/security_service.dart';
+import '../../../services/notification_service.dart';
+import 'pin_screen.dart';
 import '../../../services/currency_service.dart';
 import '../../../services/dev_monthly_test_data_service.dart';
 import '../../../services/purchase_service.dart';
@@ -22,12 +24,78 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  /// Pide el PIN actual antes de desactivarlo o cambiarlo. Sin esto,
+  /// cualquiera con el teléfono podía apagar el PIN de la Bóveda desde
+  /// Ajustes y entrar a ella.
+  Future<bool> _confirmCurrentPin({required bool isVault}) async {
+    final security = SecurityService.instance;
+    final hasPin = isVault ? security.hasVaultPin : security.hasPin;
+    if (!hasPin) return true;
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => PinScreen(isVault: isVault)),
+    );
+    return result == true;
+  }
+
+  Future<void> _changePin({required bool isVault}) async {
+    if (!await _confirmCurrentPin(isVault: isVault)) return;
+    if (!mounted) return;
+    await Navigator.pushNamed(
+      context,
+      '/pin',
+      arguments: {'setup': true, if (isVault) 'isVault': true},
+    );
+  }
+
   final bool _isLoading = false;
   bool _isRestoringPurchase = false;
+
+  // Recordatorio diario
+  bool _reminderEnabled = true;
+  TimeOfDay _reminderTime = const TimeOfDay(
+    hour: NotificationService.defaultHour,
+    minute: 0,
+  );
 
   @override
   void initState() {
     super.initState();
+    _loadReminder();
+  }
+
+  Future<void> _loadReminder() async {
+    final s = await NotificationService.instance.getReminderSettings();
+    if (!mounted) return;
+    setState(() {
+      _reminderEnabled = s.enabled;
+      _reminderTime = TimeOfDay(hour: s.hour, minute: s.minute);
+    });
+  }
+
+  Future<void> _toggleReminder(bool value, AppLocaleController l10n) async {
+    final ok = await NotificationService.instance.setReminderEnabled(value);
+    if (!mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.text('reminder_permission_denied'))),
+      );
+      return;
+    }
+    setState(() => _reminderEnabled = value);
+  }
+
+  Future<void> _pickReminderTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime,
+    );
+    if (picked == null || !mounted) return;
+    await NotificationService.instance.setReminderTime(
+      picked.hour,
+      picked.minute,
+    );
+    if (!mounted) return;
+    setState(() => _reminderTime = picked);
   }
 
   @override
@@ -95,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (result == true) {
                       await securityService.setPinActive(true);
                     }
-                  } else {
+                  } else if (await _confirmCurrentPin(isVault: false)) {
                     await securityService.setPinActive(false);
                   }
                 },
@@ -104,11 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildItem(
                   title: l10n.text('change_pin'),
                   leading: Icons.edit_rounded,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/pin',
-                    arguments: {'setup': true},
-                  ),
+                  onTap: () => _changePin(isVault: false),
                 ),
               SwitchListTile(
                 title: Text(
@@ -171,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (result == true) {
                       await securityService.setVaultPinActive(true);
                     }
-                  } else {
+                  } else if (await _confirmCurrentPin(isVault: true)) {
                     await securityService.setVaultPinActive(false);
                   }
                 },
@@ -180,11 +244,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildItem(
                   title: l10n.text('change_pin'),
                   leading: Icons.edit_rounded,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/pin',
-                    arguments: {'setup': true, 'isVault': true},
-                  ),
+                  onTap: () => _changePin(isVault: true),
+                ),
+
+              const SizedBox(height: 16),
+              _buildSectionTitle(l10n.text('reminder_section')),
+              SwitchListTile(
+                title: Text(
+                  l10n.text('reminder_daily'),
+                  style: AppTextStyles.bodyMain,
+                ),
+                subtitle: Text(
+                  l10n.text('reminder_daily_subtitle'),
+                  style: AppTextStyles.bodySmall,
+                ),
+                secondary: Icon(
+                  Icons.notifications_active_rounded,
+                  color: AppColors.primaryPurple,
+                ),
+                value: _reminderEnabled,
+                activeThumbColor: AppColors.primaryPurple,
+                onChanged: (val) => _toggleReminder(val, l10n),
+              ),
+              if (_reminderEnabled)
+                _buildItem(
+                  title: l10n.text('reminder_time'),
+                  subtitle: _reminderTime.format(context),
+                  leading: Icons.schedule_rounded,
+                  onTap: _pickReminderTime,
                 ),
 
               const SizedBox(height: 16),

@@ -103,6 +103,11 @@ class GeneralFlowService {
     NavigationService.navigate("/categories");
   }
 
+  static void openRecurring() {
+    SecurityService.instance.lockVault();
+    NavigationService.navigate("/recurring");
+  }
+
   static void openMonthlyAnalysis() {
     SecurityService.instance.lockVault();
     NavigationService.navigate("/monthly_analysis");

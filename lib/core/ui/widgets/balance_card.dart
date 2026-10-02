@@ -154,10 +154,12 @@ class _BalanceCardState extends State<BalanceCard>
                             color: targetColor,
                             fontSize: 42,
                           ),
-                          child: Text(
-                            formattedValue,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          // Montos largos se achican para entrar enteros en vez
+                          // de cortarse con "…" (ocultaba dígitos). Si el
+                          // monto entra, se ve al tamaño normal.
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(formattedValue, maxLines: 1),
                           ),
                         );
                       },

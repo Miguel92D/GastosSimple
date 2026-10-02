@@ -13,6 +13,8 @@ import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/app_button.dart';
 import '../../../core/flow/app_guard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/debt_expense.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -426,15 +428,20 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  void _showPaymentModal(Debt debt) {
+  Future<void> _showPaymentModal(Debt debt) async {
     final amountController = TextEditingController(
       text: debt.remaining > 0 ? CurrencyHelper.formatAmountForInput(debt.remaining) : '',
     );
+    // Se recuerda la última elección del usuario.
+    final prefs = await SharedPreferences.getInstance();
+    var recordExpense = prefs.getBool(DebtExpense.prefKey) ?? true;
+    if (!mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => GestureDetector(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Container(
           padding: EdgeInsets.only(
@@ -486,7 +493,12 @@ class _DebtScreenState extends State<DebtScreen> {
                       onSubmitted: (_) async {
                         final amount = CurrencyHelper.parseAmount(amountController.text) ?? 0;
                         if (amount > 0) {
-                          await _controller.makePayment(debt.id!, amount);
+                          await prefs.setBool(DebtExpense.prefKey, recordExpense);
+                          await _controller.makePayment(
+                            debt.id!,
+                            amount,
+                            recordExpenseFor: recordExpense ? debt : null,
+                          );
                           if (!context.mounted) return;
                           Navigator.pop(context);
                           _loadDebts();
@@ -503,14 +515,40 @@ class _DebtScreenState extends State<DebtScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
+                  // Registrar el pago como gasto: así el balance refleja la
+                  // plata que salió. Apagalo si ya cargás el pago a mano.
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: recordExpense,
+                    activeThumbColor: AppColors.primaryPurple,
+                    title: Text(
+                      context.read<AppLocaleController>().text('debt_record_expense'),
+                      style: AppTextStyles.bodyMain,
+                    ),
+                    subtitle: Text(
+                      context.read<AppLocaleController>().text(
+                        'debt_record_expense_hint',
+                        {'category': DebtExpense.categoryFor(debt.nombre)},
+                      ),
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    onChanged: (v) => setModalState(() => recordExpense = v),
+                  ),
+                  const SizedBox(height: 16),
                   AppButton(
                     onTap: () async {
                       final amount = CurrencyHelper.parseAmount(amountController.text) ?? 0;
                       if (amount > 0) {
+                        await prefs.setBool(DebtExpense.prefKey, recordExpense);
+                        if (!context.mounted) return;
                         final success = await AppGuard.runWithFeedback(
                           context,
-                          () => _controller.makePayment(debt.id!, amount),
+                          () => _controller.makePayment(
+                            debt.id!,
+                            amount,
+                            recordExpenseFor: recordExpense ? debt : null,
+                          ),
                         );
                         if (!context.mounted) return;
                         if (success) {
@@ -527,6 +565,7 @@ class _DebtScreenState extends State<DebtScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -576,7 +615,7 @@ class _DebtScreenState extends State<DebtScreen> {
                 ),
               ),
               TextSpan(
-                text: CurrencyHelper.format(total, context),
+                text: CurrencyHelper.formatPrivate(total, context),
                 style: AppTextStyles.cardTitle.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
@@ -594,7 +633,7 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   Widget _buildDebtItem(BuildContext context, Debt debt, {bool isPriority = false}) {
-    final bool isPaid = debt.progress >= 0.999;
+    final bool isPaid = debt.isPaid;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -755,7 +794,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      isPaid ? context.read<AppLocaleController>().text('paid_label') : CurrencyHelper.format(debt.remaining, context),
+                      isPaid ? context.read<AppLocaleController>().text('paid_label') : CurrencyHelper.formatPrivate(debt.remaining, context),
                       style: AppTextStyles.cardTitle.copyWith(
                         fontSize: 16,
                         color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,

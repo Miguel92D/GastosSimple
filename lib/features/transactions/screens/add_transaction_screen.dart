@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
  * All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
  */
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import '../../../core/flow/transaction_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_gradients.dart';
@@ -14,6 +16,9 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/currency_input_formatter.dart';
+import '../../../core/utils/installment_plan.dart';
+import '../../../core/utils/card_schedule.dart';
+import '../../../services/credit_card_service.dart';
 
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
@@ -52,10 +57,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   String _tipo = 'gasto';
   String _selectedCategory = 'Comida';
-  final bool _isRecurring = false;
-  final String _frequency = 'monthly';
+  bool _isRecurring = false;
+  String _frequency = 'monthly';
+
+  /// Compra en cuotas (solo gastos nuevos). null = un solo pago.
+  int? _installments;
+
+  /// true: el monto ingresado es el valor de UNA cuota (compras con
+  /// recargo/interés); false: es el total de la compra.
+  bool _amountIsPerInstallment = false;
+  List<CreditCard> _cards = [];
+  String? _cardId;
 
   Goal? _selectedGoal;
+
+  /// Día del movimiento (la hora se resuelve al guardar, ver [_resolveDate]).
+  DateTime _selectedDate = DateTime.now();
 
   List<String> _categoriasGasto = [
     'Comida',
@@ -102,7 +119,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   void initState() {
     super.initState();
+    // Actualiza la vista previa "6 cuotas de $X" mientras se escribe.
+    _amountController.addListener(() {
+      if (_installments != null && mounted) setState(() {});
+    });
     _loadSmartCategories();
+    _loadCards();
 
     if (widget.movimientoToEdit != null) {
       final mov = widget.movimientoToEdit!;
@@ -111,6 +133,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       _tipo = mov.type;
       _selectedCategory = mov.category;
       _noteController.text = mov.note ?? '';
+      _selectedDate = mov.date;
     } else {
       if (widget.type != null) {
         final String normalizedType = widget.type!.toLowerCase();
@@ -218,10 +241,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     try {
       final newMovement = Transaction(
         id: widget.movimientoToEdit?.id,
-        amount: amount,
+        // En cuotas con "valor de cuota", el movimiento lleva el total.
+        amount: _isInstallmentPurchase ? _installmentsTotal(amount) : amount,
         category: _selectedCategory,
         type: _tipo,
-        date: widget.movimientoToEdit?.date ?? DateTime.now(),
+        date: _resolveDate(),
         // Al editar se preserva el flag original: un movimiento de la Bóveda
         // nunca debe filtrarse al historial normal (Regla de Oro #6).
         isSecret: widget.movimientoToEdit?.isSecret ?? (widget.isVault ? 1 : 0),
@@ -241,12 +265,492 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         goal: _selectedGoal,
         goalAmount: CurrencyHelper.parseAmount(_goalAmountController.text) ?? 0,
         isFromQuickEntry: widget.isFromQuickEntry,
+        installments: _isInstallmentPurchase ? _installments : null,
+        installmentsFirstDate:
+            _isInstallmentPurchase ? _installmentsFirstDate() : null,
+        installmentsAnchorDay:
+            _isInstallmentPurchase ? _selectedCard?.dueDay : null,
       );
+      // saveTransaction atrapa sus propios errores (muestra un SnackBar) y no
+      // relanza: sin esto, tras un error el botón Guardar quedaba bloqueado.
+      if (mounted) setState(() => _isSaving = false);
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
       }
     }
+  }
+
+  static bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  /// Fecha y hora final del movimiento:
+  /// - Editando sin cambiar el día: se conserva la fecha/hora original.
+  /// - Hoy (nuevo): el momento actual.
+  /// - Otro día: ese día con la hora actual, para que el orden dentro del
+  ///   día sea natural y nunca quede en el futuro.
+  DateTime _resolveDate() {
+    final original = widget.movimientoToEdit?.date;
+    if (original != null && _isSameDay(original, _selectedDate)) {
+      return original;
+    }
+    final now = DateTime.now();
+    if (_isSameDay(_selectedDate, now)) return now;
+    return DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      now.hour,
+      now.minute,
+      now.second,
+    );
+  }
+
+  void _setDate(DateTime day) {
+    HapticFeedback.selectionClick();
+    setState(() => _selectedDate = day);
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate.isAfter(now) ? now : _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: now,
+    );
+    if (picked != null && mounted) _setDate(picked);
+  }
+
+  Widget _buildDateSelector(AppLocaleController l10n) {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final isToday = _isSameDay(_selectedDate, now);
+    final isYesterday = _isSameDay(_selectedDate, yesterday);
+    final isOther = !isToday && !isYesterday;
+    final color = _tipo == 'gasto'
+        ? AppColors.expenseRed
+        : AppColors.incomeGreen;
+
+    return Row(
+      children: [
+        Expanded(
+          child: _DateChip(
+            label: l10n.text('today'),
+            isSelected: isToday,
+            color: color,
+            onTap: () => _setDate(now),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _DateChip(
+            label: l10n.text('yesterday'),
+            isSelected: isYesterday,
+            color: color,
+            onTap: () => _setDate(yesterday),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _DateChip(
+            label: isOther
+                ? DateFormat('d MMM', l10n.locale).format(_selectedDate)
+                : l10n.text('other_date'),
+            icon: Icons.calendar_month_rounded,
+            isSelected: isOther,
+            color: color,
+            onTap: _pickDate,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ---- Cuotas: modo de monto, tarjeta y fecha de la primera cuota ----
+
+  bool get _isInstallmentPurchase =>
+      _tipo == 'gasto' && _installments != null;
+
+  CreditCard? get _selectedCard {
+    for (final c in _cards) {
+      if (c.id == _cardId) return c;
+    }
+    return null;
+  }
+
+  /// Total a pagar del plan (si se ingresó el valor de la cuota, cuota × n).
+  double _installmentsTotal(double entered) =>
+      _amountIsPerInstallment ? entered * (_installments ?? 1) : entered;
+
+  double _installmentsPer(double entered) => _amountIsPerInstallment
+      ? entered
+      : InstallmentPlan.perInstallment(entered, _installments ?? 1);
+
+  DateTime _installmentsFirstDate() {
+    final purchase = _resolveDate();
+    final card = _selectedCard;
+    return card == null ? purchase : CardSchedule.firstDueDate(purchase, card);
+  }
+
+  Future<void> _loadCards() async {
+    final cards = await CreditCardService.getCards();
+    final lastId = await CreditCardService.getLastUsedId();
+    if (!mounted) return;
+    setState(() {
+      _cards = cards;
+      _cardId = cards.any((c) => c.id == lastId) ? lastId : null;
+    });
+  }
+
+  void _selectCard(String? id) {
+    HapticFeedback.selectionClick();
+    setState(() => _cardId = id);
+    CreditCardService.setLastUsedId(id);
+  }
+
+  Future<void> _addCard(AppLocaleController l10n) async {
+    final name = TextEditingController();
+    final closing = TextEditingController();
+    final due = TextEditingController();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.text('card_add_title')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: name,
+              autofocus: true,
+              decoration: InputDecoration(labelText: l10n.text('card_name')),
+            ),
+            TextField(
+              controller: closing,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                labelText: l10n.text('card_closing_day'),
+                hintText: '1 - 31',
+              ),
+            ),
+            TextField(
+              controller: due,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                labelText: l10n.text('card_due_day'),
+                hintText: '1 - 31',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.text('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              final c = int.tryParse(closing.text);
+              final d = int.tryParse(due.text);
+              final valid = name.text.trim().isNotEmpty &&
+                  c != null && c >= 1 && c <= 31 &&
+                  d != null && d >= 1 && d <= 31;
+              if (valid) Navigator.pop(ctx, true);
+            },
+            child: Text(l10n.text('save')),
+          ),
+        ],
+      ),
+    );
+    if (result == true) {
+      final card = await CreditCardService.addCard(
+        name: name.text.trim(),
+        closingDay: int.parse(closing.text),
+        dueDay: int.parse(due.text),
+      );
+      await CreditCardService.setLastUsedId(card.id);
+      await _loadCards();
+    }
+    Future.delayed(const Duration(milliseconds: 400), () {
+      name.dispose();
+      closing.dispose();
+      due.dispose();
+    });
+  }
+
+  Future<void> _confirmDeleteCard(AppLocaleController l10n, CreditCard card) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.text('card_delete_title', {'name': card.name})),
+        content: Text(l10n.text('card_delete_body')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.text('cancel')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              l10n.text('delete'),
+              style: const TextStyle(color: AppColors.expenseRed),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await CreditCardService.deleteCard(card.id);
+      if (_cardId == card.id) await CreditCardService.setLastUsedId(null);
+      await _loadCards();
+    }
+  }
+
+  Future<void> _pickCustomInstallments(AppLocaleController l10n) async {
+    final controller = TextEditingController();
+    final value = await showDialog<int>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.text('installments_custom_title')),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: InputDecoration(
+            hintText: '2 - ${InstallmentPlan.maxInstallments}',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.text('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              final n = int.tryParse(controller.text);
+              if (n != null && n >= 2 && n <= InstallmentPlan.maxInstallments) {
+                Navigator.pop(ctx, n);
+              }
+            },
+            child: Text(l10n.text('save')),
+          ),
+        ],
+      ),
+    );
+    // Se libera después de la animación de cierre del diálogo: liberarlo
+    // en seguida hace que el TextField saliente use un controller muerto.
+    Future.delayed(const Duration(milliseconds: 400), controller.dispose);
+    if (value != null && mounted) {
+      HapticFeedback.selectionClick();
+      setState(() => _installments = value);
+    }
+  }
+
+  Widget _sectionLabel(String text) => Padding(
+    padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
+    child: Text(text, style: AppTextStyles.subLabel),
+  );
+
+  Widget _buildInstallmentsSelector(AppLocaleController l10n) {
+    const color = AppColors.expenseRed;
+    final entered = CurrencyHelper.parseAmount(_amountController.text) ?? 0;
+    final n = _installments;
+    final isCustom = n != null && !InstallmentPlan.presets.contains(n);
+
+    String? preview;
+    if (n != null && entered > 0) {
+      preview = l10n.text('installments_preview_full', {
+        'n': n.toString(),
+        'amount': CurrencyHelper.format(_installmentsPer(entered), context),
+        'total': CurrencyHelper.format(_installmentsTotal(entered), context),
+        'first': DateFormat('d MMM', l10n.locale).format(
+          _installmentsFirstDate(),
+        ),
+      });
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: n != null,
+          activeThumbColor: color,
+          secondary: const Icon(Icons.credit_card_rounded, color: color),
+          title: Text(
+            l10n.text('installments_toggle'),
+            style: AppTextStyles.subLabel,
+          ),
+          subtitle: preview != null
+              ? Text(preview, style: AppTextStyles.bodySmall)
+              : null,
+          onChanged: (value) {
+            HapticFeedback.selectionClick();
+            setState(() => _installments = value ? 3 : null);
+          },
+        ),
+        if (n != null) ...[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final p in InstallmentPlan.presets)
+                SizedBox(
+                  width: 58,
+                  child: _DateChip(
+                    label: '$p',
+                    isSelected: n == p,
+                    color: color,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _installments = p);
+                    },
+                  ),
+                ),
+              SizedBox(
+                width: 82,
+                child: _DateChip(
+                  label: isCustom ? '$n' : l10n.text('other_date'),
+                  icon: Icons.edit_rounded,
+                  isSelected: isCustom,
+                  color: color,
+                  onTap: () => _pickCustomInstallments(l10n),
+                ),
+              ),
+            ],
+          ),
+
+          // Recargo / interés: si se conoce el valor de la cuota, se carga
+          // ese valor y el total sale de cuota × n.
+          _sectionLabel(l10n.text('installments_amount_is')),
+          Row(
+            children: [
+              Expanded(
+                child: _DateChip(
+                  label: l10n.text('installments_mode_total'),
+                  isSelected: !_amountIsPerInstallment,
+                  color: color,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _amountIsPerInstallment = false);
+                  },
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _DateChip(
+                  label: l10n.text('installments_mode_per'),
+                  isSelected: _amountIsPerInstallment,
+                  color: color,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _amountIsPerInstallment = true);
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          // Tarjeta: define en qué vencimiento cae la primera cuota.
+          _sectionLabel(l10n.text('installments_first_on')),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              _CardChip(
+                label: l10n.text('installments_on_purchase_date'),
+                isSelected: _cardId == null,
+                onTap: () => _selectCard(null),
+              ),
+              for (final card in _cards)
+                _CardChip(
+                  label: card.name,
+                  icon: Icons.credit_card_rounded,
+                  isSelected: _cardId == card.id,
+                  onTap: () => _selectCard(card.id),
+                  onLongPress: () => _confirmDeleteCard(l10n, card),
+                ),
+              _CardChip(
+                label: l10n.text('card_add'),
+                icon: Icons.add_rounded,
+                isSelected: false,
+                onTap: () => _addCard(l10n),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            _selectedCard == null
+                ? l10n.text('installments_purchase_hint')
+                : l10n.text('installments_card_hint', {
+                    'closing': _selectedCard!.closingDay.toString(),
+                    'due': _selectedCard!.dueDay.toString(),
+                  }),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.softText.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildRecurringSelector(AppLocaleController l10n) {
+    final color = _tipo == 'gasto'
+        ? AppColors.expenseRed
+        : AppColors.incomeGreen;
+    const frequencies = ['monthly', 'weekly', 'daily'];
+    final labels = {
+      'monthly': l10n.text('freq_monthly'),
+      'weekly': l10n.text('freq_weekly'),
+      'daily': l10n.text('freq_daily'),
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: _isRecurring,
+          activeThumbColor: color,
+          secondary: Icon(Icons.autorenew_rounded, color: color),
+          title: Text(l10n.text('recurring_repeat'), style: AppTextStyles.subLabel),
+          subtitle: _isRecurring
+              ? Text(
+                  l10n.text('recurring_repeat_hint'),
+                  style: AppTextStyles.bodySmall,
+                )
+              : null,
+          onChanged: (value) {
+            HapticFeedback.selectionClick();
+            setState(() => _isRecurring = value);
+          },
+        ),
+        if (_isRecurring)
+          Row(
+            children: [
+              for (final f in frequencies) ...[
+                if (f != frequencies.first)
+                  const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: _DateChip(
+                    label: labels[f]!,
+                    isSelected: _frequency == f,
+                    color: color,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _frequency = f);
+                    },
+                  ),
+                ),
+              ],
+            ],
+          ),
+      ],
+    );
   }
 
   @override
@@ -434,6 +938,29 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
               ),
 
+              const SizedBox(height: AppSpacing.lg),
+
+              Text(
+                context.watch<AppLocaleController>().text('date'),
+                style: AppTextStyles.subLabel,
+              ),
+
+              const SizedBox(height: AppSpacing.md),
+
+              _buildDateSelector(context.watch<AppLocaleController>()),
+
+              // Repetir / cuotas solo al crear: una recurrencia existente se
+              // gestiona desde la pantalla "Pagos fijos".
+              if (!isEditing) ...[
+                const SizedBox(height: AppSpacing.lg),
+                if (_installments == null || _tipo != 'gasto')
+                  _buildRecurringSelector(context.watch<AppLocaleController>()),
+                if (_tipo == 'gasto' && !_isRecurring)
+                  _buildInstallmentsSelector(
+                    context.watch<AppLocaleController>(),
+                  ),
+              ],
+
               const SizedBox(height: AppSpacing.xl),
 
               GlassInput(
@@ -457,6 +984,138 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ],
           ),
         ),
+    );
+  }
+}
+
+class _CardChip extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+
+  const _CardChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.icon,
+    this.onLongPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const color = AppColors.expenseRed;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? color : color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.textPrimary.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected
+                    ? AppColors.textPrimary
+                    : color.withValues(alpha: 0.7),
+              ),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: AppTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: isSelected
+                    ? AppColors.textPrimary
+                    : color.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DateChip extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final bool isSelected;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _DateChip({
+    required this.label,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? color : color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.textPrimary.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected
+                    ? AppColors.textPrimary
+                    : color.withValues(alpha: 0.7),
+              ),
+              const SizedBox(width: 6),
+            ],
+            Flexible(
+              child: Text(
+                label.toUpperCase(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: isSelected
+                      ? AppColors.textPrimary
+                      : color.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

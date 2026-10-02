@@ -176,16 +176,21 @@ class _TransactionTileState extends State<TransactionTile>
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  widget.hideAmount
-                      ? '••••••'
-                      : '$amountPrefix${CurrencyHelper.format(widget.transaction.amount, context)}',
-                  style: AppTextStyles.cardTitle.copyWith(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    color: amountColor,
+                // El monto se achica antes que cortarse con "…".
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    widget.hideAmount
+                        ? '••••••'
+                        : '$amountPrefix${CurrencyHelper.format(widget.transaction.amount, context)}',
+                    style: AppTextStyles.cardTitle.copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      color: amountColor,
+                    ),
+                    maxLines: 1,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
                 if (widget.transaction.note != null &&
                     widget.transaction.note!.isNotEmpty)

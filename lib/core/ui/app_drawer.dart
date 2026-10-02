@@ -231,6 +231,16 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     GeneralFlowService.openDebts();
                   },
                 ),
+                _DrawerItem(
+                  icon: Icons.autorenew_rounded,
+                  title: context.watch<AppLocaleController>().text(
+                    'recurring_title',
+                  ),
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openRecurring();
+                  },
+                ),
 
                 const SizedBox(height: 12),
                 Padding(
@@ -275,7 +285,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const SizedBox(height: 6),
 
                 _DrawerItem(
-                  icon: Icons.auto_awesome_rounded,
+                  icon: Icons.auto_graph_rounded,
                   title: context.watch<AppLocaleController>().text(
                     'ai_intelligence',
                   ),

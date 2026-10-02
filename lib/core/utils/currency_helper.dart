@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/currency_service.dart';
+import '../state/app_state.dart';
 
 class CurrencyHelper {
   static String format(double value, BuildContext context) {
     // Watching the service ensures the widget calling this rebuilds on currency change
     context.watch<CurrencyService>();
     return CurrencyService.format(value);
+  }
+
+  /// Igual que [format] pero respeta "ocultar saldos" (ojo del dashboard).
+  static String formatPrivate(double value, BuildContext context) {
+    context.watch<AppState>();
+    if (AppState.instance.hideBalance) return '••••••';
+    return format(value, context);
   }
 
   static String getSymbol(BuildContext context) {

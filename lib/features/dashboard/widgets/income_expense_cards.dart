@@ -109,16 +109,20 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                AppState.instance.hideBalance
-                    ? "••••••"
-                    : CurrencyHelper.format(amount, context),
-                style: AppTextStyles.incomeValue.copyWith(
-                  color: color,
-                  fontSize: 20,
+              // Se achica para mostrar el monto completo (antes "$ 89.768.…").
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  AppState.instance.hideBalance
+                      ? "••••••"
+                      : CurrencyHelper.format(amount, context),
+                  style: AppTextStyles.incomeValue.copyWith(
+                    color: color,
+                    fontSize: 20,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

@@ -5,6 +5,7 @@ import '../widgets/vault_dashboard.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_fab.dart';
 import '../../../core/ui/app_drawer.dart';
+import '../../../core/router/navigation_service.dart';
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -21,6 +22,17 @@ class _VaultScreenState extends State<VaultScreen> {
     return AppScaffold(
       title: l10n.text('secret_expenses'),
       drawer: const AppDrawer(),
+      actions: [
+        // Pagos fijos de la Bóveda (solo los secretos).
+        IconButton(
+          tooltip: l10n.text('recurring_title'),
+          icon: const Icon(Icons.autorenew_rounded),
+          onPressed: () => NavigationService.navigate(
+            '/recurring',
+            arguments: {'isVault': true},
+          ),
+        ),
+      ],
       body: const VaultDashboard(),
       floatingActionButton: const AppFAB(mode: "vault"),
     );

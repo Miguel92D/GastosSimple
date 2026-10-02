@@ -279,7 +279,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              CurrencyHelper.format(amount, context),
+              CurrencyHelper.formatPrivate(amount, context),
               maxLines: 1,
               style: AppTextStyles.cardTitle.copyWith(
                 color: color,
@@ -329,7 +329,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
             ),
           ),
           Text(
-            CurrencyHelper.format(diff.abs(), context),
+            CurrencyHelper.formatPrivate(diff.abs(), context),
             style: AppTextStyles.bodyMain.copyWith(
               color: improved ? AppColors.incomeGreen : AppColors.expenseRed,
             ),
@@ -354,7 +354,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
         Expanded(
           child: _buildSmallDetailCard(
             l10n.text('daily_average'),
-            CurrencyHelper.format(_dailyAverage, context),
+            CurrencyHelper.formatPrivate(_dailyAverage, context),
             Icons.speed_rounded,
             AppColors.incomeGreen,
           ),

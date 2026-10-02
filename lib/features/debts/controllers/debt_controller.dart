@@ -1,5 +1,8 @@
 import '../models/debt.dart';
 import '../repositories/debt_repository.dart';
+import '../utils/debt_expense.dart';
+import '../../transactions/controllers/transaction_controller.dart';
+import '../../transactions/models/transaction.dart';
 
 class DebtController {
   final DebtRepository repository;
@@ -26,7 +29,25 @@ class DebtController {
     await repository.deleteDebt(id);
   }
 
-  Future<void> makePayment(int id, double amount) async {
+  /// [recordExpenseFor]: si se pasa la deuda, el pago también se registra
+  /// como gasto de hoy (para que el balance refleje la plata que salió).
+  Future<void> makePayment(
+    int id,
+    double amount, {
+    Debt? recordExpenseFor,
+  }) async {
     await repository.payDebt(id, amount);
+    final debt = recordExpenseFor;
+    if (debt != null) {
+      await TransactionController.addTransaction(
+        Transaction(
+          amount: amount,
+          category: DebtExpense.categoryFor(debt.nombre),
+          type: Transaction.typeExpense,
+          date: DateTime.now(),
+          note: DebtExpense.noteFor(debt.nombre),
+        ),
+      );
+    }
   }
 }

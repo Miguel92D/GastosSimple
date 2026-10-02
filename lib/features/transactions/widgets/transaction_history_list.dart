@@ -1,6 +1,7 @@
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/transaction.dart';
 import 'transaction_tile.dart';
 
@@ -26,6 +27,35 @@ class TransactionHistoryList extends StatelessWidget {
     this.padding,
   });
 
+  /// Borra y ofrece "Deshacer" (antes un swipe o un toque borraba para
+  /// siempre, sin confirmación).
+  Future<void> _deleteWithUndo(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    if (transaction.id == null) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = context.read<AppLocaleController>();
+    HapticFeedback.mediumImpact();
+    await TransactionController.deleteTransaction(transaction.id!);
+    onRefresh();
+    messenger
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(l10n.text('movement_deleted')),
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: l10n.text('undo'),
+            onPressed: () async {
+              await TransactionController.restoreDeleted(transaction);
+              onRefresh();
+            },
+          ),
+        ),
+      );
+  }
+
   void _showOptionsModal(BuildContext context, Transaction transaction) {
     showModalBottomSheet(
       context: context,
@@ -33,7 +63,7 @@ class TransactionHistoryList extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -56,7 +86,7 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.primaryPurple,
                 ),
                 title: Text(
-                  context.watch<AppLocaleController>().text('edit'),
+                  sheetContext.watch<AppLocaleController>().text('edit'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () async {
@@ -74,17 +104,12 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.expenseRed,
                 ),
                 title: Text(
-                  context.watch<AppLocaleController>().text('delete'),
+                  sheetContext.watch<AppLocaleController>().text('delete'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () async {
                   GeneralFlowService.goBack();
-                  if (transaction.id != null) {
-                    await TransactionController.deleteTransaction(
-                      transaction.id!,
-                    );
-                    onRefresh();
-                  }
+                  await _deleteWithUndo(context, transaction);
                 },
               ),
               ListTile(
@@ -93,7 +118,7 @@ class TransactionHistoryList extends StatelessWidget {
                   color: AppColors.softText,
                 ),
                 title: Text(
-                  context.watch<AppLocaleController>().text('cancel'),
+                  sheetContext.watch<AppLocaleController>().text('cancel'),
                   style: AppTextStyles.bodyMain,
                 ),
                 onTap: () => GeneralFlowService.goBack(),
@@ -131,14 +156,7 @@ class TransactionHistoryList extends StatelessWidget {
             return TransactionTile(
               transaction: transaction,
               hideAmount: AppState.instance.hideBalance,
-              onDelete: () async {
-                if (transaction.id != null) {
-                  await TransactionController.deleteTransaction(
-                    transaction.id!,
-                  );
-                  onRefresh();
-                }
-              },
+              onDelete: () => _deleteWithUndo(context, transaction),
               onArchive: () async {
                 if (transaction.isSecret == 1) {
                   await VaultController.removeFromVault(transaction);

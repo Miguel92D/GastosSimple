@@ -5,6 +5,7 @@ import '../../features/dashboard/screens/home_screen.dart';
 import '../../features/transactions/screens/quick_entry_screen.dart';
 import '../../features/transactions/screens/add_transaction_screen.dart';
 import '../../features/transactions/screens/movements_screen.dart';
+import '../../features/transactions/utils/transaction_filter.dart';
 
 import '../../features/analysis/screens/stats_screen.dart';
 import '../../features/analysis/screens/prediction_screen.dart';
@@ -22,6 +23,7 @@ import '../../features/settings/screens/consent_screen.dart';
 import '../../features/settings/screens/backup_screen.dart';
 import '../../features/settings/screens/privacy_policy_screen.dart';
 import '../../features/transactions/screens/categories_screen.dart';
+import '../../features/transactions/screens/recurring_screen.dart';
 
 class AppRouter {
   static Route generateRoute(RouteSettings settings) {
@@ -71,7 +73,9 @@ class AppRouter {
       case "/movements":
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const MovementsScreen(),
+          builder: (_) => MovementsScreen(
+            initialFilter: args['filter'] as TransactionFilter?,
+          ),
         );
 
       case "/stats":
@@ -147,6 +151,12 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const CategoriesScreen(),
+        );
+
+      case "/recurring":
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => RecurringScreen(isVault: args['isVault'] == true),
         );
 
       case "/monthly_analysis":
