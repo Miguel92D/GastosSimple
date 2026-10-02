@@ -129,7 +129,7 @@ class CategoriesScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Icon(
                     Icons.add_circle_outline_rounded,
-                    color: AppColors.softText.withValues(alpha: 0.15),
+                    color: AppColors.softText.withValues(alpha: 0.45),
                     size: 20,
                   ),
                 ],

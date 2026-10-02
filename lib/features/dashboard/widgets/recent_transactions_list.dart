@@ -37,14 +37,16 @@ class RecentTransactionsList extends StatelessWidget {
             title ??
                 context.watch<AppLocaleController>().text('recent_movements'),
             style: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withValues(alpha: 0.4),
-              fontSize: 10,
+              color: AppColors.softText.withValues(alpha: 0.65),
+              fontSize: 11,
             ),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          // sm + el md propio de cada tile = lg (24): los movimientos quedan
+          // alineados con la tarjeta de balance y las de Ingreso/Gasto.
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: TransactionHistoryList(
             transactions: transactions,
             onRefresh: onRefresh,

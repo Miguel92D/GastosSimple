@@ -830,7 +830,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 hintText: context.watch<AppLocaleController>().text('amount'),
                 hintStyle: AppTextStyles.balanceAmount.copyWith(
                   fontSize: 32,
-                  color: AppColors.softText.withValues(alpha: 0.1),
+                  color: AppColors.softText.withValues(alpha: 0.35),
                 ),
                 prefix: Baseline(
                   baseline: 30,
@@ -882,7 +882,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       onTap: () => setState(() => _selectedCategory = category),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        width: 75,
+                        width: 84,
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           color: isSelected ? color : color.withValues(alpha: 0.05),
@@ -919,13 +919,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                               child: Text(
                                 localizedName.toUpperCase(),
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  fontSize: 8,
+                                  fontSize: 10,
+                                  height: 1.1,
+                                  letterSpacing: 0.2,
                                   fontWeight: FontWeight.w900,
                                   color: isSelected
-                                      ? Colors.white
-                                      : color.withValues(alpha: 0.5),
+                                      ? AppColors.textPrimary
+                                      : color.withValues(alpha: 0.85),
                                 ),
-                                maxLines: 1,
+                                // Dos líneas: "TARJETA DE CRÉDITO" ya no se corta.
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                               ),

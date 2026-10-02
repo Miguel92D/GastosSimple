@@ -163,8 +163,8 @@ class _TransactionTileState extends State<TransactionTile>
                     context.read<AppLocaleController>().locale,
                   ).format(widget.transaction.date),
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.softText.withValues(alpha: 0.3),
-                    fontSize: 10,
+                    color: AppColors.softText.withValues(alpha: 0.6),
+                    fontSize: 11,
                   ),
                 ),
               ],
@@ -196,7 +196,7 @@ class _TransactionTileState extends State<TransactionTile>
                     widget.transaction.note!.isNotEmpty)
                   Text(
                     widget.transaction.note!,
-                    style: AppTextStyles.bodySmall.copyWith(fontSize: 9),
+                    style: AppTextStyles.bodySmall.copyWith(fontSize: 11),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -242,7 +242,7 @@ class _TransactionTileState extends State<TransactionTile>
                         widget.transaction.isSecret == 1
                             ? Icons.lock_open_rounded
                             : Icons.lock_rounded,
-                        color: AppColors.primaryPurple,
+                        color: AppColors.textPrimary,
                         size: 28,
                       ),
                     ),
@@ -259,7 +259,7 @@ class _TransactionTileState extends State<TransactionTile>
                       ),
                       child: const Icon(
                         Icons.delete_rounded,
-                        color: AppColors.expenseRed,
+                        color: AppColors.textPrimary,
                         size: 28,
                       ),
                     ),

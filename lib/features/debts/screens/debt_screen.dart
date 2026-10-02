@@ -707,8 +707,8 @@ class _DebtScreenState extends State<DebtScreen> {
                               child: Text(
                                 context.read<AppLocaleController>().text('paid_label'),
                                 style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 8,
+                                  color: AppColors.darkBackground,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                 ),
                               ),
@@ -735,7 +735,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                     context.read<AppLocaleController>().text('priority_label'), // Defaults to "Priority" in unknown locales
                                     style: const TextStyle(
                                       color: AppColors.primaryPurple,
-                                      fontSize: 9,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
@@ -990,7 +990,7 @@ class _DebtScreenState extends State<DebtScreen> {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected ? AppColors.primaryPurple : color.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1.5,
+            width: 1.5,
           ),
           gradient: LinearGradient(
             colors: isSelected
@@ -1028,7 +1028,7 @@ class _DebtScreenState extends State<DebtScreen> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected ? AppColors.primaryPurple : AppColors.cardBorder,
-                  width: isSelected ? 1.5 : 1,
+                  width: 1.5,
                 ),
               ),
               child: Center(

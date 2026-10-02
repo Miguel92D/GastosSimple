@@ -70,13 +70,13 @@ class GlassInput extends StatelessWidget {
           decoration: InputDecoration(
             labelText: label.isEmpty ? null : label,
             labelStyle: AppTextStyles.subLabel.copyWith(
-              color: AppColors.softText.withValues(alpha: 0.4),
+              color: AppColors.softText.withValues(alpha: 0.65),
             ),
             hintText: hintText,
             hintStyle:
                 hintStyle ??
                 AppTextStyles.bodyMain.copyWith(
-                  color: AppColors.softText.withValues(alpha: 0.2),
+                  color: AppColors.softText.withValues(alpha: 0.4),
                 ),
             prefixIcon: icon != null
                 ? Icon(

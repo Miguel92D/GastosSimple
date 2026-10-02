@@ -113,7 +113,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final l10n = context.watch<AppLocaleController>();
 
     return AppScaffold(
-      title: l10n.text('history'),
+      title: l10n.text('statistics'),
       drawer: const AppDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

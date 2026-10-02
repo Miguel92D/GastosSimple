@@ -269,9 +269,14 @@ class _MovementsScreenState extends State<MovementsScreen> {
                       emptyMessage: _filter.isActive
                           ? l10n.text('filter_no_results')
                           : null,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.sm,
+                      // sm + el md de cada tile = lg (24), alineado con los
+                      // filtros. Abajo, lugar para el botón de menú flotante.
+                      padding: EdgeInsets.fromLTRB(
+                        AppSpacing.sm,
+                        AppSpacing.sm,
+                        AppSpacing.sm,
+                        AppSpacing.xxl * 2 +
+                            MediaQuery.of(context).padding.bottom,
                       ),
                     ),
                   ),

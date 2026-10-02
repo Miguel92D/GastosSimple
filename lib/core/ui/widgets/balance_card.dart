@@ -65,12 +65,14 @@ class _BalanceCardState extends State<BalanceCard>
 
   @override
   Widget build(BuildContext context) {
-    // Determine target color based on balance
-    final Color targetColor = widget.balance > 0
-        ? AppColors.incomeGreen
+    // Sobre el degradado violeta el verde/rojo no se lee (contraste < 3:1):
+    // el monto va en blanco y el signo lo marca la flecha.
+    const Color targetColor = AppColors.textPrimary;
+    final IconData? trendIcon = widget.balance > 0
+        ? Icons.arrow_upward_rounded
         : widget.balance < 0
-        ? AppColors.expenseRed
-        : AppColors.softText;
+        ? Icons.arrow_downward_rounded
+        : null;
 
     return GlassCard(
       width: double.infinity,
@@ -159,7 +161,23 @@ class _BalanceCardState extends State<BalanceCard>
                           // monto entra, se ve al tamaño normal.
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text(formattedValue, maxLines: 1),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (trendIcon != null &&
+                                    !AppState.instance.hideBalance) ...[
+                                  Icon(
+                                    trendIcon,
+                                    size: 28,
+                                    color: AppColors.textPrimary.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                ],
+                                Text(formattedValue, maxLines: 1),
+                              ],
+                            ),
                           ),
                         );
                       },

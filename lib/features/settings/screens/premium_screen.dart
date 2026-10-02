@@ -224,7 +224,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         child: Text(
                           l10n.text('restore_purchase'),
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.softText.withValues(alpha: 0.4),
+                            color: AppColors.softText.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -289,7 +289,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
             borderRadius: 24,
             glowColor: selected ? AppColors.primaryPurple : Colors.transparent,
-            borderWidth: selected ? 2 : 1,
+            borderWidth: 1.5, // fijo: el contenido no salta al seleccionar
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -103,9 +103,10 @@ class _StatCard extends StatelessWidget {
                 style: AppTextStyles.subLabel.copyWith(
                   color: isSelected
                       ? color.withValues(alpha: 0.8)
-                      : AppColors.softText.withValues(alpha: 0.4),
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      : AppColors.softText.withValues(alpha: 0.65),
+                  fontSize: 11,
+                  // Mismo peso en ambos estados: el texto no "salta" al seleccionar.
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),

@@ -7,6 +7,7 @@ import '../../../core/utils/currency_helper.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/glass_card.dart';
@@ -165,7 +166,7 @@ class _PredictionScreenState extends State<PredictionScreen>
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: AppGradients.primaryGradient,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryPurple.withValues(alpha: 0.2),
@@ -175,7 +176,7 @@ class _PredictionScreenState extends State<PredictionScreen>
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         child: Stack(
           children: [
             Positioned.fill(
@@ -203,15 +204,14 @@ class _PredictionScreenState extends State<PredictionScreen>
                   _buildProjectionRow(
                     l10n.text('estimated_spending'),
                     _predictedExpense,
-                    AppColors.expenseRed,
+                    // Sobre el degradado violeta, texto blanco (rojo/verde no se leen).
+                    AppColors.textPrimary,
                   ),
                   const SizedBox(height: 32),
                   _buildProjectionRow(
                     l10n.text('estimated_balance'),
                     _predictedBalance,
-                    _predictedBalance >= 0
-                        ? AppColors.incomeGreen
-                        : AppColors.expenseRed,
+                    AppColors.textPrimary,
                     large: true,
                   ),
                 ],
