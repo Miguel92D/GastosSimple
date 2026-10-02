@@ -12,8 +12,16 @@ class AppColors {
   static const incomeGreen = Color(0xFF3DDC97);
   static const expenseRed = Color(0xFFFF5C5C);
 
+  static const primaryPurpleDeep = Color(0xFF6F4DFF);
+  static const primaryPurpleLight = Color(0xFF9A7BFF);
+
+  // Pro (Gold) — reservado para elementos Premium
+  static const gold = Color(0xFFD4AF37);
+  static const goldShine = Color(0xFFFFFACD);
+
   // Backdrop & Surfaces
   static const darkBackground = Color(0xFF0E0E11);
+  static const surface = Color(0xFF16161C);
   static const glassSurface = Color(
     0x1AFFFFFF,
   ); // Low opacity white for glass base

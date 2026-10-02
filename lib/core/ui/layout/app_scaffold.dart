@@ -32,6 +32,10 @@ class AppScaffold extends StatelessWidget {
       drawer: drawer,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        // Flecha atrás en pantallas internas (el menú vive abajo, el slot queda libre).
+        leading: Navigator.of(context).canPop()
+            ? const BackButton(color: AppColors.textPrimary)
+            : null,
         title: titleWidget ??
             Text(
               title,
@@ -41,7 +45,9 @@ class AppScaffold extends StatelessWidget {
               ),
             ),
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         actions: actions,
       ),

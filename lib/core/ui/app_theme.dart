@@ -18,16 +18,30 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryPurple,
         primary: AppColors.primaryPurple,
-        secondary: Color(0xFF9A7BFF),
-        surface: Color(0xFF16161C),
+        secondary: AppColors.primaryPurpleLight,
+        surface: AppColors.surface,
         error: AppColors.expenseRed,
         brightness: Brightness.dark,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTextStyles.cardTitle.copyWith(fontSize: 20),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        titleTextStyle: AppTextStyles.titleMain,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.surface,
+        contentTextStyle: AppTextStyles.bodyText.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          side: const BorderSide(color: AppColors.cardBorder),
+        ),
       ),
       textTheme: const TextTheme(
         headlineLarge: AppTextStyles.titleLarge,
@@ -37,7 +51,7 @@ class AppTheme {
         bodyMedium: AppTextStyles.bodySmall,
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF16161C),
+        color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.xl),

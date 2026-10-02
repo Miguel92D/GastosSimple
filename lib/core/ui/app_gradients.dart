@@ -9,8 +9,8 @@ class AppGradients {
   // Brand Identity Gradient
   static const primaryGradient = LinearGradient(
     colors: [
-      Color(0xFF6F4DFF), // Primary Start
-      Color(0xFF9A7BFF), // Primary End
+      AppColors.primaryPurpleDeep, // Primary Start
+      AppColors.primaryPurpleLight, // Primary End
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

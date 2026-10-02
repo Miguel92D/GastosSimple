@@ -8,6 +8,7 @@ import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
 import 'app_colors.dart';
 import 'app_gradients.dart';
+import 'app_radius.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
 
@@ -56,11 +57,11 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
         1.0,
       ],
       colors: [
-        const Color(0xFFD4AF37),
-        const Color(0xFFD4AF37),
-        const Color(0xFFFFFACD).withValues(alpha: 0.86),
-        const Color(0xFFD4AF37),
-        const Color(0xFFD4AF37),
+        AppColors.gold,
+        AppColors.gold,
+        AppColors.goldShine.withValues(alpha: 0.86),
+        AppColors.gold,
+        AppColors.gold,
       ],
     );
   }
@@ -107,7 +108,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isPro
-                          ? const Color(0xFFD4AF37).withValues(alpha: 0.5)
+                          ? AppColors.gold.withValues(alpha: 0.5)
                           : AppColors.cardBorder,
                       width: isPro ? 1.5 : 1.0,
                     ),
@@ -155,7 +156,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 Text(
                   context.watch<AppLocaleController>().text(
                     'financial_control_drawer',
-                  ),
+                  ).toUpperCase(),
                   style: AppTextStyles.subLabel.copyWith(
                     fontSize: 10,
                     letterSpacing: 2,
@@ -189,10 +190,10 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                       isPro
                           ? context.watch<AppLocaleController>().text(
                               'account_premium',
-                            )
+                            ).toUpperCase()
                           : context.watch<AppLocaleController>().text(
                               'account_free',
-                            ),
+                            ).toUpperCase(),
                       style: AppTextStyles.subLabel.copyWith(
                         fontSize: 11,
                         color: AppColors.textPrimary.withValues(alpha: 0.7),
@@ -241,6 +242,14 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     GeneralFlowService.openRecurring();
                   },
                 ),
+                _DrawerItem(
+                  icon: Icons.settings_rounded,
+                  title: context.watch<AppLocaleController>().text('settings'),
+                  onTap: () {
+                    GeneralFlowService.goBack();
+                    GeneralFlowService.openSettings();
+                  },
+                ),
 
                 const SizedBox(height: 12),
                 Padding(
@@ -248,7 +257,38 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     horizontal: 16,
                     vertical: 4,
                   ),
-                  child: AnimatedBuilder(
+                  // El dorado es exclusivo de Pro: en cuenta gratis el rótulo va neutro.
+                  child: !isPro
+                      ? Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppRadius.sm),
+                            border: Border.all(
+                              color: AppColors.softText.withValues(alpha: 0.5),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                'PRO',
+                                style: AppTextStyles.subLabel.copyWith(
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(
+                                Icons.lock_rounded,
+                                size: 14,
+                                color: AppColors.softText,
+                              ),
+                            ],
+                          ),
+                        )
+                      : AnimatedBuilder(
                     animation: _shimmerAnimation,
                     builder: (context, child) {
                       return ShaderMask(
@@ -337,14 +377,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   onTap: () {
                     GeneralFlowService.goBack();
                     ActionController.execute(context, AppAction.openVault);
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.settings_rounded,
-                  title: context.watch<AppLocaleController>().text('settings'),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    GeneralFlowService.openSettings();
                   },
                 ),
               ],
