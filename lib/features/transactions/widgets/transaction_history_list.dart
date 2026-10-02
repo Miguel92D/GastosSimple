@@ -19,12 +19,17 @@ class TransactionHistoryList extends StatelessWidget {
   final ScrollPhysics? physics;
   final EdgeInsetsGeometry? padding;
 
+  /// Texto cuando la lista está vacía (ej. "No hay movimientos con estos
+  /// filtros"). Si es null se usa el mensaje por defecto.
+  final String? emptyMessage;
+
   const TransactionHistoryList({
     super.key,
     required this.transactions,
     required this.onRefresh,
     this.physics,
     this.padding,
+    this.emptyMessage,
   });
 
   /// Borra y ofrece "Deshacer" (antes un swipe o un toque borraba para
@@ -136,7 +141,8 @@ class TransactionHistoryList extends StatelessWidget {
     if (transactions.isEmpty) {
       return Center(
         child: Text(
-          context.watch<AppLocaleController>().text('no_movements_recorded'),
+          emptyMessage ??
+              context.watch<AppLocaleController>().text('no_movements_recorded'),
           style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
         ),
       );
