@@ -1,18 +1,32 @@
 {
   "project_info": {
     "project_number": "741621410452",
+    "firebase_url": "https://simple-app-78147-default-rtdb.firebaseio.com",
     "project_id": "simple-app-78147",
     "storage_bucket": "simple-app-78147.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:741621410452:android:ab56b43cf0b7eb8647e281",
+        "mobilesdk_app_id": "1:741621410452:android:3b3a26a93e55a30e47e281",
         "android_client_info": {
-          "package_name": "com.gastossimple.gastos_simple"
+          "package_name": "com.migueld.gastossimple"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "741621410452-tq6autpu74lsg8p08l6t3po1jngt12gm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.migueld.gastossimple",
+            "certificate_hash": "7a374241a4a8bb4789a731786a5ba7b718f49bd8"
+          }
+        },
+        {
+          "client_id": "741621410452-6b1qo6ckuca29jmlgpb3jrd9c3fhbhp2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCJSErokzCn_vHz1WKPb14Ip_E-Tn3G-cc"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741621410452-6b1qo6ckuca29jmlgpb3jrd9c3fhbhp2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

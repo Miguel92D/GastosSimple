@@ -6,6 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -17,15 +21,14 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final isSpanish = locale.languageCode == 'es';
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.text('privacy_policy')),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+    return AppScaffold(
+      title: l10n.text('privacy_policy'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: () => Navigator.pop(context),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,28 +61,21 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   : 'The application does not share any personal or financial data with third parties. We do not track your behavior outside the app.',
             ),
             const SizedBox(height: 32),
-            Center(
-              child: ElevatedButton(
+            SizedBox(
+              width: double.infinity,
+              child: GradientButton(
+                text: (isSpanish
+                        ? 'Ver política completa online'
+                        : 'View full policy online')
+                    .toUpperCase(),
+                icon: Icons.open_in_new_rounded,
+                borderRadius: AppRadius.lg,
                 onPressed: () async {
                   final Uri url = Uri.parse('https://miguel92d.github.io/GastosSimple/privacy.html');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  elevation: 5,
-                  shadowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
-                ),
-                child: Text(
-                  isSpanish ? 'Ver política completa online' : 'View full policy online',
-                  style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.bold),
-                ),
               ),
             ),
             const SizedBox(height: 48),

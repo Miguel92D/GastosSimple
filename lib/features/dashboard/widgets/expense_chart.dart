@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ExpenseChart extends StatelessWidget {
@@ -15,14 +17,15 @@ class ExpenseChart extends StatelessWidget {
     final sections = data.entries.map((entry) {
       // Basic color palette for categories
       final List<Color> colors = [
-        Colors.blue,
-        Colors.red,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.purple,
-        Colors.teal,
-        Colors.pink,
+        // Colores de categoría (no se usan verde/rojo: son de ingreso/gasto)
+        AppColors.blue,
+        AppColors.pink,
+        AppColors.teal,
+        AppColors.amber,
+        AppColors.orange,
+        AppColors.purple,
+        AppColors.indigo,
+        AppColors.sky,
       ];
       final index = data.keys.toList().indexOf(entry.key);
       final color = colors[index % colors.length];
@@ -32,10 +35,9 @@ class ExpenseChart extends StatelessWidget {
         title: entry.key,
         color: color,
         radius: 60,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+        titleStyle: AppTextStyles.subtitle.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppColors.darkBackground,
         ),
       );
     }).toList();
@@ -46,7 +48,7 @@ class ExpenseChart extends StatelessWidget {
           padding: EdgeInsets.only(top: 16.0),
           child: Text(
             "Distribución de Gastos",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: AppTextStyles.cardTitle,
           ),
         ),
         SizedBox(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class ProBadge extends StatefulWidget {
   const ProBadge({super.key});
@@ -42,9 +43,9 @@ class _ProBadgeState extends State<ProBadge>
                 _controller.value + 0.2,
               ],
               colors: [
-                const Color(0xFFD4AF37), // Metallic Gold
-                const Color(0xFFFFFACD).withValues(alpha: 0.9), // Shine
-                const Color(0xFFD4AF37), // Metallic Gold
+                AppColors.gold, // Metallic Gold
+                AppColors.goldShine, // Shine
+                AppColors.gold, // Metallic Gold
               ],
             ).createShader(bounds);
           },

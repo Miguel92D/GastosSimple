@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/pro_badge.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/flow/general_flow_service.dart';
@@ -34,17 +36,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final securityService = context.watch<SecurityService>();
     final isPro = context.watch<AppState>().isPro;
 
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      appBar: AppBar(
-        title: Text(l10n.text('settings'), style: AppTextStyles.titleMain),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
+    return AppScaffold(
+      title: l10n.text('settings'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: () => Navigator.pop(context),
       ),
       body: Stack(
         children: [
@@ -160,14 +156,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSectionTitle(l10n.text('legal')),
               _buildItem(
                 title: l10n.text('privacy_policy'),
-                leading: Icons.description_rounded,
+                leading: Icons.shield_outlined,
                 onTap: () => GeneralFlowService.openPrivacy(),
               ),
 
               const SizedBox(height: 32),
               _buildSectionTitle('💻 DEMO / TESTING'),
               SwitchListTile(
-                title: const Text('Activar Premium (Beta)', style: TextStyle(color: AppColors.primaryPurple, fontWeight: FontWeight.bold)),
+                title: Text('Activar Premium (Beta)', style: AppTextStyles.bodyMain.copyWith(color: AppColors.primaryPurple, fontWeight: FontWeight.w700)),
                 subtitle: const Text('Alternar entre cuenta Gratuita y Premium para probar funciones.', style: AppTextStyles.bodySmall),
                 activeColor: AppColors.primaryPurple,
                 value: isPro,
@@ -226,10 +222,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      leading: Icon(leading, color: AppColors.softText.withValues(alpha: 0.7), size: 24),
+      leading: Icon(leading, color: AppColors.softText.withAlpha(180), size: 24),
       title: Text(title, style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w600)),
       subtitle: subtitle != null ? Text(subtitle, style: AppTextStyles.bodySmall) : null,
-      trailing: trailing ?? Icon(Icons.chevron_right_rounded, color: AppColors.softText.withValues(alpha: 0.3)),
+      trailing: trailing ?? Icon(Icons.chevron_right_rounded, color: AppColors.softText.withAlpha(75)),
       onTap: onTap,
     );
   }
@@ -246,8 +242,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return Container(
           height: MediaQuery.of(context).size.height * 0.7,
           decoration: const BoxDecoration(
-            color: AppColors.darkBackground,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
           ),
           child: Column(
             children: [
@@ -264,8 +260,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final c = CurrencyService.availableCurrencies[index];
                     final isSelected = currencyService.currencyCode == c.code;
                     return ListTile(
-                      leading: Text(c.symbol, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isSelected ? AppColors.primaryPurple : Colors.white)),
-                      title: Text(c.name, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      title: Text(c.name, style: AppTextStyles.bodyMain.copyWith(
+                        color: isSelected ? AppColors.textPrimary : AppColors.softText,
+                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      )),
                       trailing: isSelected ? const Icon(Icons.check_circle_rounded, color: AppColors.primaryPurple) : null,
                       onTap: () {
                         currencyService.setCurrency(c.symbol, c.code);

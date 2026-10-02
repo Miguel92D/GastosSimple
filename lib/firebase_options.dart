@@ -24,9 +24,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCJSErokzCn_vHz1WKPb14Ip_E-Tn3G-cc',
-    appId: '1:741621410452:android:ab56b43cf0b7eb8647e281',
+    appId: '1:741621410452:android:3b3a26a93e55a30e47e281',
     messagingSenderId: '741621410452',
     projectId: 'simple-app-78147',
     storageBucket: 'simple-app-78147.firebasestorage.app',
+    databaseURL: 'https://simple-app-78147-default-rtdb.firebaseio.com',
   );
 }

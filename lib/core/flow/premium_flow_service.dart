@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../router/navigation_service.dart';
 import '../i18n/app_locale_controller.dart';
+import '../ui/app_colors.dart';
+import '../ui/app_radius.dart';
+import '../ui/app_text_styles.dart';
 
 class PremiumFlowService {
   static void showUpgradePrompt(BuildContext context) {
@@ -11,7 +14,7 @@ class PremiumFlowService {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (context) {
         return SafeArea(
@@ -27,12 +30,12 @@ class PremiumFlowService {
                 const Icon(
                   Icons.workspace_premium,
                   size: 64,
-                  color: Colors.orange,
+                  color: AppColors.gold,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   l10n.text('unlock_premium_title'),
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: AppTextStyles.titleMain.copyWith(fontSize: 24),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -53,17 +56,17 @@ class PremiumFlowService {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.orange,
+                    // Dorado = Pro. Texto oscuro: blanco sobre dorado no se lee.
+                    backgroundColor: AppColors.gold,
+                    foregroundColor: AppColors.darkBackground,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                   ),
                   child: Text(
-                    l10n.text('try_premium'),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    l10n.text('try_premium').toUpperCase(),
+                    style: AppTextStyles.buttonLabel.copyWith(
+                      color: AppColors.darkBackground,
                     ),
                   ),
                 ),
@@ -72,7 +75,7 @@ class PremiumFlowService {
                   onPressed: () => NavigationService.goBack(),
                   child: Text(
                     l10n.text('continue_free'),
-                    style: const TextStyle(color: Colors.grey),
+                    style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
                   ),
                 ),
               ],
@@ -88,9 +91,9 @@ class PremiumFlowService {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.green),
+          const Icon(Icons.check_circle_rounded, color: AppColors.incomeGreen),
           const SizedBox(width: 12),
-          Text(text, style: const TextStyle(fontSize: 16)),
+          Text(text, style: AppTextStyles.bodyMain.copyWith(fontSize: 16, color: AppColors.textPrimary)),
         ],
       ),
     );

@@ -35,7 +35,7 @@ class PurchaseService {
   }
 
   Future<void> loadProducts() async {
-    const ids = {'simple_pro_monthly', 'simple_pro_annual', 'simple_pro_lifetime'};
+    const ids = {'simple_pro_lifetime'};
     final response = await _iap.queryProductDetails(ids);
     if (response.notFoundIDs.isNotEmpty) {
       debugPrint('Products not found: ${response.notFoundIDs}');
@@ -46,9 +46,7 @@ class PurchaseService {
   Future<void> buyProduct(ProductDetails product) async {
     final purchaseParam = PurchaseParam(productDetails: product);
     try {
-      if (product.id == 'simple_pro_monthly' ||
-          product.id == 'simple_pro_annual' ||
-          product.id == 'simple_pro_lifetime') {
+      if (product.id == 'simple_pro_lifetime') {
         await _iap.buyNonConsumable(purchaseParam: purchaseParam);
       }
     } catch (e) {
@@ -83,9 +81,7 @@ class PurchaseService {
   }
 
   Future<void> _deliverProduct(PurchaseDetails purchaseDetails) async {
-    if (purchaseDetails.productID == 'simple_pro_monthly' ||
-        purchaseDetails.productID == 'simple_pro_annual' ||
-        purchaseDetails.productID == 'simple_pro_lifetime') {
+    if (purchaseDetails.productID == 'simple_pro_lifetime') {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_pro', true);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/ui/app_colors.dart';
 
 class VaultCard extends StatelessWidget {
   final Widget child;
@@ -15,11 +16,11 @@ class VaultCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.blueGrey[900]!, Colors.black],
+          colors: [AppColors.surface, AppColors.darkBackground],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blueAccent.withValues(alpha: 0.2),
+            color: AppColors.blue.withValues(alpha: 0.2),
             blurRadius: 25,
             spreadRadius: 2,
             offset: const Offset(0, 10),

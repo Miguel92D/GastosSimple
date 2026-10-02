@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../ui/app_colors.dart';
+import '../ui/app_text_styles.dart';
 import 'package:provider/provider.dart';
 import '../error/exceptions.dart';
 import '../../services/error_service.dart';
@@ -22,21 +24,21 @@ class AppGuard {
     try {
       await action();
       if (successMessage != null && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage, style: AppTextStyles.bodyMain.copyWith(color: AppColors.darkBackground)), backgroundColor: AppColors.incomeGreen));
       }
       return true;
     } on DatabaseException catch (e, stack) {
       debugPrint("DB Exception trapped: $e");
       ErrorService.instance.logError(e, stack);
       if (context.mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.text('error_saving_data')), backgroundColor: Colors.redAccent));
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.text('error_saving_data'), style: AppTextStyles.bodyMain.copyWith(color: AppColors.textPrimary)), backgroundColor: AppColors.expenseRed));
       }
       return false;
     } catch (e, stack) {
       debugPrint("AppGuard feedback error: $e");
       ErrorService.instance.logError(e, stack);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(actualErrorMessage), backgroundColor: Colors.redAccent));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(actualErrorMessage, style: AppTextStyles.bodyMain.copyWith(color: AppColors.textPrimary)), backgroundColor: AppColors.expenseRed));
       }
       return false;
     }

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(flutter analyze --no-pub)",
+      "Bash(cd \"/d/mis apps/Simple\" && grep -rhoP \"text\\\\\\(\\\\s*['\\\\\"]\\([a-z0-9_]+\\)['\\\\\"]\" lib --include=\"*.dart\" | grep -oP \"['\\\\\"][a-z0-9_]+['\\\\\"]\" | tr -d \"'\\\\\"\" | sort -u > /tmp/used_keys.txt && wc -l /tmp/used_keys.txt)",
+      "Bash(awk '$1==1{print \"ONLY_ONCE: \"$2} $1>2{print \"DUP: \"$2}')",
+      "Bash(LC_ALL=C.UTF-8 awk \"/'es': \\\\{/,/^    \\\\},/\" lib/core/i18n/app_translations.dart)",
+      "Bash(LC_ALL=C.UTF-8 awk \"/'en': \\\\{/,/^ \\\\},/\" lib/core/i18n/app_translations.dart)",
+      "PowerShell(Get-ChildItem SimpleLanding, docs, landing, landing-web, SimpleWeb, github_pages_root, web -Recurse -File | Select-Object @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}}, FullName | Sort-Object FullName)",
+      "Bash(LC_ALL=C.UTF-8 grep -rn \"goal_screen\\\\|app_layout\\\\|global_add_button\\\\|app_routes\\\\|vault_card\\\\|vault_transfer\\\\|suggestion_service\\\\|pro_feature\\\\|month_navigation\\\\|splash_screen\\\\|AppRoutes\\\\|SplashScreen\" test/)",
+      "Bash(rm lib/features/goals/screens/goal_screen.dart lib/core/ui/layout/app_layout.dart lib/core/ui/global_add_button.dart lib/core/router/app_routes.dart lib/features/vault/widgets/vault_card.dart lib/features/vault/controllers/vault_transfer_controller.dart lib/services/suggestion_service.dart lib/core/ui/pro_feature.dart lib/core/ui/widgets/month_navigation.dart lib/features/settings/screens/splash_screen.dart)",
+      "Bash(rm -f analysis.json analysis.txt analysis_full.txt analysis_machine.txt analysis_output.txt analysis_output_2.txt analysis_output_2_utf8.txt analysis_output_3.txt analysis_output_3_utf8.txt analysis_output_utf8.txt analyze2.txt analyze2_utf8.txt analyze_all.txt analyze_all_utf8.txt analyze_out.txt analyze_out_utf8.txt analyze_output.txt analyze_results.txt analyze_results_utf8.txt build_debug_log.txt build_final_log.txt build_log.txt build_log_utf8.txt final_analysis.txt final_check.txt final_check_utf8.txt final_final_check.txt final_final_check_utf8.txt final_r.txt final_r_utf8.txt flutter_build_log.txt r6_errs.txt r8.txt r8_utf8.txt r9.txt r9_utf8.txt result.txt result2.txt result2_utf8.txt result3.txt result3_utf8.txt result4.txt result4_errors.txt result5.txt result5_utf8.txt result6.txt result6_utf8.txt result7.txt result7_utf8.txt result_utf8.txt robust_r.txt robust_r2.txt robust_r2_utf8.txt robust_r_utf8.txt robust_v3_r.txt robust_v3_r_utf8.txt verbose_build.txt cleanup_warnings.dart final_fix_i18n.dart fix_arb.js fix_arb.py fix_db_syntax.dart fix_db_syntax_v2.dart fix_debt.dart fix_l10n.dart fix_remnants.dart fix_remnants.py fix_remnants_2.dart fix_tex.dart generate_translations.dart generate_translations.py migrate_opacity.dart read_errors.dart read_errors_2.dart refactor.dart refactor.py replace_locales.dart replace_locales.py robust_fix_i18n.dart robust_fix_i18n_v3.dart)",
+      "Bash(rm -rf landing landing-web SimpleWeb)",
+      "Bash(cd \"/d/mis apps/Simple\" && rm -rf android/app/build android/build && echo ok)",
+      "Bash(cp docs/index.html github_pages_root/index.html)",
+      "Bash(cp docs/index.html SimpleLanding/index.html)",
+      "Bash(cp docs/privacy.html github_pages_root/privacy.html)",
+      "Bash(cp docs/privacy.html SimpleLanding/privacy.html)",
+      "Bash(rm lib/features/transactions/screens/filtered_history_screen.dart)",
+      "Bash(rm -rf lib/l10n l10n.yaml)"
+    ]
+  }
+}

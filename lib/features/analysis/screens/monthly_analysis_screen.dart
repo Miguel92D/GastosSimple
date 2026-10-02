@@ -253,7 +253,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb_outline_rounded, color: Colors.amber),
+          const Icon(Icons.lightbulb_outline_rounded, color: AppColors.amber),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

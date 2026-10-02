@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/app_fab.dart';
@@ -30,11 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isPro = context.watch<AppState>().isPro;
+
     return AppScaffold(
       title: "\$imple",
       titleWidget: GoldShimmerText(
         text: "\$imple",
-        isPro: AppState.instance.isPro,
+        isPro: isPro,
         fontSize: 24,
       ),
       drawer: const AppDrawer(),

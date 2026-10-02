@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Brand Identity (Violet/Purple)
   static const primaryPurple = Color(0xFF7B5CFF);
+  static const primaryDeep = Color(0xFF6F4DFF); // inicio del gradiente de marca
+  static const primaryLight = Color(0xFF9A7BFF); // fin del gradiente de marca
 
   // States (Neon/Minimal)
   static const incomeGreen = Color(0xFF3DDC97);
@@ -17,6 +19,7 @@ class AppColors {
   static const glassSurface = Color(
     0x1AFFFFFF,
   ); // Low opacity white for glass base
+  static const surface = Color(0xFF16161C); // superficie sólida (cards de Material, sheets)
 
   // Typography
   static const textPrimary = Colors.white;
@@ -29,6 +32,10 @@ class AppColors {
     0x4D7B5CFF,
   ); // 30% opacity purple for shadows
 
+  // Pro / Premium (usar SOLO para elementos Pro)
+  static const gold = Color(0xFFD4AF37); // dorado metálico
+  static const goldShine = Color(0xE6FFFACD); // brillo del shimmer (90%)
+
   // Category Colors (Premium/Neon)
   static const orange = Color(0xFFFB923C);
   static const blue = Color(0xFF60A5FA);
@@ -36,6 +43,9 @@ class AppColors {
   static const teal = Color(0xFF2DD4BF);
   static const pink = Color(0xFFFB7185);
   static const purple = Color(0xFFC084FC);
+  static const amber = Color(0xFFFBBF24); // tips, gráficos
+  static const sky = Color(0xFF38BDF8); // gráficos
+  static const violet = Color(0xFF6366F1); // gráficos
 
   // Legacy / Compatibility Helpers
   // (Optional: keep aliases for existing code until fully refactored if needed)

@@ -1,5 +1,8 @@
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:gastos_simple/core/ui/app_spacing.dart';
+import 'package:gastos_simple/core/ui/app_colors.dart';
+import 'package:gastos_simple/core/ui/app_gradients.dart';
+import 'package:gastos_simple/core/ui/app_text_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
@@ -147,14 +150,13 @@ class _PinScreenState extends State<PinScreen> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+          color: AppColors.primaryPurple.withValues(alpha: 0.1),
         ),
         child: Text(
           digit,
-          style: TextStyle(
+          style: AppTextStyles.titleMain.copyWith(
             fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
+            color: AppColors.primaryPurple,
           ),
         ),
       ),
@@ -167,7 +169,7 @@ class _PinScreenState extends State<PinScreen> {
         Icons.fingerprint,
         size: 32,
         color: SecurityService.instance.isBiometricActive
-            ? Theme.of(context).primaryColor
+            ? AppColors.primaryPurple
             : Colors.transparent,
       ),
       onPressed: SecurityService.instance.isBiometricActive ? _tryBiometric : null,
@@ -176,7 +178,11 @@ class _PinScreenState extends State<PinScreen> {
 
   Widget _buildBackspaceButton() {
     return IconButton(
-      icon: const Icon(Icons.backspace_outlined, size: 24),
+      icon: const Icon(
+        Icons.backspace_outlined,
+        size: 24,
+        color: AppColors.softText,
+      ),
       onPressed: _onBackspace,
     );
   }
@@ -195,8 +201,12 @@ class _PinScreenState extends State<PinScreen> {
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    // Pantalla modal: mismo fondo que AppScaffold, con AppBar propio
+    // (botón cerrar) porque AppScaffold no contempla este caso.
+    return Container(
+      decoration: BoxDecoration(gradient: AppGradients.mainBackgroundRadial),
+      child: Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -233,16 +243,13 @@ class _PinScreenState extends State<PinScreen> {
                               ? Icons.enhanced_encryption_rounded
                               : Icons.lock_outline,
                           size: 64,
-                          color: Theme.of(context).primaryColor,
+                          color: AppColors.primaryPurple,
                         ),
                         const SizedBox(height: AppSpacing.lg),
                       ],
                       Text(
                         _getTitle(l10n),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.titleMain,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.xl),
@@ -256,8 +263,8 @@ class _PinScreenState extends State<PinScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: index < _pin.length
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.grey.withValues(alpha: 0.3),
+                                  ? AppColors.primaryPurple
+                                  : AppColors.softText.withValues(alpha: 0.3),
                             ),
                           );
                         }),
@@ -295,6 +302,7 @@ class _PinScreenState extends State<PinScreen> {
             );
           },
         ),
+      ),
       ),
     );
   }

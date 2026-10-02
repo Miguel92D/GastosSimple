@@ -10,6 +10,8 @@ class AppScaffold extends StatelessWidget {
   final Widget? titleWidget;
   final Widget? floatingActionButton;
   final Widget? drawer;
+  /// Botón a la izquierda del AppBar (ej: volver en sub-pantallas).
+  final Widget? leading;
   final bool? resizeToAvoidBottomInset;
   final List<Widget>? actions;
 
@@ -20,6 +22,7 @@ class AppScaffold extends StatelessWidget {
     this.titleWidget,
     this.floatingActionButton,
     this.drawer,
+    this.leading,
     this.resizeToAvoidBottomInset,
     this.actions,
   });
@@ -32,6 +35,7 @@ class AppScaffold extends StatelessWidget {
       drawer: drawer,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        leading: leading,
         title: titleWidget ??
             Text(
               title,

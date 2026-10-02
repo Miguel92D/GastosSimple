@@ -18,7 +18,9 @@ import 'package:home_widget/home_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'dart:ui';
+import 'package:flutter/foundation.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'core/state/app_state.dart';
 import 'core/ui/error_guard.dart';
 import 'features/transactions/screens/quick_entry_screen.dart';
@@ -33,17 +35,21 @@ void main() async {
   );
   await initializeDateFormatting('es', null);
   await initializeDateFormatting('en', null);
-  await CurrencyService.instance.loadCurrency();
-
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    ErrorService.instance.logError(details.exception, details.stack);
+  
+  // Initialize Crashlytics
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-
+  
   PlatformDispatcher.instance.onError = (error, stack) {
-    ErrorService.instance.logError(error, stack);
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Log App Start Event
+  await FirebaseAnalytics.instance.logAppOpen();
+
+  await CurrencyService.instance.loadCurrency();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Builder(
@@ -125,7 +131,7 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
   }
 
   Future<void> _setupHomeWidget() async {
-    HomeWidget.setAppGroupId('group.gastossimple.gastos_simple');
+    HomeWidget.setAppGroupId('group.example.gastos_simple');
     HomeWidget.widgetClicked.listen(_handleUri);
   }
 

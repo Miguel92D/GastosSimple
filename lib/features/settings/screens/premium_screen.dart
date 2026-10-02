@@ -22,7 +22,7 @@ class PremiumScreen extends StatefulWidget {
 
 class _PremiumScreenState extends State<PremiumScreen> {
   bool _isLoading = true;
-  String _selectedProductId = 'simple_pro_annual';
+  String _selectedProductId = 'simple_pro_lifetime';
 
   @override
   void initState() {
@@ -130,22 +130,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       const SizedBox(height: 48),
                       if (!ProService.instance.isPro) ...[
                         _buildPlanCard(
-                          l10n.text('monthly_plan'),
-                          l10n.text('monthly_price'),
-                          'simple_pro_monthly',
-                        ),
-                        const SizedBox(height: 16),
-                        _buildPlanCard(
-                          l10n.text('annual_plan'),
-                          l10n.text('annual_price'),
-                          'simple_pro_annual',
-                          isRecommended: true,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildPlanCard(
                           l10n.text('lifetime_plan'),
                           l10n.text('lifetime_price'),
                           'simple_pro_lifetime',
+                          isRecommended: true,
                         ),
                         const SizedBox(height: 40),
                         GradientButton(

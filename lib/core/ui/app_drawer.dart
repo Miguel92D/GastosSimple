@@ -47,7 +47,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPro = AppState.instance.isPro;
+    final bool isPro = context.watch<AppState>().isPro;
 
     return Drawer(
       backgroundColor: AppColors.darkBackground,
@@ -78,7 +78,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     color: AppColors.glassSurface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isPro ? const Color(0xFFD4AF37).withValues(alpha: 0.5) : AppColors.cardBorder,
+                      color: isPro ? AppColors.gold.withValues(alpha: 0.5) : AppColors.cardBorder,
                       width: isPro ? 1.5 : 1.0,
                     ),
                   ),
@@ -92,14 +92,14 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   stops: [
-                                    _shimmerController.value - 0.2,
-                                    _shimmerController.value,
-                                    _shimmerController.value + 0.2,
+                                    (_shimmerController.value - 0.2).clamp(0.0, 1.0),
+                                    _shimmerController.value.clamp(0.0, 1.0),
+                                    (_shimmerController.value + 0.2).clamp(0.0, 1.0),
                                   ],
                                   colors: [
-                                    const Color(0xFFD4AF37),
-                                    const Color(0xFFFFFACD).withValues(alpha: 0.9),
-                                    const Color(0xFFD4AF37),
+                                    AppColors.gold,
+                                    AppColors.goldShine,
+                                    AppColors.gold,
                                   ],
                                 ).createShader(bounds);
                               },
@@ -217,14 +217,14 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             stops: [
-                              _shimmerController.value - 0.2,
+                              (_shimmerController.value - 0.2).clamp(0.0, 1.0),
                               _shimmerController.value,
-                              _shimmerController.value + 0.2,
+                              (_shimmerController.value + 0.2).clamp(0.0, 1.0),
                             ],
                             colors: [
-                              const Color(0xFFD4AF37),
-                              const Color(0xFFFFFACD).withValues(alpha: 0.9),
-                              const Color(0xFFD4AF37),
+                              AppColors.gold,
+                              AppColors.goldShine,
+                              AppColors.gold,
                             ],
                           ).createShader(bounds);
                         },
@@ -311,18 +311,18 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 const Divider(color: AppColors.cardBorder, height: 32),
                 ListTile(
                   leading: Icon(
-                    AppState.instance.isPro ? Icons.star_rounded : Icons.star_outline_rounded,
+                    isPro ? Icons.star_rounded : Icons.star_outline_rounded,
                     color: AppColors.primaryPurple,
                   ),
                   title: Text(
-                    AppState.instance.isPro ? context.watch<AppLocaleController>().text('switch_to_free') : context.watch<AppLocaleController>().text('switch_to_pro'),
+                    isPro ? context.watch<AppLocaleController>().text('switch_to_free') : context.watch<AppLocaleController>().text('switch_to_pro'),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.primaryPurple,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   onTap: () {
-                    final newState = !AppState.instance.isPro;
+                    final newState = !isPro;
                     AppState.instance.setPro(newState);
                     if (newState) {
                       ProService.instance.activatePro();

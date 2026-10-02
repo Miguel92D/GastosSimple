@@ -6,7 +6,7 @@ class Debt {
   final double pagoMinimo;
   final double? tasaInteres;
   final String fechaVencimiento;
-  final int? diaCierre;
+  final String? diaCierre;
   final int? cuotasTotales;
   final int? cuotasPagadas;
 
@@ -47,7 +47,7 @@ class Debt {
       pagoMinimo: (map['pago_minimo'] as num).toDouble(),
       tasaInteres: (map['tasa_interes'] as num?)?.toDouble(),
       fechaVencimiento: map['fecha_vencimiento'],
-      diaCierre: map['dia_cierre'] as int?,
+      diaCierre: map['dia_cierre']?.toString(),
       cuotasTotales: map['cuotas_totales'] as int?,
       cuotasPagadas: map['cuotas_pagadas'] as int?,
     );

@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// No description provided for @lifetime_plan.
   ///
   /// In es, this message translates to:
-  /// **'Plan Vitalicio'**
+  /// **'Acceso PRO'**
   String get lifetime_plan;
 
   /// No description provided for @monthly_price.
@@ -239,7 +239,7 @@ abstract class AppLocalizations {
   /// No description provided for @lifetime_price.
   ///
   /// In es, this message translates to:
-  /// **'\$19.99 pago único'**
+  /// **'\$4.99 pago único'**
   String get lifetime_price;
 
   /// No description provided for @pro_tools.

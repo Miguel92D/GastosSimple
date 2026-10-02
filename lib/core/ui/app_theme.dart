@@ -18,8 +18,8 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryPurple,
         primary: AppColors.primaryPurple,
-        secondary: Color(0xFF9A7BFF),
-        surface: Color(0xFF16161C),
+        secondary: AppColors.primaryLight,
+        surface: AppColors.surface,
         error: AppColors.expenseRed,
         brightness: Brightness.dark,
       ),
@@ -37,7 +37,7 @@ class AppTheme {
         bodyMedium: AppTextStyles.bodySmall,
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF16161C),
+        color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.xl),

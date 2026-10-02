@@ -74,13 +74,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get monthly_plan => 'Plan Mensual';
 
   @override
-  String get lifetime_plan => 'Plan Vitalicio';
+  String get lifetime_plan => 'Acceso PRO';
 
   @override
   String get monthly_price => '\$2.99 / mes';
 
   @override
-  String get lifetime_price => '\$19.99 pago único';
+  String get lifetime_price => '\$4.99 pago único';
 
   @override
   String get pro_tools => '⭐ Herramientas PRO';

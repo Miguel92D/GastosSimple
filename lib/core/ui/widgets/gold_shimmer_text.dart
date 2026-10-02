@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_colors.dart';
 import '../app_text_styles.dart';
 
 class GoldShimmerText extends StatefulWidget {
@@ -54,14 +55,14 @@ class _GoldShimmerTextState extends State<GoldShimmerText>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [
-                _controller.value - 0.2,
-                _controller.value,
-                _controller.value + 0.2,
+                (_controller.value - 0.2).clamp(0.0, 1.0),
+                _controller.value.clamp(0.0, 1.0),
+                (_controller.value + 0.2).clamp(0.0, 1.0),
               ],
               colors: [
-                const Color(0xFFD4AF37), // Metallic Gold
-                const Color(0xFFFFFACD).withValues(alpha: 0.9), // Shine
-                const Color(0xFFD4AF37), // Metallic Gold
+                AppColors.gold, // Metallic Gold
+                AppColors.goldShine, // Shine
+                AppColors.gold, // Metallic Gold
               ],
             ).createShader(bounds);
           },

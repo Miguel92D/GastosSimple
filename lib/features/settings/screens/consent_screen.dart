@@ -1,67 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/router/navigation_service.dart';
+import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_gradients.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class ConsentScreen extends StatelessWidget {
   const ConsentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // Pantalla completa sin AppBar: mismo fondo que AppScaffold.
+    return Container(
+      decoration: BoxDecoration(gradient: AppGradients.mainBackgroundRadial),
+      child: Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl,
+            vertical: AppSpacing.xxl,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.security, size: 80, color: Colors.deepPurple),
-              const SizedBox(height: 32),
+              const Icon(
+                Icons.security_rounded,
+                size: 80,
+                color: AppColors.primaryPurple,
+              ),
+              const SizedBox(height: AppSpacing.xl),
               const Text(
                 'Tu Privacidad',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: AppTextStyles.titleLarge,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
-              const Text(
+              const SizedBox(height: AppSpacing.lg),
+              Text(
                 '\$imple guarda tus datos financieros localmente en tu dispositivo para ayudarte a gestionar tu dinero.',
-                style: TextStyle(fontSize: 16, height: 1.5),
+                style: AppTextStyles.bodyMain.copyWith(fontSize: 16, height: 1.5),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
-              ElevatedButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setBool('has_consented', true);
-                  if (context.mounted) {
-                    NavigationService.navigateAndRemoveUntil("/dashboard");
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  'Aceptar',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: double.infinity,
+                child: GradientButton(
+                  text: 'ACEPTAR',
+                  borderRadius: AppRadius.lg,
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('has_consented', true);
+                    if (context.mounted) {
+                      NavigationService.navigateAndRemoveUntil("/dashboard");
+                    }
+                  },
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               TextButton(
                 onPressed: () {
                   NavigationService.navigate("/privacy");
                 },
-                child: const Text(
+                child: Text(
                   'Ver política de privacidad',
-                  style: TextStyle(color: Colors.grey),
+                  style: AppTextStyles.bodyMain.copyWith(
+                    color: AppColors.softText,
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

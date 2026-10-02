@@ -40,3 +40,9 @@ El menú debe mantenerse minimalista y contener estrictamente:
 ## 8. Mantenimiento y Evolución
 - **Commits**: Mantener la disciplina de commits atómicos y descriptivos.
 - **Consultar este manual**: El manual debe ser leído al inicio de cada nueva sesión de desarrollo para evitar regresiones visuales o funcionales.
+
+## 9. Sistema de Diseño
+- **Fuente de verdad visual**: `.agents/skills/diseno-simple/SKILL.md`. Leerla antes de crear o retocar cualquier pantalla, widget, color o estilo.
+- **Tokens obligatorios**: colores, radios, espaciados y textos salen de `lib/core/ui/` (`AppColors`, `AppRadius`, `AppSpacing`, `AppTextStyles`, `AppGradients`). Si falta uno, se agrega ahí; nunca un literal suelto en una pantalla.
+- **Pills**: siempre con `AppPill` (`lib/core/ui/widgets/app_pill.dart`), alto 32 y zona táctil de 48.
+- **Dorado (`AppColors.gold`)**: exclusivo de elementos Pro.

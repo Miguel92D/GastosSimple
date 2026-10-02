@@ -53,13 +53,13 @@ class _StatsScreenState extends State<StatsScreen> {
   Widget build(BuildContext context) {
     final List<Color> chartColors = [
       AppColors.primaryPurple,
-      const Color(0xFFC084FC),
-      const Color(0xFF6366F1),
+      AppColors.purple,
+      AppColors.violet,
       AppColors.incomeGreen,
-      const Color(0xFF38BDF8),
-      const Color(0xFFFBBF24),
+      AppColors.sky,
+      AppColors.amber,
       AppColors.expenseRed,
-      const Color(0xFFFB7185),
+      AppColors.pink,
     ];
 
     return AppScaffold(

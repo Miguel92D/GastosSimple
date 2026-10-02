@@ -80,7 +80,7 @@ class _DebtScreenState extends State<DebtScreen> {
       text: debt?.fechaVencimiento ?? '',
     );
     final diaCierreController = TextEditingController(
-      text: debt?.diaCierre?.toString() ?? '',
+      text: debt?.diaCierre ?? '',
     );
     final cuotasTotalesController = TextEditingController(
       text: debt?.cuotasTotales?.toString() ?? '',
@@ -138,8 +138,10 @@ class _DebtScreenState extends State<DebtScreen> {
                         child: _buildField(
                           innerL10n.text('due_day_label'),
                           fechaVencimientoController,
-                          keyboard: TextInputType.number,
+                          keyboard: TextInputType.none,
                           icon: Icons.calendar_today_rounded,
+                          readOnly: true,
+                          onTap: () => _selectDate(context, fechaVencimientoController),
                         ),
                       ),
                     ],
@@ -159,19 +161,11 @@ class _DebtScreenState extends State<DebtScreen> {
                         child: _buildField(
                           innerL10n.text('card_closing_label'),
                           diaCierreController,
-                          keyboard: TextInputType.number,
+                          keyboard: TextInputType.none,
                           icon: Icons.calendar_today_rounded,
                           textInputAction: TextInputAction.done,
-                          onSubmitted: () => _saveDebt(
-                            debt,
-                            nombreController,
-                            montoTotalController,
-                            pagoMinimoController,
-                            tasaInteresController,
-                            fechaVencimientoController,
-                            diaCierreController,
-                            cuotasTotalesController,
-                          ),
+                          readOnly: true,
+                          onTap: () => _selectDate(context, diaCierreController),
                         ),
                       ),
                     ],
@@ -231,7 +225,7 @@ class _DebtScreenState extends State<DebtScreen> {
       pagoMinimo: double.tryParse(pagoMinimoController.text) ?? 0,
       tasaInteres: double.tryParse(tasaInteresController.text),
       fechaVencimiento: fechaVencimientoController.text,
-      diaCierre: int.tryParse(diaCierreController.text),
+      diaCierre: diaCierreController.text.isEmpty ? null : diaCierreController.text,
       cuotasTotales: int.tryParse(cuotasTotalesController.text),
       cuotasPagadas: debt?.cuotasPagadas,
       montoPagado: debt?.montoPagado ?? 0,
@@ -248,11 +242,55 @@ class _DebtScreenState extends State<DebtScreen> {
     }
   }
 
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    DateTime initialDate = DateTime.now();
+    try {
+      if (controller.text.isNotEmpty) {
+        final parts = controller.text.split('/');
+        if (parts.length == 3) {
+          final day = int.parse(parts[0]);
+          final month = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          initialDate = DateTime(year, month, day);
+        }
+      }
+    } catch (_) {
+      // Ignore errors and use current date
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primaryPurple,
+              onPrimary: Colors.white,
+              surface: AppColors.darkBackground,
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: AppColors.darkBackground,
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      if (!context.mounted) return;
+      controller.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+    }
+  }
+
   Widget _buildField(String label, TextEditingController controller, {
     TextInputType keyboard = TextInputType.text,
     IconData? icon,
     TextInputAction textInputAction = TextInputAction.next,
     VoidCallback? onSubmitted,
+    VoidCallback? onTap,
+    bool readOnly = false,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -267,6 +305,8 @@ class _DebtScreenState extends State<DebtScreen> {
           keyboardType: keyboard,
           textInputAction: textInputAction,
           onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
+          onTap: onTap,
+          readOnly: readOnly,
           style: AppTextStyles.bodyMain.copyWith(fontSize: 16),
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -807,7 +847,7 @@ class _DebtScreenState extends State<DebtScreen> {
           _buildStrategyCard(
             title: l10n.text('avalanche_strategy'),
             icon: Icons.bolt_rounded,
-            color: Colors.blueAccent,
+            color: AppColors.blue,
             isSelected: _selectedStrategy == 'avalanche',
             onTap: () => _selectStrategy('avalanche'),
           ),
