@@ -39,8 +39,8 @@ android {
         applicationId "com.migueld.gastossimple"
         minSdkVersion flutter.minSdkVersion
         targetSdk 36
-        versionCode 15
-        versionName "1.1.9"
+        versionCode 16
+        versionName "1.1.10"
     }
 
     signingConfigs {

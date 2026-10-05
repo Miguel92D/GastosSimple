@@ -54,7 +54,11 @@ class PurchaseService extends ChangeNotifier {
 
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   Future<void>? _initFuture;
-  Completer<void>? _restoreAnswer;
+  Future<void>? _checking;
+
+  /// Respuesta de Google Play a un pedido de restaurar: true si trajo una
+  /// compra de PRO pagada.
+  Completer<bool>? _restoreAnswer;
 
   List<ProductDetails> products = [];
   bool available = false;
@@ -75,6 +79,7 @@ class PurchaseService extends ChangeNotifier {
     _subscription = null;
     _storeOverride = store;
     _initFuture = null;
+    _checking = null;
     _restoreAnswer = null;
     products = [];
     available = false;
@@ -106,7 +111,7 @@ class PurchaseService extends ChangeNotifier {
       available = await _store.isAvailable();
       if (!available) {
         initialized = true;
-        statusMessage = 'Google Play Billing no esta disponible.';
+        statusMessage = 'Google Play Billing no está disponible.';
         notifyListeners();
         return;
       }
@@ -146,7 +151,7 @@ class PurchaseService extends ChangeNotifier {
       const ids = {proProductId};
       final response = await _store.queryProductDetails(ids);
       if (response.notFoundIDs.isNotEmpty) {
-        statusMessage = 'El producto PRO no esta configurado en Play.';
+        statusMessage = 'El producto PRO no está configurado en Play.';
         debugPrint('Products not found: ${response.notFoundIDs}');
       } else {
         statusMessage = null;
@@ -163,12 +168,12 @@ class PurchaseService extends ChangeNotifier {
 
   Future<bool> buyProduct(ProductDetails product) async {
     if (!available || !initialized) {
-      errorMessage = 'Google Play Billing no esta listo todavia.';
+      errorMessage = 'Google Play Billing no está listo todavía.';
       notifyListeners();
       return false;
     }
     if (isLoadingProducts) {
-      errorMessage = 'El producto PRO todavia se esta cargando.';
+      errorMessage = 'El producto PRO todavía se está cargando.';
       notifyListeners();
       return false;
     }
@@ -178,7 +183,7 @@ class PurchaseService extends ChangeNotifier {
       return false;
     }
     if (product.id != proProductId || proProduct == null) {
-      errorMessage = 'El producto PRO no esta disponible ahora.';
+      errorMessage = 'El producto PRO no está disponible ahora.';
       notifyListeners();
       return false;
     }
@@ -199,7 +204,7 @@ class PurchaseService extends ChangeNotifier {
         purchaseInProgress = false;
         purchasePending = false;
         statusMessage = null;
-        errorMessage = 'No se pudo abrir Google Play. Proba de nuevo.';
+        errorMessage = 'No se pudo abrir Google Play. Probá de nuevo.';
         notifyListeners();
       }
       return launched;
@@ -224,23 +229,41 @@ class PurchaseService extends ChangeNotifier {
     await _restorePurchases(showStatus: false);
   }
 
+  /// Vuelve a preguntarle a Google Play si la compra de PRO sigue vigente
+  /// (D-027): al abrir la pantalla Pro o Configuración. Nunca corren dos
+  /// revisiones a la vez.
+  Future<void> refreshOwnership() {
+    // El arranque ya revisa: no hace falta otra vuelta.
+    if (_initFuture == null) return init();
+    return _checking ??= _initFuture!
+        .then((_) => recheckOwnedPurchases())
+        .whenComplete(() => _checking = null);
+  }
+
+  /// Al volver a la app: solo si está guardado PRO, para no cruzarse con la
+  /// compra en curso de alguien que está en Gratis.
+  Future<void> refreshOwnershipIfPro() async {
+    if (!AppState.instance.isPro) return;
+    await refreshOwnership();
+  }
+
   Future<void> _restorePurchases({required bool showStatus}) async {
     if (!available || !initialized) {
       if (showStatus) {
-        errorMessage = 'Google Play Billing no esta listo todavia.';
+        errorMessage = 'Google Play Billing no está listo todavía.';
         notifyListeners();
       }
       return;
     }
     if (purchaseInProgress || purchasePending) {
       if (showStatus) {
-        statusMessage = 'Espera a que termine la compra actual.';
+        statusMessage = 'Esperá a que termine la compra actual.';
         notifyListeners();
       }
       return;
     }
 
-    final answer = Completer<void>();
+    final answer = Completer<bool>();
     try {
       isRestoring = true;
       if (showStatus) {
@@ -251,9 +274,18 @@ class PurchaseService extends ChangeNotifier {
       _restoreAnswer = answer;
       await _store.restorePurchases();
       // La respuesta llega por purchaseStream (aunque no haya compras).
-      await answer.future.timeout(restoreTimeout, onTimeout: () {});
+      // null = Google Play no contestó a tiempo.
+      final bool? hasPaidPro = await answer.future
+          .then<bool?>((value) => value)
+          .timeout(restoreTimeout, onTimeout: () => null);
+      if (hasPaidPro == false && AppState.instance.isPro) {
+        // Google Play contestó bien y la compra ya no está (por ejemplo,
+        // se devolvió el dinero): vuelve a Gratis. Con error o sin
+        // respuesta no se toca nada (catch y null).
+        await AppState.instance.setProEntitlement(false);
+      }
       if (showStatus && !AppState.instance.isPro) {
-        statusMessage = 'No se encontro una compra de PRO en esta cuenta.';
+        statusMessage = 'No se encontró una compra de PRO en esta cuenta.';
       }
     } catch (e) {
       errorMessage = 'No se pudieron restaurar las compras.';
@@ -287,7 +319,7 @@ class PurchaseService extends ChangeNotifier {
         // Pendiente de pago: no se activa PRO ni se confirma la compra.
         purchaseInProgress = true;
         purchasePending = true;
-        statusMessage = 'La compra esta pendiente de confirmacion.';
+        statusMessage = 'La compra está pendiente de confirmación.';
         notifyListeners();
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
@@ -323,15 +355,25 @@ class PurchaseService extends ChangeNotifier {
       }
     }
     final answer = _restoreAnswer;
-    if (answer != null && !answer.isCompleted) answer.complete();
+    if (answer != null && !answer.isCompleted) {
+      answer.complete(
+        purchaseDetailsList.any(
+          (p) =>
+              p.productID == proProductId &&
+              (p.status == PurchaseStatus.purchased ||
+                  p.status == PurchaseStatus.restored) &&
+              isPaid(p),
+        ),
+      );
+    }
   }
 
   Future<void> _deliverProduct(PurchaseDetails purchaseDetails) async {
     if (purchaseDetails.productID == proProductId) {
       await AppState.instance.setProEntitlement(true);
       statusMessage = purchaseDetails.status == PurchaseStatus.restored
-          ? 'Compra restaurada. PRO esta activo.'
-          : 'Compra completada. PRO esta activo.';
+          ? 'Compra restaurada. PRO está activo.'
+          : 'Compra completada. PRO está activo.';
       errorMessage = null;
     } else {
       statusMessage = 'Compra recibida para un producto no reconocido.';

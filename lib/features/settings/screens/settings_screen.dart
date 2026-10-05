@@ -16,6 +16,7 @@ import 'pin_screen.dart';
 import '../../../services/currency_service.dart';
 import '../../../services/dev_monthly_test_data_service.dart';
 import '../../../services/purchase_service.dart';
+import '../widgets/manage_purchase_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -62,6 +63,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadReminder();
+    // Muestra "Cuenta Premium activa": se revisa que la compra siga vigente.
+    PurchaseService.instance.refreshOwnershipIfPro();
   }
 
   Future<void> _loadReminder() async {
@@ -332,15 +335,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _restorePurchase();
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Text(
-                  l10n.text('premium_google_play_manage_note'),
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.softText.withAlpha(165),
-                  ),
-                ),
-              ),
+              // Ver la compra / pedir reembolso: solo con PRO (D-027).
+              if (appState.isPro) const ManagePurchaseButton(),
 
               _buildSectionTitle(l10n.text('currency')),
               _buildItem(

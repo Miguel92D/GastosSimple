@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../../core/state/app_state.dart';
 import '../../../services/purchase_service.dart';
+import '../widgets/manage_purchase_button.dart';
 
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
@@ -45,6 +47,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
 
   Future<void> _initStoreInfo() async {
     await PurchaseService.instance.init();
+    // Al abrir la pantalla se revisa que la compra siga vigente (D-027).
+    unawaited(PurchaseService.instance.refreshOwnership());
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -254,6 +258,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
                               ),
                               textAlign: TextAlign.center,
                             ),
+                            const SizedBox(height: 16),
+                            const ManagePurchaseButton(),
                           ],
                         ),
                       ),

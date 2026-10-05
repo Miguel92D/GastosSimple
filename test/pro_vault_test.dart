@@ -1,3 +1,5 @@
+import 'dart:async';
+
 // Pro y Bóveda (chat 04): la pantalla Pro y el aviso solo prometen lo que es
 // PRO (P-05 / P-08), las pantallas PRO no se abren sin PRO, la Bóveda se tapa
 // cuando está cerrada y sus movimientos nunca se mezclan con los normales
@@ -13,6 +15,7 @@ import 'package:gastos_simple/core/state/app_state.dart';
 import 'package:gastos_simple/database/database_helper.dart';
 import 'package:gastos_simple/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:gastos_simple/features/settings/screens/premium_screen.dart';
+import 'package:gastos_simple/features/settings/widgets/manage_purchase_button.dart';
 import 'package:gastos_simple/features/transactions/controllers/transaction_controller.dart';
 import 'package:gastos_simple/features/transactions/models/transaction.dart';
 import 'package:gastos_simple/features/vault/controllers/vault_controller.dart';
@@ -40,6 +43,43 @@ class _EmptyStore implements PurchaseStore {
   Future<void> completePurchase(PurchaseDetails purchase) async {}
   @override
   Future<void> restorePurchases() async {}
+}
+
+/// Google Play que contesta: con la compra de PRO pagada o sin ella.
+class _PlayStore implements PurchaseStore {
+  _PlayStore({required this.paid});
+  final bool paid;
+  final _stream = StreamController<List<PurchaseDetails>>.broadcast();
+
+  @override
+  Stream<List<PurchaseDetails>> get purchaseStream => _stream.stream;
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<ProductDetailsResponse> queryProductDetails(Set<String> ids) async =>
+      ProductDetailsResponse(productDetails: [], notFoundIDs: ids.toList());
+  @override
+  Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async =>
+      false;
+  @override
+  Future<void> completePurchase(PurchaseDetails purchase) async {}
+  @override
+  Future<void> restorePurchases() async {
+    final owned = [
+      if (paid)
+        PurchaseDetails(
+          productID: PurchaseService.proProductId,
+          verificationData: PurchaseVerificationData(
+            localVerificationData: '{}',
+            serverVerificationData: 'token',
+            source: 'test',
+          ),
+          transactionDate: '0',
+          status: PurchaseStatus.restored,
+        ),
+    ];
+    scheduleMicrotask(() => _stream.add(owned));
+  }
 }
 
 Widget _app(Widget child) => MultiProvider(
@@ -148,6 +188,80 @@ void main() {
           expect(texts[key], isNotNull, reason: '$lang:$key');
         }
       }
+    });
+  });
+
+  group('Pantalla Pro y la compra en Google Play (D-027)', () {
+    Future<void> openPremium(WidgetTester tester, {required bool paid}) async {
+      tester.view.physicalSize = const Size(1080, 4000);
+      addTearDown(tester.view.reset);
+      SharedPreferences.setMockInitialValues({'is_pro': true});
+      await AppState.instance.loadProEntitlement();
+      PurchaseService.instance.resetForTesting(_PlayStore(paid: paid));
+
+      await tester.pumpWidget(_app(const PremiumScreen()));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('se devolvió el dinero: al abrir la pantalla vuelve a Gratis', (
+      tester,
+    ) async {
+      await openPremium(tester, paid: false);
+
+      expect(AppState.instance.isPro, isFalse);
+      expect(find.text(_t('pro_active')), findsNothing);
+      expect(find.byType(ManagePurchaseButton), findsNothing);
+    });
+
+    testWidgets('sigue pagada: sigue PRO y se puede ver la compra', (
+      tester,
+    ) async {
+      await openPremium(tester, paid: true);
+
+      expect(AppState.instance.isPro, isTrue);
+      expect(find.text(_t('pro_active')), findsOneWidget);
+      expect(find.byType(ManagePurchaseButton), findsOneWidget);
+      expect(find.text(_t('premium_google_play_manage_note')), findsOneWidget);
+    });
+
+    testWidgets('el botón abre el historial de pedidos de Google Play', (
+      tester,
+    ) async {
+      final original = ManagePurchaseButton.opener;
+      addTearDown(() => ManagePurchaseButton.opener = original);
+      Uri? opened;
+      ManagePurchaseButton.opener = (uri) async {
+        opened = uri;
+        return false; // Play Store no se pudo abrir
+      };
+      await openPremium(tester, paid: true);
+
+      await tester.tap(find.text(_t('premium_manage_purchase')));
+      await tester.pump();
+
+      expect(
+        opened.toString(),
+        'https://play.google.com/store/account/orderhistory',
+      );
+      expect(find.text(_t('premium_manage_open_failed')), findsOneWidget);
+    });
+
+    test('textos de la compra en español y en inglés', () {
+      for (final lang in ['es', 'en']) {
+        final texts = AppTranslations.translations[lang]!;
+        for (final key in [
+          'premium_manage_purchase',
+          'premium_manage_open_failed',
+          'premium_google_play_manage_note',
+        ]) {
+          expect(texts[key], isNotNull, reason: '$lang:$key');
+        }
+      }
+      // Pago único: el aviso no habla de cancelar una suscripción.
+      expect(
+        AppTranslations.translations['es']!['premium_google_play_manage_note'],
+        contains('no hay suscripción que cancelar'),
+      );
     });
   });
 

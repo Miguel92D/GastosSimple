@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 06).
+Última revisión: 2026-10-05 (tarea extra D-027).
 
 ---
 
@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (chat 06): analyze limpio, 183 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -128,4 +128,15 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 - No se mezclaron. Quedaron guardados en la rama **`archivo/main-marzo-2026`**, solo en esta compu (GitHub rechazó subirla, probablemente por los archivos de compilación pesados). No borrarla.
 - `main` pasó a apuntar al mismo commit que `feature/mejoras-sesion` (en GitHub fue un avance directo, sin forzar: `origin/main` era el punto donde nació la rama).
 - De acá en más: se trabaja en `feature/mejoras-sesion` y al publicar se adelanta `main` a ese commit.
+
+### D-027 — Pro se revisa al volver a la app y se puede quitar (tarea extra, 1.1.10)
+Tarea fuera de la tabla de chats, pedida por Miguel el 2026-10-05 a partir de lo aprendido en Cotiza. **PRO sigue siendo un pago único** (`simple_pro_lifetime`, producto único en Play Console, confirmado por Miguel): no hay suscripción que cancelar.
+- **Cuándo se revisa la compra:** al arrancar (como antes), al volver a la app (`didChangeAppLifecycleState` → `resumed`, en `main.dart`; es el mismo aviso que daría `AppLifecycleListener.onResume`), al abrir la pantalla Pro y al abrir Configuración. Al volver a la app y en Configuración se revisa **solo si está guardado PRO** (`refreshOwnershipIfPro`), para no cruzarse con la compra en curso de alguien en Gratis.
+- **Nunca dos a la vez:** `PurchaseService.refreshOwnership` devuelve la revisión que ya está corriendo.
+- **Cuándo se quita PRO** (responde P-13): solo si Google Play **contesta bien** y entre las compras no hay una de PRO **pagada** (por ejemplo, se devolvió el dinero). Si Google Play da error, no hay internet o no contesta en 8 s, queda lo guardado: nunca se le saca PRO a alguien por falta de señal. Vale igual para "Restaurar compra".
+- **Botón "Ver mi compra en Google Play"** (`ManagePurchaseButton`), solo con PRO, en Configuración y en la pantalla Pro. Abre `https://play.google.com/store/account/orderhistory` afuera de la app (`url_launcher`, `LaunchMode.externalApplication`). Si no se abre, avisa: "Entrá a Play Store > Pagos y suscripciones > Presupuesto e historial". Abajo: "Es un pago único: no hay suscripción que cancelar…". No se usa el enlace de suscripciones (`account/subscriptions?sku=…`) porque mostraría "no tenés suscripciones".
+- Tildes corregidas en los mensajes de compra y en "Tus funciones PRO están habilitadas".
+- Tests: `test/pro_purchase_test.dart` (grupo D-027: reembolso → Gratis, sigue pagada → PRO, error o sin respuesta → PRO, arranque, Gratis no pregunta, una sola revisión) y `test/pro_vault_test.dart` (abrir la pantalla Pro después del reembolso → Gratis; pagada → PRO y botón).
+- Versión **1.1.10 (16)**, tag `v1.1.10+16`. No se actualizó ningún paquete (Billing ya estaba en 8.0.0, D-017).
+- **Prueba en el teléfono:** comprar con una cuenta de prueba de licencias; en Play Console → Gestión de pedidos, reembolsar ese pedido con "quitar derecho de acceso"; esperar unos minutos y volver a la app **sin** limpiar la caché: tiene que pasar a Gratis. (Lo de "el mes dura 5 minutos" es solo para suscripciones.)
 

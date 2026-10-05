@@ -33,11 +33,14 @@ class AppTranslations {
       'restore_purchase': 'Restaurar compra',
       'premium_account': 'Cuenta Premium',
       'premium_account_active': 'Cuenta Premium activa',
-      'premium_account_active_subtitle': 'Tus funciones PRO estan habilitadas.',
+      'premium_account_active_subtitle': 'Tus funciones PRO están habilitadas.',
       'premium_restore_subtitle':
           'Recupera tu acceso Premium si reinstalaste la app o cambiaste de dispositivo.',
       'premium_google_play_manage_note':
-          'Para cancelar o pedir un reembolso, gestioná tu compra desde Google Play.',
+          'Es un pago único: no hay suscripción que cancelar. Para pedir un reembolso, abrí tu compra en Google Play. Tus datos quedan intactos.',
+      'premium_manage_purchase': 'Ver mi compra en Google Play',
+      'premium_manage_open_failed':
+          'Entrá a Play Store > Pagos y suscripciones > Presupuesto e historial.',
       'premium_restore_loading': 'Restaurando compra...',
       'premium_restore_success': 'Compra restaurada correctamente',
       'premium_restore_not_found': 'No encontramos una compra para restaurar',
@@ -532,7 +535,10 @@ class AppTranslations {
       'premium_restore_subtitle':
           'Recover your Premium access if you reinstalled the app or changed devices.',
       'premium_google_play_manage_note':
-          'To cancel or request a refund, manage your purchase from Google Play.',
+          'It is a one-time payment: there is no subscription to cancel. To request a refund, open your purchase on Google Play. Your data stays intact.',
+      'premium_manage_purchase': 'View my purchase on Google Play',
+      'premium_manage_open_failed':
+          'Open Play Store > Payments & subscriptions > Budget & history.',
       'premium_restore_loading': 'Restoring purchase...',
       'premium_restore_success': 'Purchase restored successfully',
       'premium_restore_not_found': 'We could not find a purchase to restore',

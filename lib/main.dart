@@ -97,6 +97,9 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
       SecurityService.instance.lock();
     } else if (state == AppLifecycleState.resumed) {
       _checkSecurityOnResume();
+      // Android deja la app viva en segundo plano: al volver se pregunta de
+      // nuevo si la compra de PRO sigue vigente (D-027).
+      PurchaseService.instance.refreshOwnershipIfPro();
     }
   }
 

@@ -111,8 +111,20 @@ class _FakeStore implements PurchaseStore {
     completed.add(purchase);
   }
 
+  /// Google Play da error (sin internet, servicio caído).
+  bool restoreFails = false;
+  int restoreCalls = 0;
+
   @override
   Future<void> restorePurchases() async {
+    restoreCalls++;
+    if (restoreFails) {
+      throw InAppPurchaseException(
+        source: 'test',
+        code: 'restore',
+        message: 'SERVICE_UNAVAILABLE',
+      );
+    }
     // Google Play responde por el stream, también cuando no hay compras.
     if (answerRestore) scheduleMicrotask(() => emit(List.of(owned)));
   }
@@ -173,7 +185,7 @@ void main() {
       await service.init();
 
       expect(service.proProduct, isNull);
-      expect(service.statusMessage, contains('no esta configurado'));
+      expect(service.statusMessage, contains('no está configurado'));
     });
   });
 
@@ -284,7 +296,7 @@ void main() {
 
       expect(await service.restorePurchases(), isFalse);
       expect(AppState.instance.isPro, isFalse);
-      expect(service.statusMessage, contains('No se encontro'));
+      expect(service.statusMessage, contains('No se encontró'));
     });
 
     test('compra pagada que llega de Google Play: activa PRO', () async {
@@ -323,6 +335,105 @@ void main() {
 
       expect(result, isFalse);
       expect(service.isRestoring, isFalse);
+    });
+  });
+
+  group('Revisar la compra al volver o al abrir la pantalla (D-027)', () {
+    /// Alguien que compró: PRO guardado y la compra en Google Play.
+    Future<void> paidUser() async {
+      SharedPreferences.setMockInitialValues({'is_pro': true});
+      await AppState.instance.loadProEntitlement();
+      store.owned = [_purchase(PurchaseStatus.restored)];
+      await service.init();
+      expect(AppState.instance.isPro, isTrue);
+    }
+
+    test('se devolvió el dinero: vuelve a Gratis y lo guarda', () async {
+      await paidUser();
+      store.owned = [];
+
+      await service.refreshOwnership();
+
+      expect(AppState.instance.isPro, isFalse);
+      expect(await savedPro(), isFalse);
+    });
+
+    test('sigue pagada: sigue PRO', () async {
+      await paidUser();
+
+      await service.refreshOwnershipIfPro();
+
+      expect(AppState.instance.isPro, isTrue);
+      expect(await savedPro(), isTrue);
+    });
+
+    test('Google Play da error (sin internet): no se saca PRO', () async {
+      await paidUser();
+      store.owned = [];
+      store.restoreFails = true;
+
+      await service.refreshOwnership();
+
+      expect(AppState.instance.isPro, isTrue);
+      expect(await savedPro(), isTrue);
+    });
+
+    testWidgets('Google Play no contesta: no se saca PRO', (tester) async {
+      await paidUser();
+      store.owned = [];
+      store.answerRestore = false;
+
+      var done = false;
+      service.refreshOwnership().then((_) => done = true);
+      await tester.pump();
+      await tester.pump(
+        PurchaseService.restoreTimeout + const Duration(seconds: 1),
+      );
+
+      expect(done, isTrue);
+      expect(AppState.instance.isPro, isTrue);
+    });
+
+    test('al arrancar desde cero también se revisa', () async {
+      SharedPreferences.setMockInitialValues({'is_pro': true});
+      await AppState.instance.loadProEntitlement();
+      store.owned = [];
+
+      await service.init();
+
+      expect(AppState.instance.isPro, isFalse);
+    });
+
+    test(
+      'en Gratis, volver a la app no le pregunta nada a Google Play',
+      () async {
+        await service.init();
+        final before = store.restoreCalls;
+
+        await service.refreshOwnershipIfPro();
+
+        expect(store.restoreCalls, before);
+      },
+    );
+
+    test('nunca corren dos revisiones a la vez', () async {
+      await paidUser();
+      final before = store.restoreCalls;
+
+      final first = service.refreshOwnership();
+      final second = service.refreshOwnershipIfPro();
+      await Future.wait([first, second]);
+
+      expect(store.restoreCalls, before + 1);
+    });
+
+    test('reembolsada y con otra compra sin pagar: queda en Gratis', () async {
+      await paidUser();
+      store.owned = [_playRestored(PurchaseStateWrapper.pending)];
+
+      await service.refreshOwnership();
+
+      expect(AppState.instance.isPro, isFalse);
     });
   });
 

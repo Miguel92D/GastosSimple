@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (chat 06).
+Última revisión: 2026-10-05 (tarea extra D-027).
 
 ---
 
@@ -72,11 +72,11 @@ Desde el chat 03 (D-016) nadie llama a `getTotalIncome`, `getTotalExpenses` ni `
 
 ### P-13 — ¿Se quita Pro si Google devuelve el dinero?
 Hoy Pro queda guardado en el teléfono (`is_pro`) para siempre. Si alguien pide reembolso, Google Play deja de devolver la compra, pero la app no apaga Pro. Apagarlo al no encontrar la compra tiene un riesgo: sin internet o con Google Play fallando, un cliente que pagó podría perder Pro.
-**Respuesta:** _pendiente_ — decidir si vale la pena (por ejemplo, apagar solo si Google Play contesta bien dos veces seguidas sin la compra).
+**Respuesta (2026-10-05):** ✅ Sí, con cuidado: se quita solo cuando Google Play contesta bien y la compra pagada no está; con error o sin internet queda PRO. Se revisa también al volver a la app y al abrir la pantalla Pro o Configuración (D-027).
 
 ### P-14 — Mensajes de compra solo en español y sin tildes
 Los mensajes de `PurchaseService` ("Compra cancelada.", "No se encontro una compra…") están escritos en el código, solo en español y sin tildes. D-008 pide las dos lenguas.
-**Respuesta:** _pendiente_ — pasarlos a `AppTranslations` en una tarea de textos (junto con P-09).
+**Respuesta:** _pendiente_ — las tildes ya se corrigieron (D-027); falta pasarlos a `AppTranslations` para que estén en inglés, en una tarea de textos (junto con P-09).
 
 ### P-15 — Más textos y código Pro sin uso
 Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analytics`, `benefit_strategies`, `smart_insights`, `feature_stats`, `feature_export`, `feature_vault` y `feature_goals`. Tampoco se usa `PremiumService` ni `AppModeController.isPro`.
