@@ -43,7 +43,9 @@ dependencies:
   path: ^1.9.1
   shared_preferences: ^2.5.4
   share_plus: ^10.1.0
-  in_app_purchase: ^3.2.0
+  in_app_purchase: ^3.3.1
+  # Fija Google Play Billing 8 (Play rechaza Billing 7 desde el 31/08/2026, D-017).
+  in_app_purchase_android: ^0.5.0
   file_picker: ^10.3.10
   local_auth: ^2.3.0
   flutter_secure_storage: ^9.2.2

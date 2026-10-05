@@ -4,7 +4,7 @@
 > Este documento **absorbe `PROYECTO_REGLAS.md`** (sección 6 en adelante).
 > Prioridad si algo se contradice: `DECISIONES-TECNICAS.md` > respuestas en `PENDIENTES-A-DEFINIR.md` > **este documento** > `PROYECTO_REGLAS.md`.
 
-Última revisión: 2026-10-04 (chat 00).
+Última revisión: 2026-10-04 (chat 04).
 
 ---
 
@@ -24,6 +24,7 @@ Personas que quieren controlar su plata sin planillas ni apps complicadas. Abrir
 
 - **Gratis**: carga rápida, inicio con "Podés gastar hoy", movimientos, pagos fijos y cuotas, deudas, respaldo, PIN.
 - **Pro** (pago único de por vida, `simple_pro_lifetime`): Estadísticas, Metas de ahorro, Bóveda Segura y Tips de salida en Deudas (P-05).
+- La pantalla Pro y el aviso de mejora prometen solo esos cuatro (`PremiumFlowService.proBenefitKeys`, P-08).
 - El estado Pro vive en `AppState.isPro` (se guarda en `SharedPreferences` con la clave `is_pro`) y lo activa `PurchaseService` después de comprar o restaurar en Google Play. **Nunca** se fuerza a `true` en el código. Para probar: `SharedPreferences.setMockInitialValues({'is_pro': true})` o `AppState.instance.setPro(true)`.
 
 ## 4. Pantallas del MVP
@@ -79,6 +80,8 @@ Minimalista. No se agregan entradas sin aprobación.
 5. El respaldo solo incluye la Bóveda si el usuario lo confirma (el archivo no está cifrado).
 6. `DashboardWidget` y `DashboardController` filtran siempre por `isVault`.
 7. Al editar un movimiento se conserva su `isSecret` (ya hubo una fuga por esto, corregida 2026-06-10).
+8. La Bóveda y sus pagos fijos están detrás de `VaultLockGate`: sin Pro, o con PIN y la Bóveda cerrada, no se ve nada secreto (D-019).
+9. Mandar un movimiento a la Bóveda o cargarlo ahí pide Pro; sacarlo de la Bóveda se permite siempre (P-11).
 
 ## 8. Datos y respaldo
 

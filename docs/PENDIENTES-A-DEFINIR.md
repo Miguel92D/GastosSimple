@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-04 (chat 03).
+Última revisión: 2026-10-04 (chat 04).
 
 ---
 
@@ -26,7 +26,11 @@
 
 ### P-03 — Crash de compras en la 1.1.8
 `ProxyBillingActivity.onCreate` → `NullPointerException` en `PendingIntent.getIntentSender()` (billing 8.0.0). Pasa cuando se abre la compra Pro y Google Play no devuelve la pantalla de pago.
-**Respuesta:** _pendiente_ — se trabaja en el chat 04.
+**Respuesta (2026-10-04, chat 04):** ✅ Revisado. **No es un error de nuestro código y no se puede arreglar desde la app.**
+- Se miró el código de la librería (Billing 8.0.0): `ProxyBillingActivity` es una pantalla interna de Google (no exportada) que solo abre la propia librería. Se cae cuando Google Play contesta "OK" pero **sin** la pantalla de pago. Pasa en Play Store rotos o viejos, teléfonos modificados y en los robots de prueba de Google (el "informe previo al lanzamiento"). El crash es de un Android 11 el 27/09, justo después de subir la 1.1.8: muy probablemente fue ese robot.
+- Google no lo corrigió en ninguna versión (8.1 a 9.1 no lo nombran). RevenueCat, que vende compras para miles de apps, recomienda ignorarlo en Crashlytics.
+- Lo que sí se hizo: Billing fijo en 8 (D-017, igual que la 1.1.8 y obligatorio para publicar), los botones no quedan trabados si Google Play no abre el pago, y no se abren dos compras a la vez.
+- Para el chat 06: probar una compra real con una **cuenta de prueba de licencias** en la prueba interna. Si en Crashlytics vuelve a aparecer solo en dispositivos de prueba de Google, cerrarlo como "no se arregla".
 
 ### P-04 — Los documentos en `docs/` pueden quedar públicos
 `docs/` es la carpeta que publica GitHub Pages. Cuando esta rama llegue a `main`, los `.md` se verían en la web.
@@ -47,7 +51,7 @@ Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el
 
 ### P-08 — La pantalla Pro promete cosas que ya no están a la vista
 `premium_screen.dart` muestra "Predicción de gastos del mes" (`benefit_predictions`) y el aviso de mejora (`PremiumFlowService`) muestra "Exportación de datos" (`feature_export`), pero la Proyección quedó oculta y el respaldo es gratis (P-05). En el chat 01 solo se sacaron del aviso "Análisis mensual" y "Presupuestos".
-**Respuesta:** _pendiente_ — se ajusta en el chat 04 (Pro y compras).
+**Respuesta (2026-10-04, chat 04):** ✅ Corregido. La pantalla Pro y el aviso muestran los mismos cuatro: Estadísticas, Metas de ahorro, Bóveda Segura y Tips de salida en Deudas (`PremiumFlowService.proBenefitKeys`). Se sacaron "Predicción de gastos", "Insights inteligentes", "Analíticas avanzadas" y "Exportación de datos". El botón del aviso decía "Probar Premium" (sonaba a prueba gratis): ahora dice "Ver $imple PRO". Los Tips de Deudas eran gratis en la práctica: ahora piden Pro (D-019).
 
 ### P-09 — 98 textos de traducción que ya no se usaban antes del chat 01
 En `app_translations.dart` hay 98 claves (en las dos lenguas) que ningún archivo nombra, por ejemplo `get_pro`, `history_analytics`, `dark_mode`, `privacy_policy_part1`. Ya estaban sin uso antes del chat 01. No se borraron porque algunas podrían usarse de forma indirecta (por ejemplo, nombres de categorías guardados en la base).
@@ -59,9 +63,21 @@ En "Agregar movimiento" las categorías tienen un ícono cada una (Compras, Serv
 
 ### P-11 — Movimientos a la Bóveda sin Pro
 Desde el chat 02, deslizar un movimiento a la derecha (mandarlo a la Bóveda) solo funciona con Pro; sacarlo de la Bóveda se permite siempre. Antes un usuario gratis podía esconder un movimiento en una Bóveda que no puede abrir.
-**Respuesta:** _pendiente_ — confirmar en el chat 04 (Pro y Bóveda) que es el comportamiento deseado.
+**Respuesta (2026-10-04, chat 04):** ✅ Confirmado: mandar a la Bóveda solo con Pro; sacar de la Bóveda siempre. Además, cargar un movimiento nuevo en la Bóveda (`/add` con `isVault`) también pide Pro (D-019).
 
 ### P-12 — Sumas en SQL que ya no se usan
 Desde el chat 03 (D-016) nadie llama a `getTotalIncome`, `getTotalExpenses` ni `getExpensesByCategory` de `DatabaseHelper` (ni a sus copias en `TransactionRepository` y `TransactionController`). Quedaron para no tocar la base en esta tarea.
 **Respuesta:** _pendiente_ — borrarlas en una tarea de limpieza (junto con P-09).
+
+### P-13 — ¿Se quita Pro si Google devuelve el dinero?
+Hoy Pro queda guardado en el teléfono (`is_pro`) para siempre. Si alguien pide reembolso, Google Play deja de devolver la compra, pero la app no apaga Pro. Apagarlo al no encontrar la compra tiene un riesgo: sin internet o con Google Play fallando, un cliente que pagó podría perder Pro.
+**Respuesta:** _pendiente_ — decidir si vale la pena (por ejemplo, apagar solo si Google Play contesta bien dos veces seguidas sin la compra).
+
+### P-14 — Mensajes de compra solo en español y sin tildes
+Los mensajes de `PurchaseService` ("Compra cancelada.", "No se encontro una compra…") están escritos en el código, solo en español y sin tildes. D-008 pide las dos lenguas.
+**Respuesta:** _pendiente_ — pasarlos a `AppTranslations` en una tarea de textos (junto con P-09).
+
+### P-15 — Más textos y código Pro sin uso
+Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analytics`, `benefit_strategies`, `smart_insights`, `feature_stats`, `feature_export`, `feature_vault` y `feature_goals`. Tampoco se usa `PremiumService` ni `AppModeController.isPro`.
+**Respuesta:** _pendiente_ — borrarlos en la tarea de limpieza (P-09 y P-12).
 

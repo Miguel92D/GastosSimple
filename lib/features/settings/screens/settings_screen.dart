@@ -435,14 +435,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _isRestoringPurchase = true);
     try {
       await service.init();
-      await service.restorePurchases();
-      await Future<void>.delayed(const Duration(milliseconds: 1200));
+      // Espera la respuesta de Google Play (o el tiempo máximo).
+      final restored = await service.restorePurchases();
       if (!mounted) return;
 
-      final hasError = service.errorMessage != null;
-      final restored =
-          context.read<AppState>().isPro ||
-          (service.statusMessage ?? '').toLowerCase().contains('restaur');
+      final hasError = !restored && service.errorMessage != null;
       final message = hasError
           ? l10n.text('premium_restore_failed')
           : restored

@@ -21,6 +21,14 @@ class AppTranslations {
       'benefit_analytics': 'Analíticas financieras avanzadas',
       'benefit_future': 'Mejoras futuras',
       'smart_insights': 'Insights financieros inteligentes',
+      // Lo que incluye PRO (P-05): pantalla Pro y aviso de mejora.
+      'pro_benefit_stats':
+          'Estadísticas: en qué se va tu plata, por categoría y por mes',
+      'pro_benefit_goals': 'Metas de ahorro con cuánto apartar por mes',
+      'pro_benefit_vault':
+          'Bóveda Segura: movimientos privados, fuera del saldo y del historial',
+      'pro_benefit_debt_tips':
+          'Tips de salida en Deudas: Avalancha y Bola de nieve',
       'activate_pro': 'Activar PRO',
       'restore_purchase': 'Restaurar compra',
       'premium_account': 'Cuenta Premium',
@@ -440,11 +448,15 @@ class AppTranslations {
       'save_changes': 'Guardar Cambios',
       'add_money_to': 'Agregar dinero a {name}',
       'vault_register_title': 'Registrar en Bóveda',
+      'vault_locked_title': 'La Bóveda está cerrada',
+      'vault_locked_body':
+          'Tus movimientos privados quedan ocultos hasta que pongas el PIN.',
+      'vault_open': 'Abrir Bóveda',
       'add_private_income': 'Agregar ingreso privado',
       'add_private_movement': 'Agregar movimiento privado',
       'add_private_expense': 'Agregar gasto privado',
       'unlock_premium_title': 'Desbloquea \$imple Premium',
-      'try_premium': 'Probar Premium',
+      'try_premium': 'Ver \$imple PRO',
       'continue_free': 'Continuar gratis',
       'local_backup_label': 'Respaldo Local',
       'biometric_not_available': 'Biometría no disponible en este dispositivo',
@@ -471,6 +483,13 @@ class AppTranslations {
       'benefit_analytics': 'Advanced financial analytics',
       'benefit_future': 'Future improvements',
       'smart_insights': 'Smart financial insights',
+      // What PRO includes (P-05): Pro screen and upgrade prompt.
+      'pro_benefit_stats':
+          'Statistics: where your money goes, by category and by month',
+      'pro_benefit_goals': 'Savings goals with how much to set aside each month',
+      'pro_benefit_vault':
+          'Secure Vault: private movements, kept out of your balance and history',
+      'pro_benefit_debt_tips': 'Debt exit tips: Avalanche and Snowball',
       'activate_pro': 'Activate PRO',
       'restore_purchase': 'Restore purchase',
       'premium_account': 'Premium account',
@@ -888,11 +907,15 @@ class AppTranslations {
       'save_changes': 'Save Changes',
       'add_money_to': 'Add money to {name}',
       'vault_register_title': 'Register in Vault',
+      'vault_locked_title': 'The Vault is locked',
+      'vault_locked_body':
+          'Your private movements stay hidden until you enter the PIN.',
+      'vault_open': 'Open Vault',
       'add_private_income': 'Add private income',
       'add_private_movement': 'Add private movement',
       'add_private_expense': 'Add private expense',
       'unlock_premium_title': 'Unlock \$imple Premium',
-      'try_premium': 'Try Premium',
+      'try_premium': 'See \$imple PRO',
       'continue_free': 'Continue for free',
       'local_backup_label': 'Local Backup',
       'biometric_not_available': 'Biometrics not available on this device',

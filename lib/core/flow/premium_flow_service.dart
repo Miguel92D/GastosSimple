@@ -7,9 +7,17 @@ import '../router/navigation_service.dart';
 import '../i18n/app_locale_controller.dart';
 
 class PremiumFlowService {
+  /// Lo que incluye PRO (P-05). La pantalla Pro muestra lo mismo.
+  static const List<String> proBenefitKeys = [
+    'pro_benefit_stats',
+    'pro_benefit_goals',
+    'pro_benefit_vault',
+    'pro_benefit_debt_tips',
+  ];
+
   static void showUpgradePrompt(BuildContext context) {
     final l10n = context.read<AppLocaleController>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -20,7 +28,12 @@ class PremiumFlowService {
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 32, 24, 48), // Padding inferior generoso para ergonomía
+            padding: const EdgeInsets.fromLTRB(
+              24,
+              32,
+              24,
+              48,
+            ), // Padding inferior generoso para ergonomía
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,13 +50,7 @@ class PremiumFlowService {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                _buildBenefit(l10n.text('feature_stats')),
-                _buildBenefit(l10n.text('feature_goals')),
-
-                _buildBenefit(l10n.text('feature_export')),
-                _buildBenefit(l10n.text('feature_vault')),
-
-
+                for (final key in proBenefitKeys) _buildBenefit(l10n.text(key)),
                 const SizedBox(height: 32),
                 AppButton(
                   onTap: () {

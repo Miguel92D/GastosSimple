@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-04 (chat 03).
+Última revisión: 2026-10-04 (chat 04).
 
 ---
 
@@ -43,7 +43,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-04 (chat 03): analyze limpio, 108 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-04 (chat 04): analyze limpio, 137 tests pasan.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; `main` se actualiza en el chat 06.
@@ -72,3 +72,21 @@ Inicio, carga rápida, Movimientos, Estadísticas y "Podés gastar hoy" suman **
 - Deudas: el total pendiente, el orden de Avalancha / Bola de nieve y la deuda prioritaria salen de `DebtMath` (`lib/features/debts/utils/debt_math.dart`). Una deuda pagada de más cuenta 0 (no descuenta de las otras) y "pagada" es siempre `Debt.isPaid` (centavos), nunca `progress >= 0.999`.
 - "Podés gastar hoy": límite diario y "te queda hoy" a centavos; la última cuota pendiente usa su monto real (`InstallmentPlan.amountFor`).
 Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas den lo mismo).
+
+### D-017 — Google Play Billing 8 fijo
+- Google Play **rechaza** versiones nuevas compiladas con Billing 7 desde el 31/08/2026 (con prórroga pedida, hasta el 1/11/2026). El `pubspec.lock` del repo había quedado en `in_app_purchase_android 0.4.0+8` = Billing **7.1.1**; la 1.1.8 publicada ya usaba Billing **8.0.0** (lo dice su crash).
+- Ahora: `in_app_purchase: ^3.3.1` e `in_app_purchase_android: ^0.5.0` como dependencia **directa** (antes venía de rebote). Así no puede volver a bajar a Billing 7 y además la app usa sus tipos (`GooglePlayPurchaseDetails`) para no activar Pro con compras sin pagar (D-018). Comprobado: el APK lleva `billingclient.version = 8.0.0`.
+- Si se sube a una versión mayor del paquete, revisar su CHANGELOG (la 0.5.0 sacó `queryPurchaseHistory`, que la app no usa).
+
+### D-018 — Cómo se activa Pro
+- Pro se activa **solo** en `PurchaseService._deliverProduct`, con una compra de `simple_pro_lifetime` **pagada**. Un test (`test/pro_purchase_test.dart`) falla si otro archivo de `lib/` pone Pro en `true`. Se borraron `ProService.activatePro/deactivatePro` y `PremiumService.setPremium`, que no usaba nadie.
+- Google Play devuelve al restaurar **todas** las compras de la cuenta con estado "restaurada", también las que esperan pago (efectivo, transferencia). `PurchaseService.isPaid` mira el estado real (`PurchaseStateWrapper.purchased`); si no está pagada queda "pendiente", no se activa Pro y no se confirma (`completePurchase`).
+- `PurchaseService` habla con la tienda a través de `PurchaseStore`: en la app es Google Play; en los tests, una tienda falsa (`resetForTesting`, marcado `@visibleForTesting`).
+- `restorePurchases()` espera la respuesta de Google Play (máximo `restoreTimeout` = 8 s) y devuelve si Pro quedó activo. Configuración usa ese resultado (antes esperaba 1,2 s a ciegas y leía el texto del mensaje).
+
+### D-019 — Pantallas Pro cerradas en el router y Bóveda tapada
+- `AppRouter.proRoutes` (`/stats`, `/goals`, `/prediction`, `/monthly_analysis`) y `/add` con `isVault` abren la pantalla Pro si no hay Pro, venga de donde venga la navegación (antes solo lo controlaba `ActionController`).
+- `VaultLockGate` (`lib/features/vault/widgets/vault_lock_gate.dart`) envuelve la Bóveda y sus pagos fijos: sin Pro, o con PIN de Bóveda y la Bóveda cerrada, muestra un candado en vez de los movimientos. Arregla que, al volver de segundo plano, la app cerraba la Bóveda pero la pantalla seguía mostrando lo secreto.
+- Los Tips de salida en Deudas (Avalancha / Bola de nieve) piden Pro al tocarlos (P-05). Antes eran gratis aunque la Especificación dice que son Pro.
+- Lo que promete Pro está en un solo lugar: `PremiumFlowService.proBenefitKeys` (textos `pro_benefit_*`). La pantalla Pro muestra los mismos cuatro.
+

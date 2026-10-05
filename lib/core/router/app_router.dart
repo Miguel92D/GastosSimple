@@ -17,6 +17,9 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/pin_screen.dart';
 
 import '../../features/vault/screens/vault_screen.dart';
+import '../../features/vault/widgets/vault_lock_gate.dart';
+import '../state/app_state.dart';
+import '../i18n/app_locale_controller.dart';
 import '../../features/settings/screens/premium_screen.dart';
 import '../../features/settings/screens/consent_screen.dart';
 import '../../features/settings/screens/backup_screen.dart';
@@ -24,8 +27,28 @@ import '../../features/settings/screens/privacy_policy_screen.dart';
 import '../../features/transactions/screens/recurring_screen.dart';
 
 class AppRouter {
+  /// Pantallas PRO (P-05 y las ocultas de D-013). Sin PRO, cualquier camino
+  /// que llegue a ellas abre la pantalla Pro en su lugar.
+  static const Set<String> proRoutes = {
+    '/stats',
+    '/goals',
+    '/prediction',
+    '/monthly_analysis',
+  };
+
   static Route generateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>? ?? {};
+
+    // Cargar algo en la Bóveda también es PRO (Especificación §7).
+    final bool wantsVault = args['isVault'] == true || args['mode'] == 'vault';
+    if (!AppState.instance.isPro &&
+        (proRoutes.contains(settings.name) ||
+            (settings.name == '/add' && wantsVault))) {
+      return MaterialPageRoute(
+        settings: settings,
+        builder: (_) => const PremiumScreen(),
+      );
+    }
 
     switch (settings.name) {
       case "/":
@@ -140,9 +163,16 @@ class AppRouter {
         );
 
       case "/recurring":
+        final bool vaultRecurring = args['isVault'] == true;
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => RecurringScreen(isVault: args['isVault'] == true),
+          // Los pagos fijos de la Bóveda se tapan igual que la Bóveda.
+          builder: (context) => vaultRecurring
+              ? VaultLockGate(
+                  title: AppLocaleController.instance.text('recurring_title'),
+                  child: const RecurringScreen(isVault: true),
+                )
+              : const RecurringScreen(),
         );
 
       case "/monthly_analysis":
@@ -150,7 +180,6 @@ class AppRouter {
           settings: settings,
           builder: (_) => const MonthlyAnalysisScreen(),
         );
-
 
       default:
         return MaterialPageRoute(

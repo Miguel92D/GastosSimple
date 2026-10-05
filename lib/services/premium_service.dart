@@ -10,11 +10,6 @@ class PremiumService extends ChangeNotifier {
   bool get isPremium => AppState.instance.isPro;
   static bool get isPro => instance.isPremium;
 
-  Future<void> setPremium(bool value) async {
-    await AppState.instance.setProEntitlement(value);
-    notifyListeners();
-  }
-
   static Future<bool> checkPremium(BuildContext context) async {
     if (AppState.instance.isPro) return true;
     PremiumFlowService.showUpgradePrompt(context);

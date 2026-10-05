@@ -13,6 +13,8 @@ import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/app_button.dart';
 import '../../../core/flow/app_guard.dart';
+import '../../../core/flow/premium_flow_service.dart';
+import '../../../core/state/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/debt_expense.dart';
 import '../utils/debt_math.dart';
@@ -60,6 +62,11 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   void _selectStrategy(String strategy) {
+    // Los Tips de salida (Avalancha / Bola de nieve) son PRO (P-05).
+    if (!AppState.instance.isPro) {
+      PremiumFlowService.showUpgradePrompt(context);
+      return;
+    }
     setState(() {
       _selectedStrategy = strategy;
       _sortDebts();

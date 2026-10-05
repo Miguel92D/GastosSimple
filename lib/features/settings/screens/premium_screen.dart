@@ -180,21 +180,23 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-                    _buildFeature(
-                      Icons.psychology_rounded,
-                      l10n.text('benefit_strategies'),
-                    ),
-                    _buildFeature(
-                      Icons.auto_graph_rounded,
-                      l10n.text('benefit_predictions'),
-                    ),
+                    // Solo lo que es PRO (P-05). Si cambia, cambiar también
+                    // PremiumFlowService.proBenefitKeys.
                     _buildFeature(
                       Icons.analytics_rounded,
-                      l10n.text('benefit_analytics'),
+                      l10n.text('pro_benefit_stats'),
                     ),
                     _buildFeature(
-                      Icons.lightbulb_outline_rounded,
-                      l10n.text('smart_insights'),
+                      Icons.savings_rounded,
+                      l10n.text('pro_benefit_goals'),
+                    ),
+                    _buildFeature(
+                      Icons.lock_rounded,
+                      l10n.text('pro_benefit_vault'),
+                    ),
+                    _buildFeature(
+                      Icons.psychology_rounded,
+                      l10n.text('pro_benefit_debt_tips'),
                     ),
                     const SizedBox(height: 48),
                     if (!isPro) ...[

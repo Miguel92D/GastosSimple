@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import '../core/state/app_state.dart';
 
+/// Solo lectura del estado Pro. Pro lo activa únicamente PurchaseService
+/// después de una compra o restauración en Google Play.
 class ProService extends ChangeNotifier {
   static final ProService instance = ProService._internal();
 
@@ -10,14 +12,4 @@ class ProService extends ChangeNotifier {
 
   bool get isPro => AppState.instance.isPro;
   bool get isVaultActive => _isVaultActive;
-
-  void activatePro() {
-    AppState.instance.setPro(true);
-    notifyListeners();
-  }
-
-  void deactivatePro() {
-    AppState.instance.setPro(false);
-    notifyListeners();
-  }
 }
