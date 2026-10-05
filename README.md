@@ -1,13 +1,41 @@
 # $imple
 
-$imple is a simple personal finance app for tracking income, expenses, debts, goals, budgets, and local backups.
+App de finanzas personales para anotar gastos e ingresos rápido, ver cuánto podés gastar hoy y ordenar deudas, pagos fijos y cuotas. Todo queda guardado en el teléfono. Hecha en Flutter, publicada en Google Play.
 
-## Technical note
+## Documentos guía
 
-The public product brand is `$imple`. Technical identifiers such as the Flutter package name `gastos_simple`, package imports, app ids, and bundle ids are intentionally kept unchanged to avoid release and integration risk.
+| Documento | Para qué sirve |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | Cómo se trabaja: un chat por tarea y la tabla de chats 00–06 |
+| [`docs/DECISIONES-TECNICAS.md`](docs/DECISIONES-TECNICAS.md) | Lo que ya está decidido (D-001…). **Manda sobre todo lo demás** |
+| [`docs/PENDIENTES-A-DEFINIR.md`](docs/PENDIENTES-A-DEFINIR.md) | Preguntas abiertas (P-01…) y sus respuestas |
+| [`docs/ESPECIFICACION-PRODUCTO.md`](docs/ESPECIFICACION-PRODUCTO.md) | Qué hace la app, pantallas y reglas de oro |
+| [`PROYECTO_REGLAS.md`](PROYECTO_REGLAS.md) | Reglas viejas, ya absorbidas por la Especificación |
 
-## Development
+Prioridad si se contradicen: Decisiones > respuestas de Pendientes > Especificación > `PROYECTO_REGLAS.md`.
 
-This repository contains the Flutter app source, platform projects, and public web/privacy pages.
+## Cómo correrla
 
-Use the existing package, application id, namespace, bundle id, Firebase, and billing identifiers unless a dedicated migration plan is created.
+```bash
+flutter pub get
+flutter run
+```
+
+Antes de subir cambios:
+
+```bash
+flutter analyze
+flutter test
+```
+
+## Nota técnica
+
+El nombre público es `$imple`. Los identificadores técnicos (paquete `gastos_simple`, app id `com.migueld.gastossimple`, Firebase y el producto de compra) **no se cambian** para no romper la app publicada (D-003).
+
+## Estructura
+
+- `lib/features/` — una carpeta por función (movimientos, inicio, deudas, metas, bóveda, ajustes…).
+- `lib/core/` — navegación, estado, idiomas, interfaz común.
+- `lib/database/` — base de datos local (SQLite, versión 16).
+- `lib/services/` — cálculos y servicios (compras, seguridad, proyección…).
+- `docs/`, `github_pages_root/`, `SimpleLanding/` — landing pública y política de privacidad (se mantienen iguales).

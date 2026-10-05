@@ -1,5 +1,8 @@
 # Reglas de Oro del Proyecto $imple
 
+> **Histórico (2026-10-04).** Todo este contenido fue absorbido por `docs/ESPECIFICACION-PRODUCTO.md`.
+> Si algo de acá contradice a `docs/DECISIONES-TECNICAS.md`, `docs/PENDIENTES-A-DEFINIR.md` o la Especificación, gana el otro documento (D-001).
+
 Este documento actúa como la fuente de verdad para el desarrollo asistido por IA, asegurando que las funciones críticas y el diseño premium no se pierdan en futuras iteraciones.
 
 ## 1. Identidad Visual Premium
