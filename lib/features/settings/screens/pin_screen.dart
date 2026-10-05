@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
 import '../../../core/ui/app_colors.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class PinScreen extends StatefulWidget {
   final bool isVault;
@@ -185,7 +186,7 @@ class _PinScreenState extends State<PinScreen> {
   Widget _buildBiometricButton() {
     return IconButton(
       icon: Icon(
-        Icons.fingerprint,
+        AppIcons.fingerprint,
         size: 32,
         color: SecurityService.instance.isBiometricActive
             ? Theme.of(context).primaryColor
@@ -199,7 +200,7 @@ class _PinScreenState extends State<PinScreen> {
 
   Widget _buildBackspaceButton() {
     return IconButton(
-      icon: const Icon(Icons.backspace_outlined, size: 24),
+      icon: const Icon(AppIcons.backspace, size: 24),
       onPressed: _onBackspace,
     );
   }
@@ -227,7 +228,7 @@ class _PinScreenState extends State<PinScreen> {
         elevation: 0,
         leading: widget.isSetup || widget.isVault
             ? IconButton(
-                icon: const Icon(Icons.close_rounded),
+                icon: const Icon(AppIcons.close),
                 onPressed: () => Navigator.pop(context),
               )
             : null,
@@ -253,8 +254,8 @@ class _PinScreenState extends State<PinScreen> {
                       if (!isSmallHeight) ...[
                         Icon(
                           widget.isVault
-                              ? Icons.enhanced_encryption_rounded
-                              : Icons.lock_outline,
+                              ? AppIcons.vault
+                              : AppIcons.pin,
                           size: 64,
                           color: Theme.of(context).primaryColor,
                         ),

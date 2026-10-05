@@ -15,6 +15,7 @@ import '../../../database/database_helper.dart';
 import '../../../services/daily_allowance_service.dart';
 import '../../../services/monthly_budget_service.dart';
 import '../../transactions/controllers/transaction_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 /// "Podés gastar hoy": cuánto queda por día con lo que entró este mes (o
 /// con el presupuesto mensual). Se carga sola (no depende del período del
@@ -190,12 +191,12 @@ class _DailyAllowanceCardState extends State<DailyAllowanceCard> {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: switch (d.state) {
             AllowanceState.noIncome => _buildMessage(
-              Icons.lightbulb_outline_rounded,
+              AppIcons.tip,
               AppColors.softText,
               l10n.text('allowance_no_income'),
             ),
             AllowanceState.overspent => _buildMessage(
-              Icons.warning_amber_rounded,
+              AppIcons.warning,
               AppColors.expenseRed,
               l10n.text(
                 d.usesBudget
@@ -245,7 +246,7 @@ class _DailyAllowanceCardState extends State<DailyAllowanceCard> {
               ),
             ),
             Icon(
-              Icons.info_outline_rounded,
+              AppIcons.info,
               size: 16,
               color: AppColors.softText.withValues(alpha: 0.5),
             ),

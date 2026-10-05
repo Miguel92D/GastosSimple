@@ -20,6 +20,7 @@ import '../../../core/state/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/debt_expense.dart';
 import '../utils/debt_math.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -154,13 +155,13 @@ class _DebtScreenState extends State<DebtScreen> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
-                      _buildField(innerL10n.text('debt_name_label'), nombreController, icon: Icons.badge_rounded),
-                      _buildField(innerL10n.text('total_amount'), montoTotalController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.account_balance_wallet_rounded, inputFormatters: [CurrencyInputFormatter()]),
-                      _buildField(innerL10n.text('min_payment'), pagoMinimoController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.payment_rounded, inputFormatters: [CurrencyInputFormatter()]),
+                      _buildField(innerL10n.text('debt_name_label'), nombreController, icon: AppIcons.name),
+                      _buildField(innerL10n.text('total_amount'), montoTotalController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: AppIcons.wallet, inputFormatters: [CurrencyInputFormatter()]),
+                      _buildField(innerL10n.text('min_payment'), pagoMinimoController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: AppIcons.pay, inputFormatters: [CurrencyInputFormatter()]),
                       Row(
                         children: [
                           Expanded(
-                            child: _buildField(innerL10n.text('interest_rate_optional'), tasaInteresController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: Icons.percent_rounded, fontSize: 14),
+                            child: _buildField(innerL10n.text('interest_rate_optional'), tasaInteresController, keyboard: const TextInputType.numberWithOptions(decimal: true), icon: AppIcons.percent, fontSize: 14),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -168,7 +169,7 @@ class _DebtScreenState extends State<DebtScreen> {
                               innerL10n.text('due_day_label'),
                               fechaVencimientoController,
                               keyboard: TextInputType.none,
-                              icon: Icons.calendar_today_rounded,
+                              icon: AppIcons.day,
                               readOnly: true,
                               onTap: () => _selectDate(context, fechaVencimientoController),
                               fontSize: 14,
@@ -183,7 +184,7 @@ class _DebtScreenState extends State<DebtScreen> {
                               innerL10n.text('installments_label'),
                               cuotasTotalesController,
                               keyboard: TextInputType.number,
-                              icon: Icons.reorder_rounded,
+                              icon: AppIcons.installmentCount,
                               fontSize: 14,
                             ),
                           ),
@@ -193,7 +194,7 @@ class _DebtScreenState extends State<DebtScreen> {
                               innerL10n.text('card_closing_label'),
                               diaCierreController,
                               keyboard: TextInputType.none,
-                              icon: Icons.calendar_today_rounded,
+                              icon: AppIcons.day,
                               textInputAction: TextInputAction.done,
                               readOnly: true,
                               onTap: () => _selectDate(context, diaCierreController),
@@ -384,7 +385,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.account_balance_rounded,
+                                AppIcons.debts,
                                 size: 64,
                                 color: AppColors.primaryPurple.withValues(alpha: 0.3),
                               ),
@@ -597,7 +598,7 @@ class _DebtScreenState extends State<DebtScreen> {
             borderRadius: BorderRadius.circular(18),
             child: const Center(
               child: Icon(
-                Icons.add_rounded,
+                AppIcons.add,
                 color: AppColors.primaryPurple,
                 size: 28,
               ),
@@ -674,14 +675,12 @@ class _DebtScreenState extends State<DebtScreen> {
                   child: Center(
                     child: Icon(
                       isPaid
-                          ? Icons.check_circle_rounded
+                          ? AppIcons.done
                           : (isPriority && _selectedStrategy == 'avalanche'
-                              ? Icons.flash_on_rounded
+                              ? AppIcons.avalanche
                               : (isPriority && _selectedStrategy == 'snowball'
-                                  ? Icons.ac_unit_rounded
-                                  : (debt.nombre.toLowerCase().contains('bbva')
-                                      ? Icons.account_balance_rounded
-                                      : Icons.credit_card_rounded))),
+                                  ? AppIcons.snowball
+                                  : AppIcons.debts)),
                       color: isPaid ? AppColors.incomeGreen : (isPriority ? AppColors.primaryPurple : AppColors.textPrimary),
                       size: isPaid ? 24 : 20,
                     ),
@@ -736,7 +735,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    _selectedStrategy == 'avalanche' ? Icons.flash_on_rounded : Icons.ac_unit_rounded,
+                                    _selectedStrategy == 'avalanche' ? AppIcons.avalanche : AppIcons.snowball,
                                     color: AppColors.primaryPurple,
                                     size: 10
                                   ),
@@ -766,7 +765,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             if (debt.diaCierre != null)
                               Row(
                                 children: [
-                                  const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.softText),
+                                  const Icon(AppIcons.day, size: 12, color: AppColors.softText),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
@@ -782,7 +781,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                 padding: EdgeInsets.only(top: debt.diaCierre != null ? 4.0 : 0.0),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.reorder_rounded, size: 12, color: AppColors.softText),
+                                    const Icon(AppIcons.installmentCount, size: 12, color: AppColors.softText),
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
@@ -828,19 +827,19 @@ class _DebtScreenState extends State<DebtScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _buildActionButton(
-                  icon: Icons.payments_rounded,
+                  icon: AppIcons.pay,
                   color: AppColors.incomeGreen,
                   onTap: () => _showPaymentModal(debt),
                 ),
                 const SizedBox(width: 12),
                 _buildActionButton(
-                  icon: Icons.edit_outlined,
+                  icon: AppIcons.edit,
                   color: AppColors.primaryPurple,
                   onTap: () => _showDebtForm(debt: debt),
                 ),
                 const SizedBox(width: 12),
                 _buildActionButton(
-                  icon: Icons.delete_outline_rounded,
+                  icon: AppIcons.delete,
                   color: AppColors.expenseRed,
                   onTap: () => _confirmDeleteDebt(debt),
                 ),
@@ -966,7 +965,7 @@ class _DebtScreenState extends State<DebtScreen> {
           const SizedBox(height: 24),
           _buildStrategyCard(
             title: l10n.text('avalanche_strategy'),
-            icon: Icons.bolt_rounded,
+            icon: AppIcons.avalanche,
             color: AppColors.primaryPurple,
             isSelected: _selectedStrategy == 'avalanche',
             onTap: () => _selectStrategy('avalanche'),
@@ -974,7 +973,7 @@ class _DebtScreenState extends State<DebtScreen> {
           const SizedBox(height: 12),
           _buildStrategyCard(
             title: l10n.text('snowball_strategy'),
-            icon: Icons.ac_unit_rounded,
+            icon: AppIcons.snowball,
             color: AppColors.primaryPurple,
             isSelected: _selectedStrategy == 'snowball',
             onTap: () => _selectStrategy('snowball'),
@@ -1051,7 +1050,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           shape: BoxShape.circle,
                         ),
                       )
-                    : const Icon(Icons.chevron_right_rounded,
+                    : const Icon(AppIcons.next,
                         size: 20, color: AppColors.softText),
               ),
             ),

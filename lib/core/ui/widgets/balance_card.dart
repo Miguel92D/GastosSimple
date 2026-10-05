@@ -15,6 +15,7 @@ import '../app_gradients.dart';
 import '../app_text_styles.dart';
 import '../app_spacing.dart';
 import '../app_radius.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class BalanceCard extends StatefulWidget {
   final double balance;
@@ -125,8 +126,8 @@ class _BalanceCardState extends State<BalanceCard>
                           onTap: AppState.instance.toggleHideBalance,
                           child: Icon(
                             AppState.instance.hideBalance
-                                ? Icons.visibility_off_rounded
-                                : Icons.visibility_rounded,
+                                ? AppIcons.hide
+                                : AppIcons.show,
                             size: 16,
                             color: Colors.white.withValues(alpha: 0.5),
                           ),

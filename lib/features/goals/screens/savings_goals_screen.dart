@@ -16,6 +16,7 @@ import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/currency_input_formatter.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class SavingsGoalsScreen extends StatefulWidget {
   const SavingsGoalsScreen({super.key});
@@ -139,7 +140,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
           borderRadius: BorderRadius.circular(18),
           child: const Center(
             child: Icon(
-              Icons.add_rounded,
+              AppIcons.add,
               color: AppColors.primaryPurple,
               size: 28,
             ),
@@ -336,19 +337,19 @@ class _GoalItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _buildActionButton(
-                  icon: Icons.payments_rounded,
+                  icon: AppIcons.pay,
                   color: AppColors.incomeGreen,
                   onTap: onAddMoney,
                 ),
                 const SizedBox(width: 12),
                 _buildActionButton(
-                  icon: Icons.edit_outlined,
+                  icon: AppIcons.edit,
                   color: AppColors.primaryPurple,
                   onTap: onEdit,
                 ),
                 const SizedBox(width: 12),
                 _buildActionButton(
-                  icon: Icons.delete_outline_rounded,
+                  icon: AppIcons.delete,
                   color: AppColors.expenseRed,
                   onTap: onDelete,
                 ),
@@ -531,7 +532,7 @@ class _CreateGoalModalState extends State<_CreateGoalModal> {
                           child: Row(
                             children: [
                               const Icon(
-                                Icons.calendar_today_rounded,
+                                AppIcons.day,
                                 color: AppColors.softText,
                                 size: 20,
                               ),

@@ -10,6 +10,7 @@ import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../services/security_service.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 /// Tapa las pantallas de la Bóveda cuando no se pueden ver: sin PRO, o con
 /// PIN de Bóveda y la Bóveda cerrada (por ejemplo, al volver de segundo
@@ -70,7 +71,7 @@ class _LockedVault extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.lock_rounded,
+                AppIcons.vault,
                 size: 56,
                 color: needsPro ? AppColors.gold : AppColors.primaryPurple,
               ),

@@ -18,6 +18,7 @@ import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/money.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/recurring_payment.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 /// Pagos e ingresos fijos (alquiler, suscripciones, sueldo...) y planes de
 /// cuotas. Se crean desde "Nuevo movimiento" activando "Repetir" o
@@ -86,13 +87,13 @@ class _RecurringScreenState extends State<RecurringScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.edit_rounded),
+              leading: const Icon(AppIcons.edit),
               title: Text(l10n.text('recurring_change_amount')),
               onTap: () => Navigator.pop(ctx, 'amount'),
             ),
             ListTile(
               leading: const Icon(
-                Icons.event_busy_rounded,
+                AppIcons.stopRepeat,
                 color: AppColors.expenseRed,
               ),
               title: Text(
@@ -233,7 +234,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.autorenew_rounded,
+              AppIcons.recurring,
               size: 64,
               color: AppColors.softText.withValues(alpha: 0.4),
             ),
@@ -267,7 +268,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
             child: Row(
               children: [
                 const Icon(
-                  Icons.credit_card_rounded,
+                  AppIcons.installments,
                   color: AppColors.expenseRed,
                   size: 20,
                 ),
@@ -358,8 +359,8 @@ class _RecurringScreenState extends State<RecurringScreen> {
               ),
               child: Icon(
                 item.isInstallment
-                    ? Icons.credit_card_rounded
-                    : Icons.autorenew_rounded,
+                    ? AppIcons.installments
+                    : AppIcons.recurring,
                 color: color,
                 size: 22,
               ),

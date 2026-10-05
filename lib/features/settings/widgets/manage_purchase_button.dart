@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 /// "Ver mi compra en Google Play" (D-027). PRO es un pago único: no hay
 /// suscripción que cancelar; desde el historial de pedidos de Google Play se
@@ -44,7 +45,7 @@ class ManagePurchaseButton extends StatelessWidget {
       children: [
         ListTile(
           leading: const Icon(
-            Icons.receipt_long_rounded,
+            AppIcons.pro,
             color: AppColors.primaryPurple,
           ),
           title: Text(
@@ -52,7 +53,7 @@ class ManagePurchaseButton extends StatelessWidget {
             style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w600),
           ),
           trailing: Icon(
-            Icons.open_in_new_rounded,
+            AppIcons.openOutside,
             color: AppColors.softText.withAlpha(120),
           ),
           onTap: () => _open(context),

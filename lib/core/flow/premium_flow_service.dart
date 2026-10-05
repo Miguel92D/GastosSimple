@@ -5,6 +5,7 @@ import '../ui/app_colors.dart';
 import '../ui/app_text_styles.dart';
 import '../router/navigation_service.dart';
 import '../i18n/app_locale_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class PremiumFlowService {
   /// Lo que incluye PRO (P-05). La pantalla Pro muestra lo mismo.
@@ -39,7 +40,7 @@ class PremiumFlowService {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Icon(
-                  Icons.workspace_premium,
+                  AppIcons.pro,
                   size: 64,
                   color: AppColors.gold,
                 ),
@@ -81,7 +82,7 @@ class PremiumFlowService {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: AppColors.gold, size: 20),
+          const Icon(AppIcons.done, color: AppColors.gold, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

@@ -8,6 +8,7 @@ import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 /// Se muestra una sola vez (desde InitialGuard). Crashlytics arranca apagado
 /// (ver AndroidManifest) y solo se activa si el usuario acepta.
@@ -31,7 +32,7 @@ class ConsentScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.security,
+                AppIcons.privacy,
                 size: 72,
                 color: AppColors.primaryPurple,
               ),

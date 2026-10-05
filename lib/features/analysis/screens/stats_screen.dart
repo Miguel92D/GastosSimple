@@ -23,6 +23,8 @@ import '../../../services/stats_service.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../transactions/utils/transaction_filter.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/app_spacing.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -126,7 +128,7 @@ class _StatsScreenState extends State<StatsScreen> {
           : ListenableBuilder(
               listenable: AppState.instance,
               builder: (context, _) => ListView(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 100),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.md, AppSpacing.screen, 100),
                 children: [
                   _buildMonthHeader(),
                   const SizedBox(height: 16),
@@ -146,7 +148,7 @@ class _StatsScreenState extends State<StatsScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          icon: const Icon(Icons.chevron_left_rounded),
+          icon: const Icon(AppIcons.previous),
           onPressed: () {
             HapticFeedback.selectionClick();
             monthController.goToPreviousMonth();
@@ -163,7 +165,7 @@ class _StatsScreenState extends State<StatsScreen> {
         ),
         IconButton(
           icon: Icon(
-            Icons.chevron_right_rounded,
+            AppIcons.next,
             color: canGoNext ? null : AppColors.softText.withValues(alpha: 0.2),
           ),
           onPressed: canGoNext
@@ -297,7 +299,7 @@ class _StatsScreenState extends State<StatsScreen> {
                   : TextButton.icon(
                       key: ValueKey(touched.key),
                       onPressed: () => _openMovements(touched.categories),
-                      icon: const Icon(Icons.receipt_long_rounded, size: 18),
+                      icon: const Icon(AppIcons.movements, size: 18),
                       label: Text(
                         l10n.text('stats_see_movements', {
                           'c': _sliceName(touched),
@@ -370,7 +372,7 @@ class _StatsScreenState extends State<StatsScreen> {
                   ),
                 ),
                 Icon(
-                  Icons.chevron_right_rounded,
+                  AppIcons.next,
                   size: 18,
                   color: AppColors.softText.withValues(alpha: 0.4),
                 ),

@@ -8,4 +8,7 @@ class AppSpacing {
   static const double lg = 24;
   static const double xl = 32;
   static const double xxl = 48;
+
+  /// Margen a los costados de toda pantalla (D-032).
+  static const double screen = 24;
 }

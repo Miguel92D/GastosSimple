@@ -13,6 +13,7 @@ import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../../../services/monthly_finance_service.dart';
 import '../../transactions/controllers/transaction_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class MonthlyAnalysisScreen extends StatefulWidget {
   const MonthlyAnalysisScreen({super.key});
@@ -304,7 +305,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
       child: Row(
         children: [
           Icon(
-            improved ? Icons.trending_down_rounded : Icons.trending_up_rounded,
+            improved ? AppIcons.trendDown : AppIcons.trendUp,
             color: improved ? AppColors.incomeGreen : AppColors.expenseRed,
             size: 32,
           ),
@@ -346,7 +347,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
           child: _buildSmallDetailCard(
             l10n.text('top_spending_day'),
             _topSpendingDay,
-            Icons.calendar_today_rounded,
+            AppIcons.day,
             AppColors.primaryPurple,
           ),
         ),
@@ -355,7 +356,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
           child: _buildSmallDetailCard(
             l10n.text('daily_average'),
             CurrencyHelper.formatPrivate(_dailyAverage, context),
-            Icons.speed_rounded,
+            AppIcons.speed,
             AppColors.incomeGreen,
           ),
         ),
@@ -395,7 +396,7 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb_outline_rounded, color: AppColors.primaryPurple),
+          const Icon(AppIcons.tip, color: AppColors.primaryPurple),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

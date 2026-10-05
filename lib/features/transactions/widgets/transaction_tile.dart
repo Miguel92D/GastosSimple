@@ -11,6 +11,7 @@ import '../../../core/ui/category_icons.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/app_spacing.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class TransactionTile extends StatefulWidget {
   final Transaction transaction;
@@ -207,8 +208,8 @@ class _TransactionTileState extends State<TransactionTile>
                       ),
                       child: Icon(
                         widget.transaction.isSecret == 1
-                            ? Icons.lock_open_rounded
-                            : Icons.lock_rounded,
+                            ? AppIcons.vaultLeave
+                            : AppIcons.vault,
                         color: AppColors.textPrimary,
                         size: 28,
                       ),
@@ -225,7 +226,7 @@ class _TransactionTileState extends State<TransactionTile>
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                       child: const Icon(
-                        Icons.delete_rounded,
+                        AppIcons.delete,
                         color: AppColors.textPrimary,
                         size: 28,
                       ),

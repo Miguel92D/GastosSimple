@@ -20,6 +20,7 @@ import '../../../services/currency_service.dart';
 import '../../../services/dev_monthly_test_data_service.dart';
 import '../../../services/purchase_service.dart';
 import '../widgets/manage_purchase_button.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -118,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen, vertical: AppSpacing.sm),
             children: [
               ..._section(l10n.text('language'), [
                 _buildItem(
@@ -126,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: l10n.locale == 'es'
                       ? l10n.text('language_es')
                       : l10n.text('language_en'),
-                  leading: Icons.language_rounded,
+                  leading: AppIcons.language,
                   onTap: () {
                     final newLocale = l10n.locale == 'es' ? 'en' : 'es';
                     l10n.changeLocale(newLocale);
@@ -145,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.bodySmall,
                   ),
                   secondary: Icon(
-                    Icons.password_rounded,
+                    AppIcons.pin,
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isPinActive,
@@ -168,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (securityService.isPinActive)
                   _buildItem(
                     title: l10n.text('change_pin'),
-                    leading: Icons.edit_rounded,
+                    leading: AppIcons.edit,
                     onTap: () => _changePin(isVault: false),
                   ),
                 SwitchListTile(
@@ -181,7 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.bodySmall,
                   ),
                   secondary: Icon(
-                    Icons.fingerprint_rounded,
+                    AppIcons.fingerprint,
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isBiometricActive,
@@ -234,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.bodySmall,
                   ),
                   secondary: Icon(
-                    Icons.lock_outline_rounded,
+                    AppIcons.vault,
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isVaultPinActive,
@@ -257,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (securityService.isVaultPinActive)
                   _buildItem(
                     title: l10n.text('change_pin'),
-                    leading: Icons.edit_rounded,
+                    leading: AppIcons.edit,
                     onTap: () => _changePin(isVault: true),
                   ),
               ]),
@@ -273,7 +274,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.bodySmall,
                   ),
                   secondary: Icon(
-                    Icons.notifications_active_rounded,
+                    AppIcons.reminder,
                     color: AppColors.primaryPurple,
                   ),
                   value: _reminderEnabled,
@@ -284,7 +285,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildItem(
                     title: l10n.text('reminder_time'),
                     subtitle: _reminderTime.format(context),
-                    leading: Icons.schedule_rounded,
+                    leading: AppIcons.time,
                     onTap: _pickReminderTime,
                   ),
               ]),
@@ -293,7 +294,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildItem(
                   title: l10n.text('local_backup_label'),
                   subtitle: l10n.text('backup_screen_desc'),
-                  leading: Icons.file_present_rounded,
+                  leading: AppIcons.backup,
                   onTap: () => Navigator.pushNamed(context, '/backup'),
                 ),
               ]),
@@ -303,9 +304,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildItem(
                     title: l10n.text('premium_account_active'),
                     subtitle: l10n.text('premium_account_active_subtitle'),
-                    leading: Icons.verified_rounded,
+                    leading: AppIcons.proActive,
                     trailing: const Icon(
-                      Icons.check_circle_rounded,
+                      AppIcons.done,
                       color: AppColors.incomeGreen,
                     ),
                     onTap: () {},
@@ -314,7 +315,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildItem(
                     title: l10n.text('activate_pro'),
                     subtitle: l10n.text('premium_description'),
-                    leading: Icons.workspace_premium_rounded,
+                    leading: AppIcons.pro,
                     onTap: () => Navigator.pushNamed(context, '/premium'),
                   ),
                 _buildItem(
@@ -322,7 +323,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ? l10n.text('premium_restore_loading')
                       : l10n.text('restore_purchase'),
                   subtitle: l10n.text('premium_restore_subtitle'),
-                  leading: Icons.restore_rounded,
+                  leading: AppIcons.restore,
                   trailing: _isRestoringPurchase
                       ? const SizedBox(
                           width: 20,
@@ -346,7 +347,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: l10n.text('select_currency'),
                   subtitle:
                       '${currencyService.selectedCurrency.name} (${currencyService.currencySymbol})',
-                  leading: Icons.monetization_on_rounded,
+                  leading: AppIcons.currency,
                   onTap: () => _showCurrencySelector(context),
                 ),
               ]),
@@ -354,7 +355,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ..._section(l10n.text('legal'), [
                 _buildItem(
                   title: l10n.text('privacy_policy'),
-                  leading: Icons.shield_outlined,
+                  leading: AppIcons.privacy,
                   onTap: () => GeneralFlowService.openPrivacy(),
                 ),
                 SwitchListTile(
@@ -367,7 +368,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.bodySmall,
                   ),
                   secondary: Icon(
-                    Icons.bug_report_outlined,
+                    AppIcons.crashReports,
                     color: AppColors.primaryPurple,
                   ),
                   value: appState.crashReportsEnabled,
@@ -381,13 +382,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildItem(
                     title: 'Cargar datos mensuales de prueba',
                     subtitle: 'Inserta datos TEST_MENSUAL_ en 3 meses',
-                    leading: Icons.science_rounded,
+                    leading: AppIcons.devTools,
                     onTap: _loadMonthlyTestData,
                   ),
                   _buildItem(
                     title: 'Borrar datos mensuales de prueba',
                     subtitle: 'Borra solo notas TEST_MENSUAL_',
-                    leading: Icons.delete_sweep_rounded,
+                    leading: AppIcons.deleteAll,
                     onTap: _deleteMonthlyTestData,
                   ),
                 ]),
@@ -476,7 +477,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       trailing:
           trailing ??
           Icon(
-            Icons.chevron_right_rounded,
+            AppIcons.next,
             color: AppColors.softText.withAlpha(75),
           ),
       onTap: onTap,
@@ -580,7 +581,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         trailing: isSelected
                             ? const Icon(
-                                Icons.check_circle_rounded,
+                                AppIcons.done,
                                 color: AppColors.primaryPurple,
                               )
                             : null,

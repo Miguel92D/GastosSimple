@@ -12,6 +12,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/state/app_state.dart';
 import '../../vault/controllers/vault_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class TransactionHistoryList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -87,7 +88,7 @@ class TransactionHistoryList extends StatelessWidget {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(
-                  Icons.edit_rounded,
+                  AppIcons.edit,
                   color: AppColors.primaryPurple,
                 ),
                 title: Text(
@@ -105,7 +106,7 @@ class TransactionHistoryList extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(
-                  Icons.delete_rounded,
+                  AppIcons.delete,
                   color: AppColors.expenseRed,
                 ),
                 title: Text(
@@ -119,7 +120,7 @@ class TransactionHistoryList extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(
-                  Icons.cancel_rounded,
+                  AppIcons.close,
                   color: AppColors.softText,
                 ),
                 title: Text(

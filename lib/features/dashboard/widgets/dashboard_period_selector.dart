@@ -8,6 +8,7 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../controllers/dashboard_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class DashboardPeriodSelector extends StatelessWidget {
   final DashboardPeriod selectedPeriod;
@@ -36,7 +37,7 @@ class DashboardPeriodSelector extends StatelessWidget {
             Expanded(
               child: _PeriodTab(
                 label: l10n.text('period_day'),
-                icon: Icons.calendar_today_rounded,
+                icon: AppIcons.day,
                 isSelected: selectedPeriod == DashboardPeriod.day,
                 onTap: () => onPeriodChanged(DashboardPeriod.day),
               ),
@@ -45,7 +46,7 @@ class DashboardPeriodSelector extends StatelessWidget {
             Expanded(
               child: _PeriodTab(
                 label: l10n.text('period_month'),
-                icon: Icons.calendar_month_rounded,
+                icon: AppIcons.month,
                 isSelected: selectedPeriod == DashboardPeriod.month,
                 onTap: () => onPeriodChanged(DashboardPeriod.month),
               ),

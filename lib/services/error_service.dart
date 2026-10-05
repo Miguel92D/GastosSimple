@@ -7,6 +7,7 @@ import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import '../core/ui/app_colors.dart';
 import '../core/ui/app_text_styles.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class ErrorService {
   static final ErrorService instance = ErrorService._init();
@@ -40,7 +41,7 @@ class ErrorService {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.error_outline,
+                AppIcons.error,
                 size: 80,
                 color: AppColors.expenseRed,
               ),

@@ -10,6 +10,7 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -111,7 +112,7 @@ class _BackupScreenState extends State<BackupScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.cloud_sync,
+                    AppIcons.backup,
                     size: 72,
                     color: AppColors.primaryPurple,
                   ),
@@ -130,13 +131,13 @@ class _BackupScreenState extends State<BackupScreen> {
                   const SizedBox(height: AppSpacing.xxl),
                   GradientButton(
                     text: l10n.text('create_backup'),
-                    icon: Icons.upload,
+                    icon: AppIcons.exportFile,
                     onPressed: _exportBackup,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   OutlinedButton.icon(
                     onPressed: _restoreBackup,
-                    icon: const Icon(Icons.download),
+                    icon: const Icon(AppIcons.importFile),
                     label: Text(l10n.text('restore_backup_action')),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryPurple,

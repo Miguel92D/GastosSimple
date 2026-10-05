@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../flow/transaction_flow_service.dart';
 import './app_colors.dart';
 import './glass_card.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AppFAB extends StatelessWidget {
   final String mode;
@@ -18,7 +19,7 @@ class AppFAB extends StatelessWidget {
         children: [
           _buildFab(
             context: context,
-            icon: Icons.add_rounded,
+            icon: AppIcons.add,
             color: AppColors.incomeGreen,
             onPressed: () => TransactionFlowService.instance.startQuickEntry(
               context,
@@ -30,7 +31,7 @@ class AppFAB extends StatelessWidget {
           const SizedBox(height: 16),
           _buildFab(
             context: context,
-            icon: Icons.remove_rounded,
+            icon: AppIcons.remove,
             color: AppColors.expenseRed,
             onPressed: () => TransactionFlowService.instance.startQuickEntry(
               context,

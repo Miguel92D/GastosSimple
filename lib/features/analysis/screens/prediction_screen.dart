@@ -17,6 +17,7 @@ import '../../../core/ui/app_drawer.dart';
 import '../../../core/utils/money.dart';
 import '../../../database/database_helper.dart';
 import '../../../services/monthly_projection_service.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key});
@@ -237,7 +238,7 @@ class _PredictionScreenState extends State<PredictionScreen>
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.warning_amber_rounded,
+              AppIcons.warning,
               color: AppColors.expenseRed,
               size: 24,
             ),

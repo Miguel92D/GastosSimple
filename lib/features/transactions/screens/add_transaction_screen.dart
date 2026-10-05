@@ -30,6 +30,7 @@ import '../models/transaction.dart';
 import '../../../core/ui/widgets/glass_input.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
 import '../../../core/utils/l10n_helper.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final Transaction? movimientoToEdit;
@@ -341,7 +342,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             label: isOther
                 ? DateFormat('d MMM', l10n.locale).format(_selectedDate)
                 : l10n.text('other_date'),
-            icon: Icons.calendar_month_rounded,
+            icon: AppIcons.pickDate,
             isSelected: isOther,
             color: color,
             onTap: _pickDate,
@@ -572,7 +573,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           contentPadding: EdgeInsets.zero,
           value: n != null,
           activeThumbColor: color,
-          secondary: const Icon(Icons.credit_card_rounded, color: color),
+          secondary: const Icon(AppIcons.installments, color: color),
           title: Text(
             l10n.text('installments_toggle').toUpperCase(),
             style: AppTextStyles.subLabel,
@@ -607,7 +608,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 width: 82,
                 child: _DateChip(
                   label: isCustom ? '$n' : l10n.text('other_date'),
-                  icon: Icons.edit_rounded,
+                  icon: AppIcons.edit,
                   isSelected: isCustom,
                   color: color,
                   onTap: () => _pickCustomInstallments(l10n),
@@ -661,14 +662,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               for (final card in _cards)
                 _CardChip(
                   label: card.name,
-                  icon: Icons.credit_card_rounded,
+                  icon: AppIcons.installments,
                   isSelected: _cardId == card.id,
                   onTap: () => _selectCard(card.id),
                   onLongPress: () => _confirmDeleteCard(l10n, card),
                 ),
               _CardChip(
                 label: l10n.text('card_add'),
-                icon: Icons.add_rounded,
+                icon: AppIcons.add,
                 isSelected: false,
                 onTap: () => _addCard(l10n),
               ),
@@ -709,7 +710,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           contentPadding: EdgeInsets.zero,
           value: _isRecurring,
           activeThumbColor: color,
-          secondary: Icon(Icons.autorenew_rounded, color: color),
+          secondary: Icon(AppIcons.recurring, color: color),
           title: Text(
             l10n.text('recurring_repeat').toUpperCase(),
             style: AppTextStyles.subLabel,
@@ -984,7 +985,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   .watch<AppLocaleController>()
                   .text('note')
                   .toUpperCase(),
-              icon: Icons.note_rounded,
+              icon: AppIcons.note,
               hintText: context.watch<AppLocaleController>().text('note_hint'),
             ),
 

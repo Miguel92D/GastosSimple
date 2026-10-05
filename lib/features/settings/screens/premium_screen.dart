@@ -13,6 +13,7 @@ import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -164,7 +165,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         ],
                       ),
                       child: const Icon(
-                        Icons.stars_rounded,
+                        AppIcons.pro,
                         size: 80,
                         color: AppColors.primaryPurple,
                       ),
@@ -187,19 +188,19 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     // Solo lo que es PRO (P-05). Si cambia, cambiar también
                     // PremiumFlowService.proBenefitKeys.
                     _buildFeature(
-                      Icons.analytics_rounded,
+                      AppIcons.stats,
                       l10n.text('pro_benefit_stats'),
                     ),
                     _buildFeature(
-                      Icons.savings_rounded,
+                      AppIcons.goals,
                       l10n.text('pro_benefit_goals'),
                     ),
                     _buildFeature(
-                      Icons.lock_rounded,
+                      AppIcons.vault,
                       l10n.text('pro_benefit_vault'),
                     ),
                     _buildFeature(
-                      Icons.psychology_rounded,
+                      AppIcons.exitTips,
                       l10n.text('pro_benefit_debt_tips'),
                     ),
                     const SizedBox(height: 48),
@@ -245,7 +246,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         child: Column(
                           children: [
                             const Icon(
-                              Icons.check_circle_rounded,
+                              AppIcons.done,
                               color: AppColors.incomeGreen,
                               size: 56,
                             ),
@@ -304,8 +305,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
               children: [
                 Icon(
                   hasProduct
-                      ? Icons.workspace_premium_rounded
-                      : Icons.info_outline_rounded,
+                      ? AppIcons.pro
+                      : AppIcons.info,
                   color: selected
                       ? AppColors.primaryPurple
                       : AppColors.softText.withValues(alpha: 0.45),
@@ -359,7 +360,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 ],
                 const SizedBox(height: 14),
                 Icon(
-                  selected ? Icons.check_circle : Icons.circle_outlined,
+                  selected ? AppIcons.done : AppIcons.notDone,
                   color: selected
                       ? AppColors.primaryPurple
                       : AppColors.softText.withValues(alpha: 0.45),

@@ -18,6 +18,7 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class QuickEntryScreen extends StatefulWidget {
   const QuickEntryScreen({super.key});
@@ -111,7 +112,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
                 children: [
                   _buildActionCard(
                     context: context,
-                    icon: Icons.add_rounded,
+                    icon: AppIcons.add,
                     color: AppColors.incomeGreen,
                     onTap: () {
                       ActionController.execute(
@@ -124,7 +125,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
                   const SizedBox(width: AppSpacing.xl + 8),
                   _buildActionCard(
                     context: context,
-                    icon: Icons.remove_rounded,
+                    icon: AppIcons.remove,
                     color: AppColors.expenseRed,
                     onTap: () {
                       ActionController.execute(
@@ -194,7 +195,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
         ),
         child: const Center(
           child: Icon(
-            Icons.grid_view_rounded,
+            AppIcons.categories,
             color: AppColors.primaryPurple,
             size: 32,
           ),

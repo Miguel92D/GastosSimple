@@ -137,6 +137,26 @@ void main() {
       expect(offenders, isEmpty);
     });
 
+    test('los íconos salen de AppIcons o CategoryIcons (R-3, D-032)', () {
+      const catalogs = ['core/ui/app_icons.dart', 'core/ui/category_icons.dart'];
+      final rawIcon = RegExp(r'(?<![A-Za-z_])Icons\.');
+      final offenders = <String>[];
+      for (final f in Directory('lib')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.dart'))
+          .where((f) {
+            final path = f.path.replaceAll('\\', '/');
+            return !catalogs.any(path.endsWith);
+          })) {
+        final lines = f.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          if (rawIcon.hasMatch(lines[i])) offenders.add('${f.path}:${i + 1}');
+        }
+      }
+      expect(offenders, isEmpty);
+    });
+
     test('ninguna pantalla escribe colores a mano', () {
       final offenders = <String>[];
       for (final f in screens()) {

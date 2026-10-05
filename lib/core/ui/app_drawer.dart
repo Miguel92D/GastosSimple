@@ -10,6 +10,7 @@ import 'app_colors.dart';
 import 'app_gradients.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -123,7 +124,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                                 );
                               },
                               child: const Icon(
-                                Icons.account_balance_wallet_rounded,
+                                AppIcons.wallet,
                                 color: Colors.white,
                                 size: 32,
                               ),
@@ -131,7 +132,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                           },
                         )
                       : const Icon(
-                          Icons.account_balance_wallet_rounded,
+                          AppIcons.wallet,
                           color: AppColors.textPrimary,
                           size: 32,
                         ),
@@ -208,7 +209,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               padding: EdgeInsets.fromLTRB(12, 16, 12, 16 + bottomSafePadding),
               children: [
                 _DrawerItem(
-                  icon: Icons.dashboard_rounded,
+                  icon: AppIcons.home,
                   title: context.watch<AppLocaleController>().text('dashboard'),
                   onTap: () {
                     GeneralFlowService.goBack();
@@ -216,7 +217,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.swap_vert_rounded,
+                  icon: AppIcons.movements,
                   title: context.watch<AppLocaleController>().text('movements'),
                   onTap: () {
                     GeneralFlowService.goBack();
@@ -224,7 +225,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.account_balance_rounded,
+                  icon: AppIcons.debts,
                   title: context.watch<AppLocaleController>().text('debts'),
                   onTap: () {
                     GeneralFlowService.goBack();
@@ -232,7 +233,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.autorenew_rounded,
+                  icon: AppIcons.recurring,
                   title: context.watch<AppLocaleController>().text(
                     'recurring_title',
                   ),
@@ -242,7 +243,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.settings_rounded,
+                  icon: AppIcons.settings,
                   title: context.watch<AppLocaleController>().text('settings'),
                   onTap: () {
                     GeneralFlowService.goBack();
@@ -294,7 +295,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   ),
                   const SizedBox(height: 6),
                   _DrawerItem(
-                    icon: Icons.analytics_rounded,
+                    icon: AppIcons.stats,
                     title: context.watch<AppLocaleController>().text(
                       'statistics',
                     ),
@@ -304,7 +305,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.flag_rounded,
+                    icon: AppIcons.goals,
                     title: context.watch<AppLocaleController>().text(
                       'savings_goals',
                     ),
@@ -314,7 +315,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.lock_rounded,
+                    icon: AppIcons.vault,
                     title: context.watch<AppLocaleController>().text(
                       'vault_label',
                     ),

@@ -3,6 +3,7 @@ import '../app_text_styles.dart';
 import '../app_colors.dart';
 import '../app_gradients.dart';
 import '../glass_card.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget body;
@@ -93,7 +94,7 @@ class AppScaffold extends StatelessWidget {
                     ),
                     child: const Center(
                       child: Icon(
-                        Icons.menu_rounded,
+                        AppIcons.menu,
                         color: AppColors.primaryPurple,
                         size: 26,
                       ),

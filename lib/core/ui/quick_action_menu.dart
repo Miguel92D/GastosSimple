@@ -6,6 +6,7 @@ import '../controllers/app_action.dart';
 import '../i18n/app_locale_controller.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class QuickActionMenu {
   static void open(BuildContext context, {String mode = "normal"}) {
@@ -47,7 +48,7 @@ class QuickActionMenu {
               if (!isVault) ...[
                 ListTile(
                   leading: const Icon(
-                    Icons.flash_on_rounded,
+                    AppIcons.quickEntry,
                     color: AppColors.primaryPurple,
                   ),
                   title: Text(
@@ -61,7 +62,7 @@ class QuickActionMenu {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.add_rounded,
+                    AppIcons.add,
                     color: AppColors.incomeGreen,
                   ),
                   title: Text(
@@ -75,7 +76,7 @@ class QuickActionMenu {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.remove_rounded,
+                    AppIcons.remove,
                     color: AppColors.expenseRed,
                   ),
                   title: Text(
@@ -90,7 +91,7 @@ class QuickActionMenu {
               ],
               ListTile(
                 leading: Icon(
-                  isVault ? Icons.add_rounded : Icons.lock_rounded,
+                  isVault ? AppIcons.add : AppIcons.vault,
                   color: isVault
                       ? AppColors.incomeGreen
                       : AppColors.primaryPurple,
@@ -112,7 +113,7 @@ class QuickActionMenu {
               if (isVault)
                 ListTile(
                   leading: const Icon(
-                    Icons.remove_rounded,
+                    AppIcons.remove,
                     color: AppColors.expenseRed,
                   ),
                   title: Text(

@@ -7,6 +7,7 @@ import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_fab.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/router/navigation_service.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -29,7 +30,7 @@ class _VaultScreenState extends State<VaultScreen> {
           // Pagos fijos de la Bóveda (solo los secretos).
           IconButton(
             tooltip: l10n.text('recurring_title'),
-            icon: const Icon(Icons.autorenew_rounded),
+            icon: const Icon(AppIcons.recurring),
             onPressed: () => NavigationService.navigate(
               '/recurring',
               arguments: {'isVault': true},

@@ -22,6 +22,7 @@ import '../../../core/ui/app_drawer.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/money.dart';
+import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class MovementsScreen extends StatefulWidget {
   /// Filtro inicial (ej. desde Estadísticas: categoría + mes).
@@ -240,11 +241,11 @@ class _MovementsScreenState extends State<MovementsScreen> {
       actions: [
         IconButton(
           tooltip: l10n.text('export_csv'),
-          icon: const Icon(Icons.ios_share_rounded),
+          icon: const Icon(AppIcons.share),
           onPressed: () => _exportCsv(l10n, filtered),
         ),
         IconButton(
-          icon: Icon(_isSearching ? Icons.close : Icons.search),
+          icon: Icon(_isSearching ? AppIcons.close : AppIcons.search),
           onPressed: () {
             setState(() {
               if (_isSearching) {
@@ -327,7 +328,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
             label: categoryCount == 0
                 ? l10n.text('categories')
                 : '${l10n.text('categories')} ($categoryCount)',
-            icon: Icons.tune_rounded,
+            icon: AppIcons.filter,
             isSelected: categoryCount > 0,
             color: AppColors.primaryPurple,
             onTap: () => _pickCategories(l10n),
@@ -338,7 +339,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                 context,
                 _filter.month ?? DateTime.now(),
               ),
-              icon: Icons.close_rounded,
+              icon: AppIcons.close,
               isSelected: true,
               color: AppColors.primaryPurple,
               onTap: () =>
@@ -366,7 +367,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
           if (_filter.isActive)
             _FilterPill(
               label: l10n.text('filter_clear'),
-              icon: Icons.close_rounded,
+              icon: AppIcons.close,
               isSelected: false,
               color: AppColors.softText,
               onTap: () {
