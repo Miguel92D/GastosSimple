@@ -15,6 +15,7 @@ import '../../../core/ui/app_button.dart';
 import '../../../core/flow/app_guard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/debt_expense.dart';
+import '../utils/debt_math.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -55,11 +56,7 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   void _sortDebts() {
-    if (_selectedStrategy == 'avalanche') {
-      _debts.sort((a, b) => (b.tasaInteres ?? 0).compareTo(a.tasaInteres ?? 0));
-    } else if (_selectedStrategy == 'snowball') {
-      _debts.sort((a, b) => a.remaining.compareTo(b.remaining));
-    }
+    _debts = DebtMath.sortForStrategy(_debts, _selectedStrategy);
   }
 
   void _selectStrategy(String strategy) {
@@ -339,7 +336,8 @@ class _DebtScreenState extends State<DebtScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
-    final totalRemaining = _debts.fold(0.0, (sum, d) => sum + d.remaining);
+    final totalRemaining = DebtMath.totalRemaining(_debts);
+    final priorityDebt = DebtMath.priority(_debts);
 
     return AppScaffold(
       title: l10n.text('debts'),
@@ -416,8 +414,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     )
                   else
                     ..._debts.map((debt) {
-                      final unpaidDebts = _debts.where((d) => d.progress < 0.999);
-                      final isPriority = _selectedStrategy != 'none' && unpaidDebts.isNotEmpty && debt == unpaidDebts.first;
+                      final isPriority = _selectedStrategy != 'none' && debt == priorityDebt;
                       return _buildDebtItem(context, debt, isPriority: isPriority);
                     }),
                   const SizedBox(height: 24),
@@ -430,7 +427,7 @@ class _DebtScreenState extends State<DebtScreen> {
 
   Future<void> _showPaymentModal(Debt debt) async {
     final amountController = TextEditingController(
-      text: debt.remaining > 0 ? CurrencyHelper.formatAmountForInput(debt.remaining) : '',
+      text: !debt.isPaid ? CurrencyHelper.formatAmountForInput(debt.remaining) : '',
     );
     // Se recuerda la última elección del usuario.
     final prefs = await SharedPreferences.getInstance();
@@ -746,7 +743,7 @@ class _DebtScreenState extends State<DebtScreen> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      _buildCustomProgressBar(debt.progress, debt.nombre),
+                      _buildCustomProgressBar(debt.progress, isPaid: isPaid),
                       if (debt.diaCierre != null || debt.cuotasTotales != null) ...[
                         const SizedBox(height: 8),
                         Column(
@@ -803,7 +800,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${(debt.progress * 100).toInt()}%",
+                      "${isPaid ? 100 : (debt.progress * 100).floor().clamp(0, 99)}%",
                       style: AppTextStyles.bodySmall.copyWith(
                         color: isPaid ? AppColors.incomeGreen.withValues(alpha: 0.7) : AppColors.softText,
                       ),
@@ -898,8 +895,7 @@ class _DebtScreenState extends State<DebtScreen> {
     );
   }
 
-  Widget _buildCustomProgressBar(double progress, String name) {
-    final bool isPaid = progress >= 0.999;
+  Widget _buildCustomProgressBar(double progress, {required bool isPaid}) {
     
     final color = isPaid 
         ? AppColors.incomeGreen 

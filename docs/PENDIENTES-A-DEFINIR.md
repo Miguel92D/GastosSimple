@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-04 (chat 02).
+Última revisión: 2026-10-04 (chat 03).
 
 ---
 
@@ -60,3 +60,8 @@ En "Agregar movimiento" las categorías tienen un ícono cada una (Compras, Serv
 ### P-11 — Movimientos a la Bóveda sin Pro
 Desde el chat 02, deslizar un movimiento a la derecha (mandarlo a la Bóveda) solo funciona con Pro; sacarlo de la Bóveda se permite siempre. Antes un usuario gratis podía esconder un movimiento en una Bóveda que no puede abrir.
 **Respuesta:** _pendiente_ — confirmar en el chat 04 (Pro y Bóveda) que es el comportamiento deseado.
+
+### P-12 — Sumas en SQL que ya no se usan
+Desde el chat 03 (D-016) nadie llama a `getTotalIncome`, `getTotalExpenses` ni `getExpensesByCategory` de `DatabaseHelper` (ni a sus copias en `TransactionRepository` y `TransactionController`). Quedaron para no tocar la base en esta tarea.
+**Respuesta:** _pendiente_ — borrarlas en una tarea de limpieza (junto con P-09).
+

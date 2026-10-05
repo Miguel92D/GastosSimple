@@ -1,6 +1,7 @@
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../transactions/models/transaction.dart';
 import '../../../services/monthly_finance_service.dart';
+import '../../../services/stats_service.dart';
 
 enum DashboardPeriod {
   day,
@@ -59,21 +60,27 @@ class DashboardController {
     return MonthlyFinanceService.calculateBalance(movimientos);
   }
 
+  // Los totales de todo el historial se calculan con las mismas reglas que
+  // el resto de las pantallas (MonthlyFinanceService / StatsService) sobre el
+  // historial de esa sección: antes salían de un SUM en SQL que no
+  // reconocía tipos viejos ("Gasto", "egreso"…) y el saldo de la carga
+  // rápida podía no coincidir con Movimientos. La Bóveda nunca suma en lo
+  // normal: cada lista ya viene filtrada por is_secret.
   Future<double> getIncome(bool isVault) async {
-    return await TransactionController.getTotalIncome(isVault: isVault);
+    return calculateIncome(await loadMovements(isVault));
   }
 
   Future<double> getExpenses(bool isVault) async {
-    return await TransactionController.getTotalExpenses(isVault: isVault);
+    return calculateExpenses(await loadMovements(isVault));
   }
 
   Future<double> getBalance(bool isVault) async {
-    final income = await getIncome(isVault);
-    final expenses = await getExpenses(isVault);
-    return income - expenses;
+    return calculateBalance(await loadMovements(isVault));
   }
 
   Future<Map<String, double>> getExpensesByCategory(bool isVault) async {
-    return await TransactionController.getExpensesByCategory(isVault: isVault);
+    return Map.fromEntries(
+      StatsService.expensesByCategory(await loadMovements(isVault)),
+    );
   }
 }

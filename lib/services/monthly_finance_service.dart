@@ -71,8 +71,13 @@ class MonthlyFinanceService {
         .fold<double>(0, (sum, transaction) => Money.round(sum + transaction.amount));
   }
 
+  /// Ingresos − gastos, en centavos (D-005): 0,30 − 0,10 da 0,20 y no
+  /// 0,19999… Es la misma cuenta para el inicio, la carga rápida y
+  /// Movimientos, así los saldos cuadran entre pantallas.
   static double calculateBalance(List<Transaction> transactions) {
-    return calculateIncome(transactions) - calculateExpenses(transactions);
+    return Money.round(
+      calculateIncome(transactions) - calculateExpenses(transactions),
+    );
   }
 
   static MonthlyAnalysisData buildAnalysis({
@@ -84,14 +89,16 @@ class MonthlyFinanceService {
     final income = calculateIncome(currentMonthTransactions);
     final expenses = calculateExpenses(currentMonthTransactions);
     final previousMonthExpenses = calculateExpenses(previousMonthTransactions);
-    final expenseDifference = expenses - previousMonthExpenses;
+    final expenseDifference = Money.round(expenses - previousMonthExpenses);
     final dailySpending = <int, double>{};
 
     for (final transaction in currentMonthTransactions) {
       if (!transaction.isExpense) continue;
 
       final day = transaction.date.day;
-      dailySpending[day] = (dailySpending[day] ?? 0) + transaction.amount;
+      dailySpending[day] = Money.round(
+        (dailySpending[day] ?? 0) + transaction.amount,
+      );
     }
 
     var topDay = 0;
@@ -112,7 +119,7 @@ class MonthlyFinanceService {
     return MonthlyAnalysisData(
       income: income,
       expenses: expenses,
-      balance: income - expenses,
+      balance: Money.round(income - expenses),
       previousMonthExpenses: previousMonthExpenses,
       expenseDifference: expenseDifference,
       improvedVsPreviousMonth: expenseDifference <= 0,

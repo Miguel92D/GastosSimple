@@ -17,7 +17,7 @@ class MonthTotals {
 
   const MonthTotals(this.month, this.income, this.expense);
 
-  double get saving => income - expense;
+  double get saving => Money.round(income - expense);
 }
 
 /// Cálculos de Estadísticas, sin UI (testeables).

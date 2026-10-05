@@ -55,8 +55,11 @@ class DailyAllowanceService {
     double? monthlyBudget,
   }) {
     final today = DateTime(now.year, now.month, now.day);
-    final monthEnd = DateTime(now.year, now.month + 1, 1)
-        .subtract(const Duration(milliseconds: 1));
+    final monthEnd = DateTime(
+      now.year,
+      now.month + 1,
+      1,
+    ).subtract(const Duration(milliseconds: 1));
     final startOfTomorrow = DateTime(now.year, now.month, now.day + 1);
     final daysLeft =
         RecurrenceSchedule.daysInMonth(now.year, now.month) - now.day + 1;
@@ -87,10 +90,8 @@ class DailyAllowanceService {
       );
       // Solo lo que vence DESPUÉS de hoy; lo de hoy ya se generó como
       // movimiento al abrir la app.
-      final count = InstallmentPlan.cap(schedule.due, r)
-          .where((d) => !d.isBefore(startOfTomorrow))
-          .length;
-      final amount = (r['amount'] as num).toDouble() * count;
+      final due = InstallmentPlan.cap(schedule.due, r);
+      final amount = _pendingAmount(r, due, startOfTomorrow);
       if (Transaction.normalizeType(r['type'] as String?) ==
           Transaction.typeIncome) {
         pendingIncome = Money.round(pendingIncome + amount);
@@ -106,7 +107,7 @@ class DailyAllowanceService {
     final base = usesBudget ? budget : income + pendingIncome;
     final available = Money.round(base - spentBeforeToday - pendingExpense);
 
-    if (base <= 0) {
+    if (Money.toCents(base) <= 0) {
       return DailyAllowance(
         state: AllowanceState.noIncome,
         perDay: 0,
@@ -120,19 +121,51 @@ class DailyAllowanceService {
       );
     }
 
-    final perDay = available > 0 ? available / daysLeft : 0.0;
+    // A centavos (D-005): así "te quedan hoy" nunca muestra -0,00 ni
+    // marca exceso por un error de punto flotante.
+    final perDay = Money.toCents(available) > 0
+        ? Money.round(available / daysLeft)
+        : 0.0;
     return DailyAllowance(
-      state: available - spentToday <= 0
+      state: Money.toCents(available) - Money.toCents(spentToday) <= 0
           ? AllowanceState.overspent
           : AllowanceState.ok,
       perDay: perDay,
       spentToday: spentToday,
-      leftToday: perDay - spentToday,
+      leftToday: Money.round(perDay - spentToday),
       available: available,
       daysLeft: daysLeft,
       pendingFixedExpenses: pendingExpense,
       usesBudget: usesBudget,
       base: base,
     );
+  }
+
+  /// Lo que falta cobrar/pagar de una recurrencia después de hoy. En un plan
+  /// de cuotas cada cuota usa su monto real: la última absorbe el redondeo
+  /// (igual que `processRecurringTransactions`), así lo que se descuenta
+  /// acá es lo mismo que después aparece en Movimientos.
+  static double _pendingAmount(
+    Map<String, Object?> r,
+    List<DateTime> due,
+    DateTime startOfTomorrow,
+  ) {
+    final perInstallment = (r['amount'] as num).toDouble();
+    final total = r['installments_total'] as int?;
+    final paid = (r['installments_paid'] as int?) ?? 0;
+    var cents = 0;
+    for (var i = 0; i < due.length; i++) {
+      if (due[i].isBefore(startOfTomorrow)) continue;
+      final amount = total == null
+          ? perInstallment
+          : InstallmentPlan.amountFor(
+              k: paid + i + 1,
+              count: total,
+              perInstallment: perInstallment,
+              totalAmount: (r['installments_total_amount'] as num?)?.toDouble(),
+            );
+      cents += Money.toCents(amount);
+    }
+    return Money.fromCents(cents);
   }
 }

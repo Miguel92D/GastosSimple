@@ -17,6 +17,7 @@ import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/money.dart';
+import '../../../services/monthly_finance_service.dart';
 import '../../../services/stats_service.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../transactions/models/transaction.dart';
@@ -69,10 +70,11 @@ class _StatsScreenState extends State<StatsScreen> {
     final selectedMonth = MonthController.instance.selectedMonth;
     final List<Transaction> history =
         await TransactionController.getNormalHistory();
-    final monthEnd = DateTime(selectedMonth.year, selectedMonth.month + 1);
-    final monthItems = history
-        .where((t) => !t.date.isBefore(selectedMonth) && t.date.isBefore(monthEnd))
-        .toList();
+    // Mismo corte de mes que el inicio y Movimientos (cuadran los totales).
+    final monthItems = MonthlyFinanceService.filterTransactionsForMonth(
+      history,
+      selectedMonth,
+    );
 
     if (mounted && loadVersion == _loadVersion) {
       setState(() {
@@ -392,7 +394,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final withData = _trend.where((t) => t.income > 0 || t.expense > 0);
     final avgSaving = withData.isEmpty
         ? 0.0
-        : withData.fold(0.0, (s, t) => s + t.saving) / withData.length;
+        : Money.round(Money.sum(withData.map((t) => t.saving)) / withData.length);
     final monthFormat = DateFormat('MMM', l10n.locale);
 
     return GlassCard(
