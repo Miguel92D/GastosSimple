@@ -69,6 +69,14 @@ class AppTextStyles {
     letterSpacing: -0.3,
   );
 
+  /// Monto de las tarjetas de Ingresos / Gastos (13). Tamaño FIJO: se ve
+  /// igual en todas las pantallas y con cualquier monto (D-030).
+  static const amountCard = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w900,
+    letterSpacing: -0.2,
+  );
+
   // Typography Foundations
   static const subtitle = TextStyle(
     fontSize: 12,

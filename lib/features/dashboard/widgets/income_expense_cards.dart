@@ -103,13 +103,14 @@ class _StatCard extends StatelessWidget {
   });
 
   static const double _padding = AppSpacing.md;
-  static const double _maxAmountSize = 20;
+  // Siempre el mismo tamaño (D-030). Solo se achica si un monto no entra.
+  static final double _maxAmountSize = AppTextStyles.amountCard.fontSize!;
 
   static TextStyle _amountStyle(double size) =>
-      AppTextStyles.incomeValue.copyWith(fontSize: size);
+      AppTextStyles.amountCard.copyWith(fontSize: size);
 
   /// Tamaño de letra que hace entrar todos los [texts] en una tarjeta de
-  /// [cardWidth] (como mucho 20).
+  /// [cardWidth] (como mucho el de `AppTextStyles.amountCard`).
   static double amountSizeFor(
     BuildContext context,
     List<String> texts,

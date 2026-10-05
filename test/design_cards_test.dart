@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
+import 'package:gastos_simple/core/ui/app_text_styles.dart';
 import 'package:gastos_simple/features/dashboard/widgets/income_expense_cards.dart';
 import 'package:gastos_simple/services/currency_service.dart';
 import 'package:provider/provider.dart';
@@ -57,13 +58,18 @@ void main() {
     },
   );
 
-  testWidgets('montos normales usan el tamaño completo', (tester) async {
+  testWidgets('el monto tiene siempre el mismo tamaño (D-030)', (tester) async {
     await expectTwins(tester, 1500, 918);
+    final big = tester
+        .widget<Text>(find.text(CurrencyService.format(1500)))
+        .style!
+        .fontSize;
+    expect(big, AppTextStyles.amountCard.fontSize);
     final size = tester
         .widget<Text>(find.text(CurrencyService.format(918)))
         .style!
         .fontSize;
-    expect(size, 20);
+    expect(size, AppTextStyles.amountCard.fontSize);
   });
 
   group('reglas de diseño (D-029)', () {

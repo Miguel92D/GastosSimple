@@ -19,7 +19,7 @@ Pantallas más desordenadas: **Deudas** (la peor por lejos), Pro, Estadísticas,
 
 ## Lo que se ve en la app
 
-- **A-01 · Ingresos y Gastos del inicio no eran iguales** (captura de Miguel). Con un monto largo, una tarjeta quedaba más baja y con la letra más chica. ✅ **Arreglado en este chat:** las dos usan siempre el mismo tamaño de monto (el que hace entrar al más largo) y el borde no cambia de grosor al tocarlas. Test: `test/design_cards_test.dart`.
+- **A-01 · Ingresos y Gastos del inicio no eran iguales** (captura de Miguel). Con un monto largo, una tarjeta quedaba más baja y con la letra más chica. ✅ **Arreglado en este chat:** las dos usan siempre el mismo tamaño de monto (el que hace entrar al más largo) y el borde no cambia de grosor al tocarlas. Después Miguel pidió que se vean **siempre** como con el monto largo: el monto quedó fijo en 13 (D-030). Test: `test/design_cards_test.dart`.
 - **A-02 · Deudas: los botones de abajo tapan el contenido.** El botón de menú y el `+` quedan encima de "Bola de nieve". ✅ Menos aire arriba del aviso "Sin deudas" (80 → 32) y la lista conserva 120 de espacio al final.
 - **A-03 · Deudas: cada estrategia tiene otro color.** Avalancha usa azul (`AppColors.blue`, color de categoría) y Bola de nieve violeta. Los colores de categoría no se usan como acento. ✅ Las dos en violeta.
 - **A-04 · Selector Día/Mes no sigue el patrón del segmentado.** Radio 12 escrito como `AppRadius.sm + 4`, letra 11 y la palabra cambia de grosor al elegirla (se "mueve"). ✅ Sigue el patrón del segmentado.

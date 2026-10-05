@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 07, D-028 y D-029).
+Última revisión: 2026-10-05 (chat 07, D-028 a D-030).
 
 ---
 
@@ -159,3 +159,9 @@ Miguel pidió auditar todo el diseño (`docs/AUDITORIA-DISENO.md`, puntos A-01�
 - **Colores:** nuevos tokens `AppColors.amber`, `sky`, `violet` (los nombraba la skill y no existían) y `AppColors.overlay` (fondo del "cargando"). El naranja ya no es acento (menú rápido) y los gráficos no usan verde/rojo. Un test falla si una pantalla escribe `Color(0x…)` o un color de Material.
 - **Alcance:** se arregló lo que se ve (A-01 a A-09 y A-13). Los espacios y radios sueltos del código (A-10, A-11) se pasan a tokens solo en los archivos que se tocan.
 - Tests: `test/design_cards_test.dart`.
+
+### D-030 — Cada cosa se ve igual en todas las pantallas
+Regla de Miguel (2026-10-05, con capturas): **un mismo elemento se ve siempre igual**, cambie la pantalla, el período (Día / Mes) o el monto.
+- Primer caso: las tarjetas de Ingresos / Gastos. El monto usa un tamaño **fijo**, `AppTextStyles.amountCard` (13, w900), con $ 918 o con $ 609.099.096.909,60. Antes era 20 y solo se achicaba con montos largos, así que la tarjeta cambiaba de una pantalla a otra. Solo si un monto no entra, los dos se achican juntos (D-029).
+- Para cualquier componente: nada de tamaños que dependan del contenido o de la pantalla. Si un texto no entra, se achica igual en todas las copias del componente que se ven juntas.
+- Test: `test/design_cards_test.dart`.
