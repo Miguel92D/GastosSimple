@@ -31,6 +31,14 @@ class SecurityService extends ChangeNotifier {
   int _failedAttempts = 0;
   DateTime? _lockedUntil;
 
+  /// Solo para tests: reloj para probar el bloqueo sin esperar.
+  @visibleForTesting
+  static DateTime Function() clock = DateTime.now;
+
+  /// Solo para tests: vuelve a leer todo del almacenamiento seguro.
+  @visibleForTesting
+  Future<void> reloadForTesting() => _loadSecuritySettings();
+
   Future<void> get initialized => _initCompleter.future;
   bool get isInitialized => _isInitialized;
 
@@ -131,7 +139,7 @@ class SecurityService extends ChangeNotifier {
   Duration get lockRemaining {
     final until = _lockedUntil;
     if (until == null) return Duration.zero;
-    final remaining = until.difference(DateTime.now());
+    final remaining = until.difference(clock());
     return remaining.isNegative ? Duration.zero : remaining;
   }
 
@@ -153,7 +161,7 @@ class SecurityService extends ChangeNotifier {
         final lock = Duration(seconds: seconds) > maxLockout
             ? maxLockout
             : Duration(seconds: seconds);
-        _lockedUntil = DateTime.now().add(lock);
+        _lockedUntil = clock().add(lock);
         await _storage.write(
           key: 'pin_locked_until',
           value: _lockedUntil!.millisecondsSinceEpoch.toString(),
@@ -171,6 +179,12 @@ class SecurityService extends ChangeNotifier {
   Future<void> setPinActive(bool value) async {
     await _storage.write(key: 'is_pin_active', value: value.toString());
     _isPinActive = value;
+    // La huella necesita el PIN de repuesto: sin PIN, si la huella falla
+    // (sensor roto, huellas borradas) no habría forma de entrar.
+    if (!value && _isBiometricActive) {
+      await _storage.write(key: 'is_biometric_active', value: 'false');
+      _isBiometricActive = false;
+    }
     notifyListeners();
     _applyScreenSecurity();
   }
@@ -188,11 +202,15 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setBiometricActive(bool value) async {
+  /// La huella solo se activa si ya hay PIN (es la llave de repuesto).
+  /// Devuelve false si no se pudo activar por falta de PIN.
+  Future<bool> setBiometricActive(bool value) async {
+    if (value && !(_isPinActive && hasPin)) return false;
     await _storage.write(key: 'is_biometric_active', value: value.toString());
     _isBiometricActive = value;
     notifyListeners();
     _applyScreenSecurity();
+    return true;
   }
 
   Future<void> setPin(String value) async {

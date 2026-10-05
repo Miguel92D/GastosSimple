@@ -186,6 +186,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final canUse = await securityService.canUseBiometrics;
                     if (!context.mounted) return;
                     if (canUse) {
+                      // La huella necesita un PIN de repuesto: si todavía
+                      // no hay, se crea primero.
+                      if (!securityService.isPinActive ||
+                          !securityService.hasPin) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.text('biometric_needs_pin')),
+                          ),
+                        );
+                        final created = await Navigator.pushNamed(
+                          context,
+                          '/pin',
+                          arguments: {'setup': true},
+                        );
+                        if (created != true) return;
+                        await securityService.setPinActive(true);
+                      }
                       await securityService.setBiometricActive(true);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -340,6 +357,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: l10n.text('privacy_policy'),
                 leading: Icons.shield_outlined,
                 onTap: () => GeneralFlowService.openPrivacy(),
+              ),
+              SwitchListTile(
+                title: Text(
+                  l10n.text('crash_reports_title'),
+                  style: AppTextStyles.bodyMain,
+                ),
+                subtitle: Text(
+                  l10n.text('crash_reports_subtitle'),
+                  style: AppTextStyles.bodySmall,
+                ),
+                secondary: Icon(
+                  Icons.bug_report_outlined,
+                  color: AppColors.primaryPurple,
+                ),
+                value: appState.crashReportsEnabled,
+                activeThumbColor: AppColors.primaryPurple,
+                onChanged: (val) => appState.setConsent(crashReports: val),
               ),
 
               if (kDebugMode) ...[

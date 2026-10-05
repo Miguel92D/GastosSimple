@@ -4,7 +4,7 @@
 > Este documento **absorbe `PROYECTO_REGLAS.md`** (sección 6 en adelante).
 > Prioridad si algo se contradice: `DECISIONES-TECNICAS.md` > respuestas en `PENDIENTES-A-DEFINIR.md` > **este documento** > `PROYECTO_REGLAS.md`.
 
-Última revisión: 2026-10-04 (chat 04).
+Última revisión: 2026-10-05 (chat 05).
 
 ---
 
@@ -86,6 +86,7 @@ Minimalista. No se agregan entradas sin aprobación.
 ## 8. Datos y respaldo
 
 - **Restaurar nunca pisa datos**: se usa `DatabaseHelper.restoreBackupData` (todo o nada, mezcla con `BackupMerge`). Prohibido `ConflictAlgorithm.replace` por id con datos de un archivo externo.
+- **Restaurar nunca duplica**: lo que ya está en el teléfono (aunque tenga otro id) no se vuelve a agregar; restaurar el mismo archivo dos veces deja todo igual (D-020).
 - **Fechas de pagos fijos**: siempre `RecurrenceSchedule` (respeta el día elegido y fin de mes). Nunca `DateTime(y, m + 1, d)`.
 - **Cuotas**: una compra en cuotas es un pago fijo mensual con `installments_total` / `installments_paid` (`InstallmentPlan`). Nunca se crean movimientos con fecha futura; las cuotas las genera `processRecurringTransactions` y la fila se borra al registrar la última. El plan arranca con `installments_paid = 0` y `next_date` = fecha de compra o vencimiento de la tarjeta (`CardSchedule`). La última cuota usa `installments_total_amount` para absorber el redondeo.
 - **Dinero**: ver D-005.
@@ -94,8 +95,9 @@ Minimalista. No se agregan entradas sin aprobación.
 
 ## 9. Privacidad y seguridad
 
-- Crashlytics arranca **apagado** y solo se activa con el consentimiento (`AppState.setConsent`).
-- PIN y huella opcionales. Pantalla protegida contra capturas (`FLAG_SECURE`) y bloqueo tras varios PIN fallidos.
+- Crashlytics arranca **apagado** y solo se activa con el consentimiento (`AppState.setConsent`). La respuesta se cambia cuando se quiera en Configuración → Legal (D-023).
+- PIN y huella opcionales; la huella necesita un PIN de repuesto (D-022). Pantalla protegida contra capturas (`FLAG_SECURE`) y bloqueo tras 5 PIN fallidos (30 s, que se duplican hasta 15 min).
+- La política de privacidad de la app y la de la web dicen lo mismo, palabra por palabra (D-024).
 
 ## 10. Estabilidad
 

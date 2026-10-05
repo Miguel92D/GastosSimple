@@ -13,6 +13,7 @@ class AppState extends ChangeNotifier {
   bool hideBalance = false;
   bool _refreshDashboard = false;
   bool _hasConsented = false;
+  bool _crashReportsEnabled = false;
 
   static const String _consentKey = 'has_consented';
   static const String _crashReportsKey = 'crash_reports_enabled';
@@ -20,27 +21,41 @@ class AppState extends ChangeNotifier {
   /// true cuando el usuario ya vio y respondió la pantalla de consentimiento.
   bool get hasConsented => _hasConsented;
 
+  /// true solo si el usuario aceptó enviar reportes de fallos.
+  bool get crashReportsEnabled => _crashReportsEnabled;
+
+  /// Prende o apaga Crashlytics. Solo para tests se cambia por uno falso.
+  @visibleForTesting
+  static Future<void> Function(bool enabled) crashlyticsSwitch =
+      _setCrashlytics;
+
   Future<void> loadConsent() async {
     final prefs = await SharedPreferences.getInstance();
     _hasConsented = prefs.getBool(_consentKey) ?? false;
     final crash = prefs.getBool(_crashReportsKey) ?? false;
-    await _setCrashlytics(_hasConsented && crash);
+    _crashReportsEnabled = _hasConsented && crash;
+    await crashlyticsSwitch(_crashReportsEnabled);
   }
 
+  /// Respuesta a la pantalla de consentimiento, o el cambio desde
+  /// Configuración (se puede cambiar de opinión en cualquier momento).
   Future<void> setConsent({required bool crashReports}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_consentKey, true);
     await prefs.setBool(_crashReportsKey, crashReports);
-    await _setCrashlytics(crashReports);
+    await crashlyticsSwitch(crashReports);
     _hasConsented = true;
+    _crashReportsEnabled = crashReports;
     notifyListeners();
   }
 
-  Future<void> _setCrashlytics(bool enabled) async {
+  static Future<void> _setCrashlytics(bool enabled) async {
     try {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-        enabled,
-      );
+      final crashlytics = FirebaseCrashlytics.instance;
+      await crashlytics.setCrashlyticsCollectionEnabled(enabled);
+      // Con la recolección apagada Crashlytics guarda los fallos en el
+      // teléfono y los mandaría al aceptar: sin permiso, se borran.
+      if (!enabled) await crashlytics.deleteUnsentReports();
     } catch (e) {
       debugPrint('Crashlytics toggle error: $e');
     }

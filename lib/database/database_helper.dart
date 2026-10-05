@@ -42,6 +42,22 @@ class DatabaseHelper {
       version: 16, // 14: cuotas · 15: total del plan · 16: montos a centavos
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
+      onOpen: _repairOnOpen,
+    );
+  }
+
+  /// Arreglos que corren en cada apertura (baratos y repetibles, D-004).
+  /// Un movimiento con `is_secret` vacío no aparecería ni en la lista normal
+  /// (`= 0`) ni en la Bóveda (`= 1`): para el usuario sería un dato perdido.
+  /// Pasa a ser normal, que es lo que valía antes de existir la Bóveda.
+  Future<void> _repairOnOpen(Database db) async {
+    await _tryExecute(
+      db,
+      'UPDATE transactions SET is_secret = 0 WHERE is_secret IS NULL',
+    );
+    await _tryExecute(
+      db,
+      'UPDATE recurring_transactions SET is_secret = 0 WHERE is_secret IS NULL',
     );
   }
 
@@ -815,6 +831,10 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
           final table = entry.key;
           final keys = BackupMerge.keyFields[table];
           if (keys == null) continue;
+          // Filas que ya estaban en el teléfono antes de restaurar. Cada una
+          // puede "absorber" una sola fila del archivo: si el backup trae
+          // dos movimientos iguales y el teléfono uno, se agrega el otro.
+          final unclaimed = List.of(await txn.query(table));
           var count = 0;
           for (final incoming in entry.value) {
             Map<String, Object?>? existing;
@@ -826,12 +846,26 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
               );
               existing = found.isEmpty ? null : found.first;
             }
-            switch (BackupMerge.decide(
+            var action = BackupMerge.decide(
               existing,
               incoming,
               keys,
               table: table,
-            )) {
+            );
+            if (action == MergeAction.replace || action == MergeAction.skip) {
+              unclaimed.removeWhere((r) => r['id'] == existing!['id']);
+            } else {
+              // La misma entidad ya está con otro id (por ejemplo, una
+              // restauración anterior la insertó como nueva): no se duplica.
+              final twin = unclaimed.indexWhere(
+                (r) => BackupMerge.sameEntity(r, incoming, keys),
+              );
+              if (twin >= 0) {
+                unclaimed.removeAt(twin);
+                action = MergeAction.skip;
+              }
+            }
+            switch (action) {
               case MergeAction.skip:
                 continue;
               case MergeAction.insertWithId:

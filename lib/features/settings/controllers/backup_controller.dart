@@ -29,34 +29,7 @@ class BackupController {
   /// pide explícitamente.
   static Future<String> exportBackup({bool includeVault = false}) async {
     try {
-      final normal = await TransactionRepository.getNormalTransactions();
-      final vault = includeVault
-          ? await TransactionRepository.getVaultTransactions()
-          : <Transaction>[];
-      final goals = await DatabaseHelper.instance.getGoals();
-      final debts = await DatabaseHelper.instance.getDebts();
-      final recurring = [
-        ...await DatabaseHelper.instance.getRecurringTransactions(),
-        if (includeVault)
-          ...await DatabaseHelper.instance.getRecurringTransactions(
-            isSecret: true,
-          ),
-      ];
-
-      final Map<String, dynamic> jsonData = {
-        'version': backupVersion,
-        'created_at': DateTime.now().toIso8601String(),
-        'includes_vault': includeVault,
-        'transactions': [
-          ...normal.map((e) => e.toMap()),
-          ...vault.map((e) => e.toMap()),
-        ],
-        'goals': goals.map((e) => e.toMap()).toList(),
-        'debts': debts.map((e) => e.toMap()).toList(),
-        'recurring_transactions': recurring,
-      };
-
-      final String jsonString = jsonEncode(jsonData);
+      final jsonString = await buildBackupJson(includeVault: includeVault);
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/gastos_simple_backup.json');
       await file.writeAsString(jsonString);
@@ -67,56 +40,94 @@ class BackupController {
     }
   }
 
+  /// Contenido del archivo de respaldo (JSON). Separado de [exportBackup]
+  /// para poder probar el ida y vuelta sin tocar carpetas del teléfono.
+  static Future<String> buildBackupJson({bool includeVault = false}) async {
+    final normal = await TransactionRepository.getNormalTransactions();
+    final vault = includeVault
+        ? await TransactionRepository.getVaultTransactions()
+        : <Transaction>[];
+    final goals = await DatabaseHelper.instance.getGoals();
+    final debts = await DatabaseHelper.instance.getDebts();
+    final recurring = [
+      ...await DatabaseHelper.instance.getRecurringTransactions(),
+      if (includeVault)
+        ...await DatabaseHelper.instance.getRecurringTransactions(
+          isSecret: true,
+        ),
+    ];
+
+    final Map<String, dynamic> jsonData = {
+      'version': backupVersion,
+      'created_at': DateTime.now().toIso8601String(),
+      'includes_vault': includeVault,
+      'transactions': [
+        ...normal.map((e) => e.toMap()),
+        ...vault.map((e) => e.toMap()),
+      ],
+      'goals': goals.map((e) => e.toMap()).toList(),
+      'debts': debts.map((e) => e.toMap()).toList(),
+      'recurring_transactions': recurring,
+    };
+
+    return jsonEncode(jsonData);
+  }
+
   /// Restaura sin pisar datos existentes y de forma atómica
   /// (ver [DatabaseHelper.restoreBackupData]).
   static Future<Map<String, int>> restoreBackup(String filePath) async {
     try {
       final content = await File(filePath).readAsString();
-      final dynamic parsed = jsonDecode(content);
-
-      final List<dynamic> txItems;
-      List<dynamic> goalItems = const [];
-      List<dynamic> debtItems = const [];
-      List<dynamic> recurringItems = const [];
-
-      if (parsed is List) {
-        txItems = parsed; // v1
-      } else if (parsed is Map<String, dynamic>) {
-        txItems = parsed['transactions'] as List? ?? const [];
-        goalItems = parsed['goals'] as List? ?? const [];
-        debtItems = parsed['debts'] as List? ?? const [];
-        recurringItems = parsed['recurring_transactions'] as List? ?? const [];
-      } else {
-        throw const FormatException('Formato de backup no reconocido');
-      }
-
-      // Se parsea TODO antes de tocar la base: un archivo corrupto falla
-      // acá, sin escribir nada.
-      final rows = <String, List<Map<String, Object?>>>{
-        'transactions': [
-          for (final item in txItems)
-            Transaction.fromMap(Map<String, dynamic>.from(item as Map)).toMap(),
-        ],
-        'goals': [
-          for (final item in goalItems)
-            _goalToRow(Goal.fromMap(Map<String, dynamic>.from(item as Map))),
-        ],
-        'debts': [
-          for (final item in debtItems)
-            Debt.fromMap(Map<String, dynamic>.from(item as Map)).toMap(),
-        ],
-        'recurring_transactions': [
-          for (final item in recurringItems) _recurringRow(item as Map),
-        ],
-      };
-
-      final counts = await DatabaseHelper.instance.restoreBackupData(rows);
-      TransactionNotifier.instance.refresh();
-      return counts;
+      return await restoreBackupJson(content);
     } catch (e) {
       debugPrint('Backup restore error: $e');
       rethrow;
     }
+  }
+
+  /// Restaura el contenido de un archivo de respaldo (ver [restoreBackup]).
+  static Future<Map<String, int>> restoreBackupJson(String content) async {
+    final dynamic parsed = jsonDecode(content);
+
+    final List<dynamic> txItems;
+    List<dynamic> goalItems = const [];
+    List<dynamic> debtItems = const [];
+    List<dynamic> recurringItems = const [];
+
+    if (parsed is List) {
+      txItems = parsed; // v1
+    } else if (parsed is Map<String, dynamic>) {
+      txItems = parsed['transactions'] as List? ?? const [];
+      goalItems = parsed['goals'] as List? ?? const [];
+      debtItems = parsed['debts'] as List? ?? const [];
+      recurringItems = parsed['recurring_transactions'] as List? ?? const [];
+    } else {
+      throw const FormatException('Formato de backup no reconocido');
+    }
+
+    // Se parsea TODO antes de tocar la base: un archivo corrupto falla
+    // acá, sin escribir nada.
+    final rows = <String, List<Map<String, Object?>>>{
+      'transactions': [
+        for (final item in txItems)
+          Transaction.fromMap(Map<String, dynamic>.from(item as Map)).toMap(),
+      ],
+      'goals': [
+        for (final item in goalItems)
+          _goalToRow(Goal.fromMap(Map<String, dynamic>.from(item as Map))),
+      ],
+      'debts': [
+        for (final item in debtItems)
+          Debt.fromMap(Map<String, dynamic>.from(item as Map)).toMap(),
+      ],
+      'recurring_transactions': [
+        for (final item in recurringItems) _recurringRow(item as Map),
+      ],
+    };
+
+    final counts = await DatabaseHelper.instance.restoreBackupData(rows);
+    TransactionNotifier.instance.refresh();
+    return counts;
   }
 
   static Map<String, Object?> _goalToRow(Goal goal) {
@@ -147,8 +158,8 @@ class BackupController {
       'anchor_day': item['anchor_day'] as int?,
       'installments_total': item['installments_total'] as int?,
       'installments_paid': item['installments_paid'] as int?,
-      'installments_total_amount':
-          (item['installments_total_amount'] as num?)?.toDouble(),
+      'installments_total_amount': (item['installments_total_amount'] as num?)
+          ?.toDouble(),
     };
   }
 }

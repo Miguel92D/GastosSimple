@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-04 (chat 04).
+Última revisión: 2026-10-05 (chat 05).
 
 ---
 
@@ -43,7 +43,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-04 (chat 04): analyze limpio, 137 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (chat 05): analyze limpio, 181 tests pasan.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; `main` se actualiza en el chat 06.
@@ -89,4 +89,31 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 - `VaultLockGate` (`lib/features/vault/widgets/vault_lock_gate.dart`) envuelve la Bóveda y sus pagos fijos: sin Pro, o con PIN de Bóveda y la Bóveda cerrada, muestra un candado en vez de los movimientos. Arregla que, al volver de segundo plano, la app cerraba la Bóveda pero la pantalla seguía mostrando lo secreto.
 - Los Tips de salida en Deudas (Avalancha / Bola de nieve) piden Pro al tocarlos (P-05). Antes eran gratis aunque la Especificación dice que son Pro.
 - Lo que promete Pro está en un solo lugar: `PremiumFlowService.proBenefitKeys` (textos `pro_benefit_*`). La pantalla Pro muestra los mismos cuatro.
+
+### D-020 — Restaurar un respaldo nunca duplica
+- Además de lo que ya hacía `BackupMerge` (id libre → se inserta; mismo id y misma entidad → se reemplaza; mismo id y otra cosa → fila nueva), `restoreBackupData` **saltea** una fila si la misma entidad ya está en el teléfono con **otro** id. Antes, restaurar dos veces en un teléfono con datos propios duplicaba lo que la primera vez había entrado como fila nueva.
+- Cada fila que ya estaba en el teléfono "absorbe" una sola fila del archivo: si el archivo trae dos movimientos iguales (mismo monto, categoría, tipo y fecha), llegan los dos.
+- "Misma entidad" compara el tipo normalizado (`Gasto` = `gasto`, `Transaction.normalizeType`) y las fechas como fechas (`2026-09-01` = `2026-09-01T00:00:00.000`). Antes un tipo viejo escrito distinto se duplicaba al restaurar en el mismo teléfono.
+- `BackupController.buildBackupJson` / `restoreBackupJson` arman y leen el contenido; `exportBackup` / `restoreBackup` solo escriben y leen el archivo. Tests: `test/backup_roundtrip_test.dart` (ida y vuelta con y sin Bóveda, dos veces, teléfono con datos propios, archivo roto, formato v1).
+
+### D-021 — Actualizar desde la 1.1.8 está probado (P-01)
+- `test/db_upgrade_test.dart` arma una base con el esquema exacto de las versiones **12, 13, 14, 15 y 16** (la 12 sale de git, commit `e1464ef`), con datos, y la abre con la app de hoy: no se pierde nada, los montos quedan a centavos y después se pueden usar cuotas y pagos fijos de la Bóveda. También prueba que las migraciones corren **dos veces** sin cambiar nada y que una base **17** (más nueva) se abre sin borrar nada.
+- Al abrir la base (`onOpen`, en cada arranque) se arregla `is_secret` vacío (`NULL` → `0`) en movimientos y pagos fijos: con `NULL` no aparecían ni en la lista normal ni en la Bóveda. Es barato y se puede repetir. **No** cambia la versión de la base (sigue en 16).
+- Toda la migración corre dentro de una transacción de sqflite; un `ALTER TABLE` que falla (columna que ya existe) se saltea sin deshacer el resto (`_tryExecute`).
+
+### D-022 — La huella necesita un PIN
+- `SecurityService.setBiometricActive(true)` no hace nada (devuelve `false`) si no hay PIN activo. En Configuración, prender la huella sin PIN primero pide crearlo. Apagar el PIN apaga también la huella.
+- Motivo: sin PIN, si la huella deja de andar (sensor roto, huellas borradas) el usuario quedaba afuera de la app para siempre.
+- Bloqueo tras PIN fallidos: 5 intentos libres, después 30 s, 60 s, 120 s… hasta 15 min; se guarda en el almacenamiento seguro (cerrar la app no lo saca) y lo comparten el PIN de la app y el de la Bóveda. `SecurityService.clock` (`@visibleForTesting`) permite probarlo sin esperar. El aviso muestra los segundos redondeados hacia arriba. Tests: `test/privacy_security_test.dart`.
+
+### D-023 — Consentimiento de Crashlytics
+- Crashlytics arranca apagado (`firebase_crashlytics_collection_enabled = false` en el AndroidManifest) y solo se prende si el usuario acepta en la pantalla de consentimiento.
+- La respuesta se puede cambiar cuando se quiera en **Configuración → Legal → Enviar reportes de fallos** (`AppState.crashReportsEnabled`).
+- Al apagarlo (o mientras no haya permiso) se borran los reportes guardados sin enviar (`deleteUnsentReports`): si no, Crashlytics los mandaría todos juntos al aceptar.
+- `AppState.crashlyticsSwitch` (`@visibleForTesting`) se cambia en los tests por uno falso.
+
+### D-024 — Una sola política de privacidad
+- La pantalla de la app (`PrivacyPolicyScreen`) usa los textos `privacy_s1…s8_title/body` de `AppTranslations` (antes estaban escritos en el código, solo con `isSpanish`). Son **las mismas palabras** que `privacy.html` de la landing.
+- Un test (`test/privacy_security_test.dart`) falla si las tres copias de la landing (`docs/`, `github_pages_root/`, `SimpleLanding/`) no son iguales o si la app y la web dicen cosas distintas.
+- Al cambiar la política: cambiar las secciones en `AppTranslations` y en `docs/privacy.html` a la vez, y copiar el HTML a las otras dos carpetas.
 

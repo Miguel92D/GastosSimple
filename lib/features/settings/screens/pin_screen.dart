@@ -54,7 +54,7 @@ class _PinScreenState extends State<PinScreen> {
       final success = await SecurityService.instance.authenticateBiometric(
         localizedReason: l10n.text('biometric_subtitle'),
       );
-      if (success) {
+      if (success && mounted) {
         _handleSuccess();
       }
     }
@@ -100,9 +100,9 @@ class _PinScreenState extends State<PinScreen> {
         _handleSuccess();
       } else {
         final l10n = context.read<AppLocaleController>();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.text('pins_not_match'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.text('pins_not_match'))));
         setState(() {
           _pin = '';
         });
@@ -118,18 +118,19 @@ class _PinScreenState extends State<PinScreen> {
     } else {
       success = await SecurityService.instance.authenticatePin(_pin);
     }
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (success) {
-      if (!mounted) return;
       _handleSuccess();
     } else {
-      if (!mounted) return;
       final l10n = context.read<AppLocaleController>();
       final security = SecurityService.instance;
       final message = security.isLockedOut
           ? l10n.text('pin_locked_wait', {
-              's': (security.lockRemaining.inSeconds + 1).toString(),
+              's': (security.lockRemaining.inMilliseconds / 1000)
+                  .ceil()
+                  .toString(),
             })
           : l10n.text('wrong_pin');
       ScaffoldMessenger.of(context)
@@ -190,7 +191,9 @@ class _PinScreenState extends State<PinScreen> {
             ? Theme.of(context).primaryColor
             : Colors.transparent,
       ),
-      onPressed: SecurityService.instance.isBiometricActive ? _tryBiometric : null,
+      onPressed: SecurityService.instance.isBiometricActive
+          ? _tryBiometric
+          : null,
     );
   }
 
@@ -208,7 +211,9 @@ class _PinScreenState extends State<PinScreen> {
       }
       return widget.isVault ? l10n.text('set_vault_pin') : l10n.text('set_pin');
     }
-    return widget.isVault ? l10n.text('enter_vault_pin') : l10n.text('enter_pin');
+    return widget.isVault
+        ? l10n.text('enter_vault_pin')
+        : l10n.text('enter_pin');
   }
 
   @override
@@ -236,9 +241,7 @@ class _PinScreenState extends State<PinScreen> {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg,

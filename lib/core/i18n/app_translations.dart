@@ -180,7 +180,8 @@ class AppTranslations {
       'undo': 'Deshacer',
       'reminder_section': 'Recordatorio',
       'reminder_daily': 'Recordatorio diario',
-      'reminder_daily_subtitle': 'Un aviso por día para que anotes tus movimientos',
+      'reminder_daily_subtitle':
+          'Un aviso por día para que anotes tus movimientos',
       'reminder_time': 'Hora del aviso',
       'reminder_permission_denied':
           'Las notificaciones están bloqueadas. Activalas desde los ajustes del teléfono.',
@@ -331,6 +332,33 @@ class AppTranslations {
       'note': 'Nota',
       'pin_subtitle': 'Protege tus datos con un código',
       'privacy_policy': 'Política de Privacidad',
+      'privacy_heading': 'Tu privacidad es primero',
+      'privacy_view_online': 'Ver la política en la web',
+      'privacy_updated': 'Última actualización: 5 de octubre de 2026',
+      'privacy_s1_title': 'Datos en tu teléfono',
+      'privacy_s1_body':
+          '\$imple guarda tus movimientos, deudas, pagos fijos, cuotas, metas de ahorro y la Bóveda solo en tu teléfono. No hay cuentas, inicio de sesión ni servidores de \$imple: nosotros no vemos tus datos.',
+      'privacy_s2_title': 'Respaldo',
+      'privacy_s2_body':
+          'Podés exportar un archivo de respaldo (JSON) y restaurarlo cuando quieras. El archivo no está cifrado: guardalo en un lugar seguro. Los movimientos de la Bóveda solo se incluyen si lo confirmás. Restaurar suma los datos del archivo sin borrar los que ya tenés. Vos elegís dónde se guarda y con quién se comparte.',
+      'privacy_s3_title': 'Copia de seguridad de Android',
+      'privacy_s3_body':
+          'Si tenés activada la copia de seguridad de Android en tu cuenta de Google, Android puede guardar los datos de la app (incluida la Bóveda) en esa copia. Esa copia la maneja Google, no \$imple. Tu PIN no se copia: en un teléfono nuevo lo creás de nuevo.',
+      'privacy_s4_title': 'Reportes de fallos',
+      'privacy_s4_body':
+          'Solo si lo aceptás, la app envía reportes de fallos a Firebase Crashlytics (Google): datos técnicos del error, del teléfono y un identificador de instalación. No incluyen tu historial de movimientos. Hasta que respondas, Crashlytics está apagado. Podés cambiar de opinión cuando quieras en Configuración. No usamos Firebase Analytics ni publicidad.',
+      'privacy_s5_title': 'Compra PRO',
+      'privacy_s5_body':
+          'PRO es un pago único que procesa Google Play. La app solo le pregunta a Google Play si la compra está pagada, para activar o restaurar PRO. No vemos tus datos de pago.',
+      'privacy_s6_title': 'PIN y huella',
+      'privacy_s6_body':
+          'Podés proteger la app y la Bóveda con un PIN. El PIN se guarda en el almacenamiento seguro del teléfono. La huella la procesa Android: la app no la recibe ni la guarda, y para usarla hace falta un PIN de repuesto. Después de 5 PIN incorrectos la app espera 30 segundos, y cada error siguiente duplica la espera (hasta 15 minutos). Con un bloqueo activo, la pantalla queda protegida contra capturas.',
+      'privacy_s7_title': 'Recordatorios',
+      'privacy_s7_body':
+          'La app puede programar un recordatorio diario en el teléfono para que anotes tus movimientos. Podés apagarlo en Configuración o en los permisos de Android.',
+      'privacy_s8_title': 'Borrar tus datos',
+      'privacy_s8_body':
+          'Podés borrar movimientos dentro de la app, borrar los datos de la app desde los Ajustes de Android o desinstalarla. Como no tenemos servidores, no guardamos ninguna copia.',
       'select_goal': 'Seleccionar meta',
       'security': 'Seguridad',
       'new_pin_label': 'Nuevo PIN',
@@ -460,6 +488,11 @@ class AppTranslations {
       'continue_free': 'Continuar gratis',
       'local_backup_label': 'Respaldo Local',
       'biometric_not_available': 'Biometría no disponible en este dispositivo',
+      'biometric_needs_pin':
+          'Primero creá un PIN: es la llave de repuesto si la huella falla.',
+      'crash_reports_title': 'Enviar reportes de fallos',
+      'crash_reports_subtitle':
+          'Datos técnicos del error y del teléfono (Firebase Crashlytics). No incluyen tu historial de movimientos.',
       'google_auth_error': 'Error de autenticacion con Google',
     },
     'en': {
@@ -486,7 +519,8 @@ class AppTranslations {
       // What PRO includes (P-05): Pro screen and upgrade prompt.
       'pro_benefit_stats':
           'Statistics: where your money goes, by category and by month',
-      'pro_benefit_goals': 'Savings goals with how much to set aside each month',
+      'pro_benefit_goals':
+          'Savings goals with how much to set aside each month',
       'pro_benefit_vault':
           'Secure Vault: private movements, kept out of your balance and history',
       'pro_benefit_debt_tips': 'Debt exit tips: Avalanche and Snowball',
@@ -556,7 +590,8 @@ class AppTranslations {
       'consent_privacy': 'View privacy policy',
       'recurring_title': 'Fixed payments',
       'recurring_repeat': 'Repeat',
-      'recurring_repeat_hint': 'It will be recorded automatically every period.',
+      'recurring_repeat_hint':
+          'It will be recorded automatically every period.',
       'freq_daily': 'Daily',
       'freq_weekly': 'Weekly',
       'freq_monthly': 'Monthly',
@@ -618,7 +653,8 @@ class AppTranslations {
       'installments_custom_title': 'Number of installments',
       'installments_progress': 'Installment {k} of {n}',
       'installments_remaining': '{amount} left',
-      'installments_total_left': 'You have {amount} left to pay in installments',
+      'installments_total_left':
+          'You have {amount} left to pay in installments',
       'installments_cancel_body':
           'Remaining installments will not be recorded (e.g. if you paid off the balance). Already recorded ones are kept.',
       'installments_amount_is': 'The amount I entered is',
@@ -640,7 +676,8 @@ class AppTranslations {
       'undo': 'Undo',
       'reminder_section': 'Reminder',
       'reminder_daily': 'Daily reminder',
-      'reminder_daily_subtitle': 'One notification a day to log your transactions',
+      'reminder_daily_subtitle':
+          'One notification a day to log your transactions',
       'reminder_time': 'Reminder time',
       'reminder_permission_denied':
           'Notifications are blocked. Enable them in your phone settings.',
@@ -790,6 +827,33 @@ class AppTranslations {
       'note': 'Note',
       'pin_subtitle': 'Protect your data with a code',
       'privacy_policy': 'Privacy Policy',
+      'privacy_heading': 'Your privacy comes first',
+      'privacy_view_online': 'View the policy online',
+      'privacy_updated': 'Last updated: October 5, 2026',
+      'privacy_s1_title': 'Data on your phone',
+      'privacy_s1_body':
+          '\$imple stores your transactions, debts, recurring payments, installments, savings goals and the Vault only on your phone. There are no accounts, no sign-in and no \$imple servers: we cannot see your data.',
+      'privacy_s2_title': 'Backup',
+      'privacy_s2_body':
+          'You can export a backup file (JSON) and restore it whenever you want. The file is not encrypted: keep it somewhere safe. Vault transactions are only included if you confirm it. Restoring adds the file\'s data without deleting what you already have. You choose where it is saved and who it is shared with.',
+      'privacy_s3_title': 'Android backup',
+      'privacy_s3_body':
+          'If Android backup is turned on for your Google account, Android may include the app\'s data (Vault included) in that backup. Google manages that backup, not \$imple. Your PIN is not copied: on a new phone you create it again.',
+      'privacy_s4_title': 'Crash reports',
+      'privacy_s4_body':
+          'Only if you accept, the app sends crash reports to Firebase Crashlytics (Google): technical data about the error, the phone and an installation ID. They do not include your transaction history. Until you answer, Crashlytics is off. You can change your mind anytime in Settings. We do not use Firebase Analytics or ads.',
+      'privacy_s5_title': 'PRO purchase',
+      'privacy_s5_body':
+          'PRO is a one-time payment processed by Google Play. The app only asks Google Play whether the purchase is paid, to activate or restore PRO. We do not see your payment details.',
+      'privacy_s6_title': 'PIN and biometrics',
+      'privacy_s6_body':
+          'You can protect the app and the Vault with a PIN. The PIN is stored in the phone\'s secure storage. Biometrics are handled by Android: the app never receives or stores them, and a backup PIN is required to use them. After 5 wrong PINs the app waits 30 seconds, and each further mistake doubles the wait (up to 15 minutes). With a lock turned on, the screen is protected against screenshots.',
+      'privacy_s7_title': 'Reminders',
+      'privacy_s7_body':
+          'The app can schedule a daily reminder on your phone so you log your transactions. You can turn it off in Settings or in Android permissions.',
+      'privacy_s8_title': 'Deleting your data',
+      'privacy_s8_body':
+          'You can delete records inside the app, clear the app\'s data from Android Settings, or uninstall it. Since we have no servers, we keep no copy.',
       'select_goal': 'Select goal',
       'security': 'Security',
       'new_pin_label': 'New PIN',
@@ -919,6 +983,11 @@ class AppTranslations {
       'continue_free': 'Continue for free',
       'local_backup_label': 'Local Backup',
       'biometric_not_available': 'Biometrics not available on this device',
+      'biometric_needs_pin':
+          'First create a PIN: it is the backup key if biometrics fail.',
+      'crash_reports_title': 'Send crash reports',
+      'crash_reports_subtitle':
+          'Technical error and device data (Firebase Crashlytics). They do not include your transaction history.',
     },
   };
 }

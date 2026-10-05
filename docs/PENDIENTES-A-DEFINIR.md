@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-04 (chat 04).
+Última revisión: 2026-10-05 (chat 05).
 
 ---
 
@@ -18,7 +18,8 @@
 
 **Cómo confirmarlo (opcional, 10 minutos):** Play Console → Versiones → Explorador de App Bundles → 1.1.8 (14) → descargar. Dentro, buscar en `lib/arm64-v8a/libapp.so` el texto `installments_total_amount` (si está, DB ≥ 15) y `ROUND(amount, 2)` (si está, DB = 16). Si no aparece `installments_total`, era 12 o 13.
 
-**Respuesta:** _pendiente_ — se cierra en el chat 05 con una prueba real de actualización desde la 1.1.8.
+**Respuesta (2026-10-05, chat 05):** ✅ Ya no importa cuál era. `test/db_upgrade_test.dart` arma bases con el esquema exacto de la 12, 13, 14, 15 y 16, con datos, y las abre con la app de hoy: no se pierde nada, las migraciones pueden correr dos veces y una base más nueva (17) tampoco pierde datos (D-021).
+Queda una prueba a mano, opcional, para el chat 06: en un teléfono instalar la 1.1.8 desde Play (prueba interna), cargar algunos movimientos (uno en la Bóveda), instalar encima el AAB nuevo y ver que todo sigue ahí.
 
 ### P-02 — Alcance de pantallas del MVP
 **Lo que sabemos:** propuesta en la sección 4 de la Especificación.
@@ -80,4 +81,20 @@ Los mensajes de `PurchaseService` ("Compra cancelada.", "No se encontro una comp
 ### P-15 — Más textos y código Pro sin uso
 Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analytics`, `benefit_strategies`, `smart_insights`, `feature_stats`, `feature_export`, `feature_vault` y `feature_goals`. Tampoco se usa `PremiumService` ni `AppModeController.isPro`.
 **Respuesta:** _pendiente_ — borrarlos en la tarea de limpieza (P-09 y P-12).
+
+### P-16 — Usuarios que ya tienen huella sin PIN
+Desde el chat 05 la huella necesita un PIN (D-022). Pero alguien que en una versión anterior activó solo la huella sigue así: entra con la huella o con el bloqueo del teléfono (la app lo permite). Si un día fallan los dos, no hay forma de entrar.
+**Respuesta:** _pendiente_ — decidir si al abrir la app se le pide crear un PIN a esos usuarios.
+
+### P-17 — ¿Existe el correo de contacto?
+La política web dice `soporte@simpleapp.com`. No sabemos si esa casilla existe y alguien la lee. Google Play pide un contacto que funcione.
+**Respuesta:** _pendiente_ — Miguel confirma el correo; si cambia, se cambia en las tres copias de `privacy.html` (y en la ficha de Play, chat 06).
+
+### P-18 — Formulario "Seguridad de los datos" de Play
+La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallos opcionales (Crashlytics, con identificador de instalación) y que la copia de seguridad de Android puede incluir los datos de la app. El formulario de Play tiene que decir lo mismo.
+**Respuesta:** _pendiente_ — revisarlo en el chat 06, antes de publicar.
+
+### P-19 — Más código de restauración sin uso
+`DatabaseHelper.restoreGoal` y `restoreDebt` ya no los usa nadie (el respaldo pasa por `restoreBackupData`) y usan `ConflictAlgorithm.replace`, que la Especificación §8 prohíbe para datos de un archivo. `restoreTransaction` sí se usa, pero solo para "Deshacer" un borrado.
+**Respuesta:** _pendiente_ — borrar `restoreGoal` y `restoreDebt` en la tarea de limpieza (con P-09, P-12 y P-15).
 
