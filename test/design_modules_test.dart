@@ -6,7 +6,10 @@ import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
 import 'package:gastos_simple/core/ui/app_colors.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/app_text_styles.dart';
 import 'package:gastos_simple/core/ui/widgets/app_action_button.dart';
+import 'package:gastos_simple/core/ui/widgets/app_amount.dart';
+import 'package:gastos_simple/core/ui/widgets/app_list_row.dart';
 import 'package:gastos_simple/core/ui/widgets/app_empty_state.dart';
 import 'package:gastos_simple/core/ui/widgets/app_icon_box.dart';
 import 'package:gastos_simple/core/ui/widgets/app_logo.dart';
@@ -16,6 +19,7 @@ import 'package:gastos_simple/core/ui/widgets/app_secondary_button.dart';
 import 'package:gastos_simple/core/ui/widgets/app_section_title.dart';
 import 'package:gastos_simple/core/ui/widgets/app_segmented.dart';
 import 'package:gastos_simple/core/ui/widgets/app_sheet.dart';
+import 'package:gastos_simple/services/currency_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +30,7 @@ void main() {
     providers: [
       ChangeNotifierProvider.value(value: AppLocaleController.instance),
       ChangeNotifierProvider.value(value: AppState.instance),
+      ChangeNotifierProvider.value(value: CurrencyService.instance),
     ],
     child: MaterialApp(
       home: Scaffold(
@@ -64,7 +69,10 @@ void main() {
               color: AppColors.incomeGreen,
               onTap: () {},
             ),
-            const AppIconBox(icon: AppIcons.debts, color: AppColors.textPrimary),
+            const AppIconBox(
+              icon: AppIcons.debts,
+              color: AppColors.textPrimary,
+            ),
           ],
         ),
       ),
@@ -153,6 +161,51 @@ void main() {
     await t.pumpAndSettle();
     expect(find.byType(AppSheetHandle), findsOneWidget);
     expect(find.text('contenido'), findsOneWidget);
+  });
+
+  testWidgets('fila: mismo alto con monto corto o gigante (R-4)', (t) async {
+    Future<double> heightFor(double v) async {
+      await t.pumpWidget(
+        app(
+          AppListRow(
+            icon: AppIcons.recurring,
+            iconColor: AppColors.expenseRed,
+            title: 'Netflix',
+            subtitle: 'Mensual',
+            trailing: AppAmount.list(value: v, color: AppColors.expenseRed),
+          ),
+        ),
+      );
+      return t.getSize(find.byType(AppListRow)).height;
+    }
+
+    final small = await heightFor(8999);
+    expect(await heightFor(609099096909.60), small);
+    final style = t
+        .widget<Text>(
+          find.descendant(
+            of: find.byType(AppAmount),
+            matching: find.byType(Text),
+          ),
+        )
+        .style!;
+    expect(style.fontSize, AppTextStyles.amountList.fontSize);
+  });
+
+  testWidgets('monto oculto con el ojo del inicio', (t) async {
+    await t.pumpWidget(app(const AppAmount.list(value: 1500, hidden: true)));
+    expect(find.text(AppAmount.hiddenText), findsOneWidget);
+  });
+
+  testWidgets('fila de Ajustes: caja violeta y flecha', (t) async {
+    await t.pumpWidget(
+      app(AppListRow.setting(icon: AppIcons.pin, title: 'PIN', onTap: () {})),
+    );
+    expect(
+      t.widget<AppIconBox>(find.byType(AppIconBox)).color,
+      AppColors.primaryPurple,
+    );
+    expect(find.byIcon(AppIcons.next), findsOneWidget);
   });
 
   testWidgets('el logo dice \$imple con o sin Pro', (t) async {

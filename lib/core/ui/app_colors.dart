@@ -30,6 +30,9 @@ class AppColors {
   // Typography
   static const textPrimary = Colors.white;
   static const softText = Color(0xFFBFBFD2);
+
+  /// `softText` al 60%: subtítulos de filas y datos secundarios.
+  static const softTextDim = Color(0x99BFBFD2);
   static const textMuted = Color(0xFF636366);
 
   // UI Accents

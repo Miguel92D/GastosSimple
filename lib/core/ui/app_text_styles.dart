@@ -126,6 +126,21 @@ class AppTextStyles {
     letterSpacing: -0.5,
   );
 
+  /// Título de una fila de lista (`AppListRow`): 14 negrita.
+  static const rowTitle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  );
+
+  /// Subtítulo de una fila de lista (`AppListRow`): 12 gris.
+  static const rowSubtitle = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    color: AppColors.softTextDim,
+    letterSpacing: 0.2,
+  );
+
   /// Opción de un selector (`AppSegmented`): 13/w800, MAYÚSCULAS.
   static const segmentLabel = TextStyle(
     fontSize: 13,
