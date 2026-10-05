@@ -16,6 +16,7 @@ import '../../../services/daily_allowance_service.dart';
 import '../../../services/monthly_budget_service.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_progress_bar.dart';
 
 /// "Podés gastar hoy": cuánto queda por día con lo que entró este mes (o
 /// con el presupuesto mensual). Se carga sola (no depende del período del
@@ -265,15 +266,7 @@ class _DailyAllowanceCardState extends State<DailyAllowanceCard> {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.sm),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 6,
-            backgroundColor: AppColors.softText.withValues(alpha: 0.08),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-          ),
-        ),
+        AppProgressBar(value: progress, color: color),
         const SizedBox(height: AppSpacing.sm),
         Text(
           l10n.text(

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import '../glass_card.dart';
 import '../app_colors.dart';
 import '../app_text_styles.dart';
+import '../app_radius.dart';
+import '../app_spacing.dart';
 
 class GlassInput extends StatelessWidget {
   final TextEditingController controller;
@@ -24,6 +26,11 @@ class GlassInput extends StatelessWidget {
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
 
+  /// Campo que no se escribe: abre algo al tocarlo (por ejemplo, un calendario).
+  final bool readOnly;
+  final bool autofocus;
+  final VoidCallback? onTap;
+
   const GlassInput({
     super.key,
     required this.controller,
@@ -44,6 +51,9 @@ class GlassInput extends StatelessWidget {
     this.padding,
     this.textInputAction,
     this.inputFormatters,
+    this.readOnly = false,
+    this.autofocus = false,
+    this.onTap,
   });
 
   @override
@@ -51,13 +61,20 @@ class GlassInput extends StatelessWidget {
     return GlassCard(
       height: height,
       padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      borderRadius: 30,
+          padding ??
+          const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+      borderRadius: AppRadius.xl,
       glowColor: AppColors.primaryPurple.withValues(alpha: 0.02),
       child: Center(
         child: TextField(
           controller: controller,
           focusNode: focusNode,
+          readOnly: readOnly,
+          autofocus: autofocus,
+          onTap: onTap,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           textInputAction: textInputAction ?? TextInputAction.done,

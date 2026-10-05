@@ -19,6 +19,10 @@ import '../../../core/utils/money.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/recurring_payment.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_amount.dart';
+import 'package:gastos_simple/core/ui/widgets/app_empty_state.dart';
+import 'package:gastos_simple/core/ui/widgets/app_list_row.dart';
+import 'package:gastos_simple/core/ui/widgets/app_sheet.dart';
 
 /// Pagos e ingresos fijos (alquiler, suscripciones, sueldo...) y planes de
 /// cuotas. Se crean desde "Nuevo movimiento" activando "Repetir" o
@@ -79,31 +83,25 @@ class _RecurringScreenState extends State<RecurringScreen> {
 
   Future<void> _showActions(RecurringPayment item) async {
     final l10n = context.read<AppLocaleController>();
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: AppColors.background,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(AppIcons.edit),
-              title: Text(l10n.text('recurring_change_amount')),
-              onTap: () => Navigator.pop(ctx, 'amount'),
-            ),
-            ListTile(
-              leading: const Icon(
-                AppIcons.stopRepeat,
-                color: AppColors.expenseRed,
-              ),
-              title: Text(
-                l10n.text('recurring_cancel'),
-                style: AppTextStyles.bodyMain.copyWith(color: AppColors.expenseRed),
-              ),
-              onTap: () => Navigator.pop(ctx, 'cancel'),
-            ),
-          ],
-        ),
+    final action = await AppSheet.show<String>(
+      context,
+      horizontalPadding: 0,
+      builder: (ctx) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppSheetOption(
+            icon: AppIcons.edit,
+            label: l10n.text('recurring_change_amount'),
+            onTap: () => Navigator.pop(ctx, 'amount'),
+          ),
+          AppSheetOption(
+            icon: AppIcons.stopRepeat,
+            color: AppColors.expenseRed,
+            tintLabel: true,
+            label: l10n.text('recurring_cancel'),
+            onTap: () => Navigator.pop(ctx, 'cancel'),
+          ),
+        ],
       ),
     );
     if (!mounted) return;
@@ -211,7 +209,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
           : _items.isEmpty
           ? _buildEmpty(l10n)
           : ListView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.screen),
               children: [
                 _buildSummary(l10n),
                 const SizedBox(height: AppSpacing.lg),
@@ -225,26 +223,9 @@ class _RecurringScreenState extends State<RecurringScreen> {
   }
 
   Widget _buildEmpty(AppLocaleController l10n) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              AppIcons.recurring,
-              size: 64,
-              color: AppColors.softText.withValues(alpha: 0.4),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              l10n.text('recurring_empty'),
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
-            ),
-          ],
-        ),
-      ),
+    return AppEmptyState(
+      icon: AppIcons.recurring,
+      text: l10n.text('recurring_empty'),
     );
   }
 
@@ -268,7 +249,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
                 const Icon(
                   AppIcons.installments,
                   color: AppColors.expenseRed,
-                  size: 20,
+                  size: AppIconSize.normal,
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -326,11 +307,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           _money(value),
-          style: AppTextStyles.bodyMain.copyWith(
-            color: color,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-          ),
+          style: AppTextStyles.titleMain.copyWith(color: color),
         ),
       ],
     );
@@ -342,69 +319,29 @@ class _RecurringScreenState extends State<RecurringScreen> {
     final title = (item.note != null && item.note!.trim().isNotEmpty)
         ? item.note!
         : L10nHelper.getLocalizedCategory(context, item.category);
+    final when = item.isInstallment
+        ? l10n.text('installments_progress', {
+            'k': item.nextInstallment.toString(),
+            'n': item.installmentsTotal.toString(),
+          })
+        : _frequencyLabel(l10n, item.frequency);
 
-    return GestureDetector(
+    return AppListRow(
       onTap: () => _showActions(item),
-      child: GlassCard(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                item.isInstallment
-                    ? AppIcons.installments
-                    : AppIcons.recurring,
-                color: color,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.bodyMain.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    item.isInstallment
-                        ? '${l10n.text('installments_progress', {'k': item.nextInstallment.toString(), 'n': item.installmentsTotal.toString()})} · '
-                              '${l10n.text('recurring_next', {'d': next})}'
-                        : '${_frequencyLabel(l10n, item.frequency)} · '
-                              '${l10n.text('recurring_next', {'d': next})}',
-                    style: AppTextStyles.subLabel,
-                  ),
-                  if (item.isInstallment)
-                    Text(
-                      l10n.text('installments_remaining', {
-                        'amount': _money(item.remainingAmount),
-                      }),
-                      style: AppTextStyles.bodySmall,
-                    ),
-                ],
-              ),
-            ),
-            Text(
-              _money(item.amount),
-              style: AppTextStyles.bodyMain.copyWith(
-                color: color,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-      ),
+      icon: item.isInstallment ? AppIcons.installments : AppIcons.recurring,
+      iconColor: color,
+      title: title,
+      subtitle: '$when · ${l10n.text('recurring_next', {'d': next})}',
+      extra: [
+        if (item.isInstallment)
+          Text(
+            l10n.text('installments_remaining', {
+              'amount': _money(item.remainingAmount),
+            }),
+            style: AppTextStyles.rowSubtitle,
+          ),
+      ],
+      trailing: AppAmount.list(value: item.amount, color: color),
     );
   }
 }

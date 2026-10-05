@@ -31,6 +31,8 @@ import '../../../core/ui/widgets/glass_input.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
 import '../../../core/utils/l10n_helper.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_section_title.dart';
+import 'package:gastos_simple/core/ui/widgets/app_segmented.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final Transaction? movimientoToEdit;
@@ -540,10 +542,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  Widget _sectionLabel(String text) => Padding(
-    padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
-    child: Text(text.toUpperCase(), style: AppTextStyles.subLabel),
-  );
+  Widget _sectionLabel(String text) => AppSectionTitle(text);
 
   Widget _buildInstallmentsSelector(AppLocaleController l10n) {
     const color = AppColors.expenseRed;
@@ -767,41 +766,30 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           children: [
             if (widget.type == null)
               Center(
-                child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: AppColors.glassSurface,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    border: Border.all(color: AppColors.cardBorder, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _ToggleOption(
-                        label: context.watch<AppLocaleController>().text(
-                          'income',
-                        ),
-                        isSelected: _tipo == 'ingreso',
-                        color: AppColors.incomeGreen,
-                        onTap: () => setState(() {
-                          _tipo = 'ingreso';
-                          _selectedCategory = _categoriasIngreso.first;
-                        }),
+                child: AppSegmented<String>(
+                  selected: _tipo,
+                  onChanged: (tipo) => setState(() {
+                    _tipo = tipo;
+                    _selectedCategory = tipo == 'ingreso'
+                        ? _categoriasIngreso.first
+                        : _categoriasGasto.first;
+                  }),
+                  segments: [
+                    AppSegment(
+                      value: 'ingreso',
+                      label: context.watch<AppLocaleController>().text(
+                        'income',
                       ),
-                      const SizedBox(width: 4),
-                      _ToggleOption(
-                        label: context.watch<AppLocaleController>().text(
-                          'expense',
-                        ),
-                        isSelected: _tipo == 'gasto',
-                        color: AppColors.expenseRed,
-                        onTap: () => setState(() {
-                          _tipo = 'gasto';
-                          _selectedCategory = _categoriasGasto.first;
-                        }),
+                      color: AppColors.incomeGreen,
+                    ),
+                    AppSegment(
+                      value: 'gasto',
+                      label: context.watch<AppLocaleController>().text(
+                        'expense',
                       ),
-                    ],
-                  ),
+                      color: AppColors.expenseRed,
+                    ),
+                  ],
                 ),
               ),
 
@@ -851,15 +839,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
             const SizedBox(height: AppSpacing.lg),
 
-            Text(
-              context
-                  .watch<AppLocaleController>()
-                  .text('category_section_label')
-                  .toUpperCase(),
-              style: AppTextStyles.subLabel,
+            AppSectionTitle(
+              context.watch<AppLocaleController>().text(
+                'category_section_label',
+              ),
+              spaceAbove: false,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
 
             SizedBox(
               height: 85,
@@ -952,12 +939,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
             const SizedBox(height: AppSpacing.lg),
 
-            Text(
-              context.watch<AppLocaleController>().text('date').toUpperCase(),
-              style: AppTextStyles.subLabel,
+            AppSectionTitle(
+              context.watch<AppLocaleController>().text('date'),
+              spaceAbove: false,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
 
             _buildDateSelector(context.watch<AppLocaleController>()),
 
@@ -1058,44 +1045,6 @@ class _DateChip extends StatelessWidget {
       activeColor: color,
       onTap: onTap,
       expand: true,
-    );
-  }
-}
-
-class _ToggleOption extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ToggleOption({
-    required this.label,
-    required this.isSelected,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? color : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: isSelected ? AppColors.textPrimary : AppColors.softText,
-            fontWeight: FontWeight.w800,
-            fontSize: 13,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
     );
   }
 }

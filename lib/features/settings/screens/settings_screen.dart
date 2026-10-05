@@ -11,6 +11,9 @@ import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/pro_badge.dart';
+import '../../../core/ui/widgets/app_list_row.dart';
+import '../../../core/ui/widgets/app_section_title.dart';
+import '../../../core/ui/widgets/app_sheet.dart';
 import '../../../core/flow/general_flow_service.dart';
 
 import '../../../services/security_service.dart';
@@ -136,19 +139,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ]),
 
               ..._section(l10n.text('security'), [
-                SwitchListTile(
-                  title: Text(
-                    l10n.text('enable_pin'),
-                    style: AppTextStyles.bodyMain,
-                  ),
-                  subtitle: Text(
-                    l10n.text('pin_subtitle'),
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  secondary: Icon(
-                    AppIcons.pin,
-                    color: AppColors.primaryPurple,
-                  ),
+                _buildSwitch(
+                  title: l10n.text('enable_pin'),
+                  subtitle: l10n.text('pin_subtitle'),
+                  icon: AppIcons.pin,
                   value: securityService.isPinActive,
                   onChanged: (val) async {
                     if (val) {
@@ -171,19 +165,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leading: AppIcons.edit,
                     onTap: () => _changePin(isVault: false),
                   ),
-                SwitchListTile(
-                  title: Text(
-                    l10n.text('biometric_unlock'),
-                    style: AppTextStyles.bodyMain,
-                  ),
-                  subtitle: Text(
-                    l10n.text('biometric_subtitle'),
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  secondary: Icon(
-                    AppIcons.fingerprint,
-                    color: AppColors.primaryPurple,
-                  ),
+                _buildSwitch(
+                  title: l10n.text('biometric_unlock'),
+                  subtitle: l10n.text('biometric_subtitle'),
+                  icon: AppIcons.fingerprint,
                   value: securityService.isBiometricActive,
                   onChanged: (val) async {
                     if (val) {
@@ -223,19 +208,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 const Divider(),
 
-                SwitchListTile(
-                  title: Text(
-                    l10n.text('enable_vault_pin'),
-                    style: AppTextStyles.bodyMain,
-                  ),
-                  subtitle: Text(
-                    l10n.text('vault_pin_subtitle'),
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  secondary: Icon(
-                    AppIcons.vault,
-                    color: AppColors.primaryPurple,
-                  ),
+                _buildSwitch(
+                  title: l10n.text('enable_vault_pin'),
+                  subtitle: l10n.text('vault_pin_subtitle'),
+                  icon: AppIcons.vault,
                   value: securityService.isVaultPinActive,
                   onChanged: (val) async {
                     if (val) {
@@ -261,19 +237,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ]),
 
               ..._section(l10n.text('reminder_section'), [
-                SwitchListTile(
-                  title: Text(
-                    l10n.text('reminder_daily'),
-                    style: AppTextStyles.bodyMain,
-                  ),
-                  subtitle: Text(
-                    l10n.text('reminder_daily_subtitle'),
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  secondary: Icon(
-                    AppIcons.reminder,
-                    color: AppColors.primaryPurple,
-                  ),
+                _buildSwitch(
+                  title: l10n.text('reminder_daily'),
+                  subtitle: l10n.text('reminder_daily_subtitle'),
+                  icon: AppIcons.reminder,
                   value: _reminderEnabled,
                   onChanged: (val) => _toggleReminder(val, l10n),
                 ),
@@ -354,19 +321,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: AppIcons.privacy,
                   onTap: () => GeneralFlowService.openPrivacy(),
                 ),
-                SwitchListTile(
-                  title: Text(
-                    l10n.text('crash_reports_title'),
-                    style: AppTextStyles.bodyMain,
-                  ),
-                  subtitle: Text(
-                    l10n.text('crash_reports_subtitle'),
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  secondary: Icon(
-                    AppIcons.crashReports,
-                    color: AppColors.primaryPurple,
-                  ),
+                _buildSwitch(
+                  title: l10n.text('crash_reports_title'),
+                  subtitle: l10n.text('crash_reports_subtitle'),
+                  icon: AppIcons.crashReports,
                   value: appState.crashReportsEnabled,
                   onChanged: (val) => appState.setConsent(crashReports: val),
                 ),
@@ -417,7 +375,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _buildSectionTitle(title, showBadge: showBadge),
       GlassCard(
         borderRadius: AppRadius.lg,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
         child: Column(children: children),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -425,26 +386,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSectionTitle(String title, {bool showBadge = false}) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Text(
-            title.toUpperCase(),
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.primaryPurple,
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          if (showBadge) ...[const SizedBox(width: 8), const ProBadge()],
-        ],
-      ),
+    return AppSectionTitle(
+      title,
+      trailing: showBadge ? const ProBadge() : null,
     );
   }
 
@@ -455,27 +399,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget? trailing,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      leading: Icon(
-        leading,
-        color: AppColors.softText.withAlpha(180),
-        size: 24,
-      ),
-      title: Text(
-        title,
-        style: AppTextStyles.bodyMain.copyWith(fontWeight: FontWeight.w600),
-      ),
-      subtitle: subtitle != null
-          ? Text(subtitle, style: AppTextStyles.bodySmall)
-          : null,
-      trailing:
-          trailing ??
-          Icon(
-            AppIcons.next,
-            color: AppColors.softText.withAlpha(75),
-          ),
+    return AppListRow.setting(
+      icon: leading,
+      title: title,
+      subtitle: subtitle,
+      trailing: trailing,
       onTap: onTap,
+    );
+  }
+
+  /// Fila de Ajustes con interruptor: tocar la fila también lo cambia.
+  Widget _buildSwitch({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return AppListRow.setting(
+      icon: icon,
+      title: title,
+      subtitle: subtitle,
+      trailing: Switch(value: value, onChanged: onChanged),
+      onTap: () => onChanged(!value),
     );
   }
 
@@ -526,71 +472,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final l10n = context.read<AppLocaleController>();
     final currencyService = context.read<CurrencyService>();
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+    AppSheet.show<void>(
+      context,
+      maxHeightFactor: 0.7,
+      horizontalPadding: 0,
       builder: (context) {
-        return SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            decoration: const BoxDecoration(
-              color: AppColors.darkBackground,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 12),
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBorder,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    l10n.text('select_currency'),
-                    style: AppTextStyles.titleMain,
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: CurrencyService.availableCurrencies.length,
-                    padding: const EdgeInsets.only(
-                      bottom: 32,
-                    ), // Padding para ergonomía
-                    itemBuilder: (context, index) {
-                      final c = CurrencyService.availableCurrencies[index];
-                      final isSelected = currencyService.currencyCode == c.code;
-                      return ListTile(
-                        title: Text(
-                          c.name,
-                          style: TextStyle(
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(
-                                AppIcons.done,
-                                color: AppColors.primaryPurple,
-                              )
-                            : null,
-                        onTap: () {
-                          currencyService.setCurrency(c.symbol, c.code);
-                          Navigator.pop(context);
-                        },
-                      );
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppSheetTitle(l10n.text('select_currency')),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: CurrencyService.availableCurrencies.length,
+                itemBuilder: (context, index) {
+                  final c = CurrencyService.availableCurrencies[index];
+                  final isSelected = currencyService.currencyCode == c.code;
+                  return ListTile(
+                    title: Text(
+                      c.name,
+                      style: AppTextStyles.bodyMain.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? const Icon(
+                            AppIcons.done,
+                            color: AppColors.primaryPurple,
+                          )
+                        : null,
+                    onTap: () {
+                      currencyService.setCurrency(c.symbol, c.code);
+                      Navigator.pop(context);
                     },
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
+          ],
         );
       },
     );

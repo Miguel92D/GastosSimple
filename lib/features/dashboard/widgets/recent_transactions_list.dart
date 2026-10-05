@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../transactions/models/transaction.dart';
 import '../../transactions/widgets/transaction_history_list.dart';
-import '../../../core/ui/app_colors.dart';
-import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/widgets/app_section_title.dart';
 import '../../../core/ui/app_spacing.dart';
 
 class RecentTransactionsList extends StatelessWidget {
@@ -28,22 +27,12 @@ class RecentTransactionsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
-          ),
-          child: Text(
-            (title ??
-                    context.watch<AppLocaleController>().text(
-                      'recent_movements',
-                    ))
-                .toUpperCase(),
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.softText.withValues(alpha: 0.65),
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen),
+          child: AppSectionTitle(
+            title ??
+                context.watch<AppLocaleController>().text('recent_movements'),
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
         Padding(
           // sm + el md propio de cada tile = lg (24): los movimientos quedan
           // alineados con la tarjeta de balance y las de Ingreso/Gasto.

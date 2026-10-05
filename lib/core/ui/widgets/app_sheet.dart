@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../app_colors.dart';
 import '../app_radius.dart';
 import '../app_spacing.dart';
+import '../app_text_styles.dart';
 
 /// Panel de abajo. Siempre igual (D-032): fondo `darkBackground`, radio
 /// `xl` arriba, rayita para arrastrar, fondo oscurecido al 75% y sube con
@@ -59,6 +60,59 @@ class AppSheet {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Una opción dentro de un panel: ícono de color y texto.
+class AppSheetOption extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  /// Texto en el color del ícono (por ejemplo, rojo para "Dejar de repetir").
+  final bool tintLabel;
+
+  const AppSheetOption({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color = AppColors.primaryPurple,
+    this.tintLabel = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(
+        label,
+        style: tintLabel
+            ? AppTextStyles.bodyMain.copyWith(color: color)
+            : AppTextStyles.bodyMain,
+      ),
+      onTap: onTap,
+    );
+  }
+}
+
+/// Título de un panel (18, centrado).
+class AppSheetTitle extends StatelessWidget {
+  final String text;
+
+  const AppSheetTitle(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: AppTextStyles.titleSmall,
       ),
     );
   }

@@ -141,6 +141,9 @@ class AppTextStyles {
     letterSpacing: 0.2,
   );
 
+  /// Emoji grande para elegir (ícono de una meta).
+  static const emoji = TextStyle(fontSize: 24);
+
   /// Opción de un selector (`AppSegmented`): 13/w800, MAYÚSCULAS.
   static const segmentLabel = TextStyle(
     fontSize: 13,

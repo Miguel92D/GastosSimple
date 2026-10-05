@@ -14,7 +14,6 @@ import '../widgets/transaction_history_list.dart';
 
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
-import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
@@ -23,6 +22,9 @@ import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/l10n_helper.dart';
 import '../../../core/utils/money.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_pill.dart';
+import 'package:gastos_simple/core/ui/widgets/app_section_title.dart';
+import 'package:gastos_simple/core/ui/widgets/app_sheet.dart';
 
 class MovementsScreen extends StatefulWidget {
   /// Filtro inicial (ej. desde Estadísticas: categoría + mes).
@@ -132,67 +134,59 @@ class _MovementsScreenState extends State<MovementsScreen> {
       );
     final selected = {..._filter.categories};
 
-    final result = await showModalBottomSheet<Set<String>>(
-      context: context,
-      backgroundColor: AppColors.darkBackground,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-      ),
+    final result = await AppSheet.show<Set<String>>(
+      context,
+      maxHeightFactor: 0.7,
+      horizontalPadding: 0,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => SafeArea(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(ctx).size.height * 0.7,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.text('categories').toUpperCase(),
-                          style: AppTextStyles.subLabel,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => setSheetState(selected.clear),
-                        child: Text(l10n.text('filter_clear')),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, selected),
-                        child: Text(l10n.text('filter_apply')),
-                      ),
-                    ],
+        builder: (ctx, setSheetState) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screen,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AppSectionTitle(
+                      l10n.text('categories'),
+                      spaceAbove: false,
+                    ),
                   ),
-                ),
-                Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (final c in available)
-                        CheckboxListTile(
-                          value: selected.contains(c),
-                          title: Text(
-                            L10nHelper.getLocalizedCategory(context, c),
-                          ),
-                          onChanged: (v) => setSheetState(() {
-                            if (v == true) {
-                              selected.add(c);
-                            } else {
-                              selected.remove(c);
-                            }
-                          }),
-                        ),
-                    ],
+                  TextButton(
+                    onPressed: () => setSheetState(selected.clear),
+                    child: Text(l10n.text('filter_clear')),
                   ),
-                ),
-              ],
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, selected),
+                    child: Text(l10n.text('filter_apply')),
+                  ),
+                ],
+              ),
             ),
-          ),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final c in available)
+                    CheckboxListTile(
+                      value: selected.contains(c),
+                      title: Text(
+                        L10nHelper.getLocalizedCategory(context, c),
+                      ),
+                      onChanged: (v) => setSheetState(() {
+                        if (v == true) {
+                          selected.add(c);
+                        } else {
+                          selected.remove(c);
+                        }
+                      }),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -291,13 +285,10 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Widget _buildFilterBar(AppLocaleController l10n) {
     final categoryCount = _filter.categories.length;
     return SizedBox(
-      height: 52,
+      height: AppSpacing.xxl,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen),
         children: [
           _FilterPill(
             label: l10n.text('filter_expenses'),
@@ -386,7 +377,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
     final expenseTotal = Money.sum(expense);
     final incomeTotal = Money.sum(income);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen),
       child: Row(
         children: [
           Text(
@@ -414,6 +405,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
   }
 }
 
+/// Pill de filtro: `AppPill` con su separación en la fila.
 class _FilterPill extends StatelessWidget {
   final String label;
   final IconData? icon;
@@ -433,45 +425,13 @@ class _FilterPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: AppSpacing.sm),
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected
-                ? color.withValues(alpha: 0.85)
-                : color.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(
-              color: isSelected
-                  ? AppColors.textPrimary.withValues(alpha: 0.2)
-                  : color.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(
-                  icon,
-                  size: 14,
-                  color: isSelected ? AppColors.textPrimary : color,
-                ),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                label,
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isSelected ? AppColors.textPrimary : color,
-                ),
-              ),
-            ],
-          ),
+      child: Center(
+        child: AppPill(
+          label: label,
+          icon: icon,
+          selected: isSelected,
+          activeColor: color,
+          onTap: onTap,
         ),
       ),
     );
