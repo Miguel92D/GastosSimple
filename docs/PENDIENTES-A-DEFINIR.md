@@ -88,11 +88,19 @@ Desde el chat 05 la huella necesita un PIN (D-022). Pero alguien que en una vers
 
 ### P-17 — ¿Existe el correo de contacto?
 La política web dice `soporte@simpleapp.com`. No sabemos si esa casilla existe y alguien la lee. Google Play pide un contacto que funcione.
-**Respuesta:** _pendiente_ — Miguel confirma el correo; si cambia, se cambia en las tres copias de `privacy.html` (y en la ficha de Play, chat 06).
+**Respuesta (2026-10-05, chat 06):** ✅ Miguel confirma que `soporte@simpleapp.com` existe y se lee. Queda igual; es el correo de contacto de la ficha de Play.
 
 ### P-18 — Formulario "Seguridad de los datos" de Play
 La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallos opcionales (Crashlytics, con identificador de instalación) y que la copia de seguridad de Android puede incluir los datos de la app. El formulario de Play tiene que decir lo mismo.
-**Respuesta:** _pendiente_ — revisarlo en el chat 06, antes de publicar.
+**Respuesta (2026-10-05, chat 06):** ✅ Respuestas para Play Console → Contenido de la app → Seguridad de los datos (sacadas de la política, secciones 1–8):
+- ¿Recopila o comparte datos de los tipos requeridos? **Sí** (solo los reportes de fallos, y solo si el usuario acepta).
+- ¿Datos cifrados en tránsito? **Sí** (Crashlytics envía por HTTPS).
+- ¿Forma de pedir que se borren los datos? **No** hay cuenta ni servidor propio; los datos del teléfono se borran desde la app, los Ajustes de Android o desinstalando.
+- Tipos de datos — **recopilados, no compartidos, opcionales** (el usuario elige), procesados de forma efímera: **No**:
+  - Información y rendimiento de la app → **Registros de fallos** y **Diagnóstico**. Para qué: Funcionalidad de la app y Análisis.
+  - ID del dispositivo u otros → **ID de dispositivo u otros IDs** (identificador de instalación de Firebase). Para qué: Funcionalidad de la app y Análisis.
+- **Nada más.** Movimientos, deudas, Bóveda, PIN y huella quedan solo en el teléfono (no cuenta como "recopilar"). La compra PRO la procesa Google Play (no se declara). La copia de seguridad de Android va a la cuenta de Google del usuario, $imple no la ve. No hay Firebase Analytics ni publicidad: en "¿Tu app contiene anuncios?" va **No**.
+- URL de la política: la de `privacy.html` en GitHub Pages. Correo: `soporte@simpleapp.com` (P-17).
 
 ### P-19 — Más código de restauración sin uso
 `DatabaseHelper.restoreGoal` y `restoreDebt` ya no los usa nadie (el respaldo pasa por `restoreBackupData`) y usan `ConflictAlgorithm.replace`, que la Especificación §8 prohíbe para datos de un archivo. `restoreTransaction` sí se usa, pero solo para "Deshacer" un borrado.

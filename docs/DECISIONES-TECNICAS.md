@@ -121,6 +121,7 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 ### D-025 — Versión 1.1.9 (15) y test que la vigila
 - `pubspec.yaml` dice `version: 1.1.9+15` y `android/app/build.gradle` dice `versionCode 15` / `versionName "1.1.9"`.
 - `test/version_test.dart` falla si los dos archivos no dicen lo mismo o si el `versionCode` no es mayor que 14 (la 1.1.8 publicada). Al publicar una versión nueva, subir el número en los dos archivos y, si hace falta, el `_lastPublishedCode` del test.
+- Tag `v1.1.9+15` en el commit `28fb0ed` (el que se compiló, D-012). AAB firmado con la llave de publicación (`CN=Simple App`), lleva Billing **8.0.0** (`billing.properties`), sha256 `b62e30a1…ef18eaa4`.
 
 ### D-026 — Cómo se unió `feature/mejoras-sesion` a `main` (P-07)
 - `main` local tenía 2 commits de marzo 2026 ("dashboard ui update", `4041e57` y `07d5650`) que **nunca se subieron** a GitHub. Eran una versión vieja de lo que la rama de trabajo rehízo mejor (Crashlytics sin consentimiento, `group.example` en el widget) y traían 739 archivos de `android/app/build` y logs commiteados por error.
