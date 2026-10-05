@@ -124,7 +124,7 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 
 ### D-026 — Cómo se unió `feature/mejoras-sesion` a `main` (P-07)
 - `main` local tenía 2 commits de marzo 2026 ("dashboard ui update", `4041e57` y `07d5650`) que **nunca se subieron** a GitHub. Eran una versión vieja de lo que la rama de trabajo rehízo mejor (Crashlytics sin consentimiento, `group.example` en el widget) y traían 739 archivos de `android/app/build` y logs commiteados por error.
-- No se mezclaron. Quedaron guardados en la rama **`archivo/main-marzo-2026`** (también en GitHub), así no se pierde nada.
+- No se mezclaron. Quedaron guardados en la rama **`archivo/main-marzo-2026`**, solo en esta compu (GitHub rechazó subirla, probablemente por los archivos de compilación pesados). No borrarla.
 - `main` pasó a apuntar al mismo commit que `feature/mejoras-sesion` (en GitHub fue un avance directo, sin forzar: `origin/main` era el punto donde nació la rama).
 - De acá en más: se trabaja en `feature/mejoras-sesion` y al publicar se adelanta `main` a ese commit.
 
