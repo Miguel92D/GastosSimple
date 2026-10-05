@@ -8,6 +8,7 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/amount_line.dart';
 
 class IncomeExpenseCards extends StatelessWidget {
   final double income;
@@ -168,14 +169,18 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              // Por las dudas sigue el FittedBox: nunca se corta el monto.
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  amountText,
-                  style: _amountStyle(amountSize).copyWith(color: color),
-                  maxLines: 1,
+              // Alto fijo (D-030): aunque un monto gigante se achique, la
+              // tarjeta mide siempre lo mismo. Nunca se corta el monto.
+              SizedBox(
+                height: amountLineHeight(context, _maxAmountSize),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    amountText,
+                    style: _amountStyle(amountSize).copyWith(color: color),
+                    maxLines: 1,
+                  ),
                 ),
               ),
             ],

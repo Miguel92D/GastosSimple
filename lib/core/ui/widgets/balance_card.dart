@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'app_pill.dart';
+import '../amount_line.dart';
 import '../../utils/currency_helper.dart';
 import '../../state/app_state.dart';
 import 'dart:math' as math;
@@ -153,31 +154,36 @@ class _BalanceCardState extends State<BalanceCard>
                         return AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                          style: AppTextStyles.balanceAmount.copyWith(
+                          // Tamaño fijo (D-030): la tarjeta se ve igual en
+                          // Día, en Mes y con cualquier monto. Solo un monto
+                          // que no entra se achica (nunca se corta con "…").
+                          style: AppTextStyles.balanceCardAmount.copyWith(
                             color: targetColor,
-                            fontSize: 42,
                           ),
-                          // Montos largos se achican para entrar enteros en vez
-                          // de cortarse con "…" (ocultaba dígitos). Si el
-                          // monto entra, se ve al tamaño normal.
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (trendIcon != null &&
-                                    !AppState.instance.hideBalance) ...[
-                                  Icon(
-                                    trendIcon,
-                                    size: 28,
-                                    color: AppColors.textPrimary.withValues(
-                                      alpha: 0.85,
+                          child: SizedBox(
+                            height: amountLineHeight(
+                              context,
+                              AppTextStyles.balanceCardAmount.fontSize!,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (trendIcon != null &&
+                                      !AppState.instance.hideBalance) ...[
+                                    Icon(
+                                      trendIcon,
+                                      size: 22,
+                                      color: AppColors.textPrimary.withValues(
+                                        alpha: 0.85,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: AppSpacing.xs),
+                                    const SizedBox(width: AppSpacing.xs),
+                                  ],
+                                  Text(formattedValue, maxLines: 1),
                                 ],
-                                Text(formattedValue, maxLines: 1),
-                              ],
+                              ),
                             ),
                           ),
                         );

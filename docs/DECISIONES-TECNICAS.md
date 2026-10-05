@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-029): 202.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-030): 204.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -163,5 +163,7 @@ Miguel pidió auditar todo el diseño (`docs/AUDITORIA-DISENO.md`, puntos A-01�
 ### D-030 — Cada cosa se ve igual en todas las pantallas
 Regla de Miguel (2026-10-05, con capturas): **un mismo elemento se ve siempre igual**, cambie la pantalla, el período (Día / Mes) o el monto.
 - Primer caso: las tarjetas de Ingresos / Gastos. El monto usa un tamaño **fijo**, `AppTextStyles.amountCard` (13, w900), con $ 918 o con $ 609.099.096.909,60. Antes era 20 y solo se achicaba con montos largos, así que la tarjeta cambiaba de una pantalla a otra. Solo si un monto no entra, los dos se achican juntos (D-029).
+- Segundo caso (mismo día): la **tarjeta de balance** del inicio. El monto usa `AppTextStyles.balanceCardAmount` (32, fijo; antes 42 y se achicaba solo con montos largos) y la flecha 22.
+- El renglón del monto tiene **alto fijo** (`amountLineHeight`, `lib/core/ui/amount_line.dart`): aunque un monto gigante tenga que achicarse, la tarjeta no cambia de alto. Probado en el emulador: Día y Mes miden igual.
 - Para cualquier componente: nada de tamaños que dependan del contenido o de la pantalla. Si un texto no entra, se achica igual en todas las copias del componente que se ven juntas.
-- Test: `test/design_cards_test.dart`.
+- Tests: `test/design_cards_test.dart` (balance e Ingresos/Gastos miden lo mismo con $ 1.530 y con $ 609.099.095.991,60).

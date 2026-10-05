@@ -29,6 +29,15 @@ class AppTextStyles {
     letterSpacing: -1.0,
   );
 
+  /// Monto de la tarjeta de balance del inicio (32). Tamaño FIJO: la
+  /// tarjeta mide lo mismo en Día, en Mes y con cualquier monto (D-030).
+  static const balanceCardAmount = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    letterSpacing: -1.0,
+  );
+
   // Content Labels & Cards
   static const cardTitle = TextStyle(
     fontSize: 16,

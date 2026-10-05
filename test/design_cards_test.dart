@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
 import 'package:gastos_simple/core/ui/app_text_styles.dart';
+import 'package:gastos_simple/core/ui/widgets/balance_card.dart';
 import 'package:gastos_simple/features/dashboard/widgets/income_expense_cards.dart';
 import 'package:gastos_simple/services/currency_service.dart';
 import 'package:provider/provider.dart';
@@ -70,6 +71,37 @@ void main() {
         .style!
         .fontSize;
     expect(size, AppTextStyles.amountCard.fontSize);
+  });
+
+  testWidgets('el balance mide lo mismo con cualquier monto (D-030)', (
+    tester,
+  ) async {
+    Future<double> heightFor(double balance) async {
+      await tester.pumpWidget(
+        app(BalanceCard(balance: balance, subtitle: 'Octubre 2026')),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      return tester.getSize(find.byType(BalanceCard)).height;
+    }
+
+    final small = await heightFor(1530);
+    final huge = await heightFor(609099095991.60);
+    expect(huge, small);
+  });
+
+  testWidgets('Ingresos/Gastos miden lo mismo con cualquier monto (D-030)', (
+    tester,
+  ) async {
+    Future<double> heightFor(double inc, double exp) async {
+      await tester.pumpWidget(
+        app(IncomeExpenseCards(income: inc, expenses: exp)),
+      );
+      return tester.getSize(find.byType(GestureDetector).first).height;
+    }
+
+    final small = await heightFor(5000, 3470);
+    final huge = await heightFor(609099096909.60, 918);
+    expect(huge, small);
   });
 
   group('reglas de diseño (D-029)', () {
