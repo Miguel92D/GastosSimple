@@ -124,8 +124,10 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Future<void> _pickCategories(AppLocaleController l10n) async {
     final available = _all.map((t) => t.category).toSet().toList()
       ..sort(
-        (a, b) => L10nHelper.getLocalizedCategory(context, a)
-            .compareTo(L10nHelper.getLocalizedCategory(context, b)),
+        (a, b) => L10nHelper.getLocalizedCategory(
+          context,
+          a,
+        ).compareTo(L10nHelper.getLocalizedCategory(context, b)),
       );
     final selected = {..._filter.categories};
 
@@ -301,21 +303,25 @@ class _MovementsScreenState extends State<MovementsScreen> {
             label: l10n.text('filter_expenses'),
             isSelected: _filter.type == TypeFilter.expense,
             color: AppColors.expenseRed,
-            onTap: () => _setFilter(_filter.copyWith(
-              type: _filter.type == TypeFilter.expense
-                  ? TypeFilter.all
-                  : TypeFilter.expense,
-            )),
+            onTap: () => _setFilter(
+              _filter.copyWith(
+                type: _filter.type == TypeFilter.expense
+                    ? TypeFilter.all
+                    : TypeFilter.expense,
+              ),
+            ),
           ),
           _FilterPill(
             label: l10n.text('filter_incomes'),
             isSelected: _filter.type == TypeFilter.income,
             color: AppColors.incomeGreen,
-            onTap: () => _setFilter(_filter.copyWith(
-              type: _filter.type == TypeFilter.income
-                  ? TypeFilter.all
-                  : TypeFilter.income,
-            )),
+            onTap: () => _setFilter(
+              _filter.copyWith(
+                type: _filter.type == TypeFilter.income
+                    ? TypeFilter.all
+                    : TypeFilter.income,
+              ),
+            ),
           ),
           _FilterPill(
             label: categoryCount == 0
@@ -351,9 +357,11 @@ class _MovementsScreenState extends State<MovementsScreen> {
               }),
               isSelected: _filter.period == p,
               color: AppColors.primaryPurple,
-              onTap: () => _setFilter(_filter.copyWith(
-                period: _filter.period == p ? PeriodFilter.all : p,
-              )),
+              onTap: () => _setFilter(
+                _filter.copyWith(
+                  period: _filter.period == p ? PeriodFilter.all : p,
+                ),
+              ),
             ),
           if (_filter.isActive)
             _FilterPill(
@@ -373,12 +381,10 @@ class _MovementsScreenState extends State<MovementsScreen> {
 
   Widget _buildSummary(AppLocaleController l10n, List<Transaction> items) {
     if (!_filter.isActive) return const SizedBox.shrink();
-    final expense = items
-        .where((t) => t.isExpense)
-        .fold(0.0, (s, t) => Money.round(s + t.amount));
-    final income = items
-        .where((t) => t.isIncome)
-        .fold(0.0, (s, t) => Money.round(s + t.amount));
+    final expense = items.where((t) => t.isExpense).map((t) => t.amount);
+    final income = items.where((t) => t.isIncome).map((t) => t.amount);
+    final expenseTotal = Money.sum(expense);
+    final incomeTotal = Money.sum(income);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       child: Row(
@@ -388,16 +394,16 @@ class _MovementsScreenState extends State<MovementsScreen> {
             style: AppTextStyles.subLabel,
           ),
           const Spacer(),
-          if (income > 0)
+          if (Money.toCents(incomeTotal) > 0)
             Text(
-              '+${CurrencyHelper.formatPrivate(income, context)}  ',
+              '+${CurrencyHelper.formatPrivate(incomeTotal, context)}  ',
               style: AppTextStyles.subLabel.copyWith(
                 color: AppColors.incomeGreen,
               ),
             ),
-          if (expense > 0)
+          if (Money.toCents(expenseTotal) > 0)
             Text(
-              '-${CurrencyHelper.formatPrivate(expense, context)}',
+              '-${CurrencyHelper.formatPrivate(expenseTotal, context)}',
               style: AppTextStyles.subLabel.copyWith(
                 color: AppColors.expenseRed,
               ),

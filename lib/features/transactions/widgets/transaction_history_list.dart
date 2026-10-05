@@ -142,7 +142,9 @@ class TransactionHistoryList extends StatelessWidget {
       return Center(
         child: Text(
           emptyMessage ??
-              context.watch<AppLocaleController>().text('no_movements_recorded'),
+              context.watch<AppLocaleController>().text(
+                'no_movements_recorded',
+              ),
           style: AppTextStyles.bodyMain.copyWith(color: AppColors.softText),
         ),
       );
@@ -163,14 +165,19 @@ class TransactionHistoryList extends StatelessWidget {
               transaction: transaction,
               hideAmount: AppState.instance.hideBalance,
               onDelete: () => _deleteWithUndo(context, transaction),
-              onArchive: () async {
-                if (transaction.isSecret == 1) {
-                  await VaultController.removeFromVault(transaction);
-                } else {
-                  await VaultController.moveToVault(transaction);
-                }
-                onRefresh();
-              },
+              // Deslizar a la derecha manda a la Bóveda, que es Pro: sin Pro
+              // el movimiento quedaría escondido donde no se puede abrir.
+              // Sacar de la Bóveda siempre se permite.
+              onArchive: !AppState.instance.isPro && transaction.isSecret == 0
+                  ? null
+                  : () async {
+                      if (transaction.isSecret == 1) {
+                        await VaultController.removeFromVault(transaction);
+                      } else {
+                        await VaultController.moveToVault(transaction);
+                      }
+                      onRefresh();
+                    },
               onTap: () => _showOptionsModal(context, transaction),
             );
           },

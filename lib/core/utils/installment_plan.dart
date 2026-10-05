@@ -1,3 +1,5 @@
+import 'money.dart';
+
 /// Compras en cuotas (tarjeta de crédito).
 ///
 /// Se modelan como una recurrencia mensual con un total de cuotas. Todas
@@ -14,7 +16,7 @@ class InstallmentPlan {
 
   /// Monto de cada cuota, redondeado a centavos.
   static double perInstallment(double total, int count) =>
-      (total / count * 100).roundToDouble() / 100;
+      Money.round(total / count);
 
   /// Monto de la cuota [k] de [count]. La última absorbe la diferencia de
   /// redondeo para que la suma dé exactamente [totalAmount]
@@ -26,8 +28,10 @@ class InstallmentPlan {
     double? totalAmount,
   }) {
     if (k < count || totalAmount == null) return perInstallment;
-    final last = totalAmount - perInstallment * (count - 1);
-    return (last * 100).roundToDouble() / 100;
+    // En centavos enteros: 100 - 33,33 × 2 da 33,34 justo (D-005).
+    return Money.fromCents(
+      Money.toCents(totalAmount) - Money.toCents(perInstallment) * (count - 1),
+    );
   }
 
   /// Nota de la cuota k de n. [base] es la nota que escribió el usuario.

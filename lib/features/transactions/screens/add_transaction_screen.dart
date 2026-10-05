@@ -17,12 +17,12 @@ import '../../../core/ui/app_radius.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/currency_input_formatter.dart';
 import '../../../core/utils/installment_plan.dart';
+import '../../../core/utils/money.dart';
 import '../../../core/utils/card_schedule.dart';
 import '../../../services/credit_card_service.dart';
 
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
-import '../../goals/models/goal.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/transaction.dart';
 import '../../../core/ui/widgets/glass_input.dart';
@@ -53,7 +53,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _amountController = TextEditingController();
   final _amountFocusNode = FocusNode();
   final _noteController = TextEditingController();
-  final _goalAmountController = TextEditingController();
 
   String _tipo = 'gasto';
   String _selectedCategory = 'Comida';
@@ -68,8 +67,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   bool _amountIsPerInstallment = false;
   List<CreditCard> _cards = [];
   String? _cardId;
-
-  Goal? _selectedGoal;
 
   /// Día del movimiento (la hora se resuelve al guardar, ver [_resolveDate]).
   DateTime _selectedDate = DateTime.now();
@@ -214,7 +211,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     _amountController.dispose();
     _amountFocusNode.dispose();
     _noteController.dispose();
-    _goalAmountController.dispose();
     super.dispose();
   }
 
@@ -226,12 +222,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     final amount = CurrencyHelper.parseAmount(_amountController.text);
 
-    if (amount == null || amount <= 0) {
+    // En centavos: "0,001" no es un monto válido (D-005).
+    if (amount == null || Money.toCents(amount) <= 0) {
       if (mounted) {
         final l10n = context.read<AppLocaleController>();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.text('amount_error'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.text('amount_error'))));
       }
       return;
     }
@@ -239,22 +236,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     setState(() => _isSaving = true);
 
     try {
+      final original = widget.movimientoToEdit;
       final newMovement = Transaction(
-        id: widget.movimientoToEdit?.id,
+        id: original?.id,
         // En cuotas con "valor de cuota", el movimiento lleva el total.
         amount: _isInstallmentPurchase ? _installmentsTotal(amount) : amount,
         category: _selectedCategory,
         type: _tipo,
         date: _resolveDate(),
         // Al editar se preserva el flag original: un movimiento de la Bóveda
-        // nunca debe filtrarse al historial normal (Regla de Oro #6).
-        isSecret: widget.movimientoToEdit?.isSecret ?? (widget.isVault ? 1 : 0),
-        isRecurring: _isRecurring,
+        // nunca debe filtrarse al historial normal (Especificación §7.7).
+        isSecret: original?.isSecret ?? (widget.isVault ? 1 : 0),
+        // Al editar tampoco se pierde la marca de "generado por un pago
+        // fijo" ni el vínculo con una meta (esta pantalla no los muestra).
+        isRecurring: original?.isRecurring ?? _isRecurring,
         note: _noteController.text.trim().isEmpty
             ? null
             : _noteController.text.trim(),
-        goalId: _selectedGoal?.id,
-        goalAmount: CurrencyHelper.parseAmount(_goalAmountController.text),
+        goalId: original?.goalId,
+        goalAmount: original?.goalAmount,
       );
 
       await TransactionFlowService.instance.saveTransaction(
@@ -262,14 +262,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         newMovement,
         isRecurring: _isRecurring,
         frequency: _frequency,
-        goal: _selectedGoal,
-        goalAmount: CurrencyHelper.parseAmount(_goalAmountController.text) ?? 0,
         isFromQuickEntry: widget.isFromQuickEntry,
         installments: _isInstallmentPurchase ? _installments : null,
-        installmentsFirstDate:
-            _isInstallmentPurchase ? _installmentsFirstDate() : null,
-        installmentsAnchorDay:
-            _isInstallmentPurchase ? _selectedCard?.dueDay : null,
+        installmentsFirstDate: _isInstallmentPurchase
+            ? _installmentsFirstDate()
+            : null,
+        installmentsAnchorDay: _isInstallmentPurchase
+            ? _selectedCard?.dueDay
+            : null,
       );
       // saveTransaction atrapa sus propios errores (muestra un SnackBar) y no
       // relanza: sin esto, tras un error el botón Guardar quedaba bloqueado.
@@ -369,8 +369,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   // ---- Cuotas: modo de monto, tarjeta y fecha de la primera cuota ----
 
-  bool get _isInstallmentPurchase =>
-      _tipo == 'gasto' && _installments != null;
+  bool get _isInstallmentPurchase => _tipo == 'gasto' && _installments != null;
 
   CreditCard? get _selectedCard {
     for (final c in _cards) {
@@ -380,8 +379,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   /// Total a pagar del plan (si se ingresó el valor de la cuota, cuota × n).
-  double _installmentsTotal(double entered) =>
-      _amountIsPerInstallment ? entered * (_installments ?? 1) : entered;
+  double _installmentsTotal(double entered) => _amountIsPerInstallment
+      ? Money.fromCents(Money.toCents(entered) * (_installments ?? 1))
+      : entered;
 
   double _installmentsPer(double entered) => _amountIsPerInstallment
       ? entered
@@ -454,9 +454,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             onPressed: () {
               final c = int.tryParse(closing.text);
               final d = int.tryParse(due.text);
-              final valid = name.text.trim().isNotEmpty &&
-                  c != null && c >= 1 && c <= 31 &&
-                  d != null && d >= 1 && d <= 31;
+              final valid =
+                  name.text.trim().isNotEmpty &&
+                  c != null &&
+                  c >= 1 &&
+                  c <= 31 &&
+                  d != null &&
+                  d >= 1 &&
+                  d <= 31;
               if (valid) Navigator.pop(ctx, true);
             },
             child: Text(l10n.text('save')),
@@ -480,7 +485,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     });
   }
 
-  Future<void> _confirmDeleteCard(AppLocaleController l10n, CreditCard card) async {
+  Future<void> _confirmDeleteCard(
+    AppLocaleController l10n,
+    CreditCard card,
+  ) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -561,14 +569,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final isCustom = n != null && !InstallmentPlan.presets.contains(n);
 
     String? preview;
-    if (n != null && entered > 0) {
+    if (n != null && Money.toCents(entered) > 0) {
       preview = l10n.text('installments_preview_full', {
         'n': n.toString(),
         'amount': CurrencyHelper.format(_installmentsPer(entered), context),
         'total': CurrencyHelper.format(_installmentsTotal(entered), context),
-        'first': DateFormat('d MMM', l10n.locale).format(
-          _installmentsFirstDate(),
-        ),
+        'first': DateFormat(
+          'd MMM',
+          l10n.locale,
+        ).format(_installmentsFirstDate()),
       });
     }
 
@@ -717,7 +726,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           value: _isRecurring,
           activeThumbColor: color,
           secondary: Icon(Icons.autorenew_rounded, color: color),
-          title: Text(l10n.text('recurring_repeat'), style: AppTextStyles.subLabel),
+          title: Text(
+            l10n.text('recurring_repeat'),
+            style: AppTextStyles.subLabel,
+          ),
           subtitle: _isRecurring
               ? Text(
                   l10n.text('recurring_repeat_hint'),
@@ -763,230 +775,252 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           : context.watch<AppLocaleController>().text('new_movement'),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            left: AppSpacing.lg,
-            right: AppSpacing.lg,
-            top: AppSpacing.lg,
-            bottom: AppSpacing.xxl,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (widget.type == null)
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppSpacing.xs),
-                    decoration: BoxDecoration(
-                      color: AppColors.glassSurface,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: AppColors.cardBorder, width: 1),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _ToggleOption(
-                          label: context.watch<AppLocaleController>().text('income'),
-                          isSelected: _tipo == 'ingreso',
-                          color: AppColors.incomeGreen,
-                          onTap: () => setState(() {
-                            _tipo = 'ingreso';
-                            _selectedCategory = _categoriasIngreso.first;
-                          }),
-                        ),
-                        const SizedBox(width: 4),
-                        _ToggleOption(
-                          label: context.watch<AppLocaleController>().text('expense'),
-                          isSelected: _tipo == 'gasto',
-                          color: AppColors.expenseRed,
-                          onTap: () => setState(() {
-                            _tipo = 'gasto';
-                            _selectedCategory = _categoriasGasto.first;
-                          }),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-              const SizedBox(height: AppSpacing.md),
-
-              GlassInput(
-                controller: _amountController,
-                focusNode: _amountFocusNode,
-                isCenter: true,
-                height: 85,
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [CurrencyInputFormatter()],
-                textInputAction: TextInputAction.done,
-                onSubmitted: _saveMovement,
-                label: '',
-                style: AppTextStyles.balanceAmount.copyWith(
-                  fontSize: 42,
-                  color: _tipo == 'gasto'
-                      ? AppColors.expenseRed
-                      : AppColors.incomeGreen,
-                ),
-                hintText: context.watch<AppLocaleController>().text('amount'),
-                hintStyle: AppTextStyles.balanceAmount.copyWith(
-                  fontSize: 32,
-                  color: AppColors.softText.withValues(alpha: 0.35),
-                ),
-                prefix: Baseline(
-                  baseline: 30,
-                  baselineType: TextBaseline.alphabetic,
-                  child: Text(
-                    CurrencyHelper.getSymbol(context),
-                    style: AppTextStyles.bodyMain.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color:
-                          (_tipo == 'gasto'
-                                  ? AppColors.expenseRed
-                                  : AppColors.incomeGreen)
-                              .withValues(alpha: 0.5),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              Text(context.watch<AppLocaleController>().text('category_section_label'), style: AppTextStyles.subLabel),
-
-              const SizedBox(height: AppSpacing.md),
-
-              SizedBox(
-                height: 85,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _tipo == 'gasto'
-                      ? _categoriasGasto.length
-                      : _categoriasIngreso.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: AppSpacing.md),
-                  itemBuilder: (context, index) {
-                    final category = _tipo == 'gasto'
-                        ? _categoriasGasto[index]
-                        : _categoriasIngreso[index];
-                    final isSelected = _selectedCategory == category;
-                    final icon =
-                        _categoryIcons[category] ?? Icons.category_rounded;
-                    final color = _tipo == 'gasto'
-                        ? AppColors.expenseRed
-                        : AppColors.incomeGreen;
-                    
-                    final localizedName = L10nHelper.getLocalizedCategory(context, category);
-
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedCategory = category),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 84,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? color : color.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isSelected
-                                ? Colors.white.withValues(alpha: 0.2)
-                                : color.withValues(alpha: 0.1),
-                            width: 1.5,
-                          ),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: color.withValues(alpha: 0.3),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ]
-                              : [],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              icon,
-                              color: isSelected
-                                  ? Colors.white
-                                  : color.withValues(alpha: 0.7),
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
-                              child: Text(
-                                localizedName.toUpperCase(),
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  fontSize: 10,
-                                  height: 1.1,
-                                  letterSpacing: 0.2,
-                                  fontWeight: FontWeight.w900,
-                                  color: isSelected
-                                      ? AppColors.textPrimary
-                                      : color.withValues(alpha: 0.85),
-                                ),
-                                // Dos líneas: "TARJETA DE CRÉDITO" ya no se corta.
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              Text(
-                context.watch<AppLocaleController>().text('date'),
-                style: AppTextStyles.subLabel,
-              ),
-
-              const SizedBox(height: AppSpacing.md),
-
-              _buildDateSelector(context.watch<AppLocaleController>()),
-
-              // Repetir / cuotas solo al crear: una recurrencia existente se
-              // gestiona desde la pantalla "Pagos fijos".
-              if (!isEditing) ...[
-                const SizedBox(height: AppSpacing.lg),
-                if (_installments == null || _tipo != 'gasto')
-                  _buildRecurringSelector(context.watch<AppLocaleController>()),
-                if (_tipo == 'gasto' && !_isRecurring)
-                  _buildInstallmentsSelector(
-                    context.watch<AppLocaleController>(),
-                  ),
-              ],
-
-              const SizedBox(height: AppSpacing.xl),
-
-              GlassInput(
-                controller: _noteController,
-                label: context.watch<AppLocaleController>().text('note').toUpperCase(),
-                icon: Icons.note_rounded,
-                hintText: context.watch<AppLocaleController>().text('note_hint'),
-              ),
-
-              const SizedBox(height: AppSpacing.xxl),
-
-              SizedBox(
-                width: double.infinity,
-                child: GradientButton(
-                  text: context.watch<AppLocaleController>().text('save').toUpperCase(),
-                  onPressed: _saveMovement,
-                  borderRadius: AppRadius.lg,
-                  gradientColors: AppGradients.primaryGradient.colors,
-                ),
-              ),
-            ],
-          ),
+        padding: const EdgeInsets.only(
+          left: AppSpacing.lg,
+          right: AppSpacing.lg,
+          top: AppSpacing.lg,
+          bottom: AppSpacing.xxl,
         ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (widget.type == null)
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: AppColors.glassSurface,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(color: AppColors.cardBorder, width: 1),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _ToggleOption(
+                        label: context.watch<AppLocaleController>().text(
+                          'income',
+                        ),
+                        isSelected: _tipo == 'ingreso',
+                        color: AppColors.incomeGreen,
+                        onTap: () => setState(() {
+                          _tipo = 'ingreso';
+                          _selectedCategory = _categoriasIngreso.first;
+                        }),
+                      ),
+                      const SizedBox(width: 4),
+                      _ToggleOption(
+                        label: context.watch<AppLocaleController>().text(
+                          'expense',
+                        ),
+                        isSelected: _tipo == 'gasto',
+                        color: AppColors.expenseRed,
+                        onTap: () => setState(() {
+                          _tipo = 'gasto';
+                          _selectedCategory = _categoriasGasto.first;
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            GlassInput(
+              controller: _amountController,
+              focusNode: _amountFocusNode,
+              isCenter: true,
+              height: 85,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [CurrencyInputFormatter()],
+              textInputAction: TextInputAction.done,
+              onSubmitted: _saveMovement,
+              label: '',
+              style: AppTextStyles.balanceAmount.copyWith(
+                fontSize: 42,
+                color: _tipo == 'gasto'
+                    ? AppColors.expenseRed
+                    : AppColors.incomeGreen,
+              ),
+              hintText: context.watch<AppLocaleController>().text('amount'),
+              hintStyle: AppTextStyles.balanceAmount.copyWith(
+                fontSize: 32,
+                color: AppColors.softText.withValues(alpha: 0.35),
+              ),
+              prefix: Baseline(
+                baseline: 30,
+                baselineType: TextBaseline.alphabetic,
+                child: Text(
+                  CurrencyHelper.getSymbol(context),
+                  style: AppTextStyles.bodyMain.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        (_tipo == 'gasto'
+                                ? AppColors.expenseRed
+                                : AppColors.incomeGreen)
+                            .withValues(alpha: 0.5),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.lg),
+
+            Text(
+              context.watch<AppLocaleController>().text(
+                'category_section_label',
+              ),
+              style: AppTextStyles.subLabel,
+            ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            SizedBox(
+              height: 85,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _tipo == 'gasto'
+                    ? _categoriasGasto.length
+                    : _categoriasIngreso.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(width: AppSpacing.md),
+                itemBuilder: (context, index) {
+                  final category = _tipo == 'gasto'
+                      ? _categoriasGasto[index]
+                      : _categoriasIngreso[index];
+                  final isSelected = _selectedCategory == category;
+                  final icon =
+                      _categoryIcons[category] ?? Icons.category_rounded;
+                  final color = _tipo == 'gasto'
+                      ? AppColors.expenseRed
+                      : AppColors.incomeGreen;
+
+                  final localizedName = L10nHelper.getLocalizedCategory(
+                    context,
+                    category,
+                  );
+
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedCategory = category),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 84,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? color
+                            : color.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : color.withValues(alpha: 0.1),
+                          width: 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            icon,
+                            color: isSelected
+                                ? Colors.white
+                                : color.withValues(alpha: 0.7),
+                            size: 24,
+                          ),
+                          const SizedBox(height: 4),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(
+                              localizedName.toUpperCase(),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                fontSize: 10,
+                                height: 1.1,
+                                letterSpacing: 0.2,
+                                fontWeight: FontWeight.w900,
+                                color: isSelected
+                                    ? AppColors.textPrimary
+                                    : color.withValues(alpha: 0.85),
+                              ),
+                              // Dos líneas: "TARJETA DE CRÉDITO" ya no se corta.
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.lg),
+
+            Text(
+              context.watch<AppLocaleController>().text('date'),
+              style: AppTextStyles.subLabel,
+            ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            _buildDateSelector(context.watch<AppLocaleController>()),
+
+            // Repetir / cuotas solo al crear: una recurrencia existente se
+            // gestiona desde la pantalla "Pagos fijos".
+            if (!isEditing) ...[
+              const SizedBox(height: AppSpacing.lg),
+              if (_installments == null || _tipo != 'gasto')
+                _buildRecurringSelector(context.watch<AppLocaleController>()),
+              if (_tipo == 'gasto' && !_isRecurring)
+                _buildInstallmentsSelector(
+                  context.watch<AppLocaleController>(),
+                ),
+            ],
+
+            const SizedBox(height: AppSpacing.xl),
+
+            GlassInput(
+              controller: _noteController,
+              label: context
+                  .watch<AppLocaleController>()
+                  .text('note')
+                  .toUpperCase(),
+              icon: Icons.note_rounded,
+              hintText: context.watch<AppLocaleController>().text('note_hint'),
+            ),
+
+            const SizedBox(height: AppSpacing.xxl),
+
+            SizedBox(
+              width: double.infinity,
+              child: GradientButton(
+                text: context
+                    .watch<AppLocaleController>()
+                    .text('save')
+                    .toUpperCase(),
+                onPressed: _saveMovement,
+                borderRadius: AppRadius.lg,
+                gradientColors: AppGradients.primaryGradient.colors,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

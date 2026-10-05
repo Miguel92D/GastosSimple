@@ -1,3 +1,4 @@
+import '../../../core/utils/money.dart';
 import 'transaction.dart';
 
 /// Fila de `recurring_transactions` (pago fijo / suscripción / ingreso fijo
@@ -43,8 +44,8 @@ class RecurringPayment {
       isSecret: ((map['is_secret'] as int?) ?? 0) == 1,
       installmentsTotal: map['installments_total'] as int?,
       installmentsPaid: (map['installments_paid'] as int?) ?? 0,
-      installmentsTotalAmount:
-          (map['installments_total_amount'] as num?)?.toDouble(),
+      installmentsTotalAmount: (map['installments_total_amount'] as num?)
+          ?.toDouble(),
     );
   }
 
@@ -60,16 +61,16 @@ class RecurringPayment {
 
   /// Lo que falta pagar del plan de cuotas.
   double get remainingAmount => installmentsTotalAmount != null
-      ? installmentsTotalAmount! - amount * installmentsPaid
-      : amount * installmentsLeft;
+      ? Money.round(installmentsTotalAmount! - amount * installmentsPaid)
+      : Money.round(amount * installmentsLeft);
 
   /// Cuánto representa por mes, para comparar diarios/semanales/mensuales.
   double get monthlyEquivalent {
     switch (frequency) {
       case 'daily':
-        return amount * 30.44;
+        return Money.round(amount * 30.44);
       case 'weekly':
-        return amount * 4.345;
+        return Money.round(amount * 4.345);
       default:
         return amount;
     }

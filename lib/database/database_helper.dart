@@ -16,6 +16,18 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
+  /// Solo para tests: ruta de la base (ej. `inMemoryDatabasePath`) en vez
+  /// del archivo real del teléfono.
+  @visibleForTesting
+  static String? pathOverride;
+
+  /// Solo para tests: cierra la base para empezar la próxima limpia.
+  @visibleForTesting
+  static Future<void> resetForTesting() async {
+    await _database?.close();
+    _database = null;
+  }
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('simple_wallet.db'); // Consistent name
@@ -23,8 +35,7 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
+    final path = pathOverride ?? join(await getDatabasesPath(), filePath);
 
     return await openDatabase(
       path,
@@ -215,8 +226,14 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     if (oldVersion < 12) {
       // Cada ALTER va por separado: si uno falla (columna ya existente)
       // el otro igual se aplica.
-      await _tryExecute(db, 'ALTER TABLE debts ADD COLUMN cuotas_totales INTEGER');
-      await _tryExecute(db, 'ALTER TABLE debts ADD COLUMN cuotas_pagadas INTEGER');
+      await _tryExecute(
+        db,
+        'ALTER TABLE debts ADD COLUMN cuotas_totales INTEGER',
+      );
+      await _tryExecute(
+        db,
+        'ALTER TABLE debts ADD COLUMN cuotas_pagadas INTEGER',
+      );
     }
     if (oldVersion < 13) {
       // Las recurrencias creadas en la Bóveda deben seguir siendo secretas.
@@ -273,7 +290,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       return await db.insert('transactions', mov.toMap());
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (insertTransaction): $e');
       throw DatabaseException('Operación fallida en insertTransaction', e);
     }
@@ -291,7 +308,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         mov.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (restoreTransaction): $e');
       throw DatabaseException('Operación fallida en restoreTransaction', e);
     }
@@ -308,7 +325,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       if (result.isNotEmpty) {
         return model.Transaction.fromMap(result.first);
       }
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTransactionById): $e');
       throw DatabaseException('Operación fallida en getTransactionById', e);
     }
@@ -340,9 +357,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'is_secret': mov.isSecret,
         'anchor_day': anchorDay,
       });
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (insertRecurringTransaction): $e');
-      throw DatabaseException('Operación fallida en insertRecurringTransaction', e);
+      throw DatabaseException(
+        'Operación fallida en insertRecurringTransaction',
+        e,
+      );
     }
   }
 
@@ -396,7 +416,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getAllTransactions): $e');
       throw DatabaseException('Operación fallida en getAllTransactions', e);
     }
@@ -416,7 +436,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'icon': map['icon'],
         'created_at': map['createdAt'],
       });
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (insertGoal): $e');
       throw DatabaseException('Operación fallida en insertGoal', e);
     }
@@ -436,7 +456,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'icon': map['icon'],
         'created_at': map['createdAt'],
       }, conflictAlgorithm: ConflictAlgorithm.replace);
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (restoreGoal): $e');
       throw DatabaseException('Operación fallida en restoreGoal', e);
     }
@@ -461,7 +481,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
               : DateTime.now(),
         );
       }).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getGoals): $e');
       throw DatabaseException('Operación fallida en getGoals', e);
     }
@@ -484,7 +504,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [goal.id],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (updateGoal): $e');
       throw DatabaseException('Operación fallida en updateGoal', e);
     }
@@ -494,7 +514,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       return await db.delete('goals', where: 'id = ?', whereArgs: [id]);
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (deleteGoal): $e');
       throw DatabaseException('Operación fallida en deleteGoal', e);
     }
@@ -507,7 +527,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'UPDATE goals SET saved_amount = ROUND(saved_amount + ?, 2) WHERE id = ?',
         [Money.round(amount), goalId],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (addToGoal): $e');
       throw DatabaseException('Operación fallida en addToGoal', e);
     }
@@ -547,7 +567,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTransactionsForDay): $e');
       throw DatabaseException('Operación fallida en getTransactionsForDay', e);
     }
@@ -571,9 +591,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTransactionsThisWeek): $e');
-      throw DatabaseException('Operación fallida en getTransactionsThisWeek', e);
+      throw DatabaseException(
+        'Operación fallida en getTransactionsThisWeek',
+        e,
+      );
     }
   }
 
@@ -581,7 +604,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (deleteTransaction): $e');
       throw DatabaseException('Operación fallida en deleteTransaction', e);
     }
@@ -596,7 +619,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [mov.id],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (updateTransaction): $e');
       throw DatabaseException('Operación fallida en updateTransaction', e);
     }
@@ -611,7 +634,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getSecretTransactions): $e');
       throw DatabaseException('Operación fallida en getSecretTransactions', e);
     }
@@ -626,7 +649,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [id],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (moveToVault): $e');
       throw DatabaseException('Operación fallida en moveToVault', e);
     }
@@ -641,7 +664,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [id],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (moveToNormal): $e');
       throw DatabaseException('Operación fallida en moveToNormal', e);
     }
@@ -661,7 +684,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTransactionsByType): $e');
       throw DatabaseException('Operación fallida en getTransactionsByType', e);
     }
@@ -687,7 +710,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTransactionsInMonth): $e');
       throw DatabaseException('Operación fallida en getTransactionsInMonth', e);
     }
@@ -727,8 +750,8 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
                       k: paid + i + 1,
                       count: total,
                       perInstallment: (row['amount'] as num).toDouble(),
-                      totalAmount:
-                          (row['installments_total_amount'] as num?)?.toDouble(),
+                      totalAmount: (row['installments_total_amount'] as num?)
+                          ?.toDouble(),
                     ),
               'category': row['category'],
               'type': row['type'],
@@ -769,9 +792,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
           );
         }
       });
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (processRecurringTransactions): $e');
-      throw DatabaseException('Operación fallida en processRecurringTransactions', e);
+      throw DatabaseException(
+        'Operación fallida en processRecurringTransactions',
+        e,
+      );
     }
   }
 
@@ -800,7 +826,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
               );
               existing = found.isEmpty ? null : found.first;
             }
-            switch (BackupMerge.decide(existing, incoming, keys, table: table)) {
+            switch (BackupMerge.decide(
+              existing,
+              incoming,
+              keys,
+              table: table,
+            )) {
               case MergeAction.skip:
                 continue;
               case MergeAction.insertWithId:
@@ -840,18 +871,40 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       );
     } catch (e, _) {
       debugPrint('DB Error (getRecurringTransactions): $e');
-      throw DatabaseException('Operación fallida en getRecurringTransactions', e);
+      throw DatabaseException(
+        'Operación fallida en getRecurringTransactions',
+        e,
+      );
     }
   }
 
   /// Actualiza el monto de una recurrencia (aumentos de precio). Solo afecta
   /// a las próximas ocurrencias.
+  ///
+  /// En un plan de cuotas el total se recalcula como cuota × total de cuotas:
+  /// si quedara el total viejo, la última cuota (que absorbe el redondeo)
+  /// saldría con cualquier monto, incluso negativo.
   Future<int> updateRecurringAmount(int id, double amount) async {
     try {
       final db = await DatabaseHelper.instance.database;
+      final rows = await db.query(
+        'recurring_transactions',
+        columns: ['installments_total'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      final total = rows.isEmpty
+          ? null
+          : rows.first['installments_total'] as int?;
       return await db.update(
         'recurring_transactions',
-        {'amount': Money.round(amount)},
+        {
+          'amount': Money.round(amount),
+          if (total != null)
+            'installments_total_amount': Money.fromCents(
+              Money.toCents(amount) * total,
+            ),
+        },
         where: 'id = ?',
         whereArgs: [id],
       );
@@ -872,7 +925,10 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       );
     } catch (e, _) {
       debugPrint('DB Error (deleteRecurringTransaction): $e');
-      throw DatabaseException('Operación fallida en deleteRecurringTransaction', e);
+      throw DatabaseException(
+        'Operación fallida en deleteRecurringTransaction',
+        e,
+      );
     }
   }
 
@@ -888,7 +944,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (searchTransactions): $e');
       throw DatabaseException('Operación fallida en searchTransactions', e);
     }
@@ -913,9 +969,12 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         orderBy: 'date DESC',
       );
       return result.map((json) => model.Transaction.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (searchTransactionsByType): $e');
-      throw DatabaseException('Operación fallida en searchTransactionsByType', e);
+      throw DatabaseException(
+        'Operación fallida en searchTransactionsByType',
+        e,
+      );
     }
   }
 
@@ -949,7 +1008,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         [normalizedType, legacyType],
       );
       return result.map((row) => row['category'] as String).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getCategoriasOrdenadas): $e');
       throw DatabaseException('Operación fallida en getCategoriasOrdenadas', e);
     }
@@ -960,7 +1019,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       return await db.insert('debts', debt.toMap());
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (insertDebt): $e');
       throw DatabaseException('Operación fallida en insertDebt', e);
     }
@@ -975,7 +1034,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         debt.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (restoreDebt): $e');
       throw DatabaseException('Operación fallida en restoreDebt', e);
     }
@@ -986,7 +1045,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
       final db = await DatabaseHelper.instance.database;
       final result = await db.query('debts');
       return result.map((json) => Debt.fromMap(json)).toList();
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getDebts): $e');
       throw DatabaseException('Operación fallida en getDebts', e);
     }
@@ -1001,7 +1060,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         where: 'id = ?',
         whereArgs: [debt.id],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (updateDebt): $e');
       throw DatabaseException('Operación fallida en updateDebt', e);
     }
@@ -1011,7 +1070,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     try {
       final db = await DatabaseHelper.instance.database;
       return await db.delete('debts', where: 'id = ?', whereArgs: [id]);
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (deleteDebt): $e');
       throw DatabaseException('Operación fallida en deleteDebt', e);
     }
@@ -1024,7 +1083,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         'UPDATE debts SET monto_pagado = ROUND(monto_pagado + ?, 2) WHERE id = ?',
         [Money.round(amount), debtId],
       );
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (payDebt): $e');
       throw DatabaseException('Operación fallida en payDebt', e);
     }
@@ -1043,7 +1102,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         [isVault ? 1 : 0],
       );
       return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTotalIncome): $e');
       throw DatabaseException('Operación fallida en getTotalIncome', e);
     }
@@ -1062,7 +1121,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         [isVault ? 1 : 0],
       );
       return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getTotalExpenses): $e');
       throw DatabaseException('Operación fallida en getTotalExpenses', e);
     }
@@ -1091,7 +1150,7 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
         data[category] = total;
       }
       return data;
-    } catch (e, _)  {
+    } catch (e, _) {
       debugPrint('DB Error (getExpensesByCategory): $e');
       throw DatabaseException('Operación fallida en getExpensesByCategory', e);
     }

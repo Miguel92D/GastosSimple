@@ -62,8 +62,6 @@ class TransactionFlowService {
     Transaction transaction, {
     bool isRecurring = false,
     String frequency = 'monthly',
-    Object? goal,
-    double goalAmount = 0,
     bool isFromQuickEntry = false,
     int? installments,
     DateTime? installmentsFirstDate,

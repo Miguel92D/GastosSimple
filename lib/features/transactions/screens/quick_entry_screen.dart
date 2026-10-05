@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/controllers/action_controller.dart';
 import '../../../core/controllers/app_action.dart';
+import '../../../core/notifiers/transaction_notifier.dart';
+import '../../../core/utils/money.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
@@ -38,6 +40,10 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
       duration: const Duration(milliseconds: 1500),
     )..forward();
     _checkPendingAction();
+    // La "boca" se actualiza sola cuando se guarda un movimiento (antes se
+    // recargaba con una espera fija de 500 ms que podía llegar antes de
+    // guardar).
+    TransactionNotifier.instance.addListener(_loadBalance);
     _loadBalance();
   }
 
@@ -52,6 +58,7 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
 
   @override
   void dispose() {
+    TransactionNotifier.instance.removeListener(_loadBalance);
     _mouthController.dispose();
     super.dispose();
   }
@@ -83,81 +90,72 @@ class _QuickEntryScreenState extends State<QuickEntryScreen>
     return AppScaffold(
       title: "",
       body: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xl + 8,
+                ),
+                child: Text(
+                  l10n.text('quick_entry_question'),
+                  style: AppTextStyles.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xxl + 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xl + 8,
-                    ),
-                    child: Text(
-                      l10n.text('quick_entry_question'),
-                      style: AppTextStyles.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxl + 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildActionCard(
-                        context: context,
-                        icon: Icons.add_rounded,
-                        color: AppColors.incomeGreen,
-                        onTap: () {
-                          ActionController.execute(
-                            context,
-                            AppAction.addIncome,
-                            arguments: {"isFromQuickEntry": true},
-                          );
-                          // Give it a small delay since action might be navigating
-                          Future.delayed(
-                            const Duration(milliseconds: 500),
-                            _loadBalance,
-                          );
-                        },
-                      ),
-                      const SizedBox(width: AppSpacing.xl + 8),
-                      _buildActionCard(
-                        context: context,
-                        icon: Icons.remove_rounded,
-                        color: AppColors.expenseRed,
-                        onTap: () {
-                          ActionController.execute(
-                            context,
-                            AppAction.addExpense,
-                            arguments: {"isFromQuickEntry": true},
-                          );
-                          Future.delayed(
-                            const Duration(milliseconds: 500),
-                            _loadBalance,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 48),
-                  // THE MOUTH
-                  AnimatedBuilder(
-                    animation: _mouthController,
-                    builder: (context, child) {
-                      return CustomPaint(
-                        size: const Size(120, 40),
-                        painter: _MouthPainter(
-                          balance: _balance,
-                          animationValue: _mouthController.value,
-                        ),
+                  _buildActionCard(
+                    context: context,
+                    icon: Icons.add_rounded,
+                    color: AppColors.incomeGreen,
+                    onTap: () {
+                      ActionController.execute(
+                        context,
+                        AppAction.addIncome,
+                        arguments: {"isFromQuickEntry": true},
                       );
                     },
                   ),
-                  const SizedBox(height: 64),
-                  _buildDashboardButton(context),
+                  const SizedBox(width: AppSpacing.xl + 8),
+                  _buildActionCard(
+                    context: context,
+                    icon: Icons.remove_rounded,
+                    color: AppColors.expenseRed,
+                    onTap: () {
+                      ActionController.execute(
+                        context,
+                        AppAction.addExpense,
+                        arguments: {"isFromQuickEntry": true},
+                      );
+                    },
+                  ),
                 ],
               ),
-            ),
+              const SizedBox(height: 48),
+              // THE MOUTH
+              AnimatedBuilder(
+                animation: _mouthController,
+                builder: (context, child) {
+                  return CustomPaint(
+                    size: const Size(120, 40),
+                    painter: _MouthPainter(
+                      balance: _balance,
+                      animationValue: _mouthController.value,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 64),
+              _buildDashboardButton(context),
+            ],
           ),
+        ),
+      ),
     );
   }
 
@@ -216,12 +214,14 @@ class _MouthPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Color color;
     final double curveDirection;
-    final bool isNeutral = balance == 0;
+    // Comparaciones en centavos (D-005): 0,001 cuenta como cero.
+    final cents = Money.toCents(balance);
+    final bool isNeutral = cents == 0;
 
-    if (balance > 0) {
+    if (cents > 0) {
       color = AppColors.incomeGreen;
       curveDirection = 1.0; // Happy smile
-    } else if (balance < 0) {
+    } else if (cents < 0) {
       color = AppColors.expenseRed;
       curveDirection = -1.0; // Sad frown
     } else {
@@ -237,7 +237,9 @@ class _MouthPainter extends CustomPainter {
 
     // Neon Glow - Enhanced for neutral state to be more visible
     final glowPaint = Paint()
-      ..color = color.withValues(alpha: (isNeutral ? 0.4 : 0.25) * animationValue)
+      ..color = color.withValues(
+        alpha: (isNeutral ? 0.4 : 0.25) * animationValue,
+      )
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = isNeutral ? 14 : 12
@@ -263,6 +265,6 @@ class _MouthPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MouthPainter oldDelegate) =>
-      oldDelegate.balance != balance ||
+      Money.toCents(oldDelegate.balance) != Money.toCents(balance) ||
       oldDelegate.animationValue != animationValue;
 }

@@ -149,7 +149,9 @@ class _RecurringScreenState extends State<RecurringScreen> {
           TextButton(
             onPressed: () {
               final value = CurrencyHelper.parseAmount(controller.text);
-              if (value != null && value > 0) Navigator.pop(ctx, value);
+              if (value != null && Money.toCents(value) > 0) {
+                Navigator.pop(ctx, value);
+              }
             },
             child: Text(l10n.text('save')),
           ),
@@ -252,13 +254,13 @@ class _RecurringScreenState extends State<RecurringScreen> {
       : CurrencyHelper.format(v, context);
 
   Widget _buildSummary(AppLocaleController l10n) {
-    final installmentsLeft = _items
-        .where((i) => i.isInstallment)
-        .fold(0.0, (s, i) => Money.round(s + i.remainingAmount));
+    final installmentsLeft = Money.sum(
+      _items.where((i) => i.isInstallment).map((i) => i.remainingAmount),
+    );
     return Column(
       children: [
         _buildMonthlySummary(l10n),
-        if (installmentsLeft > 0) ...[
+        if (Money.toCents(installmentsLeft) > 0) ...[
           const SizedBox(height: AppSpacing.sm),
           GlassCard(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -287,12 +289,12 @@ class _RecurringScreenState extends State<RecurringScreen> {
   }
 
   Widget _buildMonthlySummary(AppLocaleController l10n) {
-    final expense = _items
-        .where((i) => i.isExpense)
-        .fold(0.0, (s, i) => Money.round(s + i.monthlyEquivalent));
-    final income = _items
-        .where((i) => !i.isExpense)
-        .fold(0.0, (s, i) => Money.round(s + i.monthlyEquivalent));
+    final expense = Money.sum(
+      _items.where((i) => i.isExpense).map((i) => i.monthlyEquivalent),
+    );
+    final income = Money.sum(
+      _items.where((i) => !i.isExpense).map((i) => i.monthlyEquivalent),
+    );
 
     return GlassCard(
       padding: const EdgeInsets.all(AppSpacing.lg),

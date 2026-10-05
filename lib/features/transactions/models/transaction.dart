@@ -96,7 +96,8 @@ class Transaction {
       note: map['note'] ?? map['nota'],
       isRecurring: (map['is_recurring'] ?? 0) == 1,
       goalId: map['goal_id'],
-      goalAmount: (map['goal_amount'] ?? 0.0).toDouble(),
+      // null se mantiene null: al editar no se inventa un 0 en la meta.
+      goalAmount: (map['goal_amount'] as num?)?.toDouble(),
     );
   }
 }
