@@ -25,4 +25,4 @@
 | 05 | Datos y privacidad: respaldo, actualización desde la 1.1.8 (P-01), PIN/huella, consentimiento, política y landing | actualizar desde la 1.1.8 no pierde datos; respaldo ida y vuelta OK |
 | 06 | Publicación: versión ≥ 1.1.9 (15) (D-006), unir a `main` (P-07), tag (D-012), AAB firmado, ficha de Play | AAB subido a prueba interna |
 
-> La tabla de chats 01–06 es una propuesta del chat 00; se puede reordenar con una decisión nueva.
+> Tabla aprobada el 2026-10-04. Solo se reordena con una decisión nueva (D-xxx).

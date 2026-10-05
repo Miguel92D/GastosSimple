@@ -22,7 +22,7 @@
 
 ### P-02 — Alcance de pantallas del MVP
 **Lo que sabemos:** propuesta en la sección 4 de la Especificación.
-**Respuesta:** _pendiente de aprobación en el chat 00_.
+**Respuesta (2026-10-04):** ✅ Aprobada tal cual la tabla de la sección 4 de la Especificación. La aplica el chat 01.
 
 ### P-03 — Crash de compras en la 1.1.8
 `ProxyBillingActivity.onCreate` → `NullPointerException` en `PendingIntent.getIntentSender()` (billing 8.0.0). Pasa cuando se abre la compra Pro y Google Play no devuelve la pantalla de pago.
@@ -31,16 +31,15 @@
 ### P-04 — Los documentos en `docs/` pueden quedar públicos
 `docs/` es la carpeta que publica GitHub Pages. Cuando esta rama llegue a `main`, los `.md` se verían en la web.
 **Opciones:** (a) agregar `docs/_config.yml` que los excluya, (b) moverlos a otra carpeta, (c) dejarlos públicos.
-**Respuesta:** _pendiente_ — decidir antes del chat 06.
+**Respuesta (2026-10-04):** ✅ (a) No se publican. Se agregó `docs/_config.yml` que los excluye; la landing sigue igual.
 
 ### P-05 — ¿Qué es gratis y qué es Pro en el MVP?
 Hoy piden Pro: Estadísticas, Metas, Proyección, Presupuestos, Análisis mensual y Bóveda. Si se ocultan pantallas (P-02), Pro queda con menos cosas para vender.
-**Respuesta:** _pendiente_.
+**Respuesta (2026-10-04):** ✅ Con el alcance aprobado, Pro = Estadísticas, Metas de ahorro, Bóveda Segura y los Tips de salida de Deudas. Lo demás es gratis.
 
 ### P-06 — Archivos sueltos en la raíz del proyecto
-Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el `.txt` del crash. No están en git.
-**Opciones:** borrarlos, moverlos a una carpeta ignorada, o dejarlos.
-**Respuesta:** _pendiente_.
+Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el `.txt` del crash.
+**Respuesta (2026-10-04):** ✅ Movidos a `_archivo/` (ignorada por git). No se borró nada.
 
 ### P-07 — `main` está muy atrás
 `main` quedó en marzo 2026. Todo el trabajo está en `feature/mejoras-sesion`.

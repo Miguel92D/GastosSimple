@@ -23,12 +23,12 @@ Personas que quieren controlar su plata sin planillas ni apps complicadas. Abrir
 ## 3. Gratis y Pro
 
 - **Gratis**: carga rápida, inicio con "Podés gastar hoy", movimientos, pagos fijos y cuotas, deudas, respaldo, PIN.
-- **Pro** (pago único de por vida, `simple_pro_lifetime`): estadísticas, Bóveda Segura y lo que se apruebe en la sección 4.
+- **Pro** (pago único de por vida, `simple_pro_lifetime`): Estadísticas, Metas de ahorro, Bóveda Segura y Tips de salida en Deudas (P-05).
 - El estado Pro vive en `AppState.isPro` (se guarda en `SharedPreferences` con la clave `is_pro`) y lo activa `PurchaseService` después de comprar o restaurar en Google Play. **Nunca** se fuerza a `true` en el código. Para probar: `SharedPreferences.setMockInitialValues({'is_pro': true})` o `AppState.instance.setPro(true)`.
 
 ## 4. Pantallas del MVP
 
-> ⚠️ **PROPUESTA — pendiente de aprobación (P-02).** Cuando se apruebe, esta tabla pasa a ser la oficial.
+> ✅ **Aprobado el 2026-10-04 (P-02).** Esta es la lista oficial del MVP.
 
 | Pantalla | Archivo | Estado propuesto |
 |---|---|---|
@@ -61,7 +61,7 @@ Personas que quieren controlar su plata sin planillas ni apps complicadas. Abrir
 Minimalista. No se agregan entradas sin aprobación.
 
 - **General**: Inicio, Movimientos, Deudas, Pagos fijos, Configuración.
-- **Pro** (solo si `isPro`): Estadísticas, Metas de ahorro, Bóveda Segura *(sujeto a P-02)*.
+- **Pro** (solo si `isPro`): Estadísticas, Metas de ahorro, Bóveda Segura.
 - No se presenta nada como "IA" si no usa un modelo de verdad. La proyección es estadística (`MonthlyProjectionService`).
 
 ## 6. Identidad visual

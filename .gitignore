@@ -64,3 +64,6 @@ android/*.pfx
 
 # iOS
 ios/Pods/
+
+# Archivos sueltos (capturas, salidas, crashes) - P-06
+_archivo/

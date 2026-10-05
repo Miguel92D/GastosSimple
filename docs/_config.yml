@@ -1,0 +1,5 @@
+# GitHub Pages: los documentos guia no se publican (P-04)
+exclude:
+  - ESPECIFICACION-PRODUCTO.md
+  - DECISIONES-TECNICAS.md
+  - PENDIENTES-A-DEFINIR.md
