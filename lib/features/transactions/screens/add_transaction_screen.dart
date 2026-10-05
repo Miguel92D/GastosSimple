@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import '../../../core/flow/transaction_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/category_icons.dart';
+import '../../../core/ui/widgets/app_pill.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
@@ -542,7 +543,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Widget _sectionLabel(String text) => Padding(
     padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
-    child: Text(text, style: AppTextStyles.subLabel),
+    child: Text(text.toUpperCase(), style: AppTextStyles.subLabel),
   );
 
   Widget _buildInstallmentsSelector(AppLocaleController l10n) {
@@ -573,7 +574,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           activeThumbColor: color,
           secondary: const Icon(Icons.credit_card_rounded, color: color),
           title: Text(
-            l10n.text('installments_toggle'),
+            l10n.text('installments_toggle').toUpperCase(),
             style: AppTextStyles.subLabel,
           ),
           subtitle: preview != null
@@ -710,7 +711,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           activeThumbColor: color,
           secondary: Icon(Icons.autorenew_rounded, color: color),
           title: Text(
-            l10n.text('recurring_repeat'),
+            l10n.text('recurring_repeat').toUpperCase(),
             style: AppTextStyles.subLabel,
           ),
           subtitle: _isRecurring
@@ -854,9 +855,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: AppSpacing.lg),
 
             Text(
-              context.watch<AppLocaleController>().text(
-                'category_section_label',
-              ),
+              context
+                  .watch<AppLocaleController>()
+                  .text('category_section_label')
+                  .toUpperCase(),
               style: AppTextStyles.subLabel,
             ),
 
@@ -954,7 +956,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: AppSpacing.lg),
 
             Text(
-              context.watch<AppLocaleController>().text('date'),
+              context.watch<AppLocaleController>().text('date').toUpperCase(),
               style: AppTextStyles.subLabel,
             ),
 
@@ -1024,50 +1026,13 @@ class _CardChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = AppColors.expenseRed;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return AppPill(
+      label: label,
+      icon: icon,
+      selected: isSelected,
+      activeColor: AppColors.expenseRed,
       onTap: onTap,
       onLongPress: onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.textPrimary.withValues(alpha: 0.2)
-                : color.withValues(alpha: 0.1),
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 16,
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : color.withValues(alpha: 0.7),
-              ),
-              const SizedBox(width: 6),
-            ],
-            Text(
-              label,
-              style: AppTextStyles.bodySmall.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : color.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -1089,52 +1054,13 @@ class _DateChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return AppPill(
+      label: label.toUpperCase(),
+      icon: icon,
+      selected: isSelected,
+      activeColor: color,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.textPrimary.withValues(alpha: 0.2)
-                : color.withValues(alpha: 0.1),
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 16,
-                color: isSelected
-                    ? AppColors.textPrimary
-                    : color.withValues(alpha: 0.7),
-              ),
-              const SizedBox(width: 6),
-            ],
-            Flexible(
-              child: Text(
-                label.toUpperCase(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: isSelected
-                      ? AppColors.textPrimary
-                      : color.withValues(alpha: 0.7),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      expand: true,
     );
   }
 }

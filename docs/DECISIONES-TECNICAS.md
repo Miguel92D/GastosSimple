@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 07, D-028).
+Última revisión: 2026-10-05 (chat 07, D-028 y D-029).
 
 ---
 
@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-028): 199.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-029): 202.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -146,3 +146,16 @@ Tarea fuera de la tabla de chats, pedida por Miguel el 2026-10-05 a partir de lo
 - `CategoryIcons.of` reconoce el nombre guardado en cualquier forma: español en singular o plural, con o sin tilde, mayúsculas, inglés o clave `cat_*` (`Regalo` = `Regalos` = `cat_gift`). Una categoría desconocida usa `Icons.category_rounded` (antes la lista usaba `receipt_long`, el mismo de Servicios, y se confundían).
 - No toca la base ni los nombres guardados.
 - Test: `test/category_icons_test.dart` (todas las categorías de "Agregar" tienen ícono propio, mismas variantes = mismo ícono, y falla si una pantalla vuelve a armar su propio mapa).
+
+### D-029 — Reglas de diseño nuevas y auditoría (chat 07)
+Miguel pidió auditar todo el diseño (`docs/AUDITORIA-DISENO.md`, puntos A-01…A-14) y eligió el 2026-10-05:
+- **Letra:** los tamaños que más se usaban pasan a ser estilos con nombre en `AppTextStyles`: `labelSmall` (11, etiqueta chica en MAYÚSCULAS), `amountList` (15, monto dentro de una lista) y `titleSmall` (18, título de tarjeta chica o panel). No se fuerza todo a los tamaños viejos.
+- **Mayúsculas:** los botones principales van siempre en MAYÚSCULAS (`GradientButton` lo hace solo). Las etiquetas de sección (`subLabel`, `labelSmall`) también.
+- **Botón principal:** `GradientButton`, radio `lg` (24) por defecto. `AppButton` queda como atajo que usa `GradientButton` por dentro: violeta = gradiente de marca, dorado = dorado liso con texto `darkBackground`.
+- **Pills:** existe `AppPill` (`lib/core/ui/widgets/app_pill.dart`) con las medidas de la skill (alto 32, zona táctil 48, variantes con ícono, ancho completo y toque largo). Las chips de fecha y tarjeta de "Agregar movimiento" y la pill del mes usan `AppPill`.
+- **Tarjetas lado a lado** (Ingresos / Gastos): mismo alto y mismo tamaño de monto, el que hace entrar al más largo. El borde no cambia de grosor al seleccionar.
+- **Segmentado** (Día / Mes): opciones 20×10, radio `sm`, letra 13/w800, fondo violeta lleno al elegir; el peso de la letra no cambia.
+- **Ajustes:** cada sección va en una `GlassCard`, como el resto de la app.
+- **Colores:** nuevos tokens `AppColors.amber`, `sky`, `violet` (los nombraba la skill y no existían) y `AppColors.overlay` (fondo del "cargando"). El naranja ya no es acento (menú rápido) y los gráficos no usan verde/rojo. Un test falla si una pantalla escribe `Color(0x…)` o un color de Material.
+- **Alcance:** se arregló lo que se ve (A-01 a A-09 y A-13). Los espacios y radios sueltos del código (A-10, A-11) se pasan a tokens solo en los archivos que se tocan.
+- Tests: `test/design_cards_test.dart`.

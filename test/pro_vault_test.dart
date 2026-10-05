@@ -361,7 +361,7 @@ void main() {
       await tester.pump();
       expect(find.text('SECRETO'), findsNothing);
       expect(find.text(_t('vault_locked_title')), findsOneWidget);
-      expect(find.text(_t('vault_open')), findsOneWidget);
+      expect(find.text(_t('vault_open').toUpperCase()), findsOneWidget);
 
       security.unlockVault();
       await tester.pump();
@@ -373,7 +373,7 @@ void main() {
         _app(const VaultLockGate(title: 'Bóveda', child: Text('SECRETO'))),
       );
       expect(find.text('SECRETO'), findsNothing);
-      expect(find.text(_t('try_premium')), findsOneWidget);
+      expect(find.text(_t('try_premium').toUpperCase()), findsOneWidget);
     });
   });
 

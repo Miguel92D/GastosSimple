@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'app_pill.dart';
 import '../../utils/currency_helper.dart';
 import '../../state/app_state.dart';
 import 'dart:math' as math;
@@ -185,24 +186,8 @@ class _BalanceCardState extends State<BalanceCard>
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    // 3 — Month Label (Pill style)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                      ),
-                      child: Text(
-                        widget.subtitle,
-                        style: AppTextStyles.subtitle.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
+                    // 3 — Mes (pill oficial)
+                    AppPill(label: widget.subtitle, onColoredSurface: true),
                   ],
                 ),
               ),

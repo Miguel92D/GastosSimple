@@ -10,6 +10,7 @@ import '../../../core/router/navigation_service.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/state/month_controller.dart';
 import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
@@ -31,15 +32,17 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
+  // Colores de categoría (skill diseno-simple): el verde y el rojo quedan
+  // para ingreso/gasto, no se usan en el gráfico.
   static const List<Color> _chartColors = [
     AppColors.primaryPurple,
-    Color(0xFFC084FC),
-    Color(0xFF6366F1),
-    AppColors.incomeGreen,
-    Color(0xFF38BDF8),
-    Color(0xFFFBBF24),
-    AppColors.expenseRed,
-    Color(0xFFFB7185),
+    AppColors.purple,
+    AppColors.violet,
+    AppColors.teal,
+    AppColors.sky,
+    AppColors.amber,
+    AppColors.orange,
+    AppColors.pink,
   ];
 
   List<MapEntry<String, double>> _categories = [];
@@ -107,8 +110,9 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  String _money(double v) =>
-      AppState.instance.hideBalance ? '••••••' : CurrencyHelper.format(v, context);
+  String _money(double v) => AppState.instance.hideBalance
+      ? '••••••'
+      : CurrencyHelper.format(v, context);
 
   @override
   Widget build(BuildContext context) {
@@ -181,14 +185,11 @@ class _StatsScreenState extends State<StatsScreen> {
         : null;
 
     return GlassCard(
-      borderRadius: 30,
+      borderRadius: AppRadius.xl,
       glowColor: AppColors.primaryPurple.withValues(alpha: 0.08),
       child: Column(
         children: [
-          Text(
-            l10n.text('category_expenses'),
-            style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
-          ),
+          Text(l10n.text('category_expenses'), style: AppTextStyles.titleMain),
           const SizedBox(height: 24),
           if (_categories.isEmpty)
             Padding(
@@ -214,7 +215,9 @@ class _StatsScreenState extends State<StatsScreen> {
                           HapticFeedback.selectionClick();
                           setState(() {
                             _touchedIndex =
-                                (index == null || index < 0 || index == _touchedIndex)
+                                (index == null ||
+                                    index < 0 ||
+                                    index == _touchedIndex)
                                 ? null
                                 : index;
                           });
@@ -226,7 +229,8 @@ class _StatsScreenState extends State<StatsScreen> {
                             value: slices[i].value,
                             color: _chartColors[i % _chartColors.length]
                                 .withValues(
-                                  alpha: _touchedIndex == null ||
+                                  alpha:
+                                      _touchedIndex == null ||
                                           _touchedIndex == i
                                       ? 1
                                       : 0.35,
@@ -326,7 +330,7 @@ class _StatsScreenState extends State<StatsScreen> {
   ) {
     final percentage = total > 0 ? e.value / total : 0.0;
     return InkWell(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.md),
       onTap: () => _openMovements([e.key]),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -337,21 +341,23 @@ class _StatsScreenState extends State<StatsScreen> {
                 Container(
                   height: 12,
                   width: 12,
-                  decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     L10nHelper.getLocalizedCategory(context, e.key),
-                    style: AppTextStyles.cardTitle.copyWith(fontSize: 15),
+                    style: AppTextStyles.amountList.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  _money(e.value),
-                  style: AppTextStyles.cardTitle.copyWith(fontSize: 15),
-                ),
+                Text(_money(e.value), style: AppTextStyles.amountList),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: 48,
@@ -372,7 +378,7 @@ class _StatsScreenState extends State<StatsScreen> {
             ),
             const SizedBox(height: 8),
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
               child: LinearProgressIndicator(
                 value: percentage,
                 backgroundColor: AppColors.softText.withValues(alpha: 0.05),
@@ -394,18 +400,17 @@ class _StatsScreenState extends State<StatsScreen> {
     final withData = _trend.where((t) => t.income > 0 || t.expense > 0);
     final avgSaving = withData.isEmpty
         ? 0.0
-        : Money.round(Money.sum(withData.map((t) => t.saving)) / withData.length);
+        : Money.round(
+            Money.sum(withData.map((t) => t.saving)) / withData.length,
+          );
     final monthFormat = DateFormat('MMM', l10n.locale);
 
     return GlassCard(
-      borderRadius: 30,
+      borderRadius: AppRadius.xl,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.text('stats_trend_title'),
-            style: AppTextStyles.titleLarge.copyWith(fontSize: 20),
-          ),
+          Text(l10n.text('stats_trend_title'), style: AppTextStyles.titleMain),
           const SizedBox(height: 8),
           Row(
             children: [

@@ -6,6 +6,9 @@ import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/pro_badge.dart';
 import '../../../core/flow/general_flow_service.dart';
@@ -117,276 +120,277 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             children: [
-              // SECTION: LANGUAGE
-              _buildSectionTitle(l10n.text('language')),
-              _buildItem(
-                title: l10n.text('language'),
-                subtitle: l10n.locale == 'es'
-                    ? l10n.text('language_es')
-                    : l10n.text('language_en'),
-                leading: Icons.language_rounded,
-                onTap: () {
-                  final newLocale = l10n.locale == 'es' ? 'en' : 'es';
-                  l10n.changeLocale(newLocale);
-                },
-              ),
-
-              const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('security')),
-              SwitchListTile(
-                title: Text(
-                  l10n.text('enable_pin'),
-                  style: AppTextStyles.bodyMain,
-                ),
-                subtitle: Text(
-                  l10n.text('pin_subtitle'),
-                  style: AppTextStyles.bodySmall,
-                ),
-                secondary: Icon(
-                  Icons.password_rounded,
-                  color: AppColors.primaryPurple,
-                ),
-                value: securityService.isPinActive,
-                activeThumbColor: AppColors.primaryPurple,
-                onChanged: (val) async {
-                  if (val) {
-                    final result = await Navigator.pushNamed(
-                      context,
-                      '/pin',
-                      arguments: {'setup': true},
-                    );
-                    if (result == true) {
-                      await securityService.setPinActive(true);
-                    }
-                  } else if (await _confirmCurrentPin(isVault: false)) {
-                    await securityService.setPinActive(false);
-                  }
-                },
-              ),
-              if (securityService.isPinActive)
+              ..._section(l10n.text('language'), [
                 _buildItem(
-                  title: l10n.text('change_pin'),
-                  leading: Icons.edit_rounded,
-                  onTap: () => _changePin(isVault: false),
+                  title: l10n.text('language'),
+                  subtitle: l10n.locale == 'es'
+                      ? l10n.text('language_es')
+                      : l10n.text('language_en'),
+                  leading: Icons.language_rounded,
+                  onTap: () {
+                    final newLocale = l10n.locale == 'es' ? 'en' : 'es';
+                    l10n.changeLocale(newLocale);
+                  },
                 ),
-              SwitchListTile(
-                title: Text(
-                  l10n.text('biometric_unlock'),
-                  style: AppTextStyles.bodyMain,
-                ),
-                subtitle: Text(
-                  l10n.text('biometric_subtitle'),
-                  style: AppTextStyles.bodySmall,
-                ),
-                secondary: Icon(
-                  Icons.fingerprint_rounded,
-                  color: AppColors.primaryPurple,
-                ),
-                value: securityService.isBiometricActive,
-                activeThumbColor: AppColors.primaryPurple,
-                onChanged: (val) async {
-                  if (val) {
-                    final canUse = await securityService.canUseBiometrics;
-                    if (!context.mounted) return;
-                    if (canUse) {
-                      // La huella necesita un PIN de repuesto: si todavía
-                      // no hay, se crea primero.
-                      if (!securityService.isPinActive ||
-                          !securityService.hasPin) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.text('biometric_needs_pin')),
-                          ),
-                        );
-                        final created = await Navigator.pushNamed(
-                          context,
-                          '/pin',
-                          arguments: {'setup': true},
-                        );
-                        if (created != true) return;
+              ]),
+
+              ..._section(l10n.text('security'), [
+                SwitchListTile(
+                  title: Text(
+                    l10n.text('enable_pin'),
+                    style: AppTextStyles.bodyMain,
+                  ),
+                  subtitle: Text(
+                    l10n.text('pin_subtitle'),
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  secondary: Icon(
+                    Icons.password_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
+                  value: securityService.isPinActive,
+                  activeThumbColor: AppColors.primaryPurple,
+                  onChanged: (val) async {
+                    if (val) {
+                      final result = await Navigator.pushNamed(
+                        context,
+                        '/pin',
+                        arguments: {'setup': true},
+                      );
+                      if (result == true) {
                         await securityService.setPinActive(true);
                       }
-                      await securityService.setBiometricActive(true);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.text('biometric_not_available')),
-                        ),
-                      );
+                    } else if (await _confirmCurrentPin(isVault: false)) {
+                      await securityService.setPinActive(false);
                     }
-                  } else {
-                    await securityService.setBiometricActive(false);
-                  }
-                },
-              ),
-
-              const Divider(color: AppColors.cardBorder, height: 32),
-
-              SwitchListTile(
-                title: Text(
-                  l10n.text('enable_vault_pin'),
-                  style: AppTextStyles.bodyMain,
+                  },
                 ),
-                subtitle: Text(
-                  l10n.text('vault_pin_subtitle'),
-                  style: AppTextStyles.bodySmall,
-                ),
-                secondary: Icon(
-                  Icons.lock_outline_rounded,
-                  color: AppColors.primaryPurple,
-                ),
-                value: securityService.isVaultPinActive,
-                activeThumbColor: AppColors.primaryPurple,
-                onChanged: (val) async {
-                  if (val) {
-                    final result = await Navigator.pushNamed(
-                      context,
-                      '/pin',
-                      arguments: {'setup': true, 'isVault': true},
-                    );
-                    if (result == true) {
-                      await securityService.setVaultPinActive(true);
-                    }
-                  } else if (await _confirmCurrentPin(isVault: true)) {
-                    await securityService.setVaultPinActive(false);
-                  }
-                },
-              ),
-              if (securityService.isVaultPinActive)
-                _buildItem(
-                  title: l10n.text('change_pin'),
-                  leading: Icons.edit_rounded,
-                  onTap: () => _changePin(isVault: true),
-                ),
-
-              const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('reminder_section')),
-              SwitchListTile(
-                title: Text(
-                  l10n.text('reminder_daily'),
-                  style: AppTextStyles.bodyMain,
-                ),
-                subtitle: Text(
-                  l10n.text('reminder_daily_subtitle'),
-                  style: AppTextStyles.bodySmall,
-                ),
-                secondary: Icon(
-                  Icons.notifications_active_rounded,
-                  color: AppColors.primaryPurple,
-                ),
-                value: _reminderEnabled,
-                activeThumbColor: AppColors.primaryPurple,
-                onChanged: (val) => _toggleReminder(val, l10n),
-              ),
-              if (_reminderEnabled)
-                _buildItem(
-                  title: l10n.text('reminder_time'),
-                  subtitle: _reminderTime.format(context),
-                  leading: Icons.schedule_rounded,
-                  onTap: _pickReminderTime,
-                ),
-
-              const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('backup_data_title')),
-              _buildItem(
-                title: l10n.text('local_backup_label'),
-                subtitle: l10n.text('backup_screen_desc'),
-                leading: Icons.file_present_rounded,
-                onTap: () => Navigator.pushNamed(context, '/backup'),
-              ),
-
-              const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('premium_account'), showBadge: true),
-              if (appState.isPro)
-                _buildItem(
-                  title: l10n.text('premium_account_active'),
-                  subtitle: l10n.text('premium_account_active_subtitle'),
-                  leading: Icons.verified_rounded,
-                  trailing: const Icon(
-                    Icons.check_circle_rounded,
-                    color: AppColors.incomeGreen,
+                if (securityService.isPinActive)
+                  _buildItem(
+                    title: l10n.text('change_pin'),
+                    leading: Icons.edit_rounded,
+                    onTap: () => _changePin(isVault: false),
                   ),
-                  onTap: () {},
-                )
-              else
+                SwitchListTile(
+                  title: Text(
+                    l10n.text('biometric_unlock'),
+                    style: AppTextStyles.bodyMain,
+                  ),
+                  subtitle: Text(
+                    l10n.text('biometric_subtitle'),
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  secondary: Icon(
+                    Icons.fingerprint_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
+                  value: securityService.isBiometricActive,
+                  activeThumbColor: AppColors.primaryPurple,
+                  onChanged: (val) async {
+                    if (val) {
+                      final canUse = await securityService.canUseBiometrics;
+                      if (!context.mounted) return;
+                      if (canUse) {
+                        // La huella necesita un PIN de repuesto: si todavía
+                        // no hay, se crea primero.
+                        if (!securityService.isPinActive ||
+                            !securityService.hasPin) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.text('biometric_needs_pin')),
+                            ),
+                          );
+                          final created = await Navigator.pushNamed(
+                            context,
+                            '/pin',
+                            arguments: {'setup': true},
+                          );
+                          if (created != true) return;
+                          await securityService.setPinActive(true);
+                        }
+                        await securityService.setBiometricActive(true);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.text('biometric_not_available')),
+                          ),
+                        );
+                      }
+                    } else {
+                      await securityService.setBiometricActive(false);
+                    }
+                  },
+                ),
+
+                const Divider(color: AppColors.cardBorder, height: 1),
+
+                SwitchListTile(
+                  title: Text(
+                    l10n.text('enable_vault_pin'),
+                    style: AppTextStyles.bodyMain,
+                  ),
+                  subtitle: Text(
+                    l10n.text('vault_pin_subtitle'),
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  secondary: Icon(
+                    Icons.lock_outline_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
+                  value: securityService.isVaultPinActive,
+                  activeThumbColor: AppColors.primaryPurple,
+                  onChanged: (val) async {
+                    if (val) {
+                      final result = await Navigator.pushNamed(
+                        context,
+                        '/pin',
+                        arguments: {'setup': true, 'isVault': true},
+                      );
+                      if (result == true) {
+                        await securityService.setVaultPinActive(true);
+                      }
+                    } else if (await _confirmCurrentPin(isVault: true)) {
+                      await securityService.setVaultPinActive(false);
+                    }
+                  },
+                ),
+                if (securityService.isVaultPinActive)
+                  _buildItem(
+                    title: l10n.text('change_pin'),
+                    leading: Icons.edit_rounded,
+                    onTap: () => _changePin(isVault: true),
+                  ),
+              ]),
+
+              ..._section(l10n.text('reminder_section'), [
+                SwitchListTile(
+                  title: Text(
+                    l10n.text('reminder_daily'),
+                    style: AppTextStyles.bodyMain,
+                  ),
+                  subtitle: Text(
+                    l10n.text('reminder_daily_subtitle'),
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  secondary: Icon(
+                    Icons.notifications_active_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
+                  value: _reminderEnabled,
+                  activeThumbColor: AppColors.primaryPurple,
+                  onChanged: (val) => _toggleReminder(val, l10n),
+                ),
+                if (_reminderEnabled)
+                  _buildItem(
+                    title: l10n.text('reminder_time'),
+                    subtitle: _reminderTime.format(context),
+                    leading: Icons.schedule_rounded,
+                    onTap: _pickReminderTime,
+                  ),
+              ]),
+
+              ..._section(l10n.text('backup_data_title'), [
                 _buildItem(
-                  title: l10n.text('activate_pro'),
-                  subtitle: l10n.text('premium_description'),
-                  leading: Icons.workspace_premium_rounded,
-                  onTap: () => Navigator.pushNamed(context, '/premium'),
+                  title: l10n.text('local_backup_label'),
+                  subtitle: l10n.text('backup_screen_desc'),
+                  leading: Icons.file_present_rounded,
+                  onTap: () => Navigator.pushNamed(context, '/backup'),
                 ),
-              _buildItem(
-                title: _isRestoringPurchase
-                    ? l10n.text('premium_restore_loading')
-                    : l10n.text('restore_purchase'),
-                subtitle: l10n.text('premium_restore_subtitle'),
-                leading: Icons.restore_rounded,
-                trailing: _isRestoringPurchase
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.primaryPurple,
-                        ),
-                      )
-                    : null,
-                onTap: () {
-                  _restorePurchase();
-                },
-              ),
-              // Ver la compra / pedir reembolso: solo con PRO (D-027).
-              if (appState.isPro) const ManagePurchaseButton(),
+              ]),
 
-              _buildSectionTitle(l10n.text('currency')),
-              _buildItem(
-                title: l10n.text('select_currency'),
-                subtitle:
-                    '${currencyService.selectedCurrency.name} (${currencyService.currencySymbol})',
-                leading: Icons.monetization_on_rounded,
-                onTap: () => _showCurrencySelector(context),
-              ),
+              ..._section(l10n.text('premium_account'), showBadge: true, [
+                if (appState.isPro)
+                  _buildItem(
+                    title: l10n.text('premium_account_active'),
+                    subtitle: l10n.text('premium_account_active_subtitle'),
+                    leading: Icons.verified_rounded,
+                    trailing: const Icon(
+                      Icons.check_circle_rounded,
+                      color: AppColors.incomeGreen,
+                    ),
+                    onTap: () {},
+                  )
+                else
+                  _buildItem(
+                    title: l10n.text('activate_pro'),
+                    subtitle: l10n.text('premium_description'),
+                    leading: Icons.workspace_premium_rounded,
+                    onTap: () => Navigator.pushNamed(context, '/premium'),
+                  ),
+                _buildItem(
+                  title: _isRestoringPurchase
+                      ? l10n.text('premium_restore_loading')
+                      : l10n.text('restore_purchase'),
+                  subtitle: l10n.text('premium_restore_subtitle'),
+                  leading: Icons.restore_rounded,
+                  trailing: _isRestoringPurchase
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primaryPurple,
+                          ),
+                        )
+                      : null,
+                  onTap: () {
+                    _restorePurchase();
+                  },
+                ),
+                // Ver la compra / pedir reembolso: solo con PRO (D-027).
+                if (appState.isPro) const ManagePurchaseButton(),
+              ]),
 
-              const SizedBox(height: 16),
-              _buildSectionTitle(l10n.text('legal')),
-              _buildItem(
-                title: l10n.text('privacy_policy'),
-                leading: Icons.shield_outlined,
-                onTap: () => GeneralFlowService.openPrivacy(),
-              ),
-              SwitchListTile(
-                title: Text(
-                  l10n.text('crash_reports_title'),
-                  style: AppTextStyles.bodyMain,
+              ..._section(l10n.text('currency'), [
+                _buildItem(
+                  title: l10n.text('select_currency'),
+                  subtitle:
+                      '${currencyService.selectedCurrency.name} (${currencyService.currencySymbol})',
+                  leading: Icons.monetization_on_rounded,
+                  onTap: () => _showCurrencySelector(context),
                 ),
-                subtitle: Text(
-                  l10n.text('crash_reports_subtitle'),
-                  style: AppTextStyles.bodySmall,
+              ]),
+
+              ..._section(l10n.text('legal'), [
+                _buildItem(
+                  title: l10n.text('privacy_policy'),
+                  leading: Icons.shield_outlined,
+                  onTap: () => GeneralFlowService.openPrivacy(),
                 ),
-                secondary: Icon(
-                  Icons.bug_report_outlined,
-                  color: AppColors.primaryPurple,
+                SwitchListTile(
+                  title: Text(
+                    l10n.text('crash_reports_title'),
+                    style: AppTextStyles.bodyMain,
+                  ),
+                  subtitle: Text(
+                    l10n.text('crash_reports_subtitle'),
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  secondary: Icon(
+                    Icons.bug_report_outlined,
+                    color: AppColors.primaryPurple,
+                  ),
+                  value: appState.crashReportsEnabled,
+                  activeThumbColor: AppColors.primaryPurple,
+                  onChanged: (val) => appState.setConsent(crashReports: val),
                 ),
-                value: appState.crashReportsEnabled,
-                activeThumbColor: AppColors.primaryPurple,
-                onChanged: (val) => appState.setConsent(crashReports: val),
-              ),
+              ]),
 
               if (kDebugMode) ...[
-                const Divider(color: AppColors.cardBorder, height: 32),
-                _buildSectionTitle('DEV / TEST MENSUAL'),
-                _buildItem(
-                  title: 'Cargar datos mensuales de prueba',
-                  subtitle: 'Inserta datos TEST_MENSUAL_ en 3 meses',
-                  leading: Icons.science_rounded,
-                  onTap: _loadMonthlyTestData,
-                ),
-                _buildItem(
-                  title: 'Borrar datos mensuales de prueba',
-                  subtitle: 'Borra solo notas TEST_MENSUAL_',
-                  leading: Icons.delete_sweep_rounded,
-                  onTap: _deleteMonthlyTestData,
-                ),
+                ..._section('DEV / TEST MENSUAL', [
+                  _buildItem(
+                    title: 'Cargar datos mensuales de prueba',
+                    subtitle: 'Inserta datos TEST_MENSUAL_ en 3 meses',
+                    leading: Icons.science_rounded,
+                    onTap: _loadMonthlyTestData,
+                  ),
+                  _buildItem(
+                    title: 'Borrar datos mensuales de prueba',
+                    subtitle: 'Borra solo notas TEST_MENSUAL_',
+                    leading: Icons.delete_sweep_rounded,
+                    onTap: _deleteMonthlyTestData,
+                  ),
+                ]),
               ],
 
               const SizedBox(height: 60),
@@ -394,7 +398,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           if (_isLoading)
             Container(
-              color: Colors.black54,
+              color: AppColors.overlay,
               child: const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.primaryPurple,
@@ -406,9 +410,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// Una sección de Ajustes: título y sus filas dentro de una tarjeta de
+  /// vidrio, como el resto de la app (A-06, D-029).
+  List<Widget> _section(
+    String title,
+    List<Widget> children, {
+    bool showBadge = false,
+  }) {
+    return [
+      _buildSectionTitle(title, showBadge: showBadge),
+      GlassCard(
+        borderRadius: AppRadius.lg,
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: Column(children: children),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
   Widget _buildSectionTitle(String title, {bool showBadge = false}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.sm,
+      ),
       child: Row(
         children: [
           Text(

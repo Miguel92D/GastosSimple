@@ -2,6 +2,7 @@
 /// Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
 /// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
 library;
+
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -32,6 +33,8 @@ class AppColors {
   static const textMuted = Color(0xFF636366);
 
   // UI Accents
+  /// Fondo oscuro detrás de un "cargando" que tapa la pantalla.
+  static const overlay = Color(0x8A000000);
   static const cardBorder = Color(0x33FFFFFF);
   static const shadowPurple = Color(
     0x4D7B5CFF,
@@ -44,6 +47,9 @@ class AppColors {
   static const teal = Color(0xFF2DD4BF);
   static const pink = Color(0xFFFB7185);
   static const purple = Color(0xFFC084FC);
+  static const amber = Color(0xFFFBBF24);
+  static const sky = Color(0xFF38BDF8);
+  static const violet = Color(0xFF6366F1);
 
   // Legacy / Compatibility Helpers
   // (Optional: keep aliases for existing code until fully refactored if needed)

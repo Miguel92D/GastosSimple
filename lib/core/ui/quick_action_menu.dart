@@ -48,7 +48,7 @@ class QuickActionMenu {
                 ListTile(
                   leading: const Icon(
                     Icons.flash_on_rounded,
-                    color: AppColors.orange,
+                    color: AppColors.primaryPurple,
                   ),
                   title: Text(
                     l10n.text('quick_entry_title'),
@@ -91,7 +91,9 @@ class QuickActionMenu {
               ListTile(
                 leading: Icon(
                   isVault ? Icons.arrow_upward_rounded : Icons.lock_rounded,
-                  color: isVault ? AppColors.incomeGreen : AppColors.orange,
+                  color: isVault
+                      ? AppColors.incomeGreen
+                      : AppColors.primaryPurple,
                 ),
                 title: Text(
                   isVault

@@ -136,7 +136,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              l10n.text('recurring_change_amount_hint'),
+              l10n.text('recurring_change_amount_hint').toUpperCase(),
               style: AppTextStyles.subLabel,
             ),
           ],

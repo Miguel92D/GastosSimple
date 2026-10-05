@@ -1,5 +1,7 @@
 // Retoques visuales (chat 07): las tarjetas de Ingresos y Gastos del inicio
 // se ven iguales aunque un monto sea mucho más largo que el otro.
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
@@ -62,5 +64,42 @@ void main() {
         .style!
         .fontSize;
     expect(size, 20);
+  });
+
+  group('reglas de diseño (D-029)', () {
+    // Archivos donde sí se definen colores (tokens) o el tema claro sin uso.
+    const tokenFiles = [
+      'core/ui/app_colors.dart',
+      'core/ui/app_gradients.dart',
+      'core/ui/app_theme.dart',
+    ];
+    final materialColor = RegExp(
+      r'Colors\.(deepPurple|orange|redAccent|green|red|blue|blueAccent|'
+      r'purple|pink|teal|grey|yellow|amber|white70|white54|white38|black54|'
+      r'black87)',
+    );
+
+    Iterable<File> screens() => Directory('lib')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart'))
+        .where((f) {
+          final path = f.path.replaceAll('\\', '/');
+          return !tokenFiles.any(path.endsWith);
+        });
+
+    test('ninguna pantalla escribe colores a mano', () {
+      final offenders = <String>[];
+      for (final f in screens()) {
+        final lines = f.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          final line = lines[i];
+          if (line.contains('Color(0x') || materialColor.hasMatch(line)) {
+            offenders.add('${f.path}:${i + 1}');
+          }
+        }
+      }
+      expect(offenders, isEmpty);
+    });
   });
 }

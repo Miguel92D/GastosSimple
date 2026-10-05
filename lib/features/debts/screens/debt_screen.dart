@@ -7,6 +7,8 @@ import '../../../core/utils/currency_helper.dart';
 import '../../../core/utils/currency_input_formatter.dart';
 import '../controllers/debt_controller.dart';
 import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
@@ -315,7 +317,7 @@ class _DebtScreenState extends State<DebtScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.xl),
           border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
         ),
         child: TextField(
@@ -357,7 +359,12 @@ class _DebtScreenState extends State<DebtScreen> {
               ),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 120),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.md,
+                120, // lugar para el menú y el + de abajo
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -366,7 +373,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   if (_debts.isEmpty)
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 80),
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -385,8 +392,7 @@ class _DebtScreenState extends State<DebtScreen> {
                             const SizedBox(height: 24),
                             Text(
                               l10n.text('no_debts_empty'),
-                              style: AppTextStyles.titleLarge.copyWith(
-                                fontSize: 18,
+                              style: AppTextStyles.titleSmall.copyWith(
                                 color: AppColors.textPrimary.withValues(alpha: 0.7),
                               ),
                               textAlign: TextAlign.center,
@@ -406,7 +412,7 @@ class _DebtScreenState extends State<DebtScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryPurple.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(AppRadius.md),
                                   border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.3)),
                                 ),
                                 child: Text(
@@ -480,7 +486,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
-                  Text(context.read<AppLocaleController>().text('payment_amount_hint'), style: AppTextStyles.subLabel),
+                  Text(context.read<AppLocaleController>().text('payment_amount_hint').toUpperCase(), style: AppTextStyles.subLabel),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -605,8 +611,8 @@ class _DebtScreenState extends State<DebtScreen> {
   Widget _buildTotalSummary(BuildContext context, AppLocaleController l10n, double total) {
     return Center(
       child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        borderRadius: 20,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+        borderRadius: AppRadius.xl,
         child: Text.rich(
           TextSpan(
             children: [
@@ -643,7 +649,7 @@ class _DebtScreenState extends State<DebtScreen> {
       padding: const EdgeInsets.only(bottom: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
-        borderRadius: 24,
+        borderRadius: AppRadius.lg,
         border: isPaid
             ? Border.all(color: AppColors.incomeGreen.withValues(alpha: 0.3), width: 1.0)
             : (isPriority ? Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 1.5) : null),
@@ -658,7 +664,7 @@ class _DebtScreenState extends State<DebtScreen> {
                     color: isPaid
                         ? AppColors.incomeGreen.withValues(alpha: 0.15)
                         : (isPriority ? AppColors.primaryPurple.withValues(alpha: 0.15) : AppColors.glassSurface),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                     border: Border.all(
                       color: isPaid
                           ? AppColors.incomeGreen.withValues(alpha: 0.4)
@@ -692,8 +698,7 @@ class _DebtScreenState extends State<DebtScreen> {
                           Flexible(
                             child: Text(
                               debt.nombre,
-                              style: AppTextStyles.cardTitle.copyWith(
-                                fontSize: 18,
+                              style: AppTextStyles.titleSmall.copyWith(
                                 color: isPaid ? AppColors.incomeGreen : AppColors.textPrimary,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -706,14 +711,15 @@ class _DebtScreenState extends State<DebtScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: AppColors.incomeGreen,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                               ),
                               child: Text(
                                 context.read<AppLocaleController>().text('paid_label'),
-                                style: const TextStyle(
+                                style: AppTextStyles.labelSmall.copyWith(
                                   color: AppColors.darkBackground,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ),
@@ -723,7 +729,7 @@ class _DebtScreenState extends State<DebtScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryPurple.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                                 border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.5)),
                               ),
                               child: Row(
@@ -737,10 +743,11 @@ class _DebtScreenState extends State<DebtScreen> {
                                   const SizedBox(width: 4),
                                   Text(
                                     context.read<AppLocaleController>().text('priority_label'), // Defaults to "Priority" in unknown locales
-                                    style: const TextStyle(
+                                    style: AppTextStyles.labelSmall.copyWith(
                                       color: AppColors.primaryPurple,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
                                 ],
@@ -857,7 +864,7 @@ class _DebtScreenState extends State<DebtScreen> {
         height: 38,
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Center(
@@ -874,13 +881,13 @@ class _DebtScreenState extends State<DebtScreen> {
         final l10n = context.watch<AppLocaleController>();
         return AlertDialog(
           backgroundColor: AppColors.darkBackground,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
           title: Text(l10n.text('delete_debt_title'), style: AppTextStyles.cardTitle),
           content: Text(l10n.text('confirm_delete').replaceFirst('movimiento', "'${debt.nombre}'")),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.text('cancel').toUpperCase(), style: const TextStyle(color: AppColors.softText)),
+              child: Text(l10n.text('cancel').toUpperCase(), style: AppTextStyles.buttonLabel.copyWith(color: AppColors.softText)),
             ),
             TextButton(
               onPressed: () async {
@@ -894,7 +901,7 @@ class _DebtScreenState extends State<DebtScreen> {
                   _loadDebts();
                 }
               },
-              child: Text(l10n.text('delete').toUpperCase(), style: const TextStyle(color: AppColors.expenseRed)),
+              child: Text(l10n.text('delete').toUpperCase(), style: AppTextStyles.buttonLabel.copyWith(color: AppColors.expenseRed)),
             ),
           ],
         );
@@ -944,13 +951,13 @@ class _DebtScreenState extends State<DebtScreen> {
   Widget _buildStrategySection(BuildContext context) {
     final l10n = context.watch<AppLocaleController>();
     return GlassCard(
-      padding: const EdgeInsets.all(24),
-      borderRadius: 32,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderRadius: AppRadius.xl,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.text('choose_strategy'),
+            l10n.text('choose_strategy').toUpperCase(),
             style: AppTextStyles.subLabel.copyWith(
               letterSpacing: 1.2,
               color: AppColors.softText.withValues(alpha: 0.6),
@@ -960,7 +967,7 @@ class _DebtScreenState extends State<DebtScreen> {
           _buildStrategyCard(
             title: l10n.text('avalanche_strategy'),
             icon: Icons.bolt_rounded,
-            color: AppColors.blue,
+            color: AppColors.primaryPurple,
             isSelected: _selectedStrategy == 'avalanche',
             onTap: () => _selectStrategy('avalanche'),
           ),
@@ -990,7 +997,7 @@ class _DebtScreenState extends State<DebtScreen> {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primaryPurple : color.withValues(alpha: 0.3),
             width: 1.5,

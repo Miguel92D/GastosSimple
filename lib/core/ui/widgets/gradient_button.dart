@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../app_gradients.dart';
 import '../app_text_styles.dart';
 import '../app_colors.dart';
+import '../app_radius.dart';
+import '../app_spacing.dart';
 
 class GradientButton extends StatelessWidget {
   final String text;
@@ -11,14 +13,18 @@ class GradientButton extends StatelessWidget {
   final IconData? icon;
   final bool animate;
 
+  /// Color del texto y del ícono. Sobre dorado va `darkBackground`.
+  final Color foregroundColor;
+
   const GradientButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.gradientColors,
-    this.borderRadius = 16,
+    this.borderRadius = AppRadius.lg,
     this.icon,
     this.animate = false,
+    this.foregroundColor = AppColors.textPrimary,
   });
 
   @override
@@ -29,9 +35,8 @@ class GradientButton extends StatelessWidget {
     final effectiveColors = isEnabled ? colors : [disabledBase, disabledBase];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8,
-      ), // Protección para la sombra
+      // Protección para la sombra
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
@@ -56,7 +61,10 @@ class GradientButton extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(borderRadius),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -65,18 +73,22 @@ class GradientButton extends StatelessWidget {
                     Icon(
                       icon,
                       color: isEnabled
-                          ? AppColors.textPrimary
-                          : AppColors.textPrimary.withValues(alpha: 0.55),
+                          ? foregroundColor
+                          : foregroundColor.withValues(alpha: 0.55),
                       size: 20,
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.sm),
                   ],
-                  Text(
-                    text,
-                    style: AppTextStyles.buttonLabel.copyWith(
-                      color: isEnabled
-                          ? AppColors.textPrimary
-                          : AppColors.textPrimary.withValues(alpha: 0.55),
+                  // Botón principal siempre en MAYÚSCULAS (D-029).
+                  Flexible(
+                    child: Text(
+                      text.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.buttonLabel.copyWith(
+                        color: isEnabled
+                            ? foregroundColor
+                            : foregroundColor.withValues(alpha: 0.55),
+                      ),
                     ),
                   ),
                 ],

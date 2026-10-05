@@ -153,7 +153,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          l10n.text('categories'),
+                          l10n.text('categories').toUpperCase(),
                           style: AppTextStyles.subLabel,
                         ),
                       ),

@@ -7,7 +7,6 @@ import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
 
-
 class RecentTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
   final VoidCallback onRefresh;
@@ -34,11 +33,13 @@ class RecentTransactionsList extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           child: Text(
-            title ??
-                context.watch<AppLocaleController>().text('recent_movements'),
-            style: AppTextStyles.subLabel.copyWith(
+            (title ??
+                    context.watch<AppLocaleController>().text(
+                      'recent_movements',
+                    ))
+                .toUpperCase(),
+            style: AppTextStyles.labelSmall.copyWith(
               color: AppColors.softText.withValues(alpha: 0.65),
-              fontSize: 11,
             ),
           ),
         ),

@@ -169,7 +169,7 @@ class _SummaryCard extends StatelessWidget {
               Provider.of<AppLocaleController>(
                 context,
                 listen: false,
-              ).text('total_savings'),
+              ).text('total_savings').toUpperCase(),
               style: AppTextStyles.subLabel,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -309,7 +309,7 @@ class _GoalItemCard extends StatelessWidget {
                         Provider.of<AppLocaleController>(
                           context,
                           listen: false,
-                        ).text('need_to_save'),
+                        ).text('need_to_save').toUpperCase(),
                         style: AppTextStyles.subLabel,
                       ),
                       Text(
@@ -787,7 +787,7 @@ class _AddMoneyModalState extends State<_AddMoneyModal> {
                         Provider.of<AppLocaleController>(
                           context,
                           listen: false,
-                        ).text('amount_to_add'),
+                        ).text('amount_to_add').toUpperCase(),
                         style: AppTextStyles.subLabel,
                       ),
                       const SizedBox(height: AppSpacing.sm),

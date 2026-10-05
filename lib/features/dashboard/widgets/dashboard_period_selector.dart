@@ -78,21 +78,12 @@ class _PeriodTab extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.sm,
-          horizontal: AppSpacing.md,
-        ),
+        // Opción de segmentado (skill diseno-simple): 20×10, radio sm,
+        // fondo de color cuando está activa.
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primaryPurple.withValues(alpha: 0.28)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppRadius.sm + 4),
-          border: isSelected
-              ? Border.all(
-                  color: AppColors.primaryPurple.withValues(alpha: 0.55),
-                  width: 1,
-                )
-              : null,
+          color: isSelected ? AppColors.primaryPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -102,18 +93,19 @@ class _PeriodTab extends StatelessWidget {
               size: 14,
               color: isSelected
                   ? AppColors.textPrimary
-                  : AppColors.softText.withValues(alpha: 0.5),
+                  : AppColors.softText.withValues(alpha: 0.6),
             ),
-            const SizedBox(width: AppSpacing.xs + 2),
+            const SizedBox(width: AppSpacing.sm),
+            // Mismo peso en los dos estados: la palabra no se "mueve".
             Text(
               label.toUpperCase(),
               style: AppTextStyles.subLabel.copyWith(
-                fontSize: 11,
-                letterSpacing: 1.2,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
                 color: isSelected
                     ? AppColors.textPrimary
-                    : AppColors.softText.withValues(alpha: 0.5),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                    : AppColors.softText.withValues(alpha: 0.6),
               ),
             ),
           ],

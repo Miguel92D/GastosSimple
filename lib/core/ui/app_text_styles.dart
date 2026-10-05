@@ -2,6 +2,7 @@
 /// Direct usage of Color(), LinearGradient(), TextStyle(), BorderRadius.circular(), or hardcoded spacing values is not allowed.
 /// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
 library;
+
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
@@ -20,7 +21,6 @@ class AppTextStyles {
     color: AppColors.textPrimary,
     letterSpacing: -0.5,
   );
-
 
   static const balanceAmount = TextStyle(
     fontSize: 40,
@@ -42,6 +42,31 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.softText,
     letterSpacing: 1.0,
+  );
+
+  /// Etiqueta chica en MAYÚSCULAS (11): encabezado de tarjetas chicas,
+  /// estados y datos secundarios (D-029).
+  static const labelSmall = TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeight.w700,
+    color: AppColors.softText,
+    letterSpacing: 1.0,
+  );
+
+  /// Título de tarjeta chica o de panel (18) (D-029).
+  static const titleSmall = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.3,
+  );
+
+  /// Monto dentro de una lista (15) (D-029).
+  static const amountList = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.3,
   );
 
   // Typography Foundations
