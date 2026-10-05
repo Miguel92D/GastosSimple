@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (tarea extra D-027).
+Última revisión: 2026-10-05 (chat 07, D-028).
 
 ---
 
@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-028): 199.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -140,3 +140,9 @@ Tarea fuera de la tabla de chats, pedida por Miguel el 2026-10-05 a partir de lo
 - Versión **1.1.10 (16)**, tag `v1.1.10+16`. No se actualizó ningún paquete (Billing ya estaba en 8.0.0, D-017).
 - **Prueba en el teléfono:** comprar con una cuenta de prueba de licencias; en Play Console → Gestión de pedidos, reembolsar ese pedido con "quitar derecho de acceso"; esperar unos minutos y volver a la app **sin** limpiar la caché: tiene que pasar a Gratis. (Lo de "el mes dura 5 minutos" es solo para suscripciones.)
 
+### D-028 — Chat 07: retoques visuales (y un solo mapa de íconos de categoría)
+- Se agrega la fila **07** a la tabla de `CLAUDE.md`, pedida por Miguel el 2026-10-05. Es una tarea **solo visual**: no cambia funciones ni cálculos. Todo lo visual sigue la skill `diseno-simple`.
+- **Íconos de categoría (responde P-10):** un solo archivo, `lib/core/ui/category_icons.dart` (`CategoryIcons.of`). Lo usan "Agregar movimiento" y la lista de movimientos (`transaction_tile.dart`); se borraron los dos mapas que tenía cada pantalla.
+- `CategoryIcons.of` reconoce el nombre guardado en cualquier forma: español en singular o plural, con o sin tilde, mayúsculas, inglés o clave `cat_*` (`Regalo` = `Regalos` = `cat_gift`). Una categoría desconocida usa `Icons.category_rounded` (antes la lista usaba `receipt_long`, el mismo de Servicios, y se confundían).
+- No toca la base ni los nombres guardados.
+- Test: `test/category_icons_test.dart` (todas las categorías de "Agregar" tienen ícono propio, mismas variantes = mismo ícono, y falla si una pantalla vuelve a armar su propio mapa).

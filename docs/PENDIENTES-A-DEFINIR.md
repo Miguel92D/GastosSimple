@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (tarea extra D-027).
+Última revisión: 2026-10-05 (chat 07).
 
 ---
 
@@ -60,7 +60,7 @@ En `app_translations.dart` hay 98 claves (en las dos lenguas) que ningún archiv
 
 ### P-10 — Íconos de categoría distintos entre pantallas
 En "Agregar movimiento" las categorías tienen un ícono cada una (Compras, Servicios, Tarjeta de Crédito…), pero en la lista de movimientos (`transaction_tile.dart`) muchas salen con el ícono genérico porque esa lista busca otros nombres (`educación`, `venta`, `regalo`…). No es un error de datos, solo visual.
-**Respuesta:** _pendiente_ — revisar con el sistema de diseño (skill `diseno-simple`) en una tarea de diseño.
+**Respuesta (2026-10-05, chat 07):** ✅ Resuelto. Las dos pantallas usan el mismo mapa (`CategoryIcons`, D-028), que entiende singular/plural, tildes, inglés y claves `cat_*`.
 
 ### P-11 — Movimientos a la Bóveda sin Pro
 Desde el chat 02, deslizar un movimiento a la derecha (mandarlo a la Bóveda) solo funciona con Pro; sacarlo de la Bóveda se permite siempre. Antes un usuario gratis podía esconder un movimiento en una Bóveda que no puede abrir.
@@ -106,3 +106,7 @@ La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallo
 `DatabaseHelper.restoreGoal` y `restoreDebt` ya no los usa nadie (el respaldo pasa por `restoreBackupData`) y usan `ConflictAlgorithm.replace`, que la Especificación §8 prohíbe para datos de un archivo. `restoreTransaction` sí se usa, pero solo para "Deshacer" un borrado.
 **Respuesta:** _pendiente_ — borrar `restoreGoal` y `restoreDebt` en la tarea de limpieza (con P-09, P-12 y P-15).
 
+
+### P-20 — La skill `diseno-simple` nombra un `AppPill` que no existe
+La skill dice que toda pill se hace con `AppPill` (`lib/core/ui/widgets/app_pill.dart`), pero ese archivo no está en el código (visto en el chat 07). Las pills hoy se arman a mano en cada pantalla.
+**Respuesta:** _pendiente_ — crear `AppPill` con las medidas de la skill en una tarea visual, o corregir la skill.

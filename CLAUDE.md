@@ -24,5 +24,6 @@
 | 04 | Pro y compras: pantalla Pro, compra y restauración, crash de billing (P-03), Bóveda | compra y restauración probadas; Bóveda aislada |
 | 05 | Datos y privacidad: respaldo, actualización desde la 1.1.8 (P-01), PIN/huella, consentimiento, política y landing | actualizar desde la 1.1.8 no pierde datos; respaldo ida y vuelta OK |
 | 06 | Publicación: versión ≥ 1.1.9 (15) (D-006), unir a `main` (P-07), tag (D-012), AAB firmado, ficha de Play | AAB subido a prueba interna |
+| 07 | Retoques visuales: íconos de categoría iguales en todas las pantallas (P-10) y los retoques que pida Miguel, sin cambiar funciones ni cálculos (D-028) | retoques hechos y probados en la app; analyze y test en verde |
 
-> Tabla aprobada el 2026-10-04. Solo se reordena con una decisión nueva (D-xxx).
+> Tabla aprobada el 2026-10-04. Fila 07 agregada el 2026-10-05 (D-028). Solo se reordena con una decisión nueva (D-xxx).

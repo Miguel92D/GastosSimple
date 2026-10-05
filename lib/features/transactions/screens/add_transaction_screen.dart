@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../../../core/flow/transaction_flow_service.dart';
 import '../../../core/ui/app_colors.dart';
+import '../../../core/ui/category_icons.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_spacing.dart';
@@ -94,24 +95,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     'Bonos',
     'Otros',
   ];
-
-  final Map<String, IconData> _categoryIcons = {
-    'Comida': Icons.restaurant_rounded,
-    'Transporte': Icons.directions_bus_rounded,
-    'Salud': Icons.local_hospital_rounded,
-    'Ocio': Icons.sports_esports_rounded,
-    'Compras': Icons.shopping_bag_rounded,
-    'Suscripciones': Icons.subscriptions_rounded,
-    'Servicios': Icons.receipt_long_rounded,
-    'Tarjeta de Crédito': Icons.credit_card_rounded,
-    'Préstamos': Icons.handshake_rounded,
-    'Regalos': Icons.card_giftcard_rounded,
-    'Otros': Icons.more_horiz_rounded,
-    'Salario': Icons.payments_rounded,
-    'Inversiones': Icons.trending_up_rounded,
-    'Ventas': Icons.sell_rounded,
-    'Bonos': Icons.redeem_rounded,
-  };
 
   @override
   void initState() {
@@ -893,8 +876,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ? _categoriasGasto[index]
                       : _categoriasIngreso[index];
                   final isSelected = _selectedCategory == category;
-                  final icon =
-                      _categoryIcons[category] ?? Icons.category_rounded;
+                  final icon = CategoryIcons.of(category);
                   final color = _tipo == 'gasto'
                       ? AppColors.expenseRed
                       : AppColors.incomeGreen;
