@@ -21,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/debt_expense.dart';
 import '../utils/debt_math.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_round_button.dart';
 
 class DebtScreen extends StatefulWidget {
   const DebtScreen({super.key});
@@ -582,31 +583,7 @@ class _DebtScreenState extends State<DebtScreen> {
   }
 
   Widget _buildAddDebtFab(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 0), // Alineado con el menú
-      child: GlassCard(
-        width: 56,
-        height: 56,
-        borderRadius: 18,
-        padding: EdgeInsets.zero,
-        glowColor: AppColors.primaryPurple.withValues(alpha: 0.3),
-        border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.4), width: 2.0),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => _showDebtForm(),
-            borderRadius: BorderRadius.circular(18),
-            child: const Center(
-              child: Icon(
-                AppIcons.add,
-                color: AppColors.primaryPurple,
-                size: 28,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    return AppRoundButton(icon: AppIcons.add, onTap: () => _showDebtForm());
   }
 
   Widget _buildTotalSummary(BuildContext context, AppLocaleController l10n, double total) {

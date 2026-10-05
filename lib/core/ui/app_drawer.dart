@@ -9,7 +9,7 @@ import '../controllers/app_action.dart';
 import 'app_colors.dart';
 import 'app_gradients.dart';
 import 'app_text_styles.dart';
-import 'widgets/gold_shimmer_text.dart';
+import 'widgets/app_logo.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -152,7 +152,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   ),
                 ),
                 const SizedBox(height: 10),
-                GoldShimmerText(text: '\$imple', isPro: isPro, fontSize: 28),
+                const AppLogo.drawer(),
                 Text(
                   context.watch<AppLocaleController>().text(
                     'financial_control_drawer',

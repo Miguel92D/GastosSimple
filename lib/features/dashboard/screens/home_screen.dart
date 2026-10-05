@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import '../../../core/ui/app_fab.dart';
@@ -7,8 +6,7 @@ import '../widgets/dashboard_widget.dart';
 import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 
-import '../../../core/ui/widgets/gold_shimmer_text.dart';
-import '../../../core/state/app_state.dart';
+import '../../../core/ui/widgets/app_logo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,15 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPro = context.watch<AppState>().isPro;
-
     return AppScaffold(
       title: "\$imple",
-      titleWidget: GoldShimmerText(
-        text: "\$imple",
-        isPro: isPro,
-        fontSize: 24,
-      ),
+      titleWidget: const AppLogo(),
       drawer: const AppDrawer(),
       floatingActionButton: const AppFAB(),
       body: const DashboardWidget(),

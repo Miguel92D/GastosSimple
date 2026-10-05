@@ -17,6 +17,7 @@ import '../../../core/utils/currency_input_formatter.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_round_button.dart';
 
 class SavingsGoalsScreen extends StatefulWidget {
   const SavingsGoalsScreen({super.key});
@@ -123,32 +124,12 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
   }
 
   Widget _buildAddGoalFab(BuildContext context) {
-    return GlassCard(
-      width: 56,
-      height: 56,
-      borderRadius: 18,
-      padding: EdgeInsets.zero,
-      glowColor: AppColors.primaryPurple.withValues(alpha: 0.3),
-      border: Border.all(
-        color: AppColors.primaryPurple.withValues(alpha: 0.4),
-        width: 2.0,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _showCreateGoalModal(),
-          borderRadius: BorderRadius.circular(18),
-          child: const Center(
-            child: Icon(
-              AppIcons.add,
-              color: AppColors.primaryPurple,
-              size: 28,
-            ),
-          ),
-        ),
-      ),
+    return AppRoundButton(
+      icon: AppIcons.add,
+      onTap: () => _showCreateGoalModal(),
     );
   }
+
 }
 
 class _SummaryCard extends StatelessWidget {

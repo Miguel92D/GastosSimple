@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../app_text_styles.dart';
 import '../app_colors.dart';
 import '../app_gradients.dart';
-import '../glass_card.dart';
+import '../widgets/app_round_button.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 
 class AppScaffold extends StatelessWidget {
@@ -80,26 +80,9 @@ class AppScaffold extends StatelessWidget {
           children: [
             if (drawer != null)
               Builder(
-                builder: (scaffoldContext) => GestureDetector(
+                builder: (scaffoldContext) => AppRoundButton(
+                  icon: AppIcons.menu,
                   onTap: () => Scaffold.of(scaffoldContext).openDrawer(),
-                  child: GlassCard(
-                    width: 56,
-                    height: 56,
-                    borderRadius: 18,
-                    padding: EdgeInsets.zero,
-                    glowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
-                    border: Border.all(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.4),
-                      width: 1.5,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        AppIcons.menu,
-                        color: AppColors.primaryPurple,
-                        size: 26,
-                      ),
-                    ),
-                  ),
                 ),
               ),
             if (floatingActionButton != null)

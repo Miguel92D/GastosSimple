@@ -126,6 +126,22 @@ class AppTextStyles {
     letterSpacing: -0.5,
   );
 
+  /// Opción de un selector (`AppSegmented`): 13/w800, MAYÚSCULAS.
+  static const segmentLabel = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w800,
+    color: AppColors.softText,
+    letterSpacing: 0.5,
+  );
+
+  /// Texto de `AppSecondaryButton` (14, MAYÚSCULAS).
+  static const secondaryButtonLabel = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: AppColors.primaryPurple,
+    letterSpacing: 0.5,
+  );
+
   // Helper methods
   static TextStyle title() => cardTitle;
   static TextStyle body() => bodyText;

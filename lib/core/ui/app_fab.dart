@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../flow/transaction_flow_service.dart';
 import './app_colors.dart';
-import './glass_card.dart';
+import 'app_spacing.dart';
+import 'widgets/app_round_button.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 
+/// Botones `+` (ingreso) y `−` (gasto) de abajo a la derecha.
 class AppFAB extends StatelessWidget {
   final String mode;
 
@@ -11,62 +13,30 @@ class AppFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          _buildFab(
-            context: context,
-            icon: AppIcons.add,
-            color: AppColors.incomeGreen,
-            onPressed: () => TransactionFlowService.instance.startQuickEntry(
-              context,
-              type: 'income',
-              isVault: mode == "vault",
-            ),
-            heroTag: "income_fab",
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        AppRoundButton(
+          icon: AppIcons.add,
+          color: AppColors.incomeGreen,
+          onTap: () => TransactionFlowService.instance.startQuickEntry(
+            context,
+            type: 'income',
+            isVault: mode == "vault",
           ),
-          const SizedBox(height: 16),
-          _buildFab(
-            context: context,
-            icon: AppIcons.remove,
-            color: AppColors.expenseRed,
-            onPressed: () => TransactionFlowService.instance.startQuickEntry(
-              context,
-              type: 'expense',
-              isVault: mode == "vault",
-            ),
-            heroTag: "expense_fab",
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFab({
-    required BuildContext context,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-    required String heroTag,
-  }) {
-    return GlassCard(
-      width: 56,
-      height: 56,
-      borderRadius: 18,
-      padding: EdgeInsets.zero,
-      glowColor: color.withValues(alpha: 0.3),
-      border: Border.all(color: color.withValues(alpha: 0.4), width: 2.0),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(18),
-          child: Center(child: Icon(icon, color: color, size: 28)),
         ),
-      ),
+        const SizedBox(height: AppSpacing.md),
+        AppRoundButton(
+          icon: AppIcons.remove,
+          color: AppColors.expenseRed,
+          onTap: () => TransactionFlowService.instance.startQuickEntry(
+            context,
+            type: 'expense',
+            isVault: mode == "vault",
+          ),
+        ),
+      ],
     );
   }
 }
