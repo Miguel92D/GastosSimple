@@ -80,16 +80,6 @@ class ActionController {
         }
         break;
 
-      case AppAction.openBudgets:
-        if (AppState.instance.isPro) {
-          GeneralFlowService.openBudgets();
-        } else {
-          PremiumFlowService.showUpgradePrompt(context);
-        }
-        break;
-      case AppAction.openCategories:
-        GeneralFlowService.openCategories();
-        break;
       case AppAction.openMonthlyAnalysis:
         if (AppState.instance.isPro) {
           GeneralFlowService.openMonthlyAnalysis();

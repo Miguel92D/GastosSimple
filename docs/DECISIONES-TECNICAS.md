@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-04 (chat 00).
+Última revisión: 2026-10-04 (chat 01).
 
 ---
 
@@ -50,3 +50,6 @@ Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin comm
 
 ### D-012 — Cada versión publicada queda marcada
 Cuando se publica en Play se crea un tag `vX.Y.Z+N` en el commit exacto que se compiló. Así no vuelve a pasar lo de la 1.1.8 (no se sabe de qué código salió).
+
+### D-013 — Pantallas ocultas
+Proyección del mes y Análisis mensual quedan ocultas (Especificación, sección 4): conservan su archivo, su ruta (`/prediction`, `/monthly_analysis`) y su acción en `ActionController` / `GeneralFlowService`, pero ningún menú ni botón las abre. Para volver a mostrarlas alcanza con agregar la entrada en el menú.

@@ -9,8 +9,6 @@ enum AppAction {
   openPrediction,
   openDebts,
   openGoals,
-  openBudgets,
-  openCategories,
   openMonthlyAnalysis,
 }
 

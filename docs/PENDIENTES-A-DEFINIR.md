@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-04 (chat 00).
+Última revisión: 2026-10-04 (chat 01).
 
 ---
 
@@ -44,3 +44,11 @@ Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el
 ### P-07 — `main` está muy atrás
 `main` quedó en marzo 2026. Todo el trabajo está en `feature/mejoras-sesion`.
 **Respuesta:** _pendiente_ — se decide cómo unir en el chat 06.
+
+### P-08 — La pantalla Pro promete cosas que ya no están a la vista
+`premium_screen.dart` muestra "Predicción de gastos del mes" (`benefit_predictions`) y el aviso de mejora (`PremiumFlowService`) muestra "Exportación de datos" (`feature_export`), pero la Proyección quedó oculta y el respaldo es gratis (P-05). En el chat 01 solo se sacaron del aviso "Análisis mensual" y "Presupuestos".
+**Respuesta:** _pendiente_ — se ajusta en el chat 04 (Pro y compras).
+
+### P-09 — 98 textos de traducción que ya no se usaban antes del chat 01
+En `app_translations.dart` hay 98 claves (en las dos lenguas) que ningún archivo nombra, por ejemplo `get_pro`, `history_analytics`, `dark_mode`, `privacy_policy_part1`. Ya estaban sin uso antes del chat 01. No se borraron porque algunas podrían usarse de forma indirecta (por ejemplo, nombres de categorías guardados en la base).
+**Respuesta:** _pendiente_ — revisar una por una y borrar las que sobran en una tarea de limpieza.

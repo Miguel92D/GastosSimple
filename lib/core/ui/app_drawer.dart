@@ -8,7 +8,6 @@ import '../controllers/action_controller.dart';
 import '../controllers/app_action.dart';
 import 'app_colors.dart';
 import 'app_gradients.dart';
-import 'app_radius.dart';
 import 'app_text_styles.dart';
 import 'widgets/gold_shimmer_text.dart';
 
@@ -251,134 +250,80 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   },
                 ),
 
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 4,
+                // Bloque Pro: solo se muestra con Pro activo (Especificación, sección 5).
+                if (isPro) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    child: AnimatedBuilder(
+                      animation: _shimmerAnimation,
+                      builder: (context, child) {
+                        return ShaderMask(
+                          shaderCallback: (bounds) {
+                            return _goldShineGradient().createShader(bounds);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Text(
+                              'PRO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  // El dorado es exclusivo de Pro: en cuenta gratis el rótulo va neutro.
-                  child: !isPro
-                      ? Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(AppRadius.sm),
-                            border: Border.all(
-                              color: AppColors.softText.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                'PRO',
-                                style: AppTextStyles.subLabel.copyWith(
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                              const Spacer(),
-                              const Icon(
-                                Icons.lock_rounded,
-                                size: 14,
-                                color: AppColors.softText,
-                              ),
-                            ],
-                          ),
-                        )
-                      : AnimatedBuilder(
-                    animation: _shimmerAnimation,
-                    builder: (context, child) {
-                      return ShaderMask(
-                        shaderCallback: (bounds) {
-                          return _goldShineGradient().createShader(bounds);
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.8),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: const Text(
-                            'PRO',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 12,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                      );
+                  const SizedBox(height: 6),
+                  _DrawerItem(
+                    icon: Icons.analytics_rounded,
+                    title: context.watch<AppLocaleController>().text(
+                      'statistics',
+                    ),
+                    onTap: () {
+                      GeneralFlowService.goBack();
+                      ActionController.execute(context, AppAction.openStats);
                     },
                   ),
-                ),
-                const SizedBox(height: 6),
-
-                _DrawerItem(
-                  icon: Icons.auto_graph_rounded,
-                  title: context.watch<AppLocaleController>().text(
-                    'ai_intelligence',
+                  _DrawerItem(
+                    icon: Icons.flag_rounded,
+                    title: context.watch<AppLocaleController>().text(
+                      'savings_goals',
+                    ),
+                    onTap: () {
+                      GeneralFlowService.goBack();
+                      ActionController.execute(context, AppAction.openGoals);
+                    },
                   ),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openPrediction);
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.analytics_rounded,
-                  title: context.watch<AppLocaleController>().text(
-                    'statistics',
+                  _DrawerItem(
+                    icon: Icons.lock_rounded,
+                    title: context.watch<AppLocaleController>().text(
+                      'vault_label',
+                    ),
+                    onTap: () {
+                      GeneralFlowService.goBack();
+                      ActionController.execute(context, AppAction.openVault);
+                    },
                   ),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openStats);
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.insights_rounded,
-                  title: context.watch<AppLocaleController>().text(
-                    'monthly_analysis',
-                  ),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(
-                      context,
-                      AppAction.openMonthlyAnalysis,
-                    );
-                  },
-                ),
-
-                _DrawerItem(
-                  icon: Icons.flag_rounded,
-                  title: context.watch<AppLocaleController>().text(
-                    'savings_goals',
-                  ),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openGoals);
-                  },
-                ),
-
-                _DrawerItem(
-                  icon: Icons.lock_rounded,
-                  title: context.watch<AppLocaleController>().text(
-                    'vault_label',
-                  ),
-                  onTap: () {
-                    GeneralFlowService.goBack();
-                    ActionController.execute(context, AppAction.openVault);
-                  },
-                ),
+                ],
               ],
             ),
           ),

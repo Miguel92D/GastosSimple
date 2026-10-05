@@ -12,7 +12,6 @@ import '../../features/analysis/screens/prediction_screen.dart';
 
 import '../../features/debts/screens/debt_screen.dart';
 import '../../features/goals/screens/savings_goals_screen.dart';
-import '../../features/budgets/screens/budget_screen.dart';
 
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/pin_screen.dart';
@@ -22,7 +21,6 @@ import '../../features/settings/screens/premium_screen.dart';
 import '../../features/settings/screens/consent_screen.dart';
 import '../../features/settings/screens/backup_screen.dart';
 import '../../features/settings/screens/privacy_policy_screen.dart';
-import '../../features/transactions/screens/categories_screen.dart';
 import '../../features/transactions/screens/recurring_screen.dart';
 
 class AppRouter {
@@ -102,12 +100,6 @@ class AppRouter {
           builder: (_) => const SavingsGoalsScreen(),
         );
 
-      case "/budgets":
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => const BudgetScreen(),
-        );
-
       case "/settings":
         return MaterialPageRoute(
           settings: settings,
@@ -145,12 +137,6 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const PrivacyPolicyScreen(),
-        );
-
-      case "/categories":
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => const CategoriesScreen(),
         );
 
       case "/recurring":

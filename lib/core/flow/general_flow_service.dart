@@ -48,11 +48,6 @@ class GeneralFlowService {
     NavigationService.navigate("/goals");
   }
 
-  static void openBudgets() {
-    SecurityService.instance.lockVault();
-    NavigationService.navigate("/budgets");
-  }
-
   static void openEntry() {
     SecurityService.instance.lockVault();
     NavigationService.navigateAndRemoveUntil("/quick_entry");
@@ -96,11 +91,6 @@ class GeneralFlowService {
 
   static void openPrivacy() {
     NavigationService.navigate("/privacy");
-  }
-
-  static void openCategories() {
-    SecurityService.instance.lockVault();
-    NavigationService.navigate("/categories");
   }
 
   static void openRecurring() {
