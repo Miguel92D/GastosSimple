@@ -68,13 +68,9 @@ class _BalanceCardState extends State<BalanceCard>
   @override
   Widget build(BuildContext context) {
     // Sobre el degradado violeta el verde/rojo no se lee (contraste < 3:1):
-    // el monto va en blanco y el signo lo marca la flecha.
+    // el monto va en blanco. Sin flechas de subida/bajada (D-031): un saldo
+    // negativo ya se ve con su "-".
     const Color targetColor = AppColors.textPrimary;
-    final IconData? trendIcon = widget.balance > 0
-        ? Icons.arrow_upward_rounded
-        : widget.balance < 0
-        ? Icons.arrow_downward_rounded
-        : null;
 
     return GlassCard(
       width: double.infinity,
@@ -167,23 +163,7 @@ class _BalanceCardState extends State<BalanceCard>
                             ),
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (trendIcon != null &&
-                                      !AppState.instance.hideBalance) ...[
-                                    Icon(
-                                      trendIcon,
-                                      size: 22,
-                                      color: AppColors.textPrimary.withValues(
-                                        alpha: 0.85,
-                                      ),
-                                    ),
-                                    const SizedBox(width: AppSpacing.xs),
-                                  ],
-                                  Text(formattedValue, maxLines: 1),
-                                ],
-                              ),
+                              child: Text(formattedValue, maxLines: 1),
                             ),
                           ),
                         );

@@ -126,6 +126,17 @@ void main() {
           return !tokenFiles.any(path.endsWith);
         });
 
+    test('no hay flechas de subida ni bajada (D-031)', () {
+      // La Proyección y el Análisis mensual están ocultos (D-013).
+      const hidden = ['monthly_analysis_screen.dart', 'prediction_screen.dart'];
+      final arrow = RegExp(r'Icons\.(arrow_upward|arrow_downward)');
+      final offenders = screens()
+          .where((f) => !hidden.any(f.path.endsWith))
+          .where((f) => arrow.hasMatch(f.readAsStringSync()))
+          .map((f) => f.path);
+      expect(offenders, isEmpty);
+    });
+
     test('ninguna pantalla escribe colores a mano', () {
       final offenders = <String>[];
       for (final f in screens()) {

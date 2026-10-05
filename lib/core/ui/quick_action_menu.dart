@@ -61,7 +61,7 @@ class QuickActionMenu {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.arrow_upward_rounded,
+                    Icons.add_rounded,
                     color: AppColors.incomeGreen,
                   ),
                   title: Text(
@@ -75,7 +75,7 @@ class QuickActionMenu {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.arrow_downward_rounded,
+                    Icons.remove_rounded,
                     color: AppColors.expenseRed,
                   ),
                   title: Text(
@@ -90,7 +90,7 @@ class QuickActionMenu {
               ],
               ListTile(
                 leading: Icon(
-                  isVault ? Icons.arrow_upward_rounded : Icons.lock_rounded,
+                  isVault ? Icons.add_rounded : Icons.lock_rounded,
                   color: isVault
                       ? AppColors.incomeGreen
                       : AppColors.primaryPurple,
@@ -112,7 +112,7 @@ class QuickActionMenu {
               if (isVault)
                 ListTile(
                   leading: const Icon(
-                    Icons.arrow_downward_rounded,
+                    Icons.remove_rounded,
                     color: AppColors.expenseRed,
                   ),
                   title: Text(

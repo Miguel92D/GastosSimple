@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 07, D-028 a D-030).
+Última revisión: 2026-10-05 (chat 07, D-028 a D-031).
 
 ---
 
@@ -167,3 +167,10 @@ Regla de Miguel (2026-10-05, con capturas): **un mismo elemento se ve siempre ig
 - El renglón del monto tiene **alto fijo** (`amountLineHeight`, `lib/core/ui/amount_line.dart`): aunque un monto gigante tenga que achicarse, la tarjeta no cambia de alto. Probado en el emulador: Día y Mes miden igual.
 - Para cualquier componente: nada de tamaños que dependan del contenido o de la pantalla. Si un texto no entra, se achica igual en todas las copias del componente que se ven juntas.
 - Tests: `test/design_cards_test.dart` (balance e Ingresos/Gastos miden lo mismo con $ 1.530 y con $ 609.099.095.991,60).
+
+### D-031 — Sin flechas de subida o bajada
+Pedido de Miguel (2026-10-05): las flechas ↑ / ↓ al lado de un monto **no van en ninguna parte**.
+- Se sacó la flecha del monto de la tarjeta de balance. Un saldo negativo se ve igual por su "-" (`CurrencyService.format` lo pone siempre).
+- En el menú rápido, "Agregar ingreso" y "Agregar gasto" (también en la Bóveda) usan `+` y `−`, como los botones de abajo, en vez de flechas.
+- Quedan los íconos de tendencia de Análisis mensual, que está oculto (D-013); si se vuelve a mostrar, se cambian.
+- Test: `test/design_cards_test.dart` falla si una pantalla visible usa `Icons.arrow_upward` / `arrow_downward`.
