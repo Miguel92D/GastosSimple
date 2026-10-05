@@ -1,6 +1,6 @@
-# Sistema de diseño de $imple — propuesta
+# Sistema de diseño de $imple
 
-> Chat 07, 2026-10-05. **Propuesta para que Miguel apruebe. No se cambió código.**
+> Chat 07, 2026-10-05. **✅ Aprobado por Miguel (D-032): reglas y tabla de íconos tal cual, margen 24. Se aplica en el chat 08.**
 > Parte de la skill `diseno-simple` y de lo que el código tiene hoy (`lib/core/ui/`).
 > Completa la auditoría anterior (`docs/AUDITORIA-DISENO.md`) y las decisiones D-029, D-030 y D-031.
 
@@ -40,13 +40,13 @@ Ejemplo: el botón redondo `+` hoy está escrito 4 veces (inicio, Deudas, Metas 
 | Fila de lista | 4 | Movimiento, pago fijo, deuda y fila de Ajustes |
 | Monto dentro de una lista | 4 | Movimientos (15), Deudas (16), Pagos fijos (14), Estadísticas (15) |
 | Beneficios Pro | 2 | Pantalla Pro (con ícono por beneficio) y aviso Pro (con tilde dorado) |
-| Margen a los costados de la pantalla | 2 | 24 en casi todas; **16 en Ajustes y Deudas** (Deudas lo cambié yo en este chat siguiendo la skill, que dice 16: hay que decidir) |
+| Margen a los costados de la pantalla | 2 | 24 en casi todas; **16 en Ajustes** (Deudas ya volvió a 24). Decidido: 24 en todas (D-032) |
 
 ### Módulos que existen pero nadie usa
 
 `AppCard`, `NeonShadow`, `AppShadows` (solo lo usa `AppCard`), `AppTheme.lightTheme` y `AppTheme.glassDecoration`. Confunden: parecen parte del sistema y no lo son.
 
-## Las reglas (para aprobar)
+## Las reglas (aprobadas, D-032)
 
 - **R-1 · Una cosa, un módulo.** Todo lo que aparece en más de una pantalla vive en un solo archivo de `lib/core/ui/`. Las pantallas lo usan, no lo copian.
 - **R-2 · Se cambia el módulo, nunca la pantalla.** Un retoque de diseño se hace en el módulo. Si una pantalla necesita algo distinto, se agrega una **variante con nombre** al módulo (por ejemplo `AppRoundButton.small`). Nunca una copia con un cambio.

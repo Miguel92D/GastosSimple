@@ -360,9 +360,9 @@ class _DebtScreenState extends State<DebtScreen> {
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
+                AppSpacing.lg, // margen de pantalla 24 (D-032)
                 AppSpacing.sm,
-                AppSpacing.md,
+                AppSpacing.lg,
                 120, // lugar para el menú y el + de abajo
               ),
               child: Column(

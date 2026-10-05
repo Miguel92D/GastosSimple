@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 07, D-028 a D-031).
+Última revisión: 2026-10-05 (chat 07, D-028 a D-032).
 
 ---
 
@@ -174,3 +174,10 @@ Pedido de Miguel (2026-10-05): las flechas ↑ / ↓ al lado de un monto **no va
 - En el menú rápido, "Agregar ingreso" y "Agregar gasto" (también en la Bóveda) usan `+` y `−`, como los botones de abajo, en vez de flechas.
 - Quedan los íconos de tendencia de Análisis mensual, que está oculto (D-013); si se vuelve a mostrar, se cambian.
 - Test: `test/design_cards_test.dart` falla si una pantalla visible usa `Icons.arrow_upward` / `arrow_downward`.
+
+### D-032 — Sistema de diseño modular (aprobado, se hace en el chat 08)
+Miguel aprobó el 2026-10-05 la propuesta `docs/SISTEMA-DISENO.md`:
+- **Las 8 reglas tal cual (R-1 a R-8).** La central: cada cosa que se ve se dibuja en **un solo módulo** de `lib/core/ui/`; un cambio de diseño se hace en el módulo y cambia en todas las pantallas. Si una pantalla necesita algo distinto, se agrega una variante con nombre al módulo, nunca una copia.
+- **La tabla de íconos tal cual:** un concepto, un ícono, todos `…_rounded`, desde un catálogo `AppIcons`. Cambian a la vista: Metas → alcancía (`savings_rounded`), PIN → `pin_rounded`, Tips de salida → lamparita, Avalancha → `landslide_rounded`, Pagar → `paid_rounded`, Respaldo → `backup_rounded`.
+- **Margen de pantalla 24 en todas** (`AppSpacing.screen`, a crear en el chat 08). Reemplaza el "md (16)" de la skill. Deudas ya volvió a 24 en el chat 07; Ajustes queda para el 08.
+- Se hace en un **chat nuevo, 08**, con el plan de 8 pasos del documento. Cada paso deja analyze y test en verde y se sube aparte.
