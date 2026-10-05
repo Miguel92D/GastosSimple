@@ -110,3 +110,8 @@ La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallo
 ### P-20 — La skill `diseno-simple` nombra un `AppPill` que no existe
 La skill dice que toda pill se hace con `AppPill` (`lib/core/ui/widgets/app_pill.dart`), pero ese archivo no está en el código (visto en el chat 07). Las pills hoy se arman a mano en cada pantalla.
 **Respuesta:** _pendiente_ — crear `AppPill` con las medidas de la skill en una tarea visual, o corregir la skill.
+Además (auditoría del chat 07): la skill dice que el botón de menú va abajo a la izquierda, pero en la app está abajo al centro. Manda el código; hay que corregir la skill.
+
+### P-21 — Los textos mezclan "vos" y "tú"
+La app dice "Podés gastar hoy" y "Entrá…", pero también "¿Qué quieres registrar hoy?", "Agrega tu primera deuda", "Puedes exportar…", "Mantén tus datos seguros" y "Elige estrategia" (visto en el chat 07).
+**Respuesta:** _pendiente_ — elegir uno (vos o tú) y corregir los textos en español en una tarea de textos (junto con P-14).
