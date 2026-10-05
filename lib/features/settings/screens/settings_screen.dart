@@ -150,7 +150,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isPinActive,
-                  activeThumbColor: AppColors.primaryPurple,
                   onChanged: (val) async {
                     if (val) {
                       final result = await Navigator.pushNamed(
@@ -186,7 +185,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isBiometricActive,
-                  activeThumbColor: AppColors.primaryPurple,
                   onChanged: (val) async {
                     if (val) {
                       final canUse = await securityService.canUseBiometrics;
@@ -223,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
 
-                const Divider(color: AppColors.cardBorder, height: 1),
+                const Divider(),
 
                 SwitchListTile(
                   title: Text(
@@ -239,7 +237,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: AppColors.primaryPurple,
                   ),
                   value: securityService.isVaultPinActive,
-                  activeThumbColor: AppColors.primaryPurple,
                   onChanged: (val) async {
                     if (val) {
                       final result = await Navigator.pushNamed(
@@ -278,7 +275,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: AppColors.primaryPurple,
                   ),
                   value: _reminderEnabled,
-                  activeThumbColor: AppColors.primaryPurple,
                   onChanged: (val) => _toggleReminder(val, l10n),
                 ),
                 if (_reminderEnabled)
@@ -372,7 +368,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: AppColors.primaryPurple,
                   ),
                   value: appState.crashReportsEnabled,
-                  activeThumbColor: AppColors.primaryPurple,
                   onChanged: (val) => appState.setConsent(crashReports: val),
                 ),
               ]),

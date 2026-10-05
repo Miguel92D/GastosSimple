@@ -486,10 +486,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              l10n.text('delete'),
-              style: const TextStyle(color: AppColors.expenseRed),
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.expenseRed),
+            child: Text(l10n.text('delete')),
           ),
         ],
       ),
@@ -572,7 +570,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           value: n != null,
-          activeThumbColor: color,
           secondary: const Icon(AppIcons.installments, color: color),
           title: Text(
             l10n.text('installments_toggle').toUpperCase(),
@@ -709,7 +706,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           value: _isRecurring,
-          activeThumbColor: color,
           secondary: Icon(AppIcons.recurring, color: color),
           title: Text(
             l10n.text('recurring_repeat').toUpperCase(),

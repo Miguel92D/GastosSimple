@@ -58,6 +58,67 @@ class AppTheme {
           side: const BorderSide(color: AppColors.cardBorder),
         ),
       ),
+      // ── Lo de Material, configurado una vez (R-6, chat 08) ──
+      // Diálogos: todos iguales (fondo surface con borde fino, radio lg).
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          side: const BorderSide(color: AppColors.cardBorder),
+        ),
+        titleTextStyle: AppTextStyles.titleSmall,
+        contentTextStyle: AppTextStyles.bodyMain,
+      ),
+      // Botones de texto (diálogos): violetas, como están escritos.
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primaryPurple,
+          textStyle: AppTextStyles.buttonLabel.copyWith(fontSize: 14),
+        ),
+      ),
+      // Interruptores: prendido violeta con bolita blanca; apagado vidrio.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? AppColors.textPrimary
+              : AppColors.softText,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? AppColors.primaryPurple
+              : AppColors.glassSurface,
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? Colors.transparent
+              : AppColors.cardBorder,
+        ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? AppColors.primaryPurple
+              : Colors.transparent,
+        ),
+        checkColor: const WidgetStatePropertyAll(AppColors.textPrimary),
+        side: const BorderSide(color: AppColors.cardBorder, width: 1.5),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.cardBorder,
+        thickness: 1,
+        space: 1,
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primaryPurple,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.darkBackground,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+        ),
+      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.transparent,
         selectedItemColor: AppColors.primaryPurple,

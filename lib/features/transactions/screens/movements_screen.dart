@@ -176,7 +176,6 @@ class _MovementsScreenState extends State<MovementsScreen> {
                       for (final c in available)
                         CheckboxListTile(
                           value: selected.contains(c),
-                          activeColor: AppColors.primaryPurple,
                           title: Text(
                             L10nHelper.getLocalizedCategory(context, c),
                           ),

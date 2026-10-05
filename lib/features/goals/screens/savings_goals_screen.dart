@@ -313,7 +313,7 @@ class _GoalItemCard extends StatelessWidget {
               '${l10n.text('estimated_date')}: ${dateFormat.format(goal.targetDate)}',
               style: AppTextStyles.bodySmall,
             ),
-            const Divider(color: Colors.white10, height: AppSpacing.lg),
+            const Divider(height: AppSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -533,7 +533,6 @@ class _DebtScreenState extends State<DebtScreen> {
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     value: recordExpense,
-                    activeThumbColor: AppColors.primaryPurple,
                     title: Text(
                       context.read<AppLocaleController>().text('debt_record_expense'),
                       style: AppTextStyles.bodyMain,
@@ -856,14 +855,12 @@ class _DebtScreenState extends State<DebtScreen> {
       builder: (context) {
         final l10n = context.watch<AppLocaleController>();
         return AlertDialog(
-          backgroundColor: AppColors.darkBackground,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
-          title: Text(l10n.text('delete_debt_title'), style: AppTextStyles.cardTitle),
+          title: Text(l10n.text('delete_debt_title')),
           content: Text(l10n.text('confirm_delete').replaceFirst('movimiento', "'${debt.nombre}'")),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.text('cancel').toUpperCase(), style: AppTextStyles.buttonLabel.copyWith(color: AppColors.softText)),
+              child: Text(l10n.text('cancel')),
             ),
             TextButton(
               onPressed: () async {
@@ -877,7 +874,8 @@ class _DebtScreenState extends State<DebtScreen> {
                   _loadDebts();
                 }
               },
-              child: Text(l10n.text('delete').toUpperCase(), style: AppTextStyles.buttonLabel.copyWith(color: AppColors.expenseRed)),
+              style: TextButton.styleFrom(foregroundColor: AppColors.expenseRed),
+              child: Text(l10n.text('delete')),
             ),
           ],
         );

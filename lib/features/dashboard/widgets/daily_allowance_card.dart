@@ -146,10 +146,8 @@ class _DailyAllowanceCardState extends State<DailyAllowanceCard> {
           if (current != null)
             TextButton(
               onPressed: () => Navigator.pop(ctx, 0),
-              child: Text(
-                l10n.text('budget_monthly_remove'),
-                style: const TextStyle(color: AppColors.expenseRed),
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.expenseRed),
+              child: Text(l10n.text('budget_monthly_remove')),
             ),
           TextButton(
             onPressed: () => Navigator.pop(ctx),

@@ -98,7 +98,7 @@ class _RecurringScreenState extends State<RecurringScreen> {
               ),
               title: Text(
                 l10n.text('recurring_cancel'),
-                style: const TextStyle(color: AppColors.expenseRed),
+                style: AppTextStyles.bodyMain.copyWith(color: AppColors.expenseRed),
               ),
               onTap: () => Navigator.pop(ctx, 'cancel'),
             ),
@@ -187,10 +187,8 @@ class _RecurringScreenState extends State<RecurringScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              l10n.text('recurring_cancel'),
-              style: const TextStyle(color: AppColors.expenseRed),
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.expenseRed),
+            child: Text(l10n.text('recurring_cancel')),
           ),
         ],
       ),
