@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 05).
+Última revisión: 2026-10-05 (chat 06).
 
 ---
 
@@ -32,6 +32,7 @@ Los montos se guardan como `REAL`, pero: toda escritura pasa por `Money.round` (
 
 ### D-006 — Números de versión para Play
 Play ya tiene **1.1.8 (14)**. El repo dice `1.1.4+10` (`pubspec.yaml` y `android/app/build.gradle`). La próxima publicación tiene que ser **como mínimo 1.1.9 (15)**. Se corrige en el chat 06 (publicación), en los dos archivos a la vez.
+**Hecho en el chat 06:** los dos archivos dicen `1.1.9+15` (D-025).
 
 ### D-007 — Navegación
 Solo `GeneralFlowService` y `TransactionFlowService` para ir entre pantallas principales. Rutas en `lib/core/router/app_router.dart`.
@@ -43,10 +44,10 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (chat 05): analyze limpio, 181 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (chat 06): analyze limpio, 183 tests pasan.
 
 ### D-011 — Git seguro
-Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; `main` se actualiza en el chat 06.
+Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
 
 ### D-012 — Cada versión publicada queda marcada
 Cuando se publica en Play se crea un tag `vX.Y.Z+N` en el commit exacto que se compiló. Así no vuelve a pasar lo de la 1.1.8 (no se sabe de qué código salió).
@@ -116,4 +117,14 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 - La pantalla de la app (`PrivacyPolicyScreen`) usa los textos `privacy_s1…s8_title/body` de `AppTranslations` (antes estaban escritos en el código, solo con `isSpanish`). Son **las mismas palabras** que `privacy.html` de la landing.
 - Un test (`test/privacy_security_test.dart`) falla si las tres copias de la landing (`docs/`, `github_pages_root/`, `SimpleLanding/`) no son iguales o si la app y la web dicen cosas distintas.
 - Al cambiar la política: cambiar las secciones en `AppTranslations` y en `docs/privacy.html` a la vez, y copiar el HTML a las otras dos carpetas.
+
+### D-025 — Versión 1.1.9 (15) y test que la vigila
+- `pubspec.yaml` dice `version: 1.1.9+15` y `android/app/build.gradle` dice `versionCode 15` / `versionName "1.1.9"`.
+- `test/version_test.dart` falla si los dos archivos no dicen lo mismo o si el `versionCode` no es mayor que 14 (la 1.1.8 publicada). Al publicar una versión nueva, subir el número en los dos archivos y, si hace falta, el `_lastPublishedCode` del test.
+
+### D-026 — Cómo se unió `feature/mejoras-sesion` a `main` (P-07)
+- `main` local tenía 2 commits de marzo 2026 ("dashboard ui update", `4041e57` y `07d5650`) que **nunca se subieron** a GitHub. Eran una versión vieja de lo que la rama de trabajo rehízo mejor (Crashlytics sin consentimiento, `group.example` en el widget) y traían 739 archivos de `android/app/build` y logs commiteados por error.
+- No se mezclaron. Quedaron guardados en la rama **`archivo/main-marzo-2026`** (también en GitHub), así no se pierde nada.
+- `main` pasó a apuntar al mismo commit que `feature/mejoras-sesion` (en GitHub fue un avance directo, sin forzar: `origin/main` era el punto donde nació la rama).
+- De acá en más: se trabaja en `feature/mejoras-sesion` y al publicar se adelanta `main` a ese commit.
 

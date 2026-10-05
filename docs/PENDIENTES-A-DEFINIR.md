@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (chat 05).
+Última revisión: 2026-10-05 (chat 06).
 
 ---
 
@@ -48,7 +48,7 @@ Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el
 
 ### P-07 — `main` está muy atrás
 `main` quedó en marzo 2026. Todo el trabajo está en `feature/mejoras-sesion`.
-**Respuesta:** _pendiente_ — se decide cómo unir en el chat 06.
+**Respuesta (2026-10-05, chat 06):** ✅ `main` ahora apunta al mismo commit que `feature/mejoras-sesion`. Los 2 commits viejos de `main` (nunca subidos) se guardaron en la rama `archivo/main-marzo-2026` (D-026).
 
 ### P-08 — La pantalla Pro promete cosas que ya no están a la vista
 `premium_screen.dart` muestra "Predicción de gastos del mes" (`benefit_predictions`) y el aviso de mejora (`PremiumFlowService`) muestra "Exportación de datos" (`feature_export`), pero la Proyección quedó oculta y el respaldo es gratis (P-05). En el chat 01 solo se sacaron del aviso "Análisis mensual" y "Presupuestos".
