@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-04 (chat 01).
+Última revisión: 2026-10-04 (chat 02).
 
 ---
 
@@ -43,7 +43,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-04: analyze limpio, 72 tests pasan.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-04 (chat 02): analyze limpio, 91 tests pasan.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; `main` se actualiza en el chat 06.
@@ -53,3 +53,11 @@ Cuando se publica en Play se crea un tag `vX.Y.Z+N` en el commit exacto que se c
 
 ### D-013 — Pantallas ocultas
 Proyección del mes y Análisis mensual quedan ocultas (Especificación, sección 4): conservan su archivo, su ruta (`/prediction`, `/monthly_analysis`) y su acción en `ActionController` / `GeneralFlowService`, pero ningún menú ni botón las abre. Para volver a mostrarlas alcanza con agregar la entrada en el menú.
+
+### D-014 — Tests con base de datos real
+Para probar los flujos del núcleo se agregó `sqflite_common_ffi` **solo en `dev_dependencies`** (no va dentro de la app). Los tests usan una base SQLite en memoria:
+`sqfliteFfiInit(); databaseFactory = databaseFactoryFfi; DatabaseHelper.pathOverride = inMemoryDatabasePath;` y `DatabaseHelper.resetForTesting()` antes de cada test.
+`pathOverride` y `resetForTesting` están marcados `@visibleForTesting`: la app nunca los usa. Ejemplos: `test/transaction_flows_test.dart` y `test/transaction_screens_test.dart`.
+
+### D-015 — Cambiar el monto de un plan de cuotas
+Al cambiar el monto de la cuota en Pagos fijos, el total del plan pasa a ser **cuota nueva × total de cuotas** (`updateRecurringAmount`). Si quedaba el total viejo, la última cuota (que absorbe el redondeo) salía con cualquier monto, hasta negativo.

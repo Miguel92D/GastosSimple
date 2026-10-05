@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-04 (chat 01).
+Última revisión: 2026-10-04 (chat 02).
 
 ---
 
@@ -52,3 +52,11 @@ Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el
 ### P-09 — 98 textos de traducción que ya no se usaban antes del chat 01
 En `app_translations.dart` hay 98 claves (en las dos lenguas) que ningún archivo nombra, por ejemplo `get_pro`, `history_analytics`, `dark_mode`, `privacy_policy_part1`. Ya estaban sin uso antes del chat 01. No se borraron porque algunas podrían usarse de forma indirecta (por ejemplo, nombres de categorías guardados en la base).
 **Respuesta:** _pendiente_ — revisar una por una y borrar las que sobran en una tarea de limpieza.
+
+### P-10 — Íconos de categoría distintos entre pantallas
+En "Agregar movimiento" las categorías tienen un ícono cada una (Compras, Servicios, Tarjeta de Crédito…), pero en la lista de movimientos (`transaction_tile.dart`) muchas salen con el ícono genérico porque esa lista busca otros nombres (`educación`, `venta`, `regalo`…). No es un error de datos, solo visual.
+**Respuesta:** _pendiente_ — revisar con el sistema de diseño (skill `diseno-simple`) en una tarea de diseño.
+
+### P-11 — Movimientos a la Bóveda sin Pro
+Desde el chat 02, deslizar un movimiento a la derecha (mandarlo a la Bóveda) solo funciona con Pro; sacarlo de la Bóveda se permite siempre. Antes un usuario gratis podía esconder un movimiento en una Bóveda que no puede abrir.
+**Respuesta:** _pendiente_ — confirmar en el chat 04 (Pro y Bóveda) que es el comportamiento deseado.
