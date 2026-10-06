@@ -125,3 +125,8 @@ En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off
 Visto el 2026-10-06 al sacar las capturas para Play (versión 1.1.11). En un teléfono de 1080×2160 (18:9), el botón redondo de menú queda encima del botón GUARDAR de "Agregar movimiento" y se lee "G…R". También tapa un poco el final de las listas (Inicio, Deudas, Metas). En pantallas más altas (1080×2400) no pasa. La captura de "Agregar" para Play se sacó en 1080×2400 y se recortó abajo.
 **Respuesta:** _pendiente_ — darle a "Agregar" (y a las listas) espacio abajo para los botones flotantes, o esconder el botón de menú en "Agregar". Es visual: consultar con Miguel antes.
 
+### P-24 — Ícono nuevo dentro de la app
+El 2026-10-06 Miguel eligió un ícono nuevo: el mismo $ dorado de siempre, sobre el fondo oscuro con brillo violeta de la app ("opción 1"). El archivo para la ficha de Play (512×512) está en `_archivo/icono/icono-play-512.png` y Miguel lo sube a mano.
+Dentro de la app sigue el ícono viejo (fondo transparente: Android le pone un círculo claro atrás).
+**Respuesta:** _pendiente_ — en una tarea aparte: generar los íconos del teléfono (`mipmap-*`, ícono adaptable `mipmap-anydpi-v26` con fondo y frente separados, web) desde el ícono nuevo, y publicarlo en la próxima versión.
+
