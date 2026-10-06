@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 07, D-028 a D-032).
+Última revisión: 2026-10-05 (chat 08, D-033).
 
 ---
 
@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-030): 204.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-030): 204. Chat 08 (D-033): 223.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -181,3 +181,18 @@ Miguel aprobó el 2026-10-05 la propuesta `docs/SISTEMA-DISENO.md`:
 - **La tabla de íconos tal cual:** un concepto, un ícono, todos `…_rounded`, desde un catálogo `AppIcons`. Cambian a la vista: Metas → alcancía (`savings_rounded`), PIN → `pin_rounded`, Tips de salida → lamparita, Avalancha → `landslide_rounded`, Pagar → `paid_rounded`, Respaldo → `backup_rounded`.
 - **Margen de pantalla 24 en todas** (`AppSpacing.screen`, a crear en el chat 08). Reemplaza el "md (16)" de la skill. Deudas ya volvió a 24 en el chat 07; Ajustes queda para el 08.
 - Se hace en un **chat nuevo, 08**, con el plan de 8 pasos del documento. Cada paso deja analyze y test en verde y se sube aparte.
+
+### D-033 — Chat 08: sistema de diseño modular aplicado
+Se hizo el plan de 8 pasos de `docs/SISTEMA-DISENO.md` (D-032). Todo lo que se ve distinto lo aprobó Miguel antes, con dibujos "hoy / propuesta".
+- **Íconos:** catálogo `AppIcons` (un concepto, un ícono, todos `…_rounded`) y escala `AppIconSize`. Además de la tabla de D-032, Miguel eligió: "Ver movimientos" (Estadísticas) usa el ícono de Movimientos y "Ver mi compra" el de Pro (antes usaban el de la categoría Servicios); los íconos sueltos pasaron a `…_rounded`. La deuda ya no cambia de ícono por su nombre.
+- **Margen de pantalla:** `AppSpacing.screen` = 24 (Ajustes pasó de 16 a 24).
+- **Módulos nuevos** (`lib/core/ui/widgets/`): `AppLogo`, `AppRoundButton` (el botón de menú quedó igual a los `+`), `AppActionButton`, `AppIconBox`, `AppSectionTitle` (todos grises; Ajustes dejó el violeta), `AppEmptyState`, `AppProgressBar` (alto 8, color liso; Metas dejó el degradado), `AppSheet` (+ `AppSheetTitle`, `AppSheetOption`), `AppSegmented` (Ingreso/Gasto en MAYÚSCULAS), `AppSecondaryButton`, `AppListRow` (+ `.setting` para Ajustes, caja violeta), `AppAmount.list`, `ProBenefitList` (ícono propio en caja violeta, en la pantalla Pro y en el aviso).
+- **Tema (R-6):** diálogos, botones de texto (como están escritos, violetas; rojo solo para borrar), interruptores, checkbox, divisor e indicador de carga se configuran en `AppTheme.brandTheme`.
+- **Campos:** los de Deudas y Metas usan `GlassInput`. **Filtros** de Movimientos: `AppPill`. **Política:** `GradientButton`.
+- **Letras con nombre** para los tamaños que estaban escritos a mano (`screenTitle`, `headline`, `amountHighlight`, `amountHero`, `amountInput`, `price`, `pinDigit`, `badge`, `emoji`, `rowTitle`, `rowSubtitle`, `segmentLabel`, `secondaryButtonLabel`). Token nuevo `AppColors.softTextDim`; radios `AppRadius.round` (18) y `bar` (4).
+- **Borrado:** `AppCard`, `NeonShadow`, `AppShadows`, `AppTheme.lightTheme`, `glassDecoration` y el alias `neonTheme`.
+- **Catálogo visual:** `lib/features/dev/design_catalog_screen.dart`, se abre desde Ajustes → DEV (solo modo desarrollo; no está en el router).
+- **Skill:** la versión nueva de `diseno-simple` está en `.claude/skills/diseno-simple/SKILL.md` (P-20).
+- **Tests (R-7):** `test/design_cards_test.dart` y `test/design_modules_test.dart`. Fallan si una pantalla (`lib/features/`, `lib/core/flow/`) escribe `Icons.`, `fontSize:` con número, `TextStyle(`, un radio con número, `showModalBottomSheet`, `LinearProgressIndicator`, `ElevatedButton`/`OutlinedButton`, o si crece la lista de `BoxDecoration` hechas a mano (solo puede achicarse). También miden que cada módulo tenga siempre el mismo tamaño.
+- No cambió ninguna función ni cálculo.
+

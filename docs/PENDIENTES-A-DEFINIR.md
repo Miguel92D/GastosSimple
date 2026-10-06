@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (chat 07).
+Última revisión: 2026-10-05 (chat 08).
 
 ---
 
@@ -111,7 +111,13 @@ La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallo
 La skill dice que toda pill se hace con `AppPill` (`lib/core/ui/widgets/app_pill.dart`), pero ese archivo no está en el código (visto en el chat 07). Las pills hoy se arman a mano en cada pantalla.
 **Respuesta (2026-10-05, chat 07):** ✅ Se creó `AppPill` con las medidas de la skill (D-029).
 Queda abierto (auditoría del chat 07): la skill dice que el botón de menú va abajo a la izquierda, pero en la app está abajo al centro. Manda el código; hay que corregir la skill (fuera del repo) y sumarle las reglas de D-029 a D-032 (paso 8 del chat 08).
+**Respuesta (2026-10-05, chat 08):** ✅ Skill reescrita con el sistema modular (reglas R-1…R-8, `AppIcons`, módulos, letras, tests) y el menú abajo al centro. Está en el repo: `.claude/skills/diseno-simple/SKILL.md` (Claude Code la usa en este proyecto). La copia de la cuenta de claude.ai no se tocó: para que valga también fuera de este repo, Miguel tiene que subir ese archivo a su skill `diseno-simple` en claude.ai.
 
 ### P-21 — Los textos mezclan "vos" y "tú"
 La app dice "Podés gastar hoy" y "Entrá…", pero también "¿Qué quieres registrar hoy?", "Agrega tu primera deuda", "Puedes exportar…", "Mantén tus datos seguros" y "Elige estrategia" (visto en el chat 07).
 **Respuesta:** _pendiente_ — elegir uno (vos o tú) y corregir los textos en español en una tarea de textos (junto con P-14).
+
+### P-22 — Aviso "Floating SnackBar presented off screen"
+En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off screen": un aviso flotante quedó tapado o fuera de la pantalla, probablemente por los botones de abajo. Ya pasaba antes de los cambios de diseño. No se investigó (fuera de la tarea).
+**Respuesta:** _pendiente_ — ver en qué pantalla aparece y darle margen abajo al aviso.
+

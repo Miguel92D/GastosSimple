@@ -1,6 +1,7 @@
 # Sistema de diseño de $imple
 
-> Chat 07, 2026-10-05. **✅ Aprobado por Miguel (D-032): reglas y tabla de íconos tal cual, margen 24. Se aplica en el chat 08.**
+> Chat 07, 2026-10-05. **✅ Aprobado por Miguel (D-032): reglas y tabla de íconos tal cual, margen 24.**
+> **✅ Aplicado en el chat 08 (D-033).** La sección "Cómo está hoy" describe el punto de partida; hoy las pantallas usan los módulos y los tests de reglas están prendidos.
 > Parte de la skill `diseno-simple` y de lo que el código tiene hoy (`lib/core/ui/`).
 > Completa la auditoría anterior (`docs/AUDITORIA-DISENO.md`) y las decisiones D-029, D-030 y D-031.
 
