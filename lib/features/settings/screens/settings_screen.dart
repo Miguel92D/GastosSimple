@@ -123,7 +123,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.screen,
+              vertical: AppSpacing.sm,
+            ),
             children: [
               ..._section(l10n.text('language'), [
                 _buildItem(
@@ -176,23 +179,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       final canUse = await securityService.canUseBiometrics;
                       if (!context.mounted) return;
                       if (canUse) {
-                        // La huella necesita un PIN de repuesto: si todavía
-                        // no hay, se crea primero.
-                        if (!securityService.isPinActive ||
-                            !securityService.hasPin) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.text('biometric_needs_pin')),
-                            ),
-                          );
-                          final created = await Navigator.pushNamed(
-                            context,
-                            '/pin',
-                            arguments: {'setup': true},
-                          );
-                          if (created != true) return;
-                          await securityService.setPinActive(true);
-                        }
+                        // Huella y PIN van por separado (D-035): el repuesto
+                        // de la huella es el bloqueo del teléfono.
                         await securityService.setBiometricActive(true);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

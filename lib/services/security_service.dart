@@ -35,6 +35,17 @@ class SecurityService extends ChangeNotifier {
   @visibleForTesting
   static DateTime Function() clock = DateTime.now;
 
+  /// ¿El teléfono tiene algún bloqueo (patrón, PIN, huella)? Se cambia en
+  /// los tests. Si la consulta falla se responde "sí" para no abrir la app.
+  @visibleForTesting
+  static Future<bool> Function() deviceHasLock = () async {
+    try {
+      return await LocalAuthentication().isDeviceSupported();
+    } catch (_) {
+      return true;
+    }
+  };
+
   /// Solo para tests: vuelve a leer todo del almacenamiento seguro.
   @visibleForTesting
   Future<void> reloadForTesting() => _loadSecuritySettings();
@@ -69,7 +80,6 @@ class SecurityService extends ChangeNotifier {
     final bool isSupported = await _auth.isDeviceSupported();
     return canCheck && isSupported;
   }
-
 
   void lock() {
     _isUnlocked = false;
@@ -179,12 +189,6 @@ class SecurityService extends ChangeNotifier {
   Future<void> setPinActive(bool value) async {
     await _storage.write(key: 'is_pin_active', value: value.toString());
     _isPinActive = value;
-    // La huella necesita el PIN de repuesto: sin PIN, si la huella falla
-    // (sensor roto, huellas borradas) no habría forma de entrar.
-    if (!value && _isBiometricActive) {
-      await _storage.write(key: 'is_biometric_active', value: 'false');
-      _isBiometricActive = false;
-    }
     notifyListeners();
     _applyScreenSecurity();
   }
@@ -202,14 +206,27 @@ class SecurityService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// La huella solo se activa si ya hay PIN (es la llave de repuesto).
-  /// Devuelve false si no se pudo activar por falta de PIN.
-  Future<bool> setBiometricActive(bool value) async {
-    if (value && !(_isPinActive && hasPin)) return false;
+  /// PIN y huella se eligen por separado (D-035): la huella no necesita PIN.
+  /// Su repuesto es el bloqueo del teléfono.
+  Future<void> setBiometricActive(bool value) async {
     await _storage.write(key: 'is_biometric_active', value: value.toString());
     _isBiometricActive = value;
     notifyListeners();
     _applyScreenSecurity();
+  }
+
+  /// Hay huella sin PIN (solo huella).
+  bool get isBiometricOnly => _isBiometricActive && !(_isPinActive && hasPin);
+
+  /// Solo huella y el teléfono ya no tiene ningún bloqueo: Android borró las
+  /// huellas y no hay con qué comprobar quién es. Sacar el bloqueo del
+  /// teléfono exige conocerlo, así que se deja entrar y se apaga la huella
+  /// (D-035). Devuelve true si pasó eso.
+  Future<bool> releaseIfPhoneHasNoLock() async {
+    if (!isBiometricOnly) return false;
+    if (await deviceHasLock()) return false;
+    await setBiometricActive(false);
+    unlock();
     return true;
   }
 
@@ -244,7 +261,8 @@ class SecurityService extends ChangeNotifier {
       if (!canAuthenticate) return false;
 
       return await _auth.authenticate(
-        localizedReason: localizedReason ?? 'Please authenticate to access your finances',
+        localizedReason:
+            localizedReason ?? 'Please authenticate to access your finances',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: false,

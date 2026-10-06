@@ -84,7 +84,7 @@ Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analyti
 
 ### P-16 — Usuarios que ya tienen huella sin PIN
 Desde el chat 05 la huella necesita un PIN (D-022). Pero alguien que en una versión anterior activó solo la huella sigue así: entra con la huella o con el bloqueo del teléfono (la app lo permite). Si un día fallan los dos, no hay forma de entrar.
-**Respuesta:** _pendiente_ — decidir si al abrir la app se le pide crear un PIN a esos usuarios.
+**Respuesta (2026-10-06, chat 10):** ✅ Miguel decide que huella y PIN se eligen por separado (D-035). Esos usuarios quedan como "solo huella"; si la huella falla entran con el bloqueo del teléfono, y si el teléfono ya no tiene bloqueo la app los deja entrar y apaga la huella.
 
 ### P-17 — ¿Existe el correo de contacto?
 La política web dice `soporte@simpleapp.com`. No sabemos si esa casilla existe y alguien la lee. Google Play pide un contacto que funcione.

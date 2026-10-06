@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Última versión que Google Play ya tiene: 1.1.8 (14).
-const _lastPublishedCode = 14;
+const _lastPublishedCode = 16;
 
 void main() {
   final pubspec = File('pubspec.yaml').readAsStringSync();

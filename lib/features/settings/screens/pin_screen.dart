@@ -3,6 +3,7 @@ import 'package:gastos_simple/core/ui/app_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
+import '../../../core/ui/app_button.dart';
 import '../../../core/ui/app_colors.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 import 'package:gastos_simple/core/ui/app_text_styles.dart';
@@ -31,6 +32,11 @@ class _PinScreenState extends State<PinScreen> {
 
   bool get _isAppLockPrompt => !widget.isSetup && !widget.isVault;
 
+  /// Solo huella, sin PIN (D-035): el teclado no serviría, se muestra
+  /// "Usar huella" (que también acepta el bloqueo del teléfono).
+  bool get _isBiometricOnly =>
+      _isAppLockPrompt && SecurityService.instance.isBiometricOnly;
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +44,11 @@ class _PinScreenState extends State<PinScreen> {
       SecurityService.instance.setPinPromptVisible(true);
     }
     if (!widget.isSetup) {
-      _tryBiometric();
+      // Después del primer cuadro: _tryBiometric puede mostrar un aviso
+      // (ScaffoldMessenger), y eso no se puede pedir dentro de initState.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _tryBiometric();
+      });
     }
   }
 
@@ -53,6 +63,17 @@ class _PinScreenState extends State<PinScreen> {
   Future<void> _tryBiometric() async {
     if (SecurityService.instance.isBiometricActive) {
       final l10n = context.read<AppLocaleController>();
+      final messenger = ScaffoldMessenger.of(context);
+      // Si el teléfono ya no tiene bloqueo no hay con qué comprobar: se
+      // entra y se apaga la huella (D-035).
+      if (_isBiometricOnly &&
+          await SecurityService.instance.releaseIfPhoneHasNoLock()) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.text('biometric_off_no_lock'))),
+        );
+        if (mounted) _handleSuccess();
+        return;
+      }
       final success = await SecurityService.instance.authenticateBiometric(
         localizedReason: l10n.text('biometric_subtitle'),
       );
@@ -172,10 +193,7 @@ class _PinScreenState extends State<PinScreen> {
           shape: BoxShape.circle,
           color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         ),
-        child: Text(
-          digit,
-          style: AppTextStyles.pinDigit,
-        ),
+        child: Text(digit, style: AppTextStyles.pinDigit),
       ),
     );
   }
@@ -209,6 +227,7 @@ class _PinScreenState extends State<PinScreen> {
       }
       return widget.isVault ? l10n.text('set_vault_pin') : l10n.text('set_pin');
     }
+    if (_isBiometricOnly) return l10n.text('unlock_biometric_title');
     return widget.isVault
         ? l10n.text('enter_vault_pin')
         : l10n.text('enter_pin');
@@ -252,6 +271,8 @@ class _PinScreenState extends State<PinScreen> {
                         Icon(
                           widget.isVault
                               ? AppIcons.vault
+                              : _isBiometricOnly
+                              ? AppIcons.fingerprint
                               : AppIcons.pin,
                           size: 64,
                           color: Theme.of(context).primaryColor,
@@ -264,47 +285,60 @@ class _PinScreenState extends State<PinScreen> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.xl),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(4, (index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            width: 14,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: index < _pin.length
-                                  ? Theme.of(context).primaryColor
-                                  : AppColors.softText.withValues(alpha: 0.3),
-                            ),
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-                      if (_isLoading)
-                        const Padding(
-                          padding: EdgeInsets.all(AppSpacing.xxl),
-                          child: CircularProgressIndicator(),
-                        )
-                      else
-                        Container(
+                      if (_isBiometricOnly)
+                        ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 320),
-                          child: GridView.count(
-                            shrinkWrap: true,
-                            crossAxisCount: 3,
-                            mainAxisSpacing: isSmallHeight ? 8 : 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: isSmallHeight ? 1.6 : 1.2,
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: [
-                              for (var i = 1; i <= 9; i++)
-                                _buildNumpadButton(i.toString()),
-                              _buildBiometricButton(),
-                              _buildNumpadButton('0'),
-                              _buildBackspaceButton(),
-                            ],
+                          child: AppButton(
+                            label: l10n.text('use_biometric'),
+                            onTap: _tryBiometric,
+                            color: AppColors.primaryPurple,
                           ),
+                        )
+                      else ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(4, (index) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              width: 14,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: index < _pin.length
+                                    ? Theme.of(context).primaryColor
+                                    : AppColors.softText.withValues(alpha: 0.3),
+                              ),
+                            );
+                          }),
                         ),
+                        const SizedBox(height: AppSpacing.xl),
+                        if (_isLoading)
+                          const Padding(
+                            padding: EdgeInsets.all(AppSpacing.xxl),
+                            child: CircularProgressIndicator(),
+                          )
+                        else
+                          Container(
+                            constraints: const BoxConstraints(maxWidth: 320),
+                            child: GridView.count(
+                              shrinkWrap: true,
+                              crossAxisCount: 3,
+                              mainAxisSpacing: isSmallHeight ? 8 : 16,
+                              crossAxisSpacing: 16,
+                              childAspectRatio: isSmallHeight ? 1.6 : 1.2,
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                for (var i = 1; i <= 9; i++)
+                                  _buildNumpadButton(i.toString()),
+                                _buildBiometricButton(),
+                                _buildNumpadButton('0'),
+                                _buildBackspaceButton(),
+                              ],
+                            ),
+                          ),
+                      ],
                       const SizedBox(height: AppSpacing.lg),
                     ],
                   ),

@@ -152,31 +152,120 @@ void main() {
     });
   });
 
-  group('huella', () {
+  group('huella (D-035)', () {
     final security = SecurityService.instance;
 
-    test('no se activa sin PIN (sería quedar afuera si falla)', () async {
-      FlutterSecureStorage.setMockInitialValues({});
+    Future<void> telefono(Map<String, String> guardado) async {
+      FlutterSecureStorage.setMockInitialValues(guardado);
       await security.reloadForTesting();
+      security.lock();
+    }
 
-      expect(await security.setBiometricActive(true), isFalse);
+    setUp(() => SecurityService.deviceHasLock = () async => true);
+
+    test('se prende sin PIN (solo huella)', () async {
+      await telefono({});
+
+      await security.setBiometricActive(true);
+      expect(security.isBiometricActive, isTrue);
+      expect(security.isPinActive, isFalse);
+      expect(security.isBiometricOnly, isTrue);
+      await security.reloadForTesting();
+      expect(security.isBiometricActive, isTrue, reason: 'queda guardado');
+    });
+
+    test('apagar el PIN deja la huella prendida', () async {
+      await telefono({
+        'is_pin_active': 'true',
+        'pin': '1234',
+        'is_biometric_active': 'true',
+      });
+      expect(security.isBiometricOnly, isFalse);
+
+      await security.setPinActive(false);
+      expect(security.isBiometricActive, isTrue);
+      expect(security.isBiometricOnly, isTrue);
+    });
+
+    test('solo PIN: la huella queda apagada', () async {
+      await telefono({'is_pin_active': 'true', 'pin': '1234'});
+      expect(security.isPinActive, isTrue);
       expect(security.isBiometricActive, isFalse);
     });
 
-    test('con PIN se activa, y apagar el PIN apaga la huella', () async {
-      FlutterSecureStorage.setMockInitialValues({
+    test('solo huella y el teléfono con bloqueo: no se abre sola', () async {
+      await telefono({'is_biometric_active': 'true'});
+
+      expect(await security.releaseIfPhoneHasNoLock(), isFalse);
+      expect(security.isUnlocked, isFalse);
+      expect(security.isBiometricActive, isTrue);
+    });
+
+    test(
+      'solo huella y el teléfono sin bloqueo: entra y apaga la huella',
+      () async {
+        await telefono({'is_biometric_active': 'true'});
+        SecurityService.deviceHasLock = () async => false;
+
+        expect(await security.releaseIfPhoneHasNoLock(), isTrue);
+        expect(security.isUnlocked, isTrue);
+        expect(security.isBiometricActive, isFalse);
+        await security.reloadForTesting();
+        expect(security.isBiometricActive, isFalse, reason: 'queda guardado');
+      },
+    );
+
+    test('con PIN, aunque el teléfono no tenga bloqueo, pide el PIN', () async {
+      await telefono({
         'is_pin_active': 'true',
         'pin': '1234',
+        'is_biometric_active': 'true',
       });
-      await security.reloadForTesting();
+      SecurityService.deviceHasLock = () async => false;
 
-      expect(await security.setBiometricActive(true), isTrue);
-      expect(security.isBiometricActive, isTrue);
+      expect(await security.releaseIfPhoneHasNoLock(), isFalse);
+      expect(security.isUnlocked, isFalse);
+    });
 
-      await security.setPinActive(false);
-      expect(security.isBiometricActive, isFalse);
-      await security.reloadForTesting();
-      expect(security.isBiometricActive, isFalse, reason: 'queda guardado');
+    testWidgets('solo huella: botón "Usar huella" y sin teclado', (
+      tester,
+    ) async {
+      await telefono({'is_biometric_active': 'true'});
+
+      await tester.pumpWidget(_app(const PinScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text(_t('unlock_biometric_title')), findsOneWidget);
+      expect(find.text(_t('use_biometric').toUpperCase()), findsOneWidget);
+      expect(find.text('1'), findsNothing);
+      expect(security.isUnlocked, isFalse);
+    });
+
+    testWidgets('con PIN y huella se ve el teclado', (tester) async {
+      await telefono({
+        'is_pin_active': 'true',
+        'pin': '1234',
+        'is_biometric_active': 'true',
+      });
+
+      await tester.pumpWidget(_app(const PinScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text(_t('enter_pin')), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('solo huella sin bloqueo del teléfono: entra y avisa', (
+      tester,
+    ) async {
+      await telefono({'is_biometric_active': 'true'});
+      SecurityService.deviceHasLock = () async => false;
+
+      await tester.pumpWidget(_app(const PinScreen()));
+      await tester.pumpAndSettle();
+
+      expect(security.isUnlocked, isTrue);
+      expect(find.text(_t('biometric_off_no_lock')), findsOneWidget);
     });
   });
 

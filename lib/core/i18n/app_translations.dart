@@ -291,7 +291,7 @@ class AppTranslations {
           'PRO es un pago único que procesa Google Play. La app solo le pregunta a Google Play si la compra está pagada, para activar o restaurar PRO. No vemos tus datos de pago.',
       'privacy_s6_title': 'PIN y huella',
       'privacy_s6_body':
-          'Puedes proteger la app y la Bóveda con un PIN. El PIN se guarda en el almacenamiento seguro del teléfono. La huella la procesa Android: la app no la recibe ni la guarda, y para usarla hace falta un PIN de repuesto. Después de 5 PIN incorrectos la app espera 30 segundos, y cada error siguiente duplica la espera (hasta 15 minutos). Con un bloqueo activo, la pantalla queda protegida contra capturas.',
+          'Puedes proteger la app y la Bóveda con un PIN. El PIN se guarda en el almacenamiento seguro del teléfono. La huella la procesa Android: la app no la recibe ni la guarda. Puedes usar el PIN, la huella o los dos; si usas solo la huella y falla, la app acepta el bloqueo del teléfono. Después de 5 PIN incorrectos la app espera 30 segundos, y cada error siguiente duplica la espera (hasta 15 minutos). Con un bloqueo activo, la pantalla queda protegida contra capturas.',
       'privacy_s7_title': 'Recordatorios',
       'privacy_s7_body':
           'La app puede programar un recordatorio diario en el teléfono para que anotes tus movimientos. Puedes apagarlo en Configuración o en los permisos de Android.',
@@ -405,8 +405,10 @@ class AppTranslations {
       'continue_free': 'Continuar gratis',
       'local_backup_label': 'Respaldo Local',
       'biometric_not_available': 'Biometría no disponible en este dispositivo',
-      'biometric_needs_pin':
-          'Primero crea un PIN: es la llave de repuesto si la huella falla.',
+      'unlock_biometric_title': 'Desbloquea con tu huella',
+      'use_biometric': 'Usar huella',
+      'biometric_off_no_lock':
+          'Tu teléfono ya no tiene bloqueo: se apagó la huella.',
       'crash_reports_title': 'Enviar reportes de fallos',
       'crash_reports_subtitle':
           'Datos técnicos del error y del teléfono (Firebase Crashlytics). No incluyen tu historial de movimientos.',
@@ -703,7 +705,7 @@ class AppTranslations {
           'PRO is a one-time payment processed by Google Play. The app only asks Google Play whether the purchase is paid, to activate or restore PRO. We do not see your payment details.',
       'privacy_s6_title': 'PIN and biometrics',
       'privacy_s6_body':
-          'You can protect the app and the Vault with a PIN. The PIN is stored in the phone\'s secure storage. Biometrics are handled by Android: the app never receives or stores them, and a backup PIN is required to use them. After 5 wrong PINs the app waits 30 seconds, and each further mistake doubles the wait (up to 15 minutes). With a lock turned on, the screen is protected against screenshots.',
+          'You can protect the app and the Vault with a PIN. The PIN is stored in the phone\'s secure storage. Biometrics are handled by Android: the app never receives or stores them. You can use the PIN, biometrics or both; if you use only biometrics and they fail, the app accepts your phone\'s screen lock. After 5 wrong PINs the app waits 30 seconds, and each further mistake doubles the wait (up to 15 minutes). With a lock turned on, the screen is protected against screenshots.',
       'privacy_s7_title': 'Reminders',
       'privacy_s7_body':
           'The app can schedule a daily reminder on your phone so you log your transactions. You can turn it off in Settings or in Android permissions.',
@@ -816,8 +818,10 @@ class AppTranslations {
       'continue_free': 'Continue for free',
       'local_backup_label': 'Local Backup',
       'biometric_not_available': 'Biometrics not available on this device',
-      'biometric_needs_pin':
-          'First create a PIN: it is the backup key if biometrics fail.',
+      'unlock_biometric_title': 'Unlock with your fingerprint',
+      'use_biometric': 'Use fingerprint',
+      'biometric_off_no_lock':
+          'Your phone no longer has a screen lock: biometric unlock was turned off.',
       'crash_reports_title': 'Send crash reports',
       'crash_reports_subtitle':
           'Technical error and device data (Firebase Crashlytics). They do not include your transaction history.',

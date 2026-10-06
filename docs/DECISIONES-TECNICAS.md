@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 09, D-034).
+Última revisión: 2026-10-06 (chat 10, D-035).
 
 ---
 
@@ -103,6 +103,8 @@ Tests: `test/numbers_test.dart` (con base en memoria comprueba que las pantallas
 - Toda la migración corre dentro de una transacción de sqflite; un `ALTER TABLE` que falla (columna que ya existe) se saltea sin deshacer el resto (`_tryExecute`).
 
 ### D-022 — La huella necesita un PIN
+> **Reemplazada en parte por D-035:** la huella ya no necesita PIN. Sigue valiendo lo del bloqueo tras PIN fallidos.
+
 - `SecurityService.setBiometricActive(true)` no hace nada (devuelve `false`) si no hay PIN activo. En Configuración, prender la huella sin PIN primero pide crearlo. Apagar el PIN apaga también la huella.
 - Motivo: sin PIN, si la huella deja de andar (sensor roto, huellas borradas) el usuario quedaba afuera de la app para siempre.
 - Bloqueo tras PIN fallidos: 5 intentos libres, después 30 s, 60 s, 120 s… hasta 15 min; se guarda en el almacenamiento seguro (cerrar la app no lo saca) y lo comparten el PIN de la app y el de la Bóveda. `SecurityService.clock` (`@visibleForTesting`) permite probarlo sin esperar. El aviso muestra los segundos redondeados hacia arriba. Tests: `test/privacy_security_test.dart`.
@@ -202,3 +204,13 @@ Se agrega la fila **09** a la tabla de `CLAUDE.md`, pedida por Miguel el 2026-10
 - Mensajes de compra (`PurchaseService`) pasan a `AppTranslations`, en español e inglés (P-14).
 - **La app habla de "tú"** en español (respuesta de Miguel a P-21): "Puedes gastar hoy", "Agrega", "Elige", "Inténtalo"… Todo texto nuevo en español va en "tú".
 - Aviso flotante que queda fuera de la pantalla (P-22): `AppScaffold` ya no pone la zona de botones vacía cuando la pantalla no tiene menú ni botón.
+
+### D-035 — Huella y PIN se eligen por separado (chat 10, responde P-16)
+Pedido por Miguel el 2026-10-06. **Reemplaza la primera parte de D-022** ("la huella necesita un PIN"); el bloqueo tras 5 PIN fallidos sigue igual.
+- En Configuración, **PIN** y **Huella** son dos interruptores independientes. Cada usuario elige: solo PIN, solo huella o los dos. Prender la huella ya no pide crear un PIN, y apagar el PIN ya no apaga la huella.
+- **Solo huella:** al abrir la app no se muestra el teclado de números (no serviría). Se muestra "Usar huella", que también acepta el bloqueo del teléfono (`biometricOnly: false`): ese es el repuesto si la huella falla.
+- **Si el teléfono ya no tiene ningún bloqueo** (solo huella y `isDeviceSupported` da falso): la app deja entrar, apaga la huella y avisa. Es seguro porque sacar el bloqueo del teléfono exige conocerlo. Si la consulta da error, **no** se deja entrar. Lo hace `SecurityService.releaseIfPhoneHasNoLock`; `SecurityService.deviceHasLock` (`@visibleForTesting`) se cambia en los tests.
+- Usuarios viejos con solo huella (P-16) no tienen que hacer nada: quedan como "solo huella".
+- La política (§6, app y las tres copias de `privacy.html`) dice lo mismo (D-024).
+- Tests: `test/privacy_security_test.dart`, grupo `huella (D-035)`.
+- Versión **1.1.11 (17)**, tag `v1.1.11+17`.

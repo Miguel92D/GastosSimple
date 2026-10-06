@@ -96,7 +96,7 @@ Minimalista. No se agregan entradas sin aprobación.
 ## 9. Privacidad y seguridad
 
 - Crashlytics arranca **apagado** y solo se activa con el consentimiento (`AppState.setConsent`). La respuesta se cambia cuando se quiera en Configuración → Legal (D-023).
-- PIN y huella opcionales; la huella necesita un PIN de repuesto (D-022). Pantalla protegida contra capturas (`FLAG_SECURE`) y bloqueo tras 5 PIN fallidos (30 s, que se duplican hasta 15 min).
+- PIN y huella opcionales y por separado: solo PIN, solo huella o los dos (D-035). Con solo huella, el repuesto es el bloqueo del teléfono. Pantalla protegida contra capturas (`FLAG_SECURE`) y bloqueo tras 5 PIN fallidos (30 s, que se duplican hasta 15 min).
 - La política de privacidad de la app y la de la web dicen lo mismo, palabra por palabra (D-024).
 
 ## 10. Estabilidad
