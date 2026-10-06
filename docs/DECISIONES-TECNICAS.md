@@ -213,4 +213,4 @@ Pedido por Miguel el 2026-10-06. **Reemplaza la primera parte de D-022** ("la hu
 - Usuarios viejos con solo huella (P-16) no tienen que hacer nada: quedan como "solo huella".
 - La política (§6, app y las tres copias de `privacy.html`) dice lo mismo (D-024).
 - Tests: `test/privacy_security_test.dart`, grupo `huella (D-035)`.
-- Versión **1.1.11 (17)**, tag `v1.1.11+17`.
+- Versión **1.1.11 (17)**, tag `v1.1.11+17` en el commit `5280be5` (el que se compiló, D-012). AAB firmado con la llave de publicación (`CN=Simple App`), sha256 `4aed1f01…c373668b`.
