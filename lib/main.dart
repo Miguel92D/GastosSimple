@@ -16,7 +16,6 @@ import 'services/pro_service.dart';
 
 import 'core/router/app_router.dart';
 import 'core/ui/app_colors.dart';
-import 'core/state/app_mode_controller.dart';
 import 'core/state/month_controller.dart';
 import 'core/router/navigation_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -61,7 +60,6 @@ void main() async {
         ChangeNotifierProvider.value(value: SecurityService.instance),
         ChangeNotifierProvider.value(value: CurrencyService.instance),
         ChangeNotifierProvider.value(value: ProService.instance),
-        ChangeNotifierProvider.value(value: AppModeController.instance),
         ChangeNotifierProvider.value(value: MonthController.instance),
       ],
       child: const ErrorGuard(child: GastosSimpleApp()),

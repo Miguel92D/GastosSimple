@@ -52,22 +52,6 @@ class TransactionRepository {
     return await DatabaseHelper.instance.getCategoriasOrdenadas(type);
   }
 
-  static Future<double> getTotalIncome({bool isVault = false}) async {
-    return await DatabaseHelper.instance.getTotalIncome(isVault: isVault);
-  }
-
-  static Future<double> getTotalExpenses({bool isVault = false}) async {
-    return await DatabaseHelper.instance.getTotalExpenses(isVault: isVault);
-  }
-
-  static Future<Map<String, double>> getExpensesByCategory({
-    bool isVault = false,
-  }) async {
-    return await DatabaseHelper.instance.getExpensesByCategory(
-      isVault: isVault,
-    );
-  }
-
   static Future<List<Transaction>> getTransactionsInMonth({
     DateTime? month,
     bool isVault = false,

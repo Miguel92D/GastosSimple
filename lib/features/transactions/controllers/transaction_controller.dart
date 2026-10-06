@@ -138,20 +138,6 @@ class TransactionController {
     return await TransactionRepository.getCategoriasOrdenadas(type);
   }
 
-  static Future<double> getTotalIncome({bool isVault = false}) async {
-    return await TransactionRepository.getTotalIncome(isVault: isVault);
-  }
-
-  static Future<double> getTotalExpenses({bool isVault = false}) async {
-    return await TransactionRepository.getTotalExpenses(isVault: isVault);
-  }
-
-  static Future<Map<String, double>> getExpensesByCategory({
-    bool isVault = false,
-  }) async {
-    return await TransactionRepository.getExpensesByCategory(isVault: isVault);
-  }
-
   static Future<List<Transaction>> getTransactionsInMonth({
     DateTime? month,
     bool isVault = false,

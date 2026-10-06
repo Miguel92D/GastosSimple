@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
-import 'package:gastos_simple/core/state/app_mode_controller.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
 import 'package:gastos_simple/core/state/month_controller.dart';
 import 'package:gastos_simple/main.dart';
@@ -25,7 +24,6 @@ void main() {
         ChangeNotifierProvider.value(value: SecurityService.instance),
         ChangeNotifierProvider.value(value: CurrencyService.instance),
         ChangeNotifierProvider.value(value: ProService.instance),
-        ChangeNotifierProvider.value(value: AppModeController.instance),
         ChangeNotifierProvider.value(value: MonthController.instance),
       ],
       child: const GastosSimpleApp(),

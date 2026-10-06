@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../router/navigation_service.dart';
 import '../../features/transactions/controllers/transaction_controller.dart';
 import '../../features/transactions/models/transaction.dart';
-import '../state/app_mode_controller.dart';
 import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +15,6 @@ class TransactionFlowService {
     String? type,
     Map<String, dynamic>? arguments,
   }) async {
-    AppModeController.instance.setVaultMode(isVault);
-
     final Map<String, dynamic> navArgs = {
       'isVault': isVault,
       if (type != null) 'type': _normalizeQuickEntryType(type),

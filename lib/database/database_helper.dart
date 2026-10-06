@@ -458,26 +458,6 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     }
   }
 
-  /// Restaura una meta de un backup conservando su id (reemplaza si existe).
-  Future<int> restoreGoal(Goal goal) async {
-    try {
-      final db = await DatabaseHelper.instance.database;
-      final map = goal.toMap();
-      return await db.insert('goals', {
-        'id': map['id'],
-        'name': map['name'],
-        'target_amount': Money.round((map['targetAmount'] as num).toDouble()),
-        'saved_amount': Money.round((map['currentAmount'] as num).toDouble()),
-        'target_date': map['targetDate'],
-        'icon': map['icon'],
-        'created_at': map['createdAt'],
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
-    } catch (e, _) {
-      debugPrint('DB Error (restoreGoal): $e');
-      throw DatabaseException('Operación fallida en restoreGoal', e);
-    }
-  }
-
   Future<List<Goal>> getGoals() async {
     try {
       final db = await DatabaseHelper.instance.database;
@@ -1059,21 +1039,6 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     }
   }
 
-  /// Restaura una deuda de un backup conservando su id (reemplaza si existe).
-  Future<int> restoreDebt(Debt debt) async {
-    try {
-      final db = await DatabaseHelper.instance.database;
-      return await db.insert(
-        'debts',
-        debt.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    } catch (e, _) {
-      debugPrint('DB Error (restoreDebt): $e');
-      throw DatabaseException('Operación fallida en restoreDebt', e);
-    }
-  }
-
   Future<List<Debt>> getDebts() async {
     try {
       final db = await DatabaseHelper.instance.database;
@@ -1120,73 +1085,6 @@ SELECT id, monto, categoria, tipo, fecha, is_secret, nota, is_recurring, goal_id
     } catch (e, _) {
       debugPrint('DB Error (payDebt): $e');
       throw DatabaseException('Operación fallida en payDebt', e);
-    }
-  }
-
-  Future<double> getTotalIncome({bool isVault = false}) async {
-    try {
-      final db = await DatabaseHelper.instance.database;
-      final result = await db.rawQuery(
-        '''
-        SELECT ROUND(SUM(amount), 2) as total
-        FROM transactions
-        WHERE type IN ('ingreso', 'income')
-        AND is_secret = ?
-      ''',
-        [isVault ? 1 : 0],
-      );
-      return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e, _) {
-      debugPrint('DB Error (getTotalIncome): $e');
-      throw DatabaseException('Operación fallida en getTotalIncome', e);
-    }
-  }
-
-  Future<double> getTotalExpenses({bool isVault = false}) async {
-    try {
-      final db = await DatabaseHelper.instance.database;
-      final result = await db.rawQuery(
-        '''
-        SELECT ROUND(SUM(amount), 2) as total
-        FROM transactions
-        WHERE type IN ('gasto', 'expense')
-        AND is_secret = ?
-      ''',
-        [isVault ? 1 : 0],
-      );
-      return (result.first['total'] as num?)?.toDouble() ?? 0;
-    } catch (e, _) {
-      debugPrint('DB Error (getTotalExpenses): $e');
-      throw DatabaseException('Operación fallida en getTotalExpenses', e);
-    }
-  }
-
-  Future<Map<String, double>> getExpensesByCategory({
-    bool isVault = false,
-  }) async {
-    try {
-      final db = await DatabaseHelper.instance.database;
-      final result = await db.rawQuery(
-        '''
-        SELECT category, ROUND(SUM(amount), 2) as total
-        FROM transactions
-        WHERE type IN ('gasto', 'expense')
-        AND is_secret = ?
-        GROUP BY category
-      ''',
-        [isVault ? 1 : 0],
-      );
-
-      Map<String, double> data = {};
-      for (var row in result) {
-        final category = row['category'] as String;
-        final total = (row['total'] as num?)?.toDouble() ?? 0;
-        data[category] = total;
-      }
-      return data;
-    } catch (e, _) {
-      debugPrint('DB Error (getExpensesByCategory): $e');
-      throw DatabaseException('Operación fallida en getExpensesByCategory', e);
     }
   }
 

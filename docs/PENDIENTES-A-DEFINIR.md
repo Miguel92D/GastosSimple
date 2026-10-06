@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (chat 08).
+Última revisión: 2026-10-05 (chat 09).
 
 ---
 
@@ -68,7 +68,7 @@ Desde el chat 02, deslizar un movimiento a la derecha (mandarlo a la Bóveda) so
 
 ### P-12 — Sumas en SQL que ya no se usan
 Desde el chat 03 (D-016) nadie llama a `getTotalIncome`, `getTotalExpenses` ni `getExpensesByCategory` de `DatabaseHelper` (ni a sus copias en `TransactionRepository` y `TransactionController`). Quedaron para no tocar la base en esta tarea.
-**Respuesta:** _pendiente_ — borrarlas en una tarea de limpieza (junto con P-09).
+**Respuesta (2026-10-05, chat 09):** ✅ Borradas `getTotalIncome`, `getTotalExpenses` y `getExpensesByCategory` de `DatabaseHelper`, `TransactionRepository` y `TransactionController`. Queda `DashboardController.getExpensesByCategory`, que suma en Dart (D-016) y sí se usa.
 
 ### P-13 — ¿Se quita Pro si Google devuelve el dinero?
 Hoy Pro queda guardado en el teléfono (`is_pro`) para siempre. Si alguien pide reembolso, Google Play deja de devolver la compra, pero la app no apaga Pro. Apagarlo al no encontrar la compra tiene un riesgo: sin internet o con Google Play fallando, un cliente que pagó podría perder Pro.
@@ -104,7 +104,7 @@ La política nueva (chat 05) dice: datos solo en el teléfono, reportes de fallo
 
 ### P-19 — Más código de restauración sin uso
 `DatabaseHelper.restoreGoal` y `restoreDebt` ya no los usa nadie (el respaldo pasa por `restoreBackupData`) y usan `ConflictAlgorithm.replace`, que la Especificación §8 prohíbe para datos de un archivo. `restoreTransaction` sí se usa, pero solo para "Deshacer" un borrado.
-**Respuesta:** _pendiente_ — borrar `restoreGoal` y `restoreDebt` en la tarea de limpieza (con P-09, P-12 y P-15).
+**Respuesta (2026-10-05, chat 09):** ✅ Borradas `restoreGoal` y `restoreDebt`. `restoreTransaction` queda (lo usa "Deshacer").
 
 
 ### P-20 — La skill `diseno-simple` nombra un `AppPill` que no existe
