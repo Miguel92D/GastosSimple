@@ -508,13 +508,11 @@ class _DebtScreenState extends State<DebtScreen> {
                 style: AppTextStyles.subLabel.copyWith(
                   color: AppColors.softText.withValues(alpha: 0.6),
                   letterSpacing: 1.0,
-                  fontSize: 12,
                 ),
               ),
               TextSpan(
                 text: CurrencyHelper.formatPrivate(total, context),
-                style: AppTextStyles.cardTitle.copyWith(
-                  fontSize: 18,
+                style: AppTextStyles.titleSmall.copyWith(
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
                 ),
@@ -781,7 +779,7 @@ class _DebtScreenState extends State<DebtScreen> {
             Expanded(
               child: Text(
                 title,
-                style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+                style: AppTextStyles.cardTitle,
               ),
             ),
             Container(

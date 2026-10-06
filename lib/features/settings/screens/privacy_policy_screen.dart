@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
+import '../../../core/ui/widgets/gradient_button.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -36,36 +37,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 l10n.text('privacy_s${i}_body'),
               ),
             const SizedBox(height: 32),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final Uri url = Uri.parse(
-                    'https://simple-app-ar.github.io/privacy.html',
-                  );
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 18,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  elevation: 5,
-                  shadowColor: AppColors.primaryPurple.withValues(alpha: 0.4),
-                ),
-                child: Text(
-                  l10n.text('privacy_view_online'),
-                  style: AppTextStyles.bodyMain.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            GradientButton(
+              text: l10n.text('privacy_view_online'),
+              onPressed: () async {
+                final Uri url = Uri.parse(
+                  'https://simple-app-ar.github.io/privacy.html',
+                );
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
+              },
             ),
             const SizedBox(height: 48),
           ],

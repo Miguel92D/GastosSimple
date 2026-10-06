@@ -258,9 +258,7 @@ class _DailyAllowanceCardState extends State<DailyAllowanceCard> {
           child: Text(
             _money(d.leftToday.abs()),
             maxLines: 1,
-            style: AppTextStyles.balanceAmount.copyWith(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
+            style: AppTextStyles.amountHighlight.copyWith(
               color: color,
             ),
           ),

@@ -158,7 +158,7 @@ class _SummaryCard extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     CurrencyHelper.formatPrivate(value, context),
-                    style: AppTextStyles.incomeValue.copyWith(fontSize: 36),
+                    style: AppTextStyles.amountHero,
                     maxLines: 1,
                   ),
                 );
@@ -210,7 +210,7 @@ class _GoalItemCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(goal.icon, style: const TextStyle(fontSize: 24)),
+                Text(goal.icon, style: AppTextStyles.emoji),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(goal.name, style: AppTextStyles.cardTitle),

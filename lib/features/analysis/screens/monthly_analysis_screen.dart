@@ -282,9 +282,8 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
             child: Text(
               CurrencyHelper.formatPrivate(amount, context),
               maxLines: 1,
-              style: AppTextStyles.cardTitle.copyWith(
+              style: AppTextStyles.titleSmall.copyWith(
                 color: color,
-                fontSize: 18,
               ),
             ),
           ),
@@ -377,11 +376,11 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
         children: [
           Icon(icon, color: color, size: 20),
           const SizedBox(height: AppSpacing.sm),
-          Text(label, style: AppTextStyles.subLabel.copyWith(fontSize: 10)),
+          Text(label, style: AppTextStyles.badge),
           const SizedBox(height: 4),
           Text(
             value,
-            style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+            style: AppTextStyles.cardTitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

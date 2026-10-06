@@ -141,6 +141,72 @@ class AppTextStyles {
     letterSpacing: 0.2,
   );
 
+  /// Título de pantalla en la barra de arriba (24).
+  static const screenTitle = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    letterSpacing: -1.0,
+  );
+
+  /// Titular grande dentro de una pantalla (Respaldo, Consentimiento,
+  /// aviso Pro) (24).
+  static const headline = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.5,
+  );
+
+  /// Monto destacado en una tarjeta ("Podés gastar hoy", total de
+  /// Estadísticas) (26).
+  static const amountHighlight = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    letterSpacing: -1.0,
+  );
+
+  /// Monto grande de un resumen (total ahorrado en Metas) (36).
+  static const amountHero = TextStyle(
+    fontSize: 36,
+    fontWeight: FontWeight.w900,
+    color: AppColors.incomeGreen,
+    letterSpacing: -0.5,
+  );
+
+  /// Monto que se escribe en "Agregar movimiento" (42).
+  static const amountInput = TextStyle(
+    fontSize: 42,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    letterSpacing: -1.0,
+  );
+
+  /// Precio de Pro (30).
+  static const price = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w900,
+    color: AppColors.primaryPurple,
+    letterSpacing: -1.0,
+  );
+
+  /// Número del teclado del PIN (24).
+  static const pinDigit = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    color: AppColors.primaryPurple,
+  );
+
+  /// Etiqueta mínima en MAYÚSCULAS (10): nombre de categoría en su
+  /// botón, "MEJOR VALOR".
+  static const badge = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w900,
+    color: AppColors.softText,
+    letterSpacing: 0.2,
+  );
+
   /// Emoji grande para elegir (ícono de una meta).
   static const emoji = TextStyle(fontSize: 24);
 

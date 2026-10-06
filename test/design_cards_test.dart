@@ -157,6 +157,76 @@ void main() {
       expect(offenders, isEmpty);
     });
 
+    // ── R-5 / R-7 (chat 08): las pantallas no dibujan a mano ──
+    // Pantallas = lib/features y lib/core/flow. Los módulos viven en
+    // lib/core/ui y ahí sí se definen medidas.
+    Iterable<File> featureFiles() => Directory('lib')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart'))
+        .where((f) {
+          final path = f.path.replaceAll('\\', '/');
+          return path.contains('lib/features/') ||
+              path.contains('lib/core/flow/');
+        });
+
+    List<String> offendersOf(RegExp rule) {
+      final offenders = <String>[];
+      for (final f in featureFiles()) {
+        final lines = f.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          final line = lines[i].trimLeft();
+          if (line.startsWith('//') || line.startsWith('*')) continue;
+          if (rule.hasMatch(line)) offenders.add('${f.path}:${i + 1}');
+        }
+      }
+      return offenders;
+    }
+
+    test('ninguna pantalla escribe un tamaño de letra o TextStyle (R-5)', () {
+      expect(offendersOf(RegExp(r'fontSize: ?[0-9]|TextStyle\(')), isEmpty);
+    });
+
+    test('ninguna pantalla escribe un radio con número (R-5)', () {
+      expect(offendersOf(RegExp(r'Radius\.circular\([0-9]')), isEmpty);
+    });
+
+    test('paneles, barras y botones salen de sus módulos (R-1)', () {
+      // AppSheet, AppProgressBar, GradientButton / AppSecondaryButton.
+      expect(
+        offendersOf(
+          RegExp(
+            r'showModalBottomSheet|LinearProgressIndicator|ElevatedButton|'
+            r'OutlinedButton',
+          ),
+        ),
+        isEmpty,
+      );
+    });
+
+    test('decoraciones a mano: solo las que quedan, y no crecen (R-1)', () {
+      // Cosas que existen en una sola pantalla. La lista solo se achica.
+      const allowed = {
+        'debt_screen.dart': 5, // resumen, estrategias, etiqueta de deuda
+        'transaction_tile.dart': 3, // fondos al deslizar
+        'stats_screen.dart': 2, // puntos de color del gráfico
+        'pin_screen.dart': 2, // teclado del PIN
+        'premium_screen.dart': 2, // brillo del ícono, "mejor valor"
+        'prediction_screen.dart': 2, // oculta (D-013)
+        'add_transaction_screen.dart': 1, // botón de categoría
+        'savings_goals_screen.dart': 1, // elegir emoji
+        'consent_screen.dart': 1, // fondo de la primera pantalla
+      };
+      final counts = <String, int>{};
+      for (final o in offendersOf(RegExp(r'BoxDecoration\('))) {
+        final name = o.replaceAll('\\', '/').split('/').last.split(':').first;
+        counts[name] = (counts[name] ?? 0) + 1;
+      }
+      for (final e in counts.entries) {
+        expect(e.value, lessThanOrEqualTo(allowed[e.key] ?? 0), reason: e.key);
+      }
+    });
+
     test('ninguna pantalla escribe colores a mano', () {
       final offenders = <String>[];
       for (final f in screens()) {

@@ -808,15 +808,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               textInputAction: TextInputAction.done,
               onSubmitted: _saveMovement,
               label: '',
-              style: AppTextStyles.balanceAmount.copyWith(
-                fontSize: 42,
+              style: AppTextStyles.amountInput.copyWith(
                 color: _tipo == 'gasto'
                     ? AppColors.expenseRed
                     : AppColors.incomeGreen,
               ),
               hintText: context.watch<AppLocaleController>().text('amount'),
-              hintStyle: AppTextStyles.balanceAmount.copyWith(
-                fontSize: 32,
+              hintStyle: AppTextStyles.balanceCardAmount.copyWith(
                 color: AppColors.softText.withValues(alpha: 0.35),
               ),
               prefix: Baseline(
@@ -824,8 +822,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 baselineType: TextBaseline.alphabetic,
                 child: Text(
                   CurrencyHelper.getSymbol(context),
-                  style: AppTextStyles.bodyMain.copyWith(
-                    fontSize: 20,
+                  style: AppTextStyles.titleMain.copyWith(
                     fontWeight: FontWeight.bold,
                     color:
                         (_tipo == 'gasto'
@@ -882,7 +879,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         color: isSelected
                             ? color
                             : color.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
                         border: Border.all(
                           color: isSelected
                               ? Colors.white.withValues(alpha: 0.2)
@@ -914,11 +911,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: Text(
                               localizedName.toUpperCase(),
-                              style: AppTextStyles.bodySmall.copyWith(
-                                fontSize: 10,
+                              style: AppTextStyles.badge.copyWith(
                                 height: 1.1,
-                                letterSpacing: 0.2,
-                                fontWeight: FontWeight.w900,
                                 color: isSelected
                                     ? AppColors.textPrimary
                                     : color.withValues(alpha: 0.85),

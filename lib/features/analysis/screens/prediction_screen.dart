@@ -250,7 +250,6 @@ class _PredictionScreenState extends State<PredictionScreen>
               style: AppTextStyles.bodyMain.copyWith(
                 color: AppColors.expenseRed,
                 fontWeight: FontWeight.w800,
-                fontSize: 14,
               ),
             ),
           ),
@@ -281,8 +280,7 @@ class _PredictionScreenState extends State<PredictionScreen>
               AppState.instance.hideBalance
                   ? "••••••"
                   : CurrencyHelper.format(value, context),
-              style: AppTextStyles.cardTitle.copyWith(
-                fontSize: 20,
+              style: AppTextStyles.titleMain.copyWith(
                 color: color,
                 fontWeight: FontWeight.w900,
               ),

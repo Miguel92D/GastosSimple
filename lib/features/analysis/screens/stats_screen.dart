@@ -25,6 +25,7 @@ import '../../transactions/models/transaction.dart';
 import '../../transactions/utils/transaction_filter.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 import 'package:gastos_simple/core/ui/app_spacing.dart';
+import 'package:gastos_simple/core/ui/widgets/app_progress_bar.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -160,7 +161,7 @@ class _StatsScreenState extends State<StatsScreen> {
               : monthController.goToCurrentMonth,
           child: Text(
             L10nHelper.getLocalizedDateMonth(context, _loadedMonth),
-            style: AppTextStyles.cardTitle.copyWith(fontSize: 18),
+            style: AppTextStyles.titleSmall,
           ),
         ),
         IconButton(
@@ -266,9 +267,7 @@ class _StatsScreenState extends State<StatsScreen> {
                           FittedBox(
                             child: Text(
                               _money(touched?.value ?? total),
-                              style: AppTextStyles.balanceAmount.copyWith(
-                                fontSize: 26,
-                                fontWeight: FontWeight.w900,
+                              style: AppTextStyles.amountHighlight.copyWith(
                                 color: AppColors.expenseRed,
                               ),
                             ),
@@ -379,15 +378,7 @@ class _StatsScreenState extends State<StatsScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              child: LinearProgressIndicator(
-                value: percentage,
-                backgroundColor: AppColors.softText.withValues(alpha: 0.05),
-                valueColor: AlwaysStoppedAnimation<Color>(color),
-                minHeight: 6,
-              ),
-            ),
+            AppProgressBar(value: percentage, color: color),
           ],
         ),
       ),
@@ -451,8 +442,8 @@ class _StatsScreenState extends State<StatsScreen> {
                                 padding: const EdgeInsets.only(top: 8),
                                 child: Text(
                                   monthFormat.format(_trend[i].month),
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    fontSize: 11,
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    letterSpacing: 0.5,
                                     fontWeight: isSelected
                                         ? FontWeight.w800
                                         : FontWeight.w500,
@@ -473,13 +464,13 @@ class _StatsScreenState extends State<StatsScreen> {
                                 toY: _trend[i].income,
                                 color: AppColors.incomeGreen,
                                 width: 10,
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(AppRadius.bar),
                               ),
                               BarChartRodData(
                                 toY: _trend[i].expense,
                                 color: AppColors.expenseRed,
                                 width: 10,
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(AppRadius.bar),
                               ),
                             ],
                           ),

@@ -5,12 +5,12 @@ import '../controllers/backup_controller.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import 'package:provider/provider.dart';
 import '../../../core/ui/app_colors.dart';
-import '../../../core/ui/app_radius.dart';
 import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/widgets/gradient_button.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/widgets/app_secondary_button.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -106,7 +106,7 @@ class _BackupScreenState extends State<BackupScreen> {
               child: CircularProgressIndicator(color: AppColors.primaryPurple),
             )
           : Padding(
-               padding: const EdgeInsets.all(AppSpacing.lg),
+               padding: const EdgeInsets.all(AppSpacing.screen),
                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +119,7 @@ class _BackupScreenState extends State<BackupScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   Text(
                     l10n.text('keep_data_safe'),
-                    style: AppTextStyles.titleMain.copyWith(fontSize: 24),
+                    style: AppTextStyles.headline,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -135,23 +135,11 @@ class _BackupScreenState extends State<BackupScreen> {
                     onPressed: _exportBackup,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  OutlinedButton.icon(
+                  AppSecondaryButton(
+                    text: l10n.text('restore_backup_action'),
+                    icon: AppIcons.importFile,
                     onPressed: _restoreBackup,
-                    icon: const Icon(AppIcons.importFile),
-                    label: Text(l10n.text('restore_backup_action')),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primaryPurple,
-                      side: BorderSide(
-                        color: AppColors.primaryPurple.withValues(alpha: 0.6),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.md,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                      textStyle: AppTextStyles.buttonLabel,
-                    ),
+                    expand: true,
                   ),
                 ],
               ),

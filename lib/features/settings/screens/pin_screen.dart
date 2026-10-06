@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../services/security_service.dart';
 import '../../../core/ui/app_colors.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/app_text_styles.dart';
 
 class PinScreen extends StatefulWidget {
   final bool isVault;
@@ -173,11 +174,7 @@ class _PinScreenState extends State<PinScreen> {
         ),
         child: Text(
           digit,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-          ),
+          style: AppTextStyles.pinDigit,
         ),
       ),
     );
@@ -263,10 +260,7 @@ class _PinScreenState extends State<PinScreen> {
                       ],
                       Text(
                         _getTitle(l10n),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.titleSmall,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.xl),

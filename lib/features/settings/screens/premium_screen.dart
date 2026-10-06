@@ -14,6 +14,8 @@ import '../../../core/ui/widgets/gradient_button.dart';
 import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/ui/app_drawer.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
+import 'package:gastos_simple/core/ui/app_radius.dart';
+import 'package:gastos_simple/core/ui/widgets/pro_benefit_list.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -173,7 +175,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     const SizedBox(height: 24),
                     Text(
                       l10n.text('simple_pro'),
-                      style: AppTextStyles.titleLarge.copyWith(fontSize: 32),
+                      style: AppTextStyles.titleLarge,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -187,22 +189,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     const SizedBox(height: 48),
                     // Solo lo que es PRO (P-05). Si cambia, cambiar también
                     // PremiumFlowService.proBenefitKeys.
-                    _buildFeature(
-                      AppIcons.stats,
-                      l10n.text('pro_benefit_stats'),
-                    ),
-                    _buildFeature(
-                      AppIcons.goals,
-                      l10n.text('pro_benefit_goals'),
-                    ),
-                    _buildFeature(
-                      AppIcons.vault,
-                      l10n.text('pro_benefit_vault'),
-                    ),
-                    _buildFeature(
-                      AppIcons.exitTips,
-                      l10n.text('pro_benefit_debt_tips'),
-                    ),
+                    const ProBenefitList(),
                     const SizedBox(height: 48),
                     if (!isPro) ...[
                       _buildPlanCard(
@@ -253,10 +240,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             const SizedBox(height: 16),
                             Text(
                               l10n.text('pro_active'),
-                              style: AppTextStyles.cardTitle.copyWith(
-                                fontSize: 22,
-                                color: AppColors.incomeGreen,
-                              ),
+                              style: AppTextStyles.incomeValue,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 16),
@@ -315,8 +299,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 const SizedBox(height: 14),
                 Text(
                   displayTitle,
-                  style: AppTextStyles.cardTitle.copyWith(
-                    fontSize: 18,
+                  style: AppTextStyles.titleSmall.copyWith(
                     color: selected
                         ? AppColors.textPrimary
                         : AppColors.softText,
@@ -329,10 +312,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 if (hasProduct && price != null) ...[
                   Text(
                     price,
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontSize: 30,
-                      color: AppColors.primaryPurple,
-                    ),
+                    style: AppTextStyles.price,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 6),
@@ -379,7 +359,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.primaryPurple,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primaryPurple.withValues(alpha: 0.4),
@@ -390,10 +370,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 ),
                 child: Text(
                   l10n.text('best_value').toUpperCase(),
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  style: AppTextStyles.badge.copyWith(
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -424,33 +402,6 @@ class _PremiumScreenState extends State<PremiumScreen> {
               : AppColors.expenseRed,
         ),
         textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  Widget _buildFeature(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.primaryPurple.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: AppColors.primaryPurple, size: 22),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTextStyles.bodyMain.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

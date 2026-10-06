@@ -39,7 +39,7 @@ class ConsentScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               Text(
                 l10n.text('consent_title'),
-                style: AppTextStyles.titleMain.copyWith(fontSize: 24),
+                style: AppTextStyles.headline,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.lg),

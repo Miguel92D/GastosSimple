@@ -40,10 +40,7 @@ class AppScaffold extends StatelessWidget {
         title: titleWidget ??
             Text(
               title,
-              style: AppTextStyles.titleLarge.copyWith(
-                fontSize: 24,
-                letterSpacing: -1,
-              ),
+              style: AppTextStyles.screenTitle,
             ),
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,

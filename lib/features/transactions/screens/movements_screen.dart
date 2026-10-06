@@ -226,10 +226,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
             )
           : Text(
               l10n.text('movements'),
-              style: AppTextStyles.titleLarge.copyWith(
-                fontSize: 24,
-                letterSpacing: -1,
-              ),
+              style: AppTextStyles.screenTitle,
             ),
       actions: [
         IconButton(
