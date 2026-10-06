@@ -115,7 +115,7 @@ Queda abierto (auditoría del chat 07): la skill dice que el botón de menú va 
 
 ### P-21 — Los textos mezclan "vos" y "tú"
 La app dice "Podés gastar hoy" y "Entrá…", pero también "¿Qué quieres registrar hoy?", "Agrega tu primera deuda", "Puedes exportar…", "Mantén tus datos seguros" y "Elige estrategia" (visto en el chat 07).
-**Respuesta:** _pendiente_ — elegir uno (vos o tú) y corregir los textos en español en una tarea de textos (junto con P-14).
+**Respuesta (2026-10-05, chat 09):** ✅ Miguel eligió **"tú"** (D-034). Se pasaron a "tú" 25 textos en español ("Puedes gastar hoy", "Entra a Play Store…", "Inténtalo de nuevo", "Toca una porción…", "Espera {s} s.", la política de privacidad…). La política web (`privacy.html`, las tres copias) cambió igual, para que siga diciendo lo mismo que la app (D-024). La página principal de la landing no usaba "vos". Test: `test/textos_test.dart` falla si vuelve una forma de "vos" o si una clave falta en alguna lengua.
 
 ### P-22 — Aviso "Floating SnackBar presented off screen"
 En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off screen": un aviso flotante quedó tapado o fuera de la pantalla, probablemente por los botones de abajo. Ya pasaba antes de los cambios de diseño. No se investigó (fuera de la tarea).

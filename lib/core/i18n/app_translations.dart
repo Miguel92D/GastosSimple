@@ -26,14 +26,14 @@ class AppTranslations {
       'premium_restore_subtitle':
           'Recupera tu acceso Premium si reinstalaste la app o cambiaste de dispositivo.',
       'premium_google_play_manage_note':
-          'Es un pago único: no hay suscripción que cancelar. Para pedir un reembolso, abrí tu compra en Google Play. Tus datos quedan intactos.',
+          'Es un pago único: no hay suscripción que cancelar. Para pedir un reembolso, abre tu compra en Google Play. Tus datos quedan intactos.',
       'premium_manage_purchase': 'Ver mi compra en Google Play',
       'premium_manage_open_failed':
-          'Entrá a Play Store > Pagos y suscripciones > Presupuesto e historial.',
+          'Entra a Play Store > Pagos y suscripciones > Presupuesto e historial.',
       'premium_restore_loading': 'Restaurando compra...',
       'premium_restore_success': 'Compra restaurada correctamente',
       'premium_restore_not_found': 'No encontramos una compra para restaurar',
-      'premium_restore_failed': 'No se pudo restaurar. Intentá nuevamente.',
+      'premium_restore_failed': 'No se pudo restaurar. Inténtalo de nuevo.',
       // Mensajes de compra de PurchaseService (P-14).
       'purchase_billing_unavailable': 'Google Play Billing no está disponible.',
       'purchase_process_failed': 'No se pudo procesar la compra.',
@@ -94,7 +94,7 @@ class AppTranslations {
           'Estimación: lo gastado + tu ritmo diario de los últimos 30 días (sin gastos puntuales grandes) + pagos recurrentes pendientes.',
       'consent_title': 'Tu privacidad',
       'consent_body':
-          'Tus datos financieros se guardan solo en este dispositivo. ¿Nos permitís enviar reportes de fallos (Firebase Crashlytics) para mejorar la estabilidad? Contienen datos técnicos del error y del dispositivo, no tu historial.',
+          'Tus datos financieros se guardan solo en este dispositivo. ¿Nos permites enviar reportes de fallos (Firebase Crashlytics) para mejorar la estabilidad? Contienen datos técnicos del error y del dispositivo, no tu historial.',
       'consent_accept': 'Aceptar y enviar reportes',
       'consent_decline': 'Continuar sin enviar reportes',
       'consent_privacy': 'Ver política de privacidad',
@@ -108,7 +108,7 @@ class AppTranslations {
       'recurring_monthly_income': 'Ingresos fijos / mes',
       'recurring_next': 'Próximo: {d}',
       'recurring_empty':
-          'Todavía no tenés pagos fijos. Al cargar un movimiento activá "Repetir" para que se registre solo cada mes, semana o día (alquiler, suscripciones, sueldo...).',
+          'Todavía no tienes pagos fijos. Al cargar un movimiento activa "Repetir" para que se registre solo cada mes, semana o día (alquiler, suscripciones, sueldo...).',
       'recurring_change_amount': 'Cambiar monto',
       'recurring_change_amount_hint':
           'Se aplica desde el próximo cobro. Los movimientos ya registrados no cambian.',
@@ -126,33 +126,33 @@ class AppTranslations {
       'filter_no_results': 'No hay movimientos con estos filtros',
       'filter_count': '{n} movimientos',
       'stats_others': 'Otros',
-      'stats_tap_hint': 'Tocá una porción para ver el detalle',
+      'stats_tap_hint': 'Toca una porción para ver el detalle',
       'stats_see_movements': 'Ver movimientos de {c}',
       'stats_trend_title': 'Últimos 6 meses',
       'stats_avg_saving': 'Ahorro promedio por mes: {v}',
-      'allowance_today': 'Podés gastar hoy',
+      'allowance_today': 'Puedes gastar hoy',
       'allowance_over_today': 'Hoy te pasaste por',
       'allowance_detail': 'Límite diario {perDay} · quedan {days} días',
       'allowance_detail_budget':
           'Límite diario {perDay} · quedan {days} días · presupuesto {budget}',
       'allowance_no_income':
-          'Cargá tus ingresos del mes o tocá acá para definir un presupuesto mensual y ver cuánto podés gastar por día.',
+          'Carga tus ingresos del mes o toca aquí para definir un presupuesto mensual y ver cuánto puedes gastar por día.',
       'allowance_overspent':
           'Este mes ya gastaste más de lo que ingresó (contando tus pagos fijos pendientes).',
       'allowance_overspent_budget':
           'Ya usaste todo tu presupuesto del mes (contando tus pagos fijos pendientes).',
       'allowance_how_title': '¿Cómo se calcula?',
       'allowance_how_body':
-          'Ingresos del mes (incluidos los fijos que faltan cobrar), menos lo que gastaste antes de hoy y los pagos fijos pendientes ({fixed}): te quedan {available}.\n\nDividido en {days} días (incluido hoy) da {perDay} por día. Lo que gastás hoy se descuenta de ese límite.',
+          'Ingresos del mes (incluidos los fijos que faltan cobrar), menos lo que gastaste antes de hoy y los pagos fijos pendientes ({fixed}): te quedan {available}.\n\nDividido en {days} días (incluido hoy) da {perDay} por día. Lo que gastas hoy se descuenta de ese límite.',
       'allowance_how_body_budget':
           'Tu presupuesto del mes es {budget}. Menos lo que gastaste antes de hoy y los pagos fijos pendientes ({fixed}): te quedan {available}.\n\nDividido en {days} días (incluido hoy) da {perDay} por día.',
       'allowance_how_no_income':
-          'Todavía no cargaste ingresos este mes. Podés cargarlos, o definir un presupuesto mensual (útil si vivís de ahorros o cobrás en dólares) y lo usamos como base.',
+          'Todavía no cargaste ingresos este mes. Puedes cargarlos, o definir un presupuesto mensual (útil si vives de ahorros o cobras en dólares) y lo usamos como base.',
       'allowance_got_it': 'Entendido',
       'budget_monthly_button': 'Presupuesto mensual',
       'budget_monthly_title': 'Presupuesto mensual',
       'budget_monthly_hint':
-          'Cuánto querés gastar en total por mes. Si lo definís, reemplaza a tus ingresos en el cálculo de "Podés gastar hoy".',
+          'Cuánto quieres gastar en total por mes. Si lo defines, reemplaza a tus ingresos en el cálculo de "Puedes gastar hoy".',
       'budget_monthly_remove': 'Quitar',
       'installments_toggle': 'En cuotas',
       'installments_preview_full':
@@ -171,7 +171,7 @@ class AppTranslations {
       'installments_first_on': 'Primera cuota',
       'installments_on_purchase_date': 'En la fecha de compra',
       'installments_card_hint':
-          'Cierra el {closing} y vence el {due}: la cuota 1 cae en el vencimiento del resumen donde entra la compra y las demás, cada mes en esa fecha. Mantené presionada una tarjeta para borrarla.',
+          'Cierra el {closing} y vence el {due}: la cuota 1 cae en el vencimiento del resumen donde entra la compra y las demás, cada mes en esa fecha. Mantén presionada una tarjeta para borrarla.',
       'card_add': 'Tarjeta',
       'card_add_title': 'Nueva tarjeta',
       'card_name': 'Nombre (ej. Visa Galicia)',
@@ -188,13 +188,13 @@ class AppTranslations {
           'Un aviso por día para que anotes tus movimientos',
       'reminder_time': 'Hora del aviso',
       'reminder_permission_denied':
-          'Las notificaciones están bloqueadas. Activalas desde los ajustes del teléfono.',
+          'Las notificaciones están bloqueadas. Actívalas desde los ajustes del teléfono.',
       'reminder_notification_title': '¿Registraste tus gastos de hoy?',
       'reminder_notification_body':
           'No olvides anotar tus movimientos para mantener tu control financiero.',
       'debt_record_expense': 'Registrar como gasto',
       'debt_record_expense_hint':
-          'Se carga hoy en "{category}". Apagalo si ya anotás este pago a mano.',
+          'Se carga hoy en "{category}". Apágalo si ya anotas este pago a mano.',
       'csv_type': 'Tipo',
       'csv_income': 'Ingreso',
       'csv_expense': 'Gasto',
@@ -279,25 +279,25 @@ class AppTranslations {
           '\$imple guarda tus movimientos, deudas, pagos fijos, cuotas, metas de ahorro y la Bóveda solo en tu teléfono. No hay cuentas, inicio de sesión ni servidores de \$imple: nosotros no vemos tus datos.',
       'privacy_s2_title': 'Respaldo',
       'privacy_s2_body':
-          'Podés exportar un archivo de respaldo (JSON) y restaurarlo cuando quieras. El archivo no está cifrado: guardalo en un lugar seguro. Los movimientos de la Bóveda solo se incluyen si lo confirmás. Restaurar suma los datos del archivo sin borrar los que ya tenés. Vos elegís dónde se guarda y con quién se comparte.',
+          'Puedes exportar un archivo de respaldo (JSON) y restaurarlo cuando quieras. El archivo no está cifrado: guárdalo en un lugar seguro. Los movimientos de la Bóveda solo se incluyen si lo confirmas. Restaurar suma los datos del archivo sin borrar los que ya tienes. Tú eliges dónde se guarda y con quién se comparte.',
       'privacy_s3_title': 'Copia de seguridad de Android',
       'privacy_s3_body':
-          'Si tenés activada la copia de seguridad de Android en tu cuenta de Google, Android puede guardar los datos de la app (incluida la Bóveda) en esa copia. Esa copia la maneja Google, no \$imple. Tu PIN no se copia: en un teléfono nuevo lo creás de nuevo.',
+          'Si tienes activada la copia de seguridad de Android en tu cuenta de Google, Android puede guardar los datos de la app (incluida la Bóveda) en esa copia. Esa copia la maneja Google, no \$imple. Tu PIN no se copia: en un teléfono nuevo lo creas de nuevo.',
       'privacy_s4_title': 'Reportes de fallos',
       'privacy_s4_body':
-          'Solo si lo aceptás, la app envía reportes de fallos a Firebase Crashlytics (Google): datos técnicos del error, del teléfono y un identificador de instalación. No incluyen tu historial de movimientos. Hasta que respondas, Crashlytics está apagado. Podés cambiar de opinión cuando quieras en Configuración. No usamos Firebase Analytics ni publicidad.',
+          'Solo si lo aceptas, la app envía reportes de fallos a Firebase Crashlytics (Google): datos técnicos del error, del teléfono y un identificador de instalación. No incluyen tu historial de movimientos. Hasta que respondas, Crashlytics está apagado. Puedes cambiar de opinión cuando quieras en Configuración. No usamos Firebase Analytics ni publicidad.',
       'privacy_s5_title': 'Compra PRO',
       'privacy_s5_body':
           'PRO es un pago único que procesa Google Play. La app solo le pregunta a Google Play si la compra está pagada, para activar o restaurar PRO. No vemos tus datos de pago.',
       'privacy_s6_title': 'PIN y huella',
       'privacy_s6_body':
-          'Podés proteger la app y la Bóveda con un PIN. El PIN se guarda en el almacenamiento seguro del teléfono. La huella la procesa Android: la app no la recibe ni la guarda, y para usarla hace falta un PIN de repuesto. Después de 5 PIN incorrectos la app espera 30 segundos, y cada error siguiente duplica la espera (hasta 15 minutos). Con un bloqueo activo, la pantalla queda protegida contra capturas.',
+          'Puedes proteger la app y la Bóveda con un PIN. El PIN se guarda en el almacenamiento seguro del teléfono. La huella la procesa Android: la app no la recibe ni la guarda, y para usarla hace falta un PIN de repuesto. Después de 5 PIN incorrectos la app espera 30 segundos, y cada error siguiente duplica la espera (hasta 15 minutos). Con un bloqueo activo, la pantalla queda protegida contra capturas.',
       'privacy_s7_title': 'Recordatorios',
       'privacy_s7_body':
-          'La app puede programar un recordatorio diario en el teléfono para que anotes tus movimientos. Podés apagarlo en Configuración o en los permisos de Android.',
+          'La app puede programar un recordatorio diario en el teléfono para que anotes tus movimientos. Puedes apagarlo en Configuración o en los permisos de Android.',
       'privacy_s8_title': 'Borrar tus datos',
       'privacy_s8_body':
-          'Podés borrar movimientos dentro de la app, borrar los datos de la app desde los Ajustes de Android o desinstalarla. Como no tenemos servidores, no guardamos ninguna copia.',
+          'Puedes borrar movimientos dentro de la app, borrar los datos de la app desde los Ajustes de Android o desinstalarla. Como no tenemos servidores, no guardamos ninguna copia.',
       'security': 'Seguridad',
       'enable_vault_pin': 'Proteger Bóveda',
       'vault_pin_subtitle': 'Solicitar PIN al abrir la bóveda privada',
@@ -368,10 +368,10 @@ class AppTranslations {
       'data_restored': 'Datos restaurados',
       'backup_vault_title': '¿Incluir la Bóveda?',
       'backup_vault_body':
-          'El archivo de respaldo no está cifrado. Si incluís los movimientos de la Bóveda, cualquiera que tenga el archivo podrá verlos.',
+          'El archivo de respaldo no está cifrado. Si incluyes los movimientos de la Bóveda, cualquiera que tenga el archivo podrá verlos.',
       'backup_vault_include': 'Incluir',
       'backup_vault_exclude': 'No incluir',
-      'pin_locked_wait': 'Demasiados intentos. Esperá {s} s.',
+      'pin_locked_wait': 'Demasiados intentos. Espera {s} s.',
       'need_to_save': 'Necesitas ahorrar:',
       'goal_name_required': 'Por favor, ingresa un nombre para la meta',
       'goal_amount_required':
@@ -406,7 +406,7 @@ class AppTranslations {
       'local_backup_label': 'Respaldo Local',
       'biometric_not_available': 'Biometría no disponible en este dispositivo',
       'biometric_needs_pin':
-          'Primero creá un PIN: es la llave de repuesto si la huella falla.',
+          'Primero crea un PIN: es la llave de repuesto si la huella falla.',
       'crash_reports_title': 'Enviar reportes de fallos',
       'crash_reports_subtitle':
           'Datos técnicos del error y del teléfono (Firebase Crashlytics). No incluyen tu historial de movimientos.',
