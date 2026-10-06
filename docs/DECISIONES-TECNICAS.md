@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-05 (chat 08, D-033).
+Última revisión: 2026-10-05 (chat 09, D-034).
 
 ---
 
@@ -196,3 +196,9 @@ Se hizo el plan de 8 pasos de `docs/SISTEMA-DISENO.md` (D-032). Todo lo que se v
 - **Tests (R-7):** `test/design_cards_test.dart` y `test/design_modules_test.dart`. Fallan si una pantalla (`lib/features/`, `lib/core/flow/`) escribe `Icons.`, `fontSize:` con número, `TextStyle(`, un radio con número, `showModalBottomSheet`, `LinearProgressIndicator`, `ElevatedButton`/`OutlinedButton`, o si crece la lista de `BoxDecoration` hechas a mano (solo puede achicarse). También miden que cada módulo tenga siempre el mismo tamaño.
 - No cambió ninguna función ni cálculo.
 
+### D-034 — Chat 09: limpieza
+Se agrega la fila **09** a la tabla de `CLAUDE.md`, pedida por Miguel el 2026-10-05. No cambia funciones ni cálculos; lo que se vea distinto se le consulta antes.
+- Borrar textos y código sin uso: P-09, P-12, P-15 y P-19.
+- Mensajes de compra (`PurchaseService`) pasan a `AppTranslations`, en español e inglés (P-14).
+- **La app habla de "tú"** en español (respuesta de Miguel a P-21): "Puedes gastar hoy", "Agrega", "Elige", "Inténtalo"… Todo texto nuevo en español va en "tú".
+- Aviso flotante que queda fuera de la pantalla (P-22).
