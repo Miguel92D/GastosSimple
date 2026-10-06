@@ -56,7 +56,7 @@ Capturas (`cap *.jpeg/png`), `icon chatgpt..png`, `analyze.txt`, `test.txt` y el
 
 ### P-09 — 98 textos de traducción que ya no se usaban antes del chat 01
 En `app_translations.dart` hay 98 claves (en las dos lenguas) que ningún archivo nombra, por ejemplo `get_pro`, `history_analytics`, `dark_mode`, `privacy_policy_part1`. Ya estaban sin uso antes del chat 01. No se borraron porque algunas podrían usarse de forma indirecta (por ejemplo, nombres de categorías guardados en la base).
-**Respuesta:** _pendiente_ — revisar una por una y borrar las que sobran en una tarea de limpieza.
+**Respuesta (2026-10-05, chat 09):** ✅ Revisadas todas: se borraron **102 claves** (en las dos lenguas) que ningún archivo nombra. Las categorías no usan `AppTranslations` (se guardan con su nombre), así que no había usos indirectos. Las únicas claves armadas con variable son `privacy_s1…s8_title/body` (se usan y quedan). Quedan 332 claves por idioma.
 
 ### P-10 — Íconos de categoría distintos entre pantallas
 En "Agregar movimiento" las categorías tienen un ícono cada una (Compras, Servicios, Tarjeta de Crédito…), pero en la lista de movimientos (`transaction_tile.dart`) muchas salen con el ícono genérico porque esa lista busca otros nombres (`educación`, `venta`, `regalo`…). No es un error de datos, solo visual.
@@ -80,7 +80,7 @@ Los mensajes de `PurchaseService` ("Compra cancelada.", "No se encontro una comp
 
 ### P-15 — Más textos y código Pro sin uso
 Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analytics`, `benefit_strategies`, `smart_insights`, `feature_stats`, `feature_export`, `feature_vault` y `feature_goals`. Tampoco se usa `PremiumService` ni `AppModeController.isPro`.
-**Respuesta:** _pendiente_ — borrarlos en la tarea de limpieza (P-09 y P-12).
+**Respuesta (2026-10-05, chat 09):** ✅ Borrados los textos (con P-09), `PremiumService` y todo `AppModeController` (guardaba un modo que nadie leía). El test de `pro_vault_test.dart` sigue comprobando que esas promesas viejas no vuelvan, ahora con el texto escrito.
 
 ### P-16 — Usuarios que ya tienen huella sin PIN
 Desde el chat 05 la huella necesita un PIN (D-022). Pero alguien que en una versión anterior activó solo la huella sigue así: entra con la huella o con el bloqueo del teléfono (la app lo permite). Si un día fallan los dos, no hay forma de entrar.

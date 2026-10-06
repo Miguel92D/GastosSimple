@@ -100,11 +100,12 @@ const _proKeys = [
   'pro_benefit_vault',
   'pro_benefit_debt_tips',
 ];
-const _notProKeys = [
-  'benefit_predictions',
-  'feature_export',
-  'smart_insights',
-  'benefit_analytics',
+// Promesas viejas (sus claves se borraron en el chat 09): no pueden volver.
+const _notProTexts = [
+  'Predicción de gastos del mes',
+  'Exportación de datos',
+  'Insights financieros inteligentes',
+  'Analíticas financieras avanzadas',
 ];
 
 Transaction _mov(
@@ -143,8 +144,8 @@ void main() {
       for (final key in _proKeys) {
         expect(find.text(_t(key)), findsOneWidget, reason: key);
       }
-      for (final key in _notProKeys) {
-        expect(find.text(_t(key)), findsNothing, reason: key);
+      for (final text in _notProTexts) {
+        expect(find.text(text), findsNothing, reason: text);
       }
     });
 
@@ -168,8 +169,8 @@ void main() {
       for (final key in _proKeys) {
         expect(find.text(_t(key)), findsOneWidget, reason: key);
       }
-      for (final key in _notProKeys) {
-        expect(find.text(_t(key)), findsNothing, reason: key);
+      for (final text in _notProTexts) {
+        expect(find.text(text), findsNothing, reason: text);
       }
       // Es un pago único: no hay período de prueba.
       expect(find.textContaining('Probar'), findsNothing);
