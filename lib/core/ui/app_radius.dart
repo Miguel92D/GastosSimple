@@ -1,6 +1,6 @@
 /// This project uses centralized layout constants.
-/// Direct usage of hardcoded spacing values, radius values, or shadow definitions is discouraged.
-/// Use AppSpacing, AppRadius, and AppShadows instead.
+/// Direct usage of hardcoded spacing or radius values is discouraged.
+/// Use AppSpacing and AppRadius instead.
 class AppRadius {
   static const double sm = 8;
   static const double md = 16;

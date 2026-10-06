@@ -147,8 +147,8 @@ class _GastosSimpleAppState extends State<GastosSimpleApp>
         GlobalCupertinoLocalizations.delegate,
       ],
       themeMode: ThemeMode.dark,
-      theme: AppTheme.neonTheme,
-      darkTheme: AppTheme.neonTheme,
+      theme: AppTheme.brandTheme,
+      darkTheme: AppTheme.brandTheme,
       home: const InitialGuard(),
       onGenerateRoute: AppRouter.generateRoute,
     );

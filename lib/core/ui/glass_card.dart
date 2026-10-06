@@ -1,6 +1,6 @@
 /// This project uses a centralized design system.
 /// Direct usage of Color(), LinearGradient(), or TextStyle() inside UI widgets is not allowed.
-/// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius, AppShadows, and GlassCard.
+/// All UI styling must use AppColors, AppGradients, AppTextStyles, AppSpacing, AppRadius and GlassCard.
 library;
 import 'package:flutter/material.dart';
 import 'dart:ui';

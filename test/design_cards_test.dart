@@ -105,11 +105,10 @@ void main() {
   });
 
   group('reglas de diseño (D-029)', () {
-    // Archivos donde sí se definen colores (tokens) o el tema claro sin uso.
+    // Archivos donde sí se definen colores (tokens).
     const tokenFiles = [
       'core/ui/app_colors.dart',
       'core/ui/app_gradients.dart',
-      'core/ui/app_theme.dart',
     ];
     final materialColor = RegExp(
       r'Colors\.(deepPurple|orange|redAccent|green|red|blue|blueAccent|'
