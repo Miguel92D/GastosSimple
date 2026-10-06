@@ -44,7 +44,7 @@ Sistema propio `AppTranslations` (`lib/core/i18n/`), español e inglés. **No** 
 `provider` para estado; `AppState` es la fuente del modo Pro. No se agregan paquetes nuevos sin anotarlo acá.
 
 ### D-010 — Calidad mínima para subir código
-Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-030): 204. Chat 08 (D-033): 223.
+Antes de cada push: `flutter analyze` sin problemas y `flutter test` todo en verde. Al 2026-10-05 (D-027): analyze limpio, 195 tests pasan. Chat 07 (D-030): 204. Chat 08 (D-033): 223. Chat 09 (D-034): 228.
 
 ### D-011 — Git seguro
 Prohibido `git reset --hard`, `git clean` y cambiar de rama con cambios sin commit (el 2 oct 2026 eso borró trabajo, incluido el código exacto de la 1.1.8). Commits chicos y descriptivos. Rama de trabajo: `feature/mejoras-sesion`; desde el chat 06 `main` sigue a esa rama (D-026).
@@ -201,4 +201,4 @@ Se agrega la fila **09** a la tabla de `CLAUDE.md`, pedida por Miguel el 2026-10
 - Borrar textos y código sin uso: P-09, P-12, P-15 y P-19.
 - Mensajes de compra (`PurchaseService`) pasan a `AppTranslations`, en español e inglés (P-14).
 - **La app habla de "tú"** en español (respuesta de Miguel a P-21): "Puedes gastar hoy", "Agrega", "Elige", "Inténtalo"… Todo texto nuevo en español va en "tú".
-- Aviso flotante que queda fuera de la pantalla (P-22).
+- Aviso flotante que queda fuera de la pantalla (P-22): `AppScaffold` ya no pone la zona de botones vacía cuando la pantalla no tiene menú ni botón.

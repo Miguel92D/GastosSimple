@@ -119,5 +119,5 @@ La app dice "Podés gastar hoy" y "Entrá…", pero también "¿Qué quieres reg
 
 ### P-22 — Aviso "Floating SnackBar presented off screen"
 En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off screen": un aviso flotante quedó tapado o fuera de la pantalla, probablemente por los botones de abajo. Ya pasaba antes de los cambios de diseño. No se investigó (fuera de la tarea).
-**Respuesta:** _pendiente_ — ver en qué pantalla aparece y darle margen abajo al aviso.
+**Respuesta (2026-10-05, chat 09):** ✅ Arreglado. No era por los botones de abajo, sino por lo contrario: `AppScaffold` siempre ponía la zona de botones, y en las pantallas **sin** menú ni botón (Configuración, Respaldo, Carga rápida, Política) esa zona vacía ocupaba toda la pantalla. Flutter pone el aviso encima de esa zona, así que quedaba arriba del borde y **no se veía** (por ejemplo "Datos restaurados" o los mensajes de Restaurar compra en Configuración). Ahora, sin menú ni botón, no se pone la zona y el aviso sale abajo, como en el resto de la app. Test: `test/snackbar_test.dart`.
 
