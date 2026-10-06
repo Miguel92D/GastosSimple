@@ -121,3 +121,7 @@ La app dice "Podés gastar hoy" y "Entrá…", pero también "¿Qué quieres reg
 En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off screen": un aviso flotante quedó tapado o fuera de la pantalla, probablemente por los botones de abajo. Ya pasaba antes de los cambios de diseño. No se investigó (fuera de la tarea).
 **Respuesta (2026-10-05, chat 09):** ✅ Arreglado. No era por los botones de abajo, sino por lo contrario: `AppScaffold` siempre ponía la zona de botones, y en las pantallas **sin** menú ni botón (Configuración, Respaldo, Carga rápida, Política) esa zona vacía ocupaba toda la pantalla. Flutter pone el aviso encima de esa zona, así que quedaba arriba del borde y **no se veía** (por ejemplo "Datos restaurados" o los mensajes de Restaurar compra en Configuración). Ahora, sin menú ni botón, no se pone la zona y el aviso sale abajo, como en el resto de la app. Test: `test/snackbar_test.dart`.
 
+### P-23 — En pantallas 18:9 el botón de menú tapa "GUARDAR"
+Visto el 2026-10-06 al sacar las capturas para Play (versión 1.1.11). En un teléfono de 1080×2160 (18:9), el botón redondo de menú queda encima del botón GUARDAR de "Agregar movimiento" y se lee "G…R". También tapa un poco el final de las listas (Inicio, Deudas, Metas). En pantallas más altas (1080×2400) no pasa. La captura de "Agregar" para Play se sacó en 1080×2400 y se recortó abajo.
+**Respuesta:** _pendiente_ — darle a "Agregar" (y a las listas) espacio abajo para los botones flotantes, o esconder el botón de menú en "Agregar". Es visual: consultar con Miguel antes.
+
