@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import '../core/i18n/app_locale_controller.dart';
 import '../core/state/app_state.dart';
 
 /// Lo que PurchaseService usa de la tienda. En la app es Google Play
@@ -40,6 +41,9 @@ class _PlayStore implements PurchaseStore {
   @override
   Future<void> restorePurchases() => _iap.restorePurchases();
 }
+
+/// Mensajes en el idioma de la app (P-14).
+String _t(String key) => AppLocaleController.instance.text(key);
 
 class PurchaseService extends ChangeNotifier {
   static final PurchaseService instance = PurchaseService._init();
@@ -111,7 +115,7 @@ class PurchaseService extends ChangeNotifier {
       available = await _store.isAvailable();
       if (!available) {
         initialized = true;
-        statusMessage = 'Google Play Billing no está disponible.';
+        statusMessage = _t('purchase_billing_unavailable');
         notifyListeners();
         return;
       }
@@ -125,7 +129,7 @@ class PurchaseService extends ChangeNotifier {
           _subscription = null;
         },
         onError: (error) {
-          errorMessage = 'No se pudo procesar la compra.';
+          errorMessage = _t('purchase_process_failed');
           debugPrint('Purchase Stream Error: $error');
           notifyListeners();
         },
@@ -136,7 +140,7 @@ class PurchaseService extends ChangeNotifier {
       await recheckOwnedPurchases();
     } catch (e) {
       initialized = true;
-      errorMessage = 'No se pudo inicializar Google Play Billing.';
+      errorMessage = _t('purchase_billing_init_failed');
       debugPrint('Billing init error: $e');
       notifyListeners();
     }
@@ -151,14 +155,14 @@ class PurchaseService extends ChangeNotifier {
       const ids = {proProductId};
       final response = await _store.queryProductDetails(ids);
       if (response.notFoundIDs.isNotEmpty) {
-        statusMessage = 'El producto PRO no está configurado en Play.';
+        statusMessage = _t('purchase_product_not_configured');
         debugPrint('Products not found: ${response.notFoundIDs}');
       } else {
         statusMessage = null;
       }
       products = response.productDetails;
     } catch (e) {
-      errorMessage = 'No se pudo cargar el producto PRO.';
+      errorMessage = _t('purchase_product_load_failed');
       debugPrint('Product load error: $e');
     } finally {
       isLoadingProducts = false;
@@ -168,22 +172,22 @@ class PurchaseService extends ChangeNotifier {
 
   Future<bool> buyProduct(ProductDetails product) async {
     if (!available || !initialized) {
-      errorMessage = 'Google Play Billing no está listo todavía.';
+      errorMessage = _t('purchase_billing_not_ready');
       notifyListeners();
       return false;
     }
     if (isLoadingProducts) {
-      errorMessage = 'El producto PRO todavía se está cargando.';
+      errorMessage = _t('purchase_product_loading');
       notifyListeners();
       return false;
     }
     if (purchaseInProgress || purchasePending) {
-      statusMessage = 'Ya hay una compra en curso.';
+      statusMessage = _t('purchase_in_progress');
       notifyListeners();
       return false;
     }
     if (product.id != proProductId || proProduct == null) {
-      errorMessage = 'El producto PRO no está disponible ahora.';
+      errorMessage = _t('purchase_product_unavailable');
       notifyListeners();
       return false;
     }
@@ -192,7 +196,7 @@ class PurchaseService extends ChangeNotifier {
     try {
       purchaseInProgress = true;
       purchasePending = true;
-      statusMessage = 'Abriendo Google Play...';
+      statusMessage = _t('purchase_opening_play');
       errorMessage = null;
       notifyListeners();
       final launched = await _store.buyNonConsumable(
@@ -204,14 +208,14 @@ class PurchaseService extends ChangeNotifier {
         purchaseInProgress = false;
         purchasePending = false;
         statusMessage = null;
-        errorMessage = 'No se pudo abrir Google Play. Probá de nuevo.';
+        errorMessage = _t('purchase_open_play_failed');
         notifyListeners();
       }
       return launched;
     } catch (e) {
       purchaseInProgress = false;
       purchasePending = false;
-      errorMessage = 'No se pudo iniciar la compra.';
+      errorMessage = _t('purchase_start_failed');
       debugPrint('Error buying product: $e');
       notifyListeners();
     }
@@ -250,14 +254,14 @@ class PurchaseService extends ChangeNotifier {
   Future<void> _restorePurchases({required bool showStatus}) async {
     if (!available || !initialized) {
       if (showStatus) {
-        errorMessage = 'Google Play Billing no está listo todavía.';
+        errorMessage = _t('purchase_billing_not_ready');
         notifyListeners();
       }
       return;
     }
     if (purchaseInProgress || purchasePending) {
       if (showStatus) {
-        statusMessage = 'Esperá a que termine la compra actual.';
+        statusMessage = _t('purchase_wait_current');
         notifyListeners();
       }
       return;
@@ -267,7 +271,7 @@ class PurchaseService extends ChangeNotifier {
     try {
       isRestoring = true;
       if (showStatus) {
-        statusMessage = 'Buscando compras anteriores...';
+        statusMessage = _t('purchase_searching');
       }
       errorMessage = null;
       notifyListeners();
@@ -285,10 +289,10 @@ class PurchaseService extends ChangeNotifier {
         await AppState.instance.setProEntitlement(false);
       }
       if (showStatus && !AppState.instance.isPro) {
-        statusMessage = 'No se encontró una compra de PRO en esta cuenta.';
+        statusMessage = _t('purchase_not_found');
       }
     } catch (e) {
-      errorMessage = 'No se pudieron restaurar las compras.';
+      errorMessage = _t('purchase_restore_failed');
       debugPrint('Error restoring purchases: $e');
     } finally {
       if (identical(_restoreAnswer, answer)) _restoreAnswer = null;
@@ -319,7 +323,7 @@ class PurchaseService extends ChangeNotifier {
         // Pendiente de pago: no se activa PRO ni se confirma la compra.
         purchaseInProgress = true;
         purchasePending = true;
-        statusMessage = 'La compra está pendiente de confirmación.';
+        statusMessage = _t('purchase_pending');
         notifyListeners();
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
@@ -329,12 +333,12 @@ class PurchaseService extends ChangeNotifier {
           errorMessage =
               purchaseErrorMessage != null && purchaseErrorMessage.isNotEmpty
               ? purchaseErrorMessage
-              : 'La compra no se pudo completar.';
+              : _t('purchase_not_completed');
           debugPrint('Purchase Error: ${purchaseDetails.error}');
         } else if (purchaseDetails.status == PurchaseStatus.canceled) {
           purchaseInProgress = false;
           purchasePending = false;
-          statusMessage = 'Compra cancelada.';
+          statusMessage = _t('purchase_canceled');
           errorMessage = null;
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
             purchaseDetails.status == PurchaseStatus.restored) {
@@ -372,11 +376,11 @@ class PurchaseService extends ChangeNotifier {
     if (purchaseDetails.productID == proProductId) {
       await AppState.instance.setProEntitlement(true);
       statusMessage = purchaseDetails.status == PurchaseStatus.restored
-          ? 'Compra restaurada. PRO está activo.'
-          : 'Compra completada. PRO está activo.';
+          ? _t('purchase_restored_active')
+          : _t('purchase_completed_active');
       errorMessage = null;
     } else {
-      statusMessage = 'Compra recibida para un producto no reconocido.';
+      statusMessage = _t('purchase_unknown_product');
     }
   }
 

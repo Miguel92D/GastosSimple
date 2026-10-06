@@ -76,7 +76,7 @@ Hoy Pro queda guardado en el teléfono (`is_pro`) para siempre. Si alguien pide 
 
 ### P-14 — Mensajes de compra solo en español y sin tildes
 Los mensajes de `PurchaseService` ("Compra cancelada.", "No se encontro una compra…") están escritos en el código, solo en español y sin tildes. D-008 pide las dos lenguas.
-**Respuesta:** _pendiente_ — las tildes ya se corrigieron (D-027); falta pasarlos a `AppTranslations` para que estén en inglés, en una tarea de textos (junto con P-09).
+**Respuesta (2026-10-05, chat 09):** ✅ Los 22 mensajes de `PurchaseService` están en `AppTranslations` (claves `purchase_*`), en español (con "tú", P-21) e inglés. Salen en el idioma que tiene la app en ese momento. Test: `test/pro_purchase_test.dart` falla si falta una clave en alguna lengua o si vuelve un mensaje escrito a mano.
 
 ### P-15 — Más textos y código Pro sin uso
 Desde el chat 04 ya nadie usa los textos `benefit_predictions`, `benefit_analytics`, `benefit_strategies`, `smart_insights`, `feature_stats`, `feature_export`, `feature_vault` y `feature_goals`. Tampoco se usa `PremiumService` ni `AppModeController.isPro`.

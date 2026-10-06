@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gastos_simple/core/i18n/app_translations.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
 import 'package:gastos_simple/services/purchase_service.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -453,5 +454,32 @@ void main() {
       File('lib/services/purchase_service.dart').readAsStringSync(),
       contains('setProEntitlement(true)'),
     );
+  });
+
+  group('Mensajes de compra en las dos lenguas (P-14)', () {
+    test('cada mensaje de PurchaseService está en español e inglés', () {
+      final source = File(
+        'lib/services/purchase_service.dart',
+      ).readAsStringSync();
+      final keys = RegExp(
+        r"_t\('([a-z_]+)'\)",
+      ).allMatches(source).map((m) => m.group(1)!).toSet();
+      expect(keys, isNotEmpty);
+      for (final lang in ['es', 'en']) {
+        for (final key in keys) {
+          expect(
+            AppTranslations.translations[lang]![key],
+            isNotNull,
+            reason: '$lang: $key',
+          );
+        }
+      }
+      // Ningún mensaje escrito a mano: statusMessage y errorMessage solo
+      // reciben textos de AppTranslations (o el error que manda Google Play).
+      expect(
+        RegExp(r"(statusMessage|errorMessage) =\s*'").hasMatch(source),
+        isFalse,
+      );
+    });
   });
 }
