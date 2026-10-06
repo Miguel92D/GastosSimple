@@ -19,6 +19,7 @@ import 'package:gastos_simple/core/ui/widgets/app_secondary_button.dart';
 import 'package:gastos_simple/core/ui/widgets/app_section_title.dart';
 import 'package:gastos_simple/core/ui/widgets/app_segmented.dart';
 import 'package:gastos_simple/core/ui/widgets/app_sheet.dart';
+import 'package:gastos_simple/features/dev/design_catalog_screen.dart';
 import 'package:gastos_simple/services/currency_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -211,5 +212,24 @@ void main() {
   testWidgets('el logo dice \$imple con o sin Pro', (t) async {
     await t.pumpWidget(app(const AppLogo()));
     expect(find.text('\$imple'), findsOneWidget);
+  });
+
+  testWidgets('el catálogo de diseño abre sin errores (paso 7)', (t) async {
+    t.view.physicalSize = const Size(1080, 2400);
+    t.view.devicePixelRatio = 3;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: AppLocaleController.instance),
+          ChangeNotifierProvider.value(value: AppState.instance),
+          ChangeNotifierProvider.value(value: CurrencyService.instance),
+        ],
+        child: const MaterialApp(home: DesignCatalogScreen()),
+      ),
+    );
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('Catálogo'), findsOneWidget);
+    expect(t.takeException(), isNull);
   });
 }

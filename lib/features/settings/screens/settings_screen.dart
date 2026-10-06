@@ -19,6 +19,7 @@ import '../../../core/flow/general_flow_service.dart';
 import '../../../services/security_service.dart';
 import '../../../services/notification_service.dart';
 import 'pin_screen.dart';
+import '../../dev/design_catalog_screen.dart';
 import '../../../services/currency_service.dart';
 import '../../../services/dev_monthly_test_data_service.dart';
 import '../../../services/purchase_service.dart';
@@ -337,6 +338,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     subtitle: 'Inserta datos TEST_MENSUAL_ en 3 meses',
                     leading: AppIcons.devTools,
                     onTap: _loadMonthlyTestData,
+                  ),
+                  _buildItem(
+                    title: 'Catálogo de diseño',
+                    subtitle: 'Todos los módulos juntos (D-032)',
+                    leading: AppIcons.categories,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const DesignCatalogScreen(),
+                      ),
+                    ),
                   ),
                   _buildItem(
                     title: 'Borrar datos mensuales de prueba',
