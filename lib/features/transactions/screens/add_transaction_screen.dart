@@ -755,11 +755,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           : context.watch<AppLocaleController>().text('new_movement'),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(
+        padding: EdgeInsets.only(
           left: AppSpacing.lg,
           right: AppSpacing.lg,
           top: AppSpacing.lg,
-          bottom: AppSpacing.xxl,
+          bottom: AppScaffold.bottomClearance(context),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

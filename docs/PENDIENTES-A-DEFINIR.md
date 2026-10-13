@@ -123,7 +123,7 @@ En el emulador (chat 08) Flutter avisó una vez "Floating SnackBar presented off
 
 ### P-23 — En pantallas 18:9 el botón de menú tapa "GUARDAR"
 Visto el 2026-10-06 al sacar las capturas para Play (versión 1.1.11). En un teléfono de 1080×2160 (18:9), el botón redondo de menú queda encima del botón GUARDAR de "Agregar movimiento" y se lee "G…R". También tapa un poco el final de las listas (Inicio, Deudas, Metas). En pantallas más altas (1080×2400) no pasa. La captura de "Agregar" para Play se sacó en 1080×2400 y se recortó abajo.
-**Respuesta:** _pendiente_ — darle a "Agregar" (y a las listas) espacio abajo para los botones flotantes, o esconder el botón de menú en "Agregar". Es visual: consultar con Miguel antes.
+**Respuesta (2026-10-13, chat 11):** Miguel eligió **espacio abajo** (el menú sigue en todas las pantallas). Toda pantalla con menú o FAB termina su scroll con `AppScaffold.bottomClearance(context)`: 88 (botón 56 + margen 16 + aire 16, token `AppSpacing.floatingButtons`) más la barra del sistema; con los botones + y − de `AppFAB` (Inicio, Bóveda) se usa `stackedFab: true`. Reemplaza los 48, 80, 100 y 120 sueltos que tenía cada pantalla. Test: `test/transaction_screens_test.dart`, "en 18:9 el botón de menú no tapa GUARDAR" (falla con el código viejo). La pantalla Pro ya dejaba su propio espacio y quedó igual.
 
 ### P-24 — Ícono nuevo dentro de la app
 El 2026-10-06 Miguel eligió un ícono nuevo: el mismo $ dorado de siempre, sobre el fondo oscuro con brillo violeta de la app ("opción 1"). El archivo para la ficha de Play (512×512) está en `_archivo/icono/icono-play-512.png` y Miguel lo sube a mano.

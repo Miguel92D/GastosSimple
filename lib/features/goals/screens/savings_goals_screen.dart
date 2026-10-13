@@ -82,7 +82,12 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppScaffold.bottomClearance(context), // menú y + (P-23)
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -107,7 +112,6 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                     icon: AppIcons.goals,
                     text: l10n.text('no_goals_message'),
                   ),
-                const SizedBox(height: 80), // Space for FAB
               ],
             ),
           );

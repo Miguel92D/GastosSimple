@@ -268,8 +268,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                         AppSpacing.sm,
                         AppSpacing.sm,
                         AppSpacing.sm,
-                        AppSpacing.xxl * 2 +
-                            MediaQuery.of(context).padding.bottom,
+                        AppScaffold.bottomClearance(context), // P-23
                       ),
                     ),
                   ),

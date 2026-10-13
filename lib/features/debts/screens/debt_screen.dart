@@ -352,11 +352,11 @@ class _DebtScreenState extends State<DebtScreen> {
               child: CircularProgressIndicator(color: AppColors.primaryPurple),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
+              padding: EdgeInsets.fromLTRB(
                 AppSpacing.lg, // margen de pantalla 24 (D-032)
                 AppSpacing.sm,
                 AppSpacing.lg,
-                120, // lugar para el menú y el + de abajo
+                AppScaffold.bottomClearance(context), // menú y + (P-23)
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

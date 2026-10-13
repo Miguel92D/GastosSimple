@@ -158,7 +158,12 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppScaffold.bottomClearance(context), // P-23
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -169,7 +174,6 @@ class _MonthlyAnalysisScreenState extends State<MonthlyAnalysisScreen> {
                   _buildDetailedStats(l10n),
                   const SizedBox(height: AppSpacing.lg),
                   _buildTipsSection(l10n),
-                  const SizedBox(height: 100),
                 ],
               ),
             ),

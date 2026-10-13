@@ -8,6 +8,7 @@ import '../../transactions/controllers/transaction_controller.dart';
 import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/ui/app_colors.dart';
 import '../../../core/ui/app_radius.dart';
+import '../../../core/ui/app_spacing.dart';
 import '../../../core/ui/app_text_styles.dart';
 import '../../../core/ui/app_gradients.dart';
 import '../../../core/ui/glass_card.dart';
@@ -102,7 +103,12 @@ class _PredictionScreenState extends State<PredictionScreen>
               listenable: AppState.instance,
               builder: (context, _) {
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppScaffold.bottomClearance(context), // P-23
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

@@ -129,7 +129,12 @@ class _StatsScreenState extends State<StatsScreen> {
           : ListenableBuilder(
               listenable: AppState.instance,
               builder: (context, _) => ListView(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.md, AppSpacing.screen, 100),
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.screen,
+                  AppSpacing.md,
+                  AppSpacing.screen,
+                  AppScaffold.bottomClearance(context), // P-23
+                ),
                 children: [
                   _buildMonthHeader(),
                   const SizedBox(height: 16),

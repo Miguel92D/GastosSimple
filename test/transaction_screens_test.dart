@@ -6,6 +6,8 @@ import 'package:gastos_simple/core/i18n/app_locale_controller.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:gastos_simple/core/router/navigation_service.dart';
 import 'package:gastos_simple/core/state/app_state.dart';
+import 'package:gastos_simple/core/ui/widgets/app_round_button.dart';
+import 'package:gastos_simple/core/ui/widgets/gradient_button.dart';
 import 'package:gastos_simple/database/database_helper.dart';
 import 'package:gastos_simple/features/transactions/models/transaction.dart';
 import 'package:gastos_simple/features/transactions/controllers/transaction_controller.dart';
@@ -98,6 +100,31 @@ void main() {
     expect(saved.single['type'], Transaction.typeExpense);
     expect(saved.single['is_secret'], 0);
     expect(find.text('abrir'), findsOneWidget);
+  });
+
+  testWidgets('en 18:9 el botón de menú no tapa GUARDAR (P-23)', (
+    tester,
+  ) async {
+    // 1080×2160 a 3x, como el teléfono donde se vio.
+    tester.view.physicalSize = const Size(1080, 2160);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(app(const AddTransactionScreen(type: 'expense')));
+    await tester.tap(find.text('abrir'));
+    await settleDb(tester);
+
+    // Hasta el final de la pantalla, donde quedaba tapado.
+    await tester.drag(
+      find.byType(SingleChildScrollView).first,
+      const Offset(0, -3000),
+    );
+    await tester.pumpAndSettle();
+
+    // El botón entero (no solo el texto) termina antes de que empiece el menú.
+    final save = tester.getRect(find.byType(GradientButton));
+    final menu = tester.getRect(find.byType(AppRoundButton));
+    expect(save.bottom, lessThanOrEqualTo(menu.top));
   });
 
   testWidgets(

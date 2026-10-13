@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../app_text_styles.dart';
 import '../app_colors.dart';
 import '../app_gradients.dart';
+import '../app_spacing.dart';
 import '../widgets/app_round_button.dart';
 import 'package:gastos_simple/core/ui/app_icons.dart';
 
@@ -24,6 +25,18 @@ class AppScaffold extends StatelessWidget {
     this.resizeToAvoidBottomInset,
     this.actions,
   });
+
+  /// Espacio libre al final del contenido de una pantalla con menú o FAB,
+  /// para que los botones flotantes no tapen GUARDAR ni el último renglón
+  /// (P-23). Con [stackedFab] (los botones + y − de `AppFAB`) suma otro
+  /// botón y su separación.
+  static double bottomClearance(
+    BuildContext context, {
+    bool stackedFab = false,
+  }) =>
+      AppSpacing.floatingButtons +
+      (stackedFab ? AppRoundButton.size + AppSpacing.md : 0) +
+      MediaQuery.of(context).padding.bottom;
 
   @override
   Widget build(BuildContext context) {

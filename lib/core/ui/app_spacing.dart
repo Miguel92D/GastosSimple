@@ -11,4 +11,9 @@ class AppSpacing {
 
   /// Margen a los costados de toda pantalla (D-032).
   static const double screen = 24;
+
+  /// Espacio libre al final de una pantalla con botón de menú o FAB:
+  /// botón (56) + su margen (16) + aire (16). Sin esto el botón tapaba
+  /// GUARDAR y el último renglón en pantallas 18:9 (P-23).
+  static const double floatingButtons = 88;
 }

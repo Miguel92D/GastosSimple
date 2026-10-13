@@ -76,7 +76,7 @@ Todos en `lib/core/ui/`. ✅ = ya existe y se usa.
 | **`AppSegmented`** (nuevo) | Selector de dos o más opciones | Día/Mes e Ingreso/Gasto |
 | ✅ `GradientButton` | Botón principal (D-029) | `AppButton` queda como atajo |
 | **`AppSecondaryButton`** (nuevo) | Botón con borde, sin relleno | "Restaurar backup", "Agregar primera deuda", botones de texto de los diálogos |
-| **`AppRoundButton`** (nuevo) | Botón redondo 56×56 | `+`/`−` del inicio, `+` de Deudas y Metas, botón de menú |
+| **`AppRoundButton`** (nuevo) | Botón redondo 56×56 | `+`/`−` del inicio, `+` de Deudas y Metas, botón de menú. Toda pantalla con estos botones termina su scroll con `AppScaffold.bottomClearance(context)` (`stackedFab: true` si tiene `+` y `−`), nunca con un número suelto (P-23) |
 | **`AppActionButton`** (nuevo) | Botón chico 38×38 de editar, borrar, pagar | Las 2 copias de Deudas y Metas |
 | **`AppIconBox`** (nuevo) | Ícono dentro de una caja de color | Las 3 versiones |
 | **`AppSectionTitle`** (nuevo) | Título de sección en MAYÚSCULAS | Las 5 versiones |

@@ -209,7 +209,12 @@ class _RecurringScreenState extends State<RecurringScreen> {
           : _items.isEmpty
           ? _buildEmpty(l10n)
           : ListView(
-              padding: const EdgeInsets.all(AppSpacing.screen),
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.screen,
+                AppSpacing.screen,
+                AppSpacing.screen,
+                AppScaffold.bottomClearance(context), // P-23
+              ),
               children: [
                 _buildSummary(l10n),
                 const SizedBox(height: AppSpacing.lg),

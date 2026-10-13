@@ -11,6 +11,7 @@ import '../../../core/notifiers/transaction_notifier.dart';
 import '../../../core/state/month_controller.dart';
 import '../../../core/ui/widgets/balance_card.dart';
 import '../../../core/ui/app_spacing.dart';
+import '../../../core/ui/layout/app_scaffold.dart';
 import '../../../core/i18n/app_locale_controller.dart';
 import '../../../core/utils/l10n_helper.dart';
 import 'dashboard_period_selector.dart';
@@ -300,15 +301,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               .toList();
 
     return SingleChildScrollView(
-      // Espacio para que el final de la lista quede por encima de los
-      // botones flotantes (+ y − : 2 × 56 + 16 de separación + margen) y de
-      // la barra de navegación del sistema. Con 100 fijos, el "+" tapaba
-      // montos y textos al llegar al final.
+      // El final de la lista queda por encima de los botones + y − y de la
+      // barra de navegación del sistema (P-23).
       padding: EdgeInsets.only(
-        bottom:
-            AppSpacing.xxl * 3 +
-            AppSpacing.lg +
-            MediaQuery.of(context).padding.bottom,
+        bottom: AppScaffold.bottomClearance(context, stackedFab: true),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
