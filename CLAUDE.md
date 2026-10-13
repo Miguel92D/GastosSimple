@@ -28,5 +28,6 @@
 | 08 | Sistema de diseño modular: aplicar `docs/SISTEMA-DISENO.md` (reglas R-1…R-8, `AppIcons`, módulos, `AppTheme`, pantalla por pantalla) (D-032) | ninguna pantalla dibuja a mano lo que tiene módulo; tests de reglas prendidos; analyze y test en verde |
 | 09 | Limpieza: textos y código sin uso (P-09, P-12, P-15, P-19), textos de compra en las dos lenguas y todo en "tú" (P-14, P-21), aviso fuera de pantalla (P-22) (D-034) | nada sin uso; mensajes de compra en español e inglés; analyze y test en verde |
 | 10 | Huella y PIN por separado (P-16, D-035): cada uno se prende solo en Ajustes, nadie queda encerrado, versión 1.1.11 (17) lista para publicar | se puede usar solo PIN, solo huella o los dos; tests de cada caso; analyze y test en verde; tag y AAB |
+| 11 | Versión 1.1.12 (18) (D-036): recordatorio que no se apaga (P-25), botón de menú que tapa GUARDAR en 18:9 (P-23), ícono nuevo dentro de la app (P-24) | los tres arreglados y probados; analyze y test en verde; tag y AAB firmado con la llave nueva, subido después del 15/10/2026 00:29 |
 
-> Tabla aprobada el 2026-10-04. Filas 07 y 08 agregadas el 2026-10-05 (D-028, D-032). Fila 09 agregada el 2026-10-05 (D-034). Fila 10 agregada el 2026-10-06 (D-035). Solo se reordena con una decisión nueva (D-xxx).
+> Tabla aprobada el 2026-10-04. Filas 07 y 08 agregadas el 2026-10-05 (D-028, D-032). Fila 09 agregada el 2026-10-05 (D-034). Fila 10 agregada el 2026-10-06 (D-035). Fila 11 agregada el 2026-10-13 (D-036). Solo se reordena con una decisión nueva (D-xxx).

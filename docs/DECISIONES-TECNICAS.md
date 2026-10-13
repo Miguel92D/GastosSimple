@@ -3,7 +3,7 @@
 > Cosas ya decididas. **Este documento manda sobre todos los demás.**
 > Una decisión solo se cambia con una nueva entrada (D-0xx) que diga cuál reemplaza.
 
-Última revisión: 2026-10-06 (chat 10, D-035).
+Última revisión: 2026-10-13 (chat 11, D-036).
 
 ---
 
@@ -213,4 +213,12 @@ Pedido por Miguel el 2026-10-06. **Reemplaza la primera parte de D-022** ("la hu
 - Usuarios viejos con solo huella (P-16) no tienen que hacer nada: quedan como "solo huella".
 - La política (§6, app y las tres copias de `privacy.html`) dice lo mismo (D-024).
 - Tests: `test/privacy_security_test.dart`, grupo `huella (D-035)`.
-- Versión **1.1.11 (17)**, tag `v1.1.11+17` en el commit `5280be5` (el que se compiló, D-012). AAB firmado con la llave de publicación (`CN=Simple App`), sha256 `4aed1f01…c373668b`.
+- Versión **1.1.11 (17)**, tag `v1.1.11+17` en el commit `5280be5` (el que se compiló, D-012). AAB firmado con la llave de publicación (`CN=Simple App`), sha256 `4aed1f01…c373668b`. **En producción desde el 2026-10-06.**
+
+### D-036 — Chat 11: versión 1.1.12 (18) con P-23, P-24 y P-25
+Pedido por Miguel el 2026-10-13. Se agrega la fila **11** a la tabla de `CLAUDE.md`.
+- **P-25:** el interruptor del recordatorio no se movía en la versión de la tienda (R8 rompía Gson dentro de `flutter_local_notifications`). Arreglado en `a0f499d`.
+- **P-23:** el botón de menú tapa GUARDAR en pantallas 18:9. Se le muestran a Miguel las dos opciones antes de tocar nada.
+- **P-24:** el ícono nuevo pasa a la app (`mipmap-*`, ícono adaptable `mipmap-anydpi-v26`, web).
+- **Llave de subida nueva:** `E:\06 Mis apps\keys\simple\simple-upload-keystore.jks`, alias `simple_upload`, SHA-1 `14:14:F0:8F…20:7F`. **Vale desde el 2026-10-15 00:29 (hora de Argentina)**: antes de eso Play rechaza un AAB firmado con ella. `android/key.properties` (no va a git) apunta a esa ruta.
+- Al final: versión **1.1.12 (18)**, tag (D-012), AAB firmado con la llave nueva y subido después del 15/10 00:29.
