@@ -22,8 +22,10 @@ class NotificationService {
   Future<void> init() async {
     tz.initializeTimeZones();
     _configureLocalTimeZone();
+    // Ícono de la barra de estado: el $ en blanco. El ícono de la app ya no
+    // sirve porque tiene fondo (P-24) y Android lo mostraría como un cuadrado.
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_stat_simple');
 
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);

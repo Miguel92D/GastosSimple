@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shrinkResources no ve que el plugin de avisos busca el ícono por nombre
+     (NotificationService.init): sin esto la versión de la tienda lo borra. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_simple" />
