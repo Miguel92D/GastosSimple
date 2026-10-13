@@ -16,6 +16,14 @@
 -keep class com.google.firebase.crashlytics.** { *; }
 -dontwarn com.google.firebase.crashlytics.**
 
+# flutter_local_notifications guarda los avisos programados con Gson.
+# Con R8 en modo completo el TypeToken pierde su tipo genérico y cancel()
+# y zonedSchedule() fallan en la versión de la tienda (P-25).
+-keep class com.dexterous.flutterlocalnotifications.models.** { *; }
+-keep class com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep public class * implements java.lang.reflect.Type
+
 # AndroidX
 -keep class androidx.** { *; }
 -dontwarn androidx.**

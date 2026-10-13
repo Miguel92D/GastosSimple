@@ -3,7 +3,7 @@
 > Preguntas abiertas. Cuando Miguel responde, la respuesta se escribe acá y **pasa a valer más que la Especificación** (ver D-001).
 > Formato: pregunta · lo que sabemos · respuesta (vacía hasta que se decida).
 
-Última revisión: 2026-10-05 (chat 09).
+Última revisión: 2026-10-13 (diagnóstico, P-25).
 
 ---
 
@@ -129,4 +129,8 @@ Visto el 2026-10-06 al sacar las capturas para Play (versión 1.1.11). En un tel
 El 2026-10-06 Miguel eligió un ícono nuevo: el mismo $ dorado de siempre, sobre el fondo oscuro con brillo violeta de la app ("opción 1"). El archivo para la ficha de Play (512×512) está en `_archivo/icono/icono-play-512.png` y Miguel lo sube a mano.
 Dentro de la app sigue el ícono viejo (fondo transparente: Android le pone un círculo claro atrás).
 **Respuesta:** _pendiente_ — en una tarea aparte: generar los íconos del teléfono (`mipmap-*`, ícono adaptable `mipmap-anydpi-v26` con fondo y frente separados, web) desde el ícono nuevo, y publicarlo en la próxima versión.
+
+### P-25 — En Ajustes no se puede apagar el recordatorio diario
+Visto por Miguel el 2026-10-13 en la 1.1.11 (17) de la tienda. Leyendo el código parece bien: el interruptor llama a `NotificationService.setReminderEnabled(false)`, que guarda "apagado" y `scheduleDailyReminder` cancela el aviso (`_notifications.cancel(_reminderId)`). Así que la falla hay que verla en la app. Falta saber cuál de las dos pasa: (a) el interruptor no se mueve o vuelve a prenderse solo, o (b) se apaga pero los avisos siguen llegando.
+**Respuesta (2026-10-13, chat 11):** es la (a), en las dos direcciones: el interruptor no se mueve al tocarlo y el cambio aparece recién al salir y volver a entrar. Causa: la versión de la tienda se compila con R8 en modo completo (`android.enableR8.fullMode=true`) y no había reglas para Gson, que `flutter_local_notifications` usa para guardar los avisos programados. `cancel` y `zonedSchedule` tiraban `PlatformException` después de que prefs ya había guardado el valor nuevo; el error cortaba `_toggleReminder` antes del `setState`, y al volver a entrar la pantalla leía prefs. Arreglo: reglas de Gson en `android/app/proguard-rules.pro`; `scheduleDailyReminder` ya no deja subir errores del plugin; el interruptor se mueve al instante y vuelve atrás solo si se niega el permiso. Test: `test/reminder_toggle_test.dart` (falla con el código viejo). Falta probarlo en el teléfono con la 1.1.12 (18) firmada, porque el fallo de R8 solo pasa en compilación de release.
 

@@ -85,15 +85,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _toggleReminder(bool value, AppLocaleController l10n) async {
-    final ok = await NotificationService.instance.setReminderEnabled(value);
-    if (!mounted) return;
-    if (!ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.text('reminder_permission_denied'))),
-      );
-      return;
-    }
+    // El interruptor se mueve al instante (P-25); si el permiso se niega,
+    // vuelve atrás.
     setState(() => _reminderEnabled = value);
+    final ok = await NotificationService.instance.setReminderEnabled(value);
+    if (!mounted || ok) return;
+    setState(() => _reminderEnabled = !value);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.text('reminder_permission_denied'))),
+    );
   }
 
   Future<void> _pickReminderTime() async {

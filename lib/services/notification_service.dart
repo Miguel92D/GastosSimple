@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -64,13 +65,21 @@ class NotificationService {
   Future<void> scheduleDailyReminder() async {
     final prefs = await SharedPreferences.getInstance();
     final settings = _readSettings(prefs);
-    if (!settings.enabled) {
-      await _notifications.cancel(_reminderId);
-      return;
+    // Lo que manda es lo guardado en prefs: si el plugin falla no se corta
+    // el flujo, porque antes el error llegaba a Ajustes y el interruptor
+    // no se movía hasta salir y volver a entrar (P-25).
+    try {
+      if (!settings.enabled) {
+        await _notifications.cancel(_reminderId);
+        return;
+      }
+      await _scheduleWithFallback(settings.hour, settings.minute);
+    } on PlatformException catch (e) {
+      debugPrint('No se pudo programar el recordatorio: $e');
     }
-    final hour = settings.hour;
-    final minute = settings.minute;
+  }
 
+  Future<void> _scheduleWithFallback(int hour, int minute) async {
     try {
       await _scheduleDailyReminderAt(
         hour,
@@ -114,11 +123,17 @@ class NotificationService {
   /// no lo activa, para que el interruptor no mienta.
   Future<bool> setReminderEnabled(bool enabled) async {
     if (enabled) {
-      final granted = await _notifications
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.requestNotificationsPermission();
+      bool? granted;
+      try {
+        granted = await _notifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+      } on PlatformException {
+        // "Ya hay un pedido de permiso en curso": no se activa.
+        granted = false;
+      }
       if (granted == false) return false;
     }
     final prefs = await SharedPreferences.getInstance();
