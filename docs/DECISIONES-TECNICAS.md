@@ -222,3 +222,4 @@ Pedido por Miguel el 2026-10-13. Se agrega la fila **11** a la tabla de `CLAUDE.
 - **P-24:** el ícono nuevo pasa a la app (`mipmap-*`, ícono adaptable `mipmap-anydpi-v26`, web).
 - **Llave de subida nueva:** `E:\06 Mis apps\keys\simple\simple-upload-keystore.jks`, alias `simple_upload`, SHA-1 `14:14:F0:8F…20:7F`. **Vale desde el 2026-10-15 00:29 (hora de Argentina)**: antes de eso Play rechaza un AAB firmado con ella. `android/key.properties` (no va a git) apunta a esa ruta.
 - Al final: versión **1.1.12 (18)**, tag (D-012), AAB firmado con la llave nueva y subido después del 15/10 00:29.
+- Hecho el 2026-10-13: tag `v1.1.12+18` en el commit `5ae9901` (el que se compiló). AAB firmado con la llave de subida nueva (`CN=Simple App`, SHA-1 `14:14:F0:8F…20:7F`), sha256 `fb3818f3…04690997af`. En `mapping.txt` quedan sin renombrar `TypeToken` y `NotificationDetails` (P-25). **Falta subirlo** a Play después del 15/10 00:29.
